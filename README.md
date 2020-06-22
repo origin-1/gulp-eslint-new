@@ -1,4 +1,4 @@
-# gulp-eslint [![Build Status](https://travis-ci.org/adametry/gulp-eslint.svg)](https://travis-ci.org/adametry/gulp-eslint) [![Coverage Status](https://img.shields.io/coveralls/adametry/gulp-eslint.svg)](https://coveralls.io/github/adametry/gulp-eslint)
+# gulp-eslint7
 
 > A [gulp](https://gulpjs.com/) plugin for [ESLint](https://eslint.org/)
 
@@ -7,14 +7,14 @@
 [Use](https://docs.npmjs.com/cli/install) [npm](https://docs.npmjs.com/getting-started/what-is-npm).
 
 ```
-npm install gulp-eslint
+npm install gulp-eslint7
 ```
 
 ## Usage
 
 ```javascript
 const {src, task} = require('gulp');
-const eslint = require('gulp-eslint');
+const eslint = require('gulp-eslint7');
 
 task('default', () => {
     return src(['scripts/*.js'])
@@ -50,7 +50,7 @@ gulp.src(['**/*.js','!node_modules/**'])
 	.pipe(eslint.formatEach('compact', process.stderr));
 ```
 
-For additional examples, look through the [example directory](https://github.com/adametry/gulp-eslint/tree/master/example).
+For additional examples, look through the [example directory](https://github.com/fasttime/gulp-eslint7/tree/master/example).
 
 ## API
 
@@ -96,7 +96,7 @@ Specify global variables to declare.
 
 Type: `Boolean`
 
-This option instructs ESLint to try to fix as many issues as possible. The fixes are applied to the gulp stream. The fixed content can be saved to file using `gulp.dest` (See [example/fix.js](https://github.com/adametry/gulp-eslint/blob/master/example/fix.js)). Rules that are fixable can be found in ESLint's [rules list](https://eslint.org/docs/rules/).
+This option instructs ESLint to try to fix as many issues as possible. The fixes are applied to the gulp stream. The fixed content can be saved to file using `gulp.dest` (See [example/fix.js](https://github.com/fasttime/gulp-eslint7/blob/master/example/fix.js)). Rules that are fixable can be found in ESLint's [rules list](https://eslint.org/docs/rules/).
 
 When fixes are applied, a "fixed" property is set to `true` on the fixed file's ESLint result.
 
