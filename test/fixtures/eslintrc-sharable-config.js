@@ -1,6 +1,6 @@
 module.exports = {
 	root: true,
-	extends: '@shinnn/node',
+	extends: '@shinnn',
 	rules: {
 		'no-redeclare': 'off',
 		'no-use-before-define': 'off'
