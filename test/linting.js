@@ -119,17 +119,26 @@ describe('gulp-eslint plugin', () => {
 			}));
 	});
 
-	it('should throw an error when it fails to load a plugin', () => {
+	it('should throw an error when it fails to load a plugin', done => {
 		const pluginName = 'this-is-unknown-plugin';
-		should.throws(() => {
-			eslint({plugins: [pluginName]})
-				.end(new File({
-					path: 'test/fixtures/file.js',
-					contents: Buffer.from('')
-				}));
-		},
-		/^Error: Failed to load plugin '.+' declared in 'CLIOptions': Cannot find module '.+'\s/
-		);
+		eslint({plugins: [pluginName]})
+			.on('error', err => {
+				err.plugin.should.equal('gulp-eslint');
+				// Remove stack trace from error message as it's machine-dependent
+				const message = err.message.split('\n')[0];
+				message.should.equal(
+					`Failed to load plugin '${
+						pluginName
+					}' declared in 'CLIOptions': Cannot find module 'eslint-plugin-${
+						pluginName
+					}'`);
+
+				done();
+			})
+			.end(new File({
+				path: 'test/fixtures/file.js',
+				contents: Buffer.from('')
+			}));
 	});
 
 	describe('"warnFileIgnored" option', () => {

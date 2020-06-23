@@ -56,14 +56,30 @@ exports.createIgnoreResult = file => {
  * @returns {Object} migrated options
  */
 exports.migrateOptions = function migrateOptions(options) {
+	const eslintOptions = { };
 	if (typeof options === 'string') {
 		// basic config path overload: gulpEslint('path/to/config.json')
-		options = {
-			configFile: options
-		};
+		eslintOptions.overrideConfigFile = options;
+	} else {
+		Object.assign(eslintOptions, options);
+	}
+	const { configFile, quiet, warnFileIgnored } = eslintOptions;
+	if (configFile) {
+		delete eslintOptions.configFile;
+		eslintOptions.overrideConfigFile = configFile;
+	}
+	delete eslintOptions.quiet;
+	delete eslintOptions.warnFileIgnored;
+	for (const optName of ['parser', 'plugins', 'rules']) {
+		const optValue = eslintOptions[optName];
+		if (optValue) {
+			delete eslintOptions[optName];
+			(eslintOptions.overrideConfig = eslintOptions.overrideConfig || { })[optName]
+			= optValue;
+		}
 	}
 
-	return options;
+	return { eslintOptions, quiet, warnFileIgnored };
 };
 
 /**

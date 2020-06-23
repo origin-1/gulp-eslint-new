@@ -106,10 +106,10 @@ describe('utility methods', () => {
 	});
 
 	describe('migrateOptions', () => {
-		it('should migrate a string config value to "configPath"', () => {
-			const options = util.migrateOptions('Config/Path');
-			should.exist(options.configFile);
-			options.configFile.should.equal('Config/Path');
+		it('should migrate a string config value to "overrideConfigFile"', () => {
+			const { eslintOptions } = util.migrateOptions('Config/Path');
+			should.exist(eslintOptions.overrideConfigFile);
+			eslintOptions.overrideConfigFile.should.equal('Config/Path');
 		});
 	});
 
