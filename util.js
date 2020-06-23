@@ -50,6 +50,31 @@ exports.createIgnoreResult = file => {
 };
 
 /**
+ * Convert a string array to a boolean map.
+ * @param {string[]|null} keys The keys to assign true.
+ * @param {boolean} defaultValue The default value for each property.
+ * @param {string} displayName The property name which is used in error message.
+ * @returns {Record<string,boolean>} The boolean map.
+ */
+function toBooleanMap(keys, defaultValue, displayName) {
+	if (keys && !Array.isArray(keys)) {
+		throw new Error(`${displayName} must be an array.`);
+	}
+	if (keys && keys.length > 0) {
+		return keys.reduce((map, def) => {
+			const [key, value] = def.split(':');
+
+			if (key !== '__proto__') {
+				map[key] = value === undefined ? defaultValue : value === 'true';
+			}
+
+			return map;
+		}, {});
+	}
+	return void 0;
+}
+
+/**
  * Create config helper to merge various config sources
  *
  * @param {Object} options - options to migrate
@@ -78,7 +103,18 @@ exports.migrateOptions = function migrateOptions(options) {
 			= optValue;
 		}
 	}
-
+	const { globals } = eslintOptions;
+	if (globals) {
+		delete eslintOptions.globals;
+		(eslintOptions.overrideConfig = eslintOptions.overrideConfig || { }).globals
+		= toBooleanMap(globals, false, 'globals');
+	}
+	const { envs } = eslintOptions;
+	if (envs) {
+		delete eslintOptions.envs;
+		(eslintOptions.overrideConfig = eslintOptions.overrideConfig || { }).env
+		= toBooleanMap(envs, true, 'envs');
+	}
 	return { eslintOptions, quiet, warnFileIgnored };
 };
 

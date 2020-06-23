@@ -12,6 +12,8 @@ require('mocha');
 describe('gulp-eslint plugin', () => {
 	it('should configure an alternate parser', done => {
 		eslint({
+			envs: [],
+			globals: [],
 			parser: 'babel-eslint',
 			useEslintrc: false,
 			rules: {'prefer-template': 'error'}
