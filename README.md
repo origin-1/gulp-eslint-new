@@ -54,14 +54,17 @@ For additional examples, look through the [example directory](https://github.com
 
 ## API
 
-### eslint()
+### `eslint()`
 
 *No explicit configuration.* A `.eslintrc` file may be resolved relative to each linted file.
 
-### eslint(options)
-See [ESlint CLIEngine options](https://eslint.org/docs/developer-guide/nodejs-api#cliengine).
+### `eslint(options)`
 
-#### options.rules
+[ESLint constructor options](https://eslint.org/docs/developer-guide/nodejs-api#parameters).
+Additionally, the following options are supported, mostly for backward compatibility with
+[gulp-eslint](https://github.com/adametry/gulp-eslint).
+
+#### `options.rules`
 
 Type: `Object`
 
@@ -77,7 +80,7 @@ Set [configuration](https://eslint.org/docs/user-guide/configuring#configuring-r
 }
 ```
 
-#### options.globals
+#### `options.globals`
 
 Type: `Array`
 
@@ -92,7 +95,7 @@ Specify global variables to declare.
 }
 ```
 
-#### options.fix
+#### `options.fix`
 
 Type: `Boolean`
 
@@ -100,7 +103,7 @@ This option instructs ESLint to try to fix as many issues as possible. The fixes
 
 When fixes are applied, a "fixed" property is set to `true` on the fixed file's ESLint result.
 
-#### options.quiet
+#### `options.quiet`
 
 Type: `Boolean`
 
@@ -110,43 +113,43 @@ Type: `function (message, index, list) { return Boolean(); }`
 
 When provided a function, it will be used to filter ESLint result messages, removing any messages that do not return a `true` (or truthy) value.
 
-#### options.envs
+#### `options.envs`
 
 Type: `Array`
 
 Specify a list of [environments](https://eslint.org/docs/user-guide/configuring#specifying-environments) to be applied.
 
-#### options.rulePaths
+#### `options.rulePaths`
 
 Type: `Array`
 
 This option allows you to specify additional directories from which to load rules files. This is useful when you have custom rules that aren't suitable for being bundled with ESLint. This option works much like the ESLint CLI's [rulesdir option](https://eslint.org/docs/user-guide/command-line-interface#rulesdir).
 
-#### options.configFile
+#### `options.configFile`
 
 Type: `String`
 
 Path to the ESLint rules configuration file. For more information, see the ESLint CLI [config option](https://eslint.org/docs/user-guide/command-line-interface#c-config) and [Using Configuration Files](https://eslint.org/docs/user-guide/configuring#using-configuration-files).
 
-#### options.warnFileIgnored
+#### `options.warnFileIgnored` or `options.warnIgnored`
 
 Type: `Boolean`
 
 When `true`, add a result warning when ESLint ignores a file. This can be used to file files that are needlessly being loaded by `gulp.src`. For example, since ESLint automatically ignores "node_modules" file paths and gulp.src does not, a gulp task may take seconds longer just reading files from the "node_modules" directory.
 
-#### <a name="options.useEslintrc"></a>options.useEslintrc
+#### `options.useEslintrc`
 
 Type: `Boolean`
 
 When `false`, ESLint will not load [.eslintrc files](https://eslint.org/docs/user-guide/configuring#using-configuration-files).
 
-### eslint(configFilePath)
+### `eslint(configFilePath)`
 
 Type: `String`
 
 Shorthand for defining `options.configFile`.
 
-### eslint.result(action)
+### `eslint.result(action)`
 
 Type: `function (result) {}`
 
@@ -169,7 +172,7 @@ Type: `function (result, callback) { callback(error); }`
 Call an asynchronous function for each ESLint file result. The callback must be called for the stream to finish. If a value is passed to the callback, it will be wrapped in a Gulp PluginError and emitted from the stream.
 
 
-### eslint.results(action)
+### `eslint.results(action)`
 
 Type: `function (results) {}`
 
@@ -192,7 +195,7 @@ Type: `function (results, callback) { callback(error); }`
 
 Call an asynchronous function once for all ESLint file results before a stream finishes. The callback must be called for the stream to finish. If a value is passed to the callback, it will be wrapped in a Gulp PluginError and emitted from the stream.
 
-### eslint.failOnError()
+### `eslint.failOnError()`
 
 Stop a task/stream if an ESLint error has been reported for any file.
 
@@ -203,7 +206,7 @@ gulp.src(['**/*.js','!node_modules/**'])
 	.pipe(eslint.failOnError());
 ```
 
-### eslint.failAfterError()
+### `eslint.failAfterError()`
 
 Stop a task/stream if an ESLint error has been reported for any file, but wait for all of them to be processed first.
 
@@ -214,7 +217,7 @@ gulp.src(['**/*.js','!node_modules/**'])
 	.pipe(eslint.failAfterError());
 ```
 
-### eslint.format(formatter, output)
+### `eslint.format(formatter, output)`
 
 Format all linted files once. This should be used in the stream after piping through `eslint`; otherwise, this will find no ESLint results to format.
 
@@ -242,7 +245,7 @@ eslint.format();
 eslint.format('junit', process.stdout)
 ```
 
-### eslint.formatEach(formatter, output)
+### `eslint.formatEach(formatter, output)`
 
 Format each linted file individually. This should be used in the stream after piping through `eslint`; otherwise, this will find no ESLint results to format.
 
@@ -251,7 +254,7 @@ The arguments for `formatEach` are the same as the arguments for `format`.
 
 ## Configuration
 
-ESLint may be configured explicity by using any of the following plugin options: `config`, `rules`, `globals`, or `env`. If the [useEslintrc option](#useEslintrc) is not set to `false`, ESLint will attempt to resolve a file by the name of `.eslintrc` within the same directory as the file to be linted. If not found there, parent directories will be searched until `.eslintrc` is found or the directory root is reached.
+ESLint may be configured explicity by using any of the following plugin options: `config`, `rules`, `globals`, or `env`. If the [useEslintrc option](#optionsuseEslintrc) is not set to `false`, ESLint will attempt to resolve a file by the name of `.eslintrc` within the same directory as the file to be linted. If not found there, parent directories will be searched until `.eslintrc` is found or the directory root is reached.
 
 ## Ignore Files
 

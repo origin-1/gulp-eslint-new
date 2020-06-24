@@ -87,34 +87,31 @@ exports.migrateOptions = function migrateOptions(options) {
 	} else {
 		Object.assign(eslintOptions, options);
 	}
-	const { configFile, quiet, warnFileIgnored } = eslintOptions;
-	if (configFile) {
-		delete eslintOptions.configFile;
-		eslintOptions.overrideConfigFile = configFile;
-	}
-	delete eslintOptions.quiet;
-	delete eslintOptions.warnFileIgnored;
-	for (const optName of ['parser', 'plugins', 'rules']) {
-		const optValue = eslintOptions[optName];
-		if (optValue) {
-			delete eslintOptions[optName];
-			(eslintOptions.overrideConfig = eslintOptions.overrideConfig || { })[optName]
-			= optValue;
+
+	function migrateOption(oldName, convert = value => value, newName = oldName) {
+		if (oldName in eslintOptions) {
+			const value = eslintOptions[oldName];
+			delete eslintOptions[oldName];
+			if (value != null) {
+				(eslintOptions.overrideConfig = eslintOptions.overrideConfig || { })[newName]
+				= convert(value);
+			}
 		}
 	}
-	const { globals } = eslintOptions;
-	if (globals) {
-		delete eslintOptions.globals;
-		(eslintOptions.overrideConfig = eslintOptions.overrideConfig || { }).globals
-		= toBooleanMap(globals, false, 'globals');
-	}
-	const { envs } = eslintOptions;
-	if (envs) {
-		delete eslintOptions.envs;
-		(eslintOptions.overrideConfig = eslintOptions.overrideConfig || { }).env
-		= toBooleanMap(envs, true, 'envs');
-	}
-	return { eslintOptions, quiet, warnFileIgnored };
+
+	migrateOption('configFile');
+	migrateOption('envs', envs => toBooleanMap(envs, true, 'envs'), 'env');
+	migrateOption('globals', globals => toBooleanMap(globals, false, 'globals'));
+	migrateOption('parser');
+	migrateOption('parserOptions');
+	migrateOption('plugins');
+	migrateOption('rules');
+	const { quiet, warnFileIgnored, warnIgnored } = eslintOptions;
+	delete eslintOptions.quiet;
+	delete eslintOptions.warnFileIgnored;
+	delete eslintOptions.warnIgnored;
+	const returnValue = { eslintOptions, quiet, warnIgnored: warnFileIgnored || warnIgnored };
+	return returnValue;
 };
 
 /**

@@ -24,7 +24,7 @@ const {relative} = require('path');
  * @returns {stream} gulp file stream
  */
 function gulpEslint(options) {
-	const { eslintOptions, quiet, warnFileIgnored } = migrateOptions(options);
+	const { eslintOptions, quiet, warnIgnored } = migrateOptions(options);
 	const linter = new ESLint(eslintOptions);
 
 	return transform((file, enc, cb) => {
@@ -52,7 +52,7 @@ function gulpEslint(options) {
 				// E.g., If ../.eslintignore has "foo/*.js", ESLint will ignore ./foo/*.js, instead of ../foo/*.js.
 				// Eslint rolls this into `ESLint.lintText`. So, gulp-eslint must account for this limitation.
 
-				if (warnFileIgnored) {
+				if (warnIgnored) {
 					// Warn that gulp.src is needlessly reading files that ESLint ignores
 					file.eslint = createIgnoreResult(file);
 				}
