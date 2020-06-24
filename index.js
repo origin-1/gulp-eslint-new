@@ -23,7 +23,7 @@ async function lintFile(linter, file, quiet, warnIgnored) {
 	}
 
 	if (file.isStream()) {
-		throw 'gulp-eslint doesn\'t support vinyl files with Stream contents.';
+		throw 'gulp-eslint7 doesn\'t support vinyl files with Stream contents.';
 	}
 
 	const filePath = relative(process.cwd(), file.path);
@@ -33,7 +33,7 @@ async function lintFile(linter, file, quiet, warnIgnored) {
 		// (https://github.com/gulpjs/gulp/blob/master/docs/recipes/specifying-a-cwd.md)
 		// Also, ESLint doesn't adjust file paths relative to an ancestory .eslintignore path.
 		// E.g., If ../.eslintignore has "foo/*.js", ESLint will ignore ./foo/*.js, instead of ../foo/*.js.
-		// Eslint rolls this into `ESLint.lintText`. So, gulp-eslint must account for this limitation.
+		// Eslint rolls this into `ESLint.lintText`. So, gulp-eslint7 must account for this limitation.
 
 		if (warnIgnored) {
 			// Warn that gulp.src is needlessly reading files that ESLint ignores
@@ -142,7 +142,7 @@ gulpEslint.failOnError = () => {
 			return;
 		}
 
-		throw new PluginError('gulp-eslint', {
+		throw new PluginError('gulp-eslint7', {
 			name: 'ESLintError',
 			fileName: result.filePath,
 			message: error.message,
@@ -163,7 +163,7 @@ gulpEslint.failAfterError = () => {
 			return;
 		}
 
-		throw new PluginError('gulp-eslint', {
+		throw new PluginError('gulp-eslint7', {
 			name: 'ESLintError',
 			message: 'Failed with ' + count + (count === 1 ? ' error' : ' errors')
 		});

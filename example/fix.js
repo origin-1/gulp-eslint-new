@@ -1,6 +1,6 @@
 'use strict';
 
-// npm install gulp@next gulp-eslint gulp-if
+// npm install gulp@next gulp-eslint7 gulp-if
 
 const {dest, src, task} = require('gulp');
 const gulpIf = require('gulp-if');

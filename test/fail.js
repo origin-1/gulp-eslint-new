@@ -8,7 +8,7 @@ const eslint = require('../');
 
 require('mocha');
 
-describe('gulp-eslint failOnError', () =>  {
+describe('gulp-eslint7 failOnError', () =>  {
 	it('should fail a file immediately if an error is found', done =>  {
 		const lintStream = eslint({useEslintrc: false, rules: {'no-undef': 2}});
 
@@ -22,7 +22,7 @@ describe('gulp-eslint failOnError', () =>  {
 				should.exists(err);
 				err.message.should.equal('\'x\' is not defined.');
 				err.fileName.should.equal(path.resolve('test/fixtures/invalid.js'));
-				err.plugin.should.equal('gulp-eslint');
+				err.plugin.should.equal('gulp-eslint7');
 				done();
 			})
 			.on('finish', endWithoutError);
@@ -68,7 +68,7 @@ describe('gulp-eslint failOnError', () =>  {
 
 });
 
-describe('gulp-eslint failAfterError', () =>  {
+describe('gulp-eslint7 failAfterError', () =>  {
 
 	it('should fail when the file stream ends if an error is found', done =>  {
 		const lintStream = eslint({useEslintrc: false, rules: {'no-undef': 2}});
@@ -83,7 +83,7 @@ describe('gulp-eslint failAfterError', () =>  {
 				should.exists(err);
 				err.message.should.equal('Failed with 1 error');
 				err.name.should.equal('ESLintError');
-				err.plugin.should.equal('gulp-eslint');
+				err.plugin.should.equal('gulp-eslint7');
 				done();
 			})
 			.on('finish', endWithoutError);
@@ -101,7 +101,7 @@ describe('gulp-eslint failAfterError', () =>  {
 			should.exists(err);
 			err.message.should.equal('Failed with 2 errors');
 			err.name.should.equal('ESLintError');
-			err.plugin.should.equal('gulp-eslint');
+			err.plugin.should.equal('gulp-eslint7');
 			done();
 		}));
 

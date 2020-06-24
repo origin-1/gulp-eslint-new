@@ -9,7 +9,7 @@ const should = require('should');
 
 require('mocha');
 
-describe('gulp-eslint plugin', () => {
+describe('gulp-eslint7 plugin', () => {
 	it('should configure an alternate parser', done => {
 		eslint({
 			envs: [],
@@ -110,9 +110,9 @@ describe('gulp-eslint plugin', () => {
 	it('should emit an error when it takes a steam content', done => {
 		eslint({useEslintrc: false, rules: {'strict': 'error'}})
 			.on('error', err => {
-				err.plugin.should.equal('gulp-eslint');
+				err.plugin.should.equal('gulp-eslint7');
 				err.message.should
-					.equal('gulp-eslint doesn\'t support vinyl files with Stream contents.');
+					.equal('gulp-eslint7 doesn\'t support vinyl files with Stream contents.');
 				done();
 			})
 			.end(new File({
@@ -125,7 +125,7 @@ describe('gulp-eslint plugin', () => {
 		const pluginName = 'this-is-unknown-plugin';
 		eslint({plugins: [pluginName]})
 			.on('error', err => {
-				err.plugin.should.equal('gulp-eslint');
+				err.plugin.should.equal('gulp-eslint7');
 				// Remove stack trace from error message as it's machine-dependent
 				const message = err.message.split('\n')[0];
 				message.should.equal(
