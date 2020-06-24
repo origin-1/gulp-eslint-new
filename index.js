@@ -17,6 +17,53 @@ const {
 } = require('./util');
 const {relative} = require('path');
 
+async function lintFile(linter, file, quiet, warnIgnored) {
+	if (file.isNull()) {
+		return;
+	}
+
+	if (file.isStream()) {
+		throw 'gulp-eslint doesn\'t support vinyl files with Stream contents.';
+	}
+
+	const filePath = relative(process.cwd(), file.path);
+	if (await linter.isPathIgnored(filePath)) {
+		// Note:
+		// Vinyl files can have an independently defined cwd, but ESLint works relative to `process.cwd()`.
+		// (https://github.com/gulpjs/gulp/blob/master/docs/recipes/specifying-a-cwd.md)
+		// Also, ESLint doesn't adjust file paths relative to an ancestory .eslintignore path.
+		// E.g., If ../.eslintignore has "foo/*.js", ESLint will ignore ./foo/*.js, instead of ../foo/*.js.
+		// Eslint rolls this into `ESLint.lintText`. So, gulp-eslint must account for this limitation.
+
+		if (warnIgnored) {
+			// Warn that gulp.src is needlessly reading files that ESLint ignores
+			file.eslint = createIgnoreResult(file);
+		}
+		return;
+	}
+
+	const results = await linter.lintText(file.contents.toString(), { filePath });
+	if (!results) {
+		return;
+	}
+	const [result] = results;
+	// Note: Fixes are applied as part of "lintText".
+	// Any applied fix messages have been removed from the result.
+
+	if (quiet) {
+		// ignore warnings
+		file.eslint = filterResult(result, quiet);
+	} else {
+		file.eslint = result;
+	}
+
+	// Update the fixed output; otherwise, fixable messages are simply ignored.
+	if (file.eslint.hasOwnProperty('output')) {
+		file.contents = Buffer.from(file.eslint.output);
+		file.eslint.fixed = true;
+	}
+}
+
 /**
  * Append ESLint result to each file
  *
@@ -28,63 +75,9 @@ function gulpEslint(options) {
 	const linter = new ESLint(eslintOptions);
 
 	return transform((file, enc, cb) => {
-		const filePath = relative(process.cwd(), file.path);
-
-		if (file.isNull()) {
-			cb(null, file);
-			return;
-		}
-
-		if (file.isStream()) {
-			cb(new PluginError(
-				'gulp-eslint',
-				'gulp-eslint doesn\'t support vinyl files with Stream contents.'
-			));
-			return;
-		}
-
-		linter.isPathIgnored(filePath).then(pathIgnored => {
-			if (pathIgnored) {
-				// Note:
-				// Vinyl files can have an independently defined cwd, but ESLint works relative to `process.cwd()`.
-				// (https://github.com/gulpjs/gulp/blob/master/docs/recipes/specifying-a-cwd.md)
-				// Also, ESLint doesn't adjust file paths relative to an ancestory .eslintignore path.
-				// E.g., If ../.eslintignore has "foo/*.js", ESLint will ignore ./foo/*.js, instead of ../foo/*.js.
-				// Eslint rolls this into `ESLint.lintText`. So, gulp-eslint must account for this limitation.
-
-				if (warnIgnored) {
-					// Warn that gulp.src is needlessly reading files that ESLint ignores
-					file.eslint = createIgnoreResult(file);
-				}
-				cb(null, file);
-				return;
-			}
-
-			return linter.lintText(file.contents.toString(), { filePath });
-		}).then(results => {
-			if (!results) {
-				return;
-			}
-			const [result] = results;
-			// Note: Fixes are applied as part of "lintText".
-			// Any applied fix messages have been removed from the result.
-
-			if (quiet) {
-				// ignore warnings
-				file.eslint = filterResult(result, quiet);
-			} else {
-				file.eslint = result;
-			}
-
-			// Update the fixed output; otherwise, fixable messages are simply ignored.
-			if (file.eslint.hasOwnProperty('output')) {
-				file.contents = Buffer.from(file.eslint.output);
-				file.eslint.fixed = true;
-			}
-			cb(null, file);
-		}).catch(e => {
-			cb(new PluginError('gulp-eslint', e));
-		});
+		lintFile(linter, file, quiet, warnIgnored)
+			.then(() => cb(null, file))
+			.catch(error => cb(new PluginError('gulp-eslint7', error)));
 	});
 }
 

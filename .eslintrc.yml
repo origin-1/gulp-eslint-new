@@ -1,5 +1,5 @@
 parserOptions:
-  ecmaVersion: 7
+  ecmaVersion: 8
 
 env:
   node: true
@@ -56,4 +56,4 @@ rules:
   space-in-parens: [1, "never"]
   no-var: 2
   prefer-const: 2
- 
+
