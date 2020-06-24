@@ -210,4 +210,6 @@ gulpEslint.format = (formatter, writable) => {
 	});
 };
 
+gulpEslint.PluginError = PluginError;
+
 module.exports = gulpEslint;

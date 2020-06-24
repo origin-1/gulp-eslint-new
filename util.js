@@ -69,9 +69,8 @@ function toBooleanMap(keys, defaultValue, displayName) {
 			}
 
 			return map;
-		}, {});
+		}, { });
 	}
-	return void 0;
 }
 
 /**
