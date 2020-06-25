@@ -61,8 +61,7 @@ For additional examples, look through the [example directory](https://github.com
 ### `eslint(options)`
 
 [ESLint constructor options](https://eslint.org/docs/developer-guide/nodejs-api#parameters).
-Additionally, the following options are supported, mostly for backward compatibility with
-[gulp-eslint](https://github.com/adametry/gulp-eslint).
+Additionally, the following options are supported, mostly for backward compatibility with [gulp-eslint](https://github.com/adametry/gulp-eslint).
 
 #### `options.rules`
 
@@ -80,11 +79,13 @@ Set [configuration](https://eslint.org/docs/user-guide/configuring#configuring-r
 }
 ```
 
+_Prefer using `options.overrideConfig.rules` instead._
+
 #### `options.globals`
 
 Type: `Array`
 
-Specify global variables to declare.
+Specify [global variables](https://eslint.org/docs/user-guide/configuring#specifying-globals) to declare.
 
 ```javascript
 {
@@ -94,6 +95,8 @@ Specify global variables to declare.
 	]
 }
 ```
+
+_Prefer using `options.overrideConfig.globals` instead. Note the different format._
 
 #### `options.fix`
 
@@ -119,6 +122,8 @@ Type: `Array`
 
 Specify a list of [environments](https://eslint.org/docs/user-guide/configuring#specifying-environments) to be applied.
 
+_Prefer using `options.overrideConfig.env` instead. Note the different option name and format._
+
 #### `options.rulePaths`
 
 Type: `Array`
@@ -130,6 +135,8 @@ This option allows you to specify additional directories from which to load rule
 Type: `String`
 
 Path to the ESLint rules configuration file. For more information, see the ESLint CLI [config option](https://eslint.org/docs/user-guide/command-line-interface#c-config) and [Using Configuration Files](https://eslint.org/docs/user-guide/configuring#using-configuration-files).
+
+_Prefer using `options.overrideConfig.configFile` instead._
 
 #### `options.warnFileIgnored` or `options.warnIgnored`
 
@@ -145,13 +152,13 @@ When `false`, ESLint will not load [.eslintrc files](https://eslint.org/docs/use
 
 ### `eslint(configFilePath)`
 
-Type: `String`
+Param type: `String`
 
-Shorthand for defining `options.configFile`.
+Shorthand for defining `options.overrideConfigFile`.
 
 ### `eslint.result(action)`
 
-Type: `function (result) {}`
+Param type: `function (result) {}`
 
 Call a function for each ESLint file result. No returned value is expected. If an error is thrown, it will be wrapped in a Gulp PluginError and emitted from the stream.
 
@@ -174,7 +181,7 @@ Call an asynchronous function for each ESLint file result. The callback must be 
 
 ### `eslint.results(action)`
 
-Type: `function (results) {}`
+Param type: `function (results) {}`
 
 Call a function once for all ESLint file results before a stream finishes. No returned value is expected. If an error is thrown, it will be wrapped in a Gulp PluginError and emitted from the stream.
 
@@ -191,7 +198,7 @@ gulp.src(['**/*.js','!node_modules/**'])
 	}));
 ```
 
-Type: `function (results, callback) { callback(error); }`
+Param type: `function (results, callback) { callback(error); }`
 
 Call an asynchronous function once for all ESLint file results before a stream finishes. The callback must be called for the stream to finish. If a value is passed to the callback, it will be wrapped in a Gulp PluginError and emitted from the stream.
 

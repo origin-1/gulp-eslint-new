@@ -80,19 +80,18 @@ function toBooleanMap(keys, defaultValue, displayName) {
  * @returns {Object} migrated options
  */
 exports.migrateOptions = function migrateOptions(options) {
-	const eslintOptions = { };
 	if (typeof options === 'string') {
 		// basic config path overload: gulpEslint('path/to/config.json')
-		eslintOptions.overrideConfigFile = options;
-	} else {
-		Object.assign(eslintOptions, options);
+		const returnValue = { eslintOptions: { overrideConfigFile: options } };
+		return returnValue;
 	}
+	const eslintOptions = { ...options };
 
-	function migrateOption(oldName, convert = value => value, newName = oldName) {
+	function migrateOption(oldName, newName = oldName, convert = value => value) {
 		if (oldName in eslintOptions) {
 			const value = eslintOptions[oldName];
 			delete eslintOptions[oldName];
-			if (value != null) {
+			if (value !== undefined) {
 				(eslintOptions.overrideConfig = eslintOptions.overrideConfig || { })[newName]
 				= convert(value);
 			}
@@ -100,17 +99,20 @@ exports.migrateOptions = function migrateOptions(options) {
 	}
 
 	migrateOption('configFile');
-	migrateOption('envs', envs => toBooleanMap(envs, true, 'envs'), 'env');
-	migrateOption('globals', globals => toBooleanMap(globals, false, 'globals'));
+	migrateOption('envs', 'env', envs => toBooleanMap(envs, true, 'envs'));
+	migrateOption('globals', undefined, globals => toBooleanMap(globals, false, 'globals'));
+	migrateOption('ignorePattern', 'ignorePatterns');
 	migrateOption('parser');
 	migrateOption('parserOptions');
 	migrateOption('plugins');
 	migrateOption('rules');
-	const { quiet, warnFileIgnored, warnIgnored } = eslintOptions;
+	const { quiet, warnFileIgnored } = eslintOptions;
+	const warnIgnored
+	= warnFileIgnored !== undefined ? warnFileIgnored : eslintOptions.warnIgnored;
 	delete eslintOptions.quiet;
 	delete eslintOptions.warnFileIgnored;
 	delete eslintOptions.warnIgnored;
-	const returnValue = { eslintOptions, quiet, warnIgnored: warnFileIgnored || warnIgnored };
+	const returnValue = { eslintOptions, quiet, warnIgnored };
 	return returnValue;
 };
 

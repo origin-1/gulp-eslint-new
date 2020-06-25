@@ -14,9 +14,11 @@ describe('gulp-eslint7 plugin', () => {
 		eslint({
 			envs: [],
 			globals: [],
+			ignorePattern: [],
 			parser: 'babel-eslint',
+			parserOptions: { },
 			useEslintrc: false,
-			rules: {'prefer-template': 'error'}
+			rules: { 'prefer-template': 'error' }
 		})
 			.on('error', done)
 			.on('data', file => {

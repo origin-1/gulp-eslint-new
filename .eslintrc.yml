@@ -1,5 +1,5 @@
 parserOptions:
-  ecmaVersion: 8
+  ecmaVersion: 9
 
 env:
   node: true
