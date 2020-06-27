@@ -1,6 +1,6 @@
 {
 	"name": "gulp-eslint7",
-	"version": "0.1.0",
+	"version": "0.2.0",
 	"description": "An up-to-date replacement for gulp-eslint",
 	"repository": "fasttime/gulp-eslint7",
 	"files": [
