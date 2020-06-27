@@ -88,17 +88,21 @@ exports.migrateOptions = function migrateOptions(options) {
 	const eslintOptions = { ...options };
 
 	function migrateOption(oldName, newName = oldName, convert = value => value) {
-		if (oldName in eslintOptions) {
-			const value = eslintOptions[oldName];
-			delete eslintOptions[oldName];
-			if (value !== undefined) {
-				(eslintOptions.overrideConfig = eslintOptions.overrideConfig || { })[newName]
-				= convert(value);
-			}
+		const value = eslintOptions[oldName];
+		delete eslintOptions[oldName];
+		if (value !== undefined) {
+			(eslintOptions.overrideConfig = eslintOptions.overrideConfig || { })[newName]
+			= convert(value);
 		}
 	}
 
-	migrateOption('configFile');
+	{
+		const { configFile } = eslintOptions;
+		delete eslintOptions.configFile;
+		if (configFile !== undefined) {
+			eslintOptions.overrideConfigFile = configFile;
+		}
+	}
 	migrateOption('envs', 'env', envs => toBooleanMap(envs, true, 'envs'));
 	migrateOption('globals', undefined, globals => toBooleanMap(globals, false, 'globals'));
 	migrateOption('ignorePattern', 'ignorePatterns');
