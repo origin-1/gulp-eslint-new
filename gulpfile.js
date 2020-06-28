@@ -1,16 +1,30 @@
 'use strict';
 
-const eslint                = require('.');
-const { series, src, task } = require('gulp');
+const { parallel, series, src, task } = require('gulp');
+
+task
+(
+	'clean',
+	async() => {
+		const { promises: { rmdir } } = require('fs');
+
+		await rmdir('coverage', { recursive: true });
+	}
+);
 
 task
 (
 	'lint',
-	() =>
-		src(['*.js', 'example/**/*.js', 'test/**/*.js', '!test/fixtures/**'])
-			.pipe(eslint())
-			.pipe(eslint.format())
-			.pipe(eslint.failAfterError())
+	() => {
+		const gulpESLint = require('.');
+
+		const stream
+		= src(['*.js', 'example/**/*.js', 'test/**/*.js', '!test/fixtures/**'])
+			.pipe(gulpESLint())
+			.pipe(gulpESLint.format())
+			.pipe(gulpESLint.failAfterError());
+		return stream;
+	}
 );
 
 task
@@ -29,4 +43,4 @@ task
 	}
 );
 
-task('default', series('lint', 'test'));
+task('default', series(parallel('clean', 'lint'), 'test'));
