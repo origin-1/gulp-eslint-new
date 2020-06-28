@@ -1,6 +1,6 @@
-# gulp-eslint7
+# gulp-eslint7 · [![npm version][npm badge]][npm URL] [![Node.js CI][CI badge]][CI URL]
 
-> A [gulp](https://gulpjs.com/) plugin for [ESLint](https://eslint.org/)
+> A [gulp](https://gulpjs.com/) plugin to lint code with [ESLint](https://eslint.org/) 7
 
 ## Installation
 
@@ -277,3 +277,8 @@ ESLint results are attached as an "eslint" property to the vinyl files that pass
 
 * [gulp-eslint-if-fixed](https://github.com/lukeapage/gulp-eslint-if-fixed)
 * [gulp-eslint-threshold](https://github.com/krmbkt/gulp-eslint-threshold)
+
+[npm badge]: https://badge.fury.io/js/gulp-eslint7.svg
+[npm URL]: https://www.npmjs.com/package/gulp-eslint7
+[CI badge]: https://github.com/fasttime/gulp-eslint7/workflows/Node.js%20CI/badge.svg
+[CI URL]: https://github.com/fasttime/gulp-eslint7/actions?query=workflow%3A%22Node.js+CI%22

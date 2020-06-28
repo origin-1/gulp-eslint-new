@@ -1,7 +1,7 @@
 {
 	"name": "gulp-eslint7",
 	"version": "0.2.0",
-	"description": "An up-to-date replacement for gulp-eslint",
+	"description": "A gulp plugin to lint code with ESLint 7",
 	"repository": "fasttime/gulp-eslint7",
 	"files": [
 		"index.js",
