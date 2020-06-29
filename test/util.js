@@ -10,6 +10,7 @@ require('mocha');
 
 describe('utility methods', () => {
 	describe('transform', () => {
+
 		it('should handle files in a stream', done => {
 			let passedFile = false;
 			const streamFile = new File({
@@ -71,6 +72,7 @@ describe('utility methods', () => {
 	});
 
 	describe('createIgnoreResult', () => {
+
 		it('should create a warning that the file is ignored by ".eslintignore"', () => {
 			const file = new File({
 				path: 'test/fixtures/ignored.js',
@@ -106,11 +108,41 @@ describe('utility methods', () => {
 	});
 
 	describe('migrateOptions', () => {
+
 		it('should migrate a string config value to "overrideConfigFile"', () => {
 			const { eslintOptions } = util.migrateOptions('Config/Path');
-			should.exist(eslintOptions.overrideConfigFile);
-			eslintOptions.overrideConfigFile.should.equal('Config/Path');
+			eslintOptions.should.deepEqual({ overrideConfigFile: 'Config/Path' });
 		});
+
+		it('should migrate "configFile" to "overrideConfigFile"', () => {
+			const { eslintOptions } = util.migrateOptions({ configFile: 'Config/Path' });
+			eslintOptions.should.deepEqual({ overrideConfigFile: 'Config/Path' });
+		});
+
+		it('should migrate an "envs" array to an "env" object', () => {
+			const { eslintOptions }
+			= util.migrateOptions({ envs: ['foo:true', 'bar:false', 'baz'] });
+			eslintOptions.should.deepEqual(
+				{ overrideConfig: { env: { foo: true, bar: false, baz: true } } }
+			);
+		});
+
+		it('should migrate a "globals" array to an object', () => {
+			const { eslintOptions }
+			= util.migrateOptions({ globals: ['foo:true', 'bar:false', 'baz'] });
+			eslintOptions.should.deepEqual(
+				{ overrideConfig: { globals: { foo: true, bar: false, baz: false } } }
+			);
+		});
+
+		it('should fail if "envs" is not an array or falsy', () => {
+			should.throws(() => util.migrateOptions({ envs: 'foo' }), /\benvs\b/);
+		});
+
+		it('should fail if "globals" is not an array or falsy', () => {
+			should.throws(() => util.migrateOptions({ globals: { } }), /\globals\b/);
+		});
+
 	});
 
 	describe('isErrorMessage', () => {
@@ -158,7 +190,8 @@ describe('utility methods', () => {
 				source: 'function a() { x = 0; }'
 			}],
 			errorCount: 1,
-			warningCount: 1
+			warningCount: 1,
+			output: 'function a () { x = 0; }'
 		};
 
 		it('should filter messages', () => {
@@ -170,6 +203,7 @@ describe('utility methods', () => {
 			quietResult.messages.should.be.instanceof(Array).and.have.lengthOf(1);
 			quietResult.errorCount.should.equal(0);
 			quietResult.warningCount.should.equal(1);
+			quietResult.output.should.equal('function a () { x = 0; }');
 		});
 
 		it('should remove warning messages', () => {
@@ -178,6 +212,7 @@ describe('utility methods', () => {
 			quietResult.messages.should.be.instanceof(Array).and.have.lengthOf(1);
 			quietResult.errorCount.should.equal(1);
 			quietResult.warningCount.should.equal(0);
+			quietResult.output.should.equal('function a () { x = 0; }');
 		});
 
 	});

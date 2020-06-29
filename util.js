@@ -278,7 +278,7 @@ exports.resolveFormatter = (formatter) => {
 	// use ESLint to look up formatter references
 	if (typeof formatter !== 'function') {
 		// load formatter (module, relative to cwd, ESLint formatter)
-		formatter =	CLIEngine.getFormatter(formatter) || formatter;
+		formatter =	CLIEngine.getFormatter(formatter);
 	}
 
 	return formatter;

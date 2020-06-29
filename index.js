@@ -42,11 +42,7 @@ async function lintFile(linter, file, quiet, warnIgnored) {
 		return;
 	}
 
-	const results = await linter.lintText(file.contents.toString(), { filePath });
-	if (!results) {
-		return;
-	}
-	const [result] = results;
+	const [result] = await linter.lintText(file.contents.toString(), { filePath });
 	// Note: Fixes are applied as part of "lintText".
 	// Any applied fix messages have been removed from the result.
 
