@@ -1,4 +1,4 @@
-# gulp-eslint7 · [![npm version][npm badge]][npm URL] [![Node.js CI][CI badge]][CI URL]
+# gulp-eslint7 · [![npm version][npm badge]][npm URL]
 
 > A [gulp](https://gulpjs.com/) plugin to lint code with [ESLint](https://eslint.org/) 7
 
@@ -280,5 +280,3 @@ ESLint results are attached as an "eslint" property to the vinyl files that pass
 
 [npm badge]: https://badge.fury.io/js/gulp-eslint7.svg
 [npm URL]: https://www.npmjs.com/package/gulp-eslint7
-[CI badge]: https://github.com/fasttime/gulp-eslint7/workflows/Node.js%20CI/badge.svg
-[CI URL]: https://github.com/fasttime/gulp-eslint7/actions?query=workflow%3A%22Node.js+CI%22
