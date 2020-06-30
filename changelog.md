@@ -1,3 +1,9 @@
+<a name="0.2.1"></a>
+## [0.2.1](https://github.com/fasttime/gulp-eslint7/releases/tag/0.2.1) (2020-06-30)
+
+* Minor optimizations.
+* Showing npm badge in the readme file.
+
 <a name="0.2.0"></a>
 ## [0.2.0](https://github.com/fasttime/gulp-eslint7/releases/tag/0.2.0) (2020-06-27)
 
