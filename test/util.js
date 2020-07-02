@@ -116,7 +116,9 @@ describe('utility methods', () => {
 
 		it('should migrate "configFile" to "overrideConfigFile"', () => {
 			const { eslintOptions } = util.migrateOptions({ configFile: 'Config/Path' });
-			eslintOptions.should.deepEqual({ overrideConfigFile: 'Config/Path' });
+			eslintOptions.should.deepEqual(
+				{ overrideConfig: { }, overrideConfigFile: 'Config/Path' }
+			);
 		});
 
 		it('should migrate an "envs" array to an "env" object', () => {
@@ -135,12 +137,24 @@ describe('utility methods', () => {
 			);
 		});
 
+		it('should fail if "overrideConfig" is not an object or null', () => {
+			should.throws(
+				() => util.migrateOptions({ overrideConfig: 'foo' }), /\overrideConfig\b/
+			);
+		});
+
 		it('should fail if "envs" is not an array or falsy', () => {
 			should.throws(() => util.migrateOptions({ envs: 'foo' }), /\benvs\b/);
 		});
 
 		it('should fail if "globals" is not an array or falsy', () => {
 			should.throws(() => util.migrateOptions({ globals: { } }), /\globals\b/);
+		});
+
+		it('should not modify an existing overrideConfig', () => {
+			const options = { overrideConfig: { }, parser: 'foo' };
+			util.migrateOptions(options);
+			options.overrideConfig.should.deepEqual({ });
 		});
 
 	});

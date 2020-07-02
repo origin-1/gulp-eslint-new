@@ -58,7 +58,7 @@ exports.createIgnoreResult = file => {
  */
 function toBooleanMap(keys, defaultValue, displayName) {
 	if (keys && !Array.isArray(keys)) {
-		throw new Error(`${displayName} must be an array.`);
+		throw Error(`${displayName} must be an array.`);
 	}
 	if (keys && keys.length > 0) {
 		return keys.reduce((map, def) => {
@@ -79,20 +79,31 @@ function toBooleanMap(keys, defaultValue, displayName) {
  * @param {Object} options - options to migrate
  * @returns {Object} migrated options
  */
-exports.migrateOptions = function migrateOptions(options) {
+exports.migrateOptions = function migrateOptions(options = { }) {
 	if (typeof options === 'string') {
 		// basic config path overload: gulpEslint('path/to/config.json')
 		const returnValue = { eslintOptions: { overrideConfigFile: options } };
 		return returnValue;
 	}
-	const eslintOptions = { ...options };
+	const {
+		overrideConfig: originalOverrideConfig,
+		quiet,
+		warnFileIgnored,
+		warnIgnored: originalWarnIgnored,
+		...eslintOptions
+	}
+	= options;
+	if (originalOverrideConfig != null && typeof originalOverrideConfig !== 'object') {
+		throw Error('\'overrideConfig\' must be an object or null.');
+	}
+	const overrideConfig = eslintOptions.overrideConfig
+	= originalOverrideConfig != null ? { ...originalOverrideConfig } : { };
 
 	function migrateOption(oldName, newName = oldName, convert = value => value) {
 		const value = eslintOptions[oldName];
 		delete eslintOptions[oldName];
 		if (value !== undefined) {
-			(eslintOptions.overrideConfig = eslintOptions.overrideConfig || { })[newName]
-			= convert(value);
+			overrideConfig[newName] = convert(value);
 		}
 	}
 
@@ -110,12 +121,7 @@ exports.migrateOptions = function migrateOptions(options) {
 	migrateOption('parserOptions');
 	migrateOption('plugins');
 	migrateOption('rules');
-	const { quiet, warnFileIgnored } = eslintOptions;
-	const warnIgnored
-	= warnFileIgnored !== undefined ? warnFileIgnored : eslintOptions.warnIgnored;
-	delete eslintOptions.quiet;
-	delete eslintOptions.warnFileIgnored;
-	delete eslintOptions.warnIgnored;
+	const warnIgnored = warnFileIgnored !== undefined ? warnFileIgnored : originalWarnIgnored;
 	const returnValue = { eslintOptions, quiet, warnIgnored };
 	return returnValue;
 };
