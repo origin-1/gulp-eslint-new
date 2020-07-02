@@ -137,6 +137,16 @@ describe('utility methods', () => {
 			);
 		});
 
+		it('should migrate a "plugins" arrays', () => {
+			const { eslintOptions } = util.migrateOptions({ plugins: ['foo', 'bar'] });
+			eslintOptions.should.deepEqual({ overrideConfig: { plugins: ['foo', 'bar'] } });
+		});
+
+		it('should not migrate a "plugins" object', () => {
+			const { eslintOptions } = util.migrateOptions({ plugins: { foo: 'bar' } });
+			eslintOptions.should.deepEqual({ overrideConfig: { }, plugins: { foo: 'bar' } });
+		});
+
 		it('should fail if "overrideConfig" is not an object or null', () => {
 			should.throws(
 				() => util.migrateOptions({ overrideConfig: 'foo' }), /\overrideConfig\b/

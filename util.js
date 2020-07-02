@@ -119,7 +119,9 @@ exports.migrateOptions = function migrateOptions(options = { }) {
 	migrateOption('ignorePattern', 'ignorePatterns');
 	migrateOption('parser');
 	migrateOption('parserOptions');
-	migrateOption('plugins');
+	if (Array.isArray(eslintOptions.plugins)) {
+		migrateOption('plugins');
+	}
 	migrateOption('rules');
 	const warnIgnored = warnFileIgnored !== undefined ? warnFileIgnored : originalWarnIgnored;
 	const returnValue = { eslintOptions, quiet, warnIgnored };
