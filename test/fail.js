@@ -1,9 +1,9 @@
 /* global describe, it, beforeEach */
 'use strict';
 
+const assert = require('assert');
 const File = require('vinyl');
 const path = require('path');
-const should = require('should');
 const eslint = require('../');
 
 require('mocha');
@@ -19,10 +19,10 @@ describe('gulp-eslint7 failOnError', () =>  {
 		lintStream.pipe(eslint.failOnError())
 			.on('error', function(err)  {
 				this.removeListener('finish', endWithoutError);
-				should.exists(err);
-				err.message.should.equal('\'x\' is not defined.');
-				err.fileName.should.equal(path.resolve('test/fixtures/invalid.js'));
-				err.plugin.should.equal('gulp-eslint7');
+				assert(err);
+				assert.strictEqual(err.message, '\'x\' is not defined.');
+				assert.strictEqual(err.fileName, path.resolve('test/fixtures/invalid.js'));
+				assert.strictEqual(err.plugin, 'gulp-eslint7');
 				done();
 			})
 			.on('finish', endWithoutError);
@@ -80,10 +80,10 @@ describe('gulp-eslint7 failAfterError', () =>  {
 		lintStream.pipe(eslint.failAfterError())
 			.on('error', function(err)  {
 				this.removeListener('finish', endWithoutError);
-				should.exists(err);
-				err.message.should.equal('Failed with 1 error');
-				err.name.should.equal('ESLintError');
-				err.plugin.should.equal('gulp-eslint7');
+				assert(err);
+				assert.strictEqual(err.message, 'Failed with 1 error');
+				assert.strictEqual(err.name, 'ESLintError');
+				assert.strictEqual(err.plugin, 'gulp-eslint7');
 				done();
 			})
 			.on('finish', endWithoutError);
@@ -98,10 +98,10 @@ describe('gulp-eslint7 failAfterError', () =>  {
 		const lintStream = eslint({useEslintrc: false, rules: {'no-undef': 2}});
 
 		lintStream.pipe(eslint.failAfterError().on('error', (err) =>  {
-			should.exists(err);
-			err.message.should.equal('Failed with 2 errors');
-			err.name.should.equal('ESLintError');
-			err.plugin.should.equal('gulp-eslint7');
+			assert(err);
+			assert.strictEqual(err.message, 'Failed with 2 errors');
+			assert.strictEqual(err.name, 'ESLintError');
+			assert.strictEqual(err.plugin, 'gulp-eslint7');
 			done();
 		}));
 

@@ -1,9 +1,9 @@
 /* global describe, it, afterEach */
 'use strict';
 
+const assert = require('assert');
 const File = require('vinyl');
 const stream = require('stream');
-const should = require('should');
 const util = require('../util');
 
 require('mocha');
@@ -18,14 +18,14 @@ describe('utility methods', () => {
 				contents: Buffer.from('x = 1;')
 			});
 			const testStream = util.transform((file, enc, cb) => {
-				should.exist(file);
-				should.exist(cb);
+				assert(file);
+				assert(cb);
 				passedFile = (streamFile === file);
 				cb();
 			})
 				.on('error', done)
 				.on('finish', () => {
-					passedFile.should.equal(true);
+					assert.strictEqual(passedFile, true);
 					done();
 				});
 
@@ -46,20 +46,20 @@ describe('utility methods', () => {
 				})
 			];
 			const testStream = util.transform((file, enc, cb) => {
-				should.exist(file);
-				should.exist(cb);
+				assert(file);
+				assert(cb);
 				count += 1;
 				cb();
 			}, cb => {
-				should.exist(cb);
-				count.should.equal(files.length);
-				testStream._writableState.ending.should.equal(true);
+				assert(cb);
+				assert.strictEqual(count, files.length);
+				assert.strictEqual(testStream._writableState.ending, true);
 				finalCount = count;
 				cb();
 			})
 				.on('error', done)
 				.on('finish', () => {
-					finalCount.should.equal(files.length);
+					assert.strictEqual(finalCount, files.length);
 					done();
 				});
 
@@ -79,12 +79,16 @@ describe('utility methods', () => {
 				contents: Buffer.from('')
 			});
 			const result = util.createIgnoreResult(file);
-			should.exist(result);
-			result.filePath.should.equal(file.path);
-			result.errorCount.should.equal(0);
-			result.warningCount.should.equal(1);
-			result.messages.should.be.instanceof(Array).and.have.lengthOf(1);
-			result.messages[0].message.should.equal('File ignored because of .eslintignore file');
+			assert(result);
+			assert.strictEqual(result.filePath, file.path);
+			assert.strictEqual(result.errorCount, 0);
+			assert.strictEqual(result.warningCount, 1);
+			assert(Array.isArray(result.messages));
+			assert.strictEqual(result.messages.length, 1);
+			assert.strictEqual(
+				result.messages[0].message,
+				'File ignored because of .eslintignore file'
+			);
 
 		});
 
@@ -94,12 +98,14 @@ describe('utility methods', () => {
 				contents: Buffer.from('')
 			});
 			const result = util.createIgnoreResult(file);
-			should.exist(result);
-			result.filePath.should.equal(file.path);
-			result.errorCount.should.equal(0);
-			result.warningCount.should.equal(1);
-			result.messages.should.be.instanceof(Array).and.have.lengthOf(1);
-			result.messages[0].message.should.equal(
+			assert(result);
+			assert.strictEqual(result.filePath, file.path);
+			assert.strictEqual(result.errorCount, 0);
+			assert.strictEqual(result.warningCount, 1);
+			assert(Array.isArray(result.messages));
+			assert.strictEqual(result.messages.length, 1);
+			assert.strictEqual(
+				result.messages[0].message,
 				'File ignored because it has a node_modules/** path'
 			);
 
@@ -111,12 +117,13 @@ describe('utility methods', () => {
 
 		it('should migrate a string config value to "overrideConfigFile"', () => {
 			const { eslintOptions } = util.migrateOptions('Config/Path');
-			eslintOptions.should.deepEqual({ overrideConfigFile: 'Config/Path' });
+			assert.deepStrictEqual(eslintOptions, { overrideConfigFile: 'Config/Path' });
 		});
 
 		it('should migrate "configFile" to "overrideConfigFile"', () => {
 			const { eslintOptions } = util.migrateOptions({ configFile: 'Config/Path' });
-			eslintOptions.should.deepEqual(
+			assert.deepStrictEqual(
+				eslintOptions,
 				{ overrideConfig: { }, overrideConfigFile: 'Config/Path' }
 			);
 		});
@@ -124,7 +131,8 @@ describe('utility methods', () => {
 		it('should migrate an "envs" array to an "env" object', () => {
 			const { eslintOptions }
 			= util.migrateOptions({ envs: ['foo:true', 'bar:false', 'baz'] });
-			eslintOptions.should.deepEqual(
+			assert.deepStrictEqual(
+				eslintOptions,
 				{ overrideConfig: { env: { foo: true, bar: false, baz: true } } }
 			);
 		});
@@ -132,39 +140,46 @@ describe('utility methods', () => {
 		it('should migrate a "globals" array to an object', () => {
 			const { eslintOptions }
 			= util.migrateOptions({ globals: ['foo:true', 'bar:false', 'baz'] });
-			eslintOptions.should.deepEqual(
+			assert.deepStrictEqual(
+				eslintOptions,
 				{ overrideConfig: { globals: { foo: true, bar: false, baz: false } } }
 			);
 		});
 
 		it('should migrate a "plugins" arrays', () => {
 			const { eslintOptions } = util.migrateOptions({ plugins: ['foo', 'bar'] });
-			eslintOptions.should.deepEqual({ overrideConfig: { plugins: ['foo', 'bar'] } });
+			assert.deepStrictEqual(
+				eslintOptions,
+				{ overrideConfig: { plugins: ['foo', 'bar'] } }
+			);
 		});
 
 		it('should not migrate a "plugins" object', () => {
 			const { eslintOptions } = util.migrateOptions({ plugins: { foo: 'bar' } });
-			eslintOptions.should.deepEqual({ overrideConfig: { }, plugins: { foo: 'bar' } });
+			assert.deepStrictEqual(
+				eslintOptions,
+				{ overrideConfig: { }, plugins: { foo: 'bar' } }
+			);
 		});
 
 		it('should fail if "overrideConfig" is not an object or null', () => {
-			should.throws(
+			assert.throws(
 				() => util.migrateOptions({ overrideConfig: 'foo' }), /\overrideConfig\b/
 			);
 		});
 
 		it('should fail if "envs" is not an array or falsy', () => {
-			should.throws(() => util.migrateOptions({ envs: 'foo' }), /\benvs\b/);
+			assert.throws(() => util.migrateOptions({ envs: 'foo' }), /\benvs\b/);
 		});
 
 		it('should fail if "globals" is not an array or falsy', () => {
-			should.throws(() => util.migrateOptions({ globals: { } }), /\globals\b/);
+			assert.throws(() => util.migrateOptions({ globals: { } }), /\globals\b/);
 		});
 
 		it('should not modify an existing overrideConfig', () => {
 			const options = { overrideConfig: { }, parser: 'foo' };
 			util.migrateOptions(options);
-			options.overrideConfig.should.deepEqual({ });
+			assert.deepStrictEqual(options.overrideConfig, { });
 		});
 
 	});
@@ -177,7 +192,7 @@ describe('utility methods', () => {
 				severity: 0
 			};
 			const isError = util.isErrorMessage(errorMessage);
-			isError.should.equal(true);
+			assert.strictEqual(isError, true);
 
 		});
 
@@ -186,7 +201,7 @@ describe('utility methods', () => {
 				severity: [2, 1]
 			};
 			const isError = util.isErrorMessage(errorMessage);
-			isError.should.equal(true);
+			assert.strictEqual(isError, true);
 
 		});
 
@@ -223,20 +238,22 @@ describe('utility methods', () => {
 				return message.severity === 1;
 			}
 			const quietResult = util.filterResult(result, warningsOnly);
-			quietResult.filePath.should.equal('test/fixtures/invalid.js');
-			quietResult.messages.should.be.instanceof(Array).and.have.lengthOf(1);
-			quietResult.errorCount.should.equal(0);
-			quietResult.warningCount.should.equal(1);
-			quietResult.output.should.equal('function a () { x = 0; }');
+			assert.strictEqual(quietResult.filePath, 'test/fixtures/invalid.js');
+			assert(Array.isArray(quietResult.messages));
+			assert.strictEqual(quietResult.messages.length, 1);
+			assert.strictEqual(quietResult.errorCount, 0);
+			assert.strictEqual(quietResult.warningCount, 1);
+			assert.strictEqual(quietResult.output, 'function a () { x = 0; }');
 		});
 
 		it('should remove warning messages', () => {
 			const quietResult = util.filterResult(result, true);
-			quietResult.filePath.should.equal('test/fixtures/invalid.js');
-			quietResult.messages.should.be.instanceof(Array).and.have.lengthOf(1);
-			quietResult.errorCount.should.equal(1);
-			quietResult.warningCount.should.equal(0);
-			quietResult.output.should.equal('function a () { x = 0; }');
+			assert.strictEqual(quietResult.filePath, 'test/fixtures/invalid.js');
+			assert(Array.isArray(quietResult.messages));
+			assert.strictEqual(quietResult.messages.length, 1);
+			assert.strictEqual(quietResult.errorCount, 1);
+			assert.strictEqual(quietResult.warningCount, 0);
+			assert.strictEqual(quietResult.output, 'function a () { x = 0; }');
 		});
 
 	});
@@ -246,14 +263,14 @@ describe('utility methods', () => {
 		it('should default to the "stylish" formatter', () => {
 
 			const formatter = util.resolveFormatter();
-			formatter.should.equal(require('eslint/lib/cli-engine/formatters/stylish'));
+			assert.strictEqual(formatter, require('eslint/lib/cli-engine/formatters/stylish'));
 
 		});
 
 		it('should resolve a formatter', () => {
 
 			const formatter = util.resolveFormatter('tap');
-			formatter.should.equal(require('eslint/lib/cli-engine/formatters/tap'));
+			assert.strictEqual(formatter, require('eslint/lib/cli-engine/formatters/tap'));
 
 		});
 
@@ -262,9 +279,7 @@ describe('utility methods', () => {
 			function resolveMissingFormatter() {
 				util.resolveFormatter('missing-formatter');
 			}
-			resolveMissingFormatter.should.throw(Error, {
-				message: /There was a problem loading formatter/
-			});
+			assert.throws(resolveMissingFormatter, /\bThere was a problem loading formatter\b/);
 
 		});
 
@@ -275,7 +290,7 @@ describe('utility methods', () => {
 		it('should default to fancyLog', () => {
 
 			const write = util.resolveWritable();
-			write.should.equal(require('fancy-log'));
+			assert.strictEqual(write, require('fancy-log'));
 
 		});
 
@@ -287,8 +302,8 @@ describe('utility methods', () => {
 			const write = util.resolveWritable(writable);
 
 			writable._write = function writeChunk(chunk, encoding, cb) {
-				should.exist(chunk);
-				chunk.should.equal(testValue);
+				assert(chunk);
+				assert.strictEqual(chunk, testValue);
 				written = true;
 				cb();
 			};
@@ -296,7 +311,7 @@ describe('utility methods', () => {
 			writable
 				.on('error', done)
 				.on('finish', () => {
-					written.should.equal(true);
+					assert.strictEqual(written, true);
 					done();
 				});
 			write(testValue);
@@ -319,17 +334,17 @@ describe('utility methods', () => {
 			const testValue = {};
 
 			function testFormatter(results, config) {
-				should.exist(results);
-				results.should.equal(testResults);
-				should.exist(config);
-				config.should.equal(testConfig);
+				assert(results);
+				assert.strictEqual(results, testResults);
+				assert(config);
+				assert.strictEqual(config, testConfig);
 
 				return testValue;
 			}
 
 			function testWriter(value) {
-				should.exist(value);
-				value.should.equal(testValue);
+				assert(value);
+				assert.strictEqual(value, testValue);
 			}
 
 			util.writeResults(testResults, testFormatter, testWriter);
@@ -339,16 +354,16 @@ describe('utility methods', () => {
 		it('should not write an empty or missing value', () => {
 
 			function testFormatter(results, config) {
-				should.exist(results);
-				results.should.equal(testResults);
-				should.exist(config);
-				config.should.equal(testConfig);
+				assert(results);
+				assert.strictEqual(results, testResults);
+				assert(config);
+				assert.strictEqual(config, testConfig);
 
 				return '';
 			}
 
 			function testWriter(value) {
-				should.not.exist(value);
+				assert(!value);
 			}
 
 			util.writeResults(testResults, testFormatter, testWriter);
@@ -358,16 +373,17 @@ describe('utility methods', () => {
 		it('should default undefined results to an empty array', () => {
 
 			function testFormatter(results, config) {
-				should.exist(results);
-				results.should.be.instanceof(Array).and.have.lengthOf(0);
-				should.exist(config);
+				assert(results);
+				assert(Array.isArray(results));
+				assert.strictEqual(results.length, 0);
+				assert(config);
 
 				return results.length + ' results';
 			}
 
 			function testWriter(value) {
-				should.exist(value);
-				value.should.equal('0 results');
+				assert(value);
+				assert.strictEqual(value, '0 results');
 			}
 
 			util.writeResults(null, testFormatter, testWriter);

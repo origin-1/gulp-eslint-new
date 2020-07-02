@@ -1,9 +1,9 @@
 /* global describe, it, beforeEach */
 'use strict';
 
+const assert = require('assert');
 const File = require('vinyl');
 const stream = require('stream');
-const should = require('should');
 const eslint = require('..');
 
 require('mocha');
@@ -41,8 +41,8 @@ describe('gulp-eslint7 format', () => {
 	 * @param {String} message - a message to count as written
 	 */
 	function outputWriter(message) {
-		should.exist(message);
-		message.should.match(/^\d+ messages$/);
+		assert(message);
+		assert(/^\d+ messages$/.test(message));
 		writeCount++;
 	}
 
@@ -68,9 +68,9 @@ describe('gulp-eslint7 format', () => {
 		 * @returns {String} formatted results
 		 */
 		function formatResults(results, config) {
-			should.exist(config);
-			should.exist(results);
-			results.should.be.instanceof(Array).with.a.lengthOf(3);
+			assert(config);
+			assert(Array.isArray(results));
+			assert.strictEqual(results.length, 3);
 			formatCount++;
 
 			const messageCount = results.reduce((sum, result) => {
@@ -96,12 +96,12 @@ describe('gulp-eslint7 format', () => {
 			formatStream
 				.on('error', done)
 				.on('finish', () => {
-					formatCount.should.equal(1);
-					writeCount.should.equal(1);
+					assert.strictEqual(formatCount, 1);
+					assert.strictEqual(writeCount, 1);
 					done();
 				});
 
-			should.exist(lintStream.pipe);
+			assert(lintStream.pipe);
 			lintStream.pipe(formatStream);
 
 			files.forEach(function(file) {
@@ -121,12 +121,12 @@ describe('gulp-eslint7 format', () => {
 			formatStream
 				.on('error', done)
 				.on('finish', () => {
-					formatCount.should.equal(0);
-					writeCount.should.equal(0);
+					assert.strictEqual(formatCount, 0);
+					assert.strictEqual(writeCount, 0);
 					done();
 				});
 
-			should.exist(passthruStream.pipe);
+			assert(passthruStream.pipe);
 			passthruStream.pipe(formatStream);
 
 			files.forEach(function(file) {
@@ -140,9 +140,9 @@ describe('gulp-eslint7 format', () => {
 	describe('format each result', () => {
 
 		function formatResult(results, config) {
-			should.exist(config);
-			should.exist(results);
-			results.should.be.instanceof(Array).with.a.lengthOf(1);
+			assert(config);
+			assert(Array.isArray(results));
+			assert.strictEqual(results.length, 1);
 			formatCount++;
 
 			return `${results.reduce((sum, result) => sum + result.messages.length, 0)} messages`;
@@ -161,15 +161,15 @@ describe('gulp-eslint7 format', () => {
 				.on('error', done)
 				.on('finish', function() {
 				// the stream should not have emitted an error
-					this._writableState.errorEmitted.should.equal(false);
+					assert.strictEqual(this._writableState.errorEmitted, false);
 
 					const fileCount = files.length - 1;// remove directory
-					formatCount.should.equal(fileCount);
-					writeCount.should.equal(fileCount);
+					assert.strictEqual(formatCount, fileCount);
+					assert.strictEqual(writeCount, fileCount);
 					done();
 				});
 
-			should.exist(lintStream.pipe);
+			assert(lintStream.pipe);
 			lintStream.pipe(formatStream);
 
 			files.forEach(file => lintStream.write(file));
@@ -189,17 +189,17 @@ describe('gulp-eslint7 format', () => {
 
 			formatStream
 				.on('error', err => {
-					should.exists(err);
-					err.message.should.equal('Writer Test Error: 1 messages');
-					err.name.should.equal('TestError');
-					err.plugin.should.equal('gulp-eslint7');
+					assert(err);
+					assert.strictEqual(err.message, 'Writer Test Error: 1 messages');
+					assert.strictEqual(err.name, 'TestError');
+					assert.strictEqual(err.plugin, 'gulp-eslint7');
 					done();
 				})
 				.on('finish', () => {
 					done(new Error('Expected PluginError to fail stream'));
 				});
 
-			should.exist(lintStream.pipe);
+			assert(lintStream.pipe);
 			lintStream.pipe(formatStream);
 
 			files.forEach(file => lintStream.write(file));

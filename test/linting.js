@@ -1,11 +1,11 @@
 /* global describe, it*/
 'use strict';
 
+const assert = require('assert');
 const path = require('path');
 const eslint = require('..');
 const File = require('vinyl');
 const stringToStream = require('from2-string');
-const should = require('should');
 
 require('mocha');
 
@@ -22,19 +22,21 @@ describe('gulp-eslint7 plugin', () => {
 		})
 			.on('error', done)
 			.on('data', file => {
-				should.exist(file);
-				should.exist(file.contents);
-				should.exist(file.eslint);
-				file.eslint.should.have
-					.property('filePath', path.resolve('test/fixtures/stage0-class-property.js'));
+				assert(file);
+				assert(file.contents);
+				assert(file.eslint);
+				assert.strictEqual(
+					file.eslint.filePath,
+					path.resolve('test/fixtures/stage0-class-property.js')
+				);
 
-				file.eslint.messages
-					.should.be.instanceof(Array)
-					.and.have.lengthOf(1);
+				assert(Array.isArray(file.eslint.messages));
+				assert.strictEqual(file.eslint.messages.length, 1);
 
-				file.eslint.messages[0]
-					.should.have.properties('message', 'line', 'column')
-					.and.have.property('ruleId', 'prefer-template');
+				assert('message' in file.eslint.messages[0]);
+				assert('line' in file.eslint.messages[0]);
+				assert('column' in file.eslint.messages[0]);
+				assert.strictEqual(file.eslint.messages[0].ruleId, 'prefer-template');
 
 				done();
 			})
@@ -48,17 +50,17 @@ describe('gulp-eslint7 plugin', () => {
 		eslint(path.resolve(__dirname, 'fixtures', 'eslintrc-sharable-config.js'))
 			.on('error', done)
 			.on('data', file => {
-				should.exist(file);
-				should.exist(file.contents);
-				should.exist(file.eslint);
+				assert(file);
+				assert(file.contents);
+				assert(file.eslint);
 
-				file.eslint.messages
-					.should.be.instanceof(Array)
-					.and.have.lengthOf(1);
+				assert(Array.isArray(file.eslint.messages));
+				assert.strictEqual(file.eslint.messages.length, 1);
 
-				file.eslint.messages[0]
-					.should.have.properties('message', 'line', 'column')
-					.and.have.property('ruleId', 'eol-last');
+				assert('message' in file.eslint.messages[0]);
+				assert('line' in file.eslint.messages[0]);
+				assert('column' in file.eslint.messages[0]);
+				assert.strictEqual(file.eslint.messages[0].ruleId, 'eol-last');
 
 				done();
 			})
@@ -72,19 +74,21 @@ describe('gulp-eslint7 plugin', () => {
 		eslint({useEslintrc: false, rules: {strict: [2, 'global']}})
 			.on('error', done)
 			.on('data', file => {
-				should.exist(file);
-				should.exist(file.contents);
-				should.exist(file.eslint);
-				file.eslint.should.have
-					.property('filePath', path.resolve('test/fixtures/use-strict.js'));
+				assert(file);
+				assert(file.contents);
+				assert(file.eslint);
+				assert.strictEqual(
+					file.eslint.filePath,
+					path.resolve('test/fixtures/use-strict.js')
+				);
 
-				file.eslint.messages
-					.should.be.instanceof(Array)
-					.and.have.lengthOf(1);
+				assert(Array.isArray(file.eslint.messages));
+				assert.strictEqual(file.eslint.messages.length, 1);
 
-				file.eslint.messages[0]
-					.should.have.properties('message', 'line', 'column')
-					.and.have.property('ruleId', 'strict');
+				assert('message' in file.eslint.messages[0]);
+				assert('line' in file.eslint.messages[0]);
+				assert('column' in file.eslint.messages[0]);
+				assert.strictEqual(file.eslint.messages[0].ruleId, 'strict');
 
 				done();
 			})
@@ -98,9 +102,9 @@ describe('gulp-eslint7 plugin', () => {
 		eslint({useEslintrc: false, rules: {'strict': 2}})
 			.on('error', done)
 			.on('data', file => {
-				should.exist(file);
-				should.not.exist(file.contents);
-				should.not.exist(file.eslint);
+				assert(file);
+				assert(!file.contents);
+				assert(!file.eslint);
 				done();
 			})
 			.end(new File({
@@ -112,9 +116,11 @@ describe('gulp-eslint7 plugin', () => {
 	it('should emit an error when it takes a steam content', done => {
 		eslint({useEslintrc: false, rules: {'strict': 'error'}})
 			.on('error', err => {
-				err.plugin.should.equal('gulp-eslint7');
-				err.message.should
-					.equal('gulp-eslint7 doesn\'t support vinyl files with Stream contents.');
+				assert.strictEqual(err.plugin, 'gulp-eslint7');
+				assert.strictEqual(
+					err.message,
+					'gulp-eslint7 doesn\'t support vinyl files with Stream contents.'
+				);
 				done();
 			})
 			.end(new File({
@@ -127,15 +133,17 @@ describe('gulp-eslint7 plugin', () => {
 		const pluginName = 'this-is-unknown-plugin';
 		eslint({plugins: [pluginName]})
 			.on('error', err => {
-				err.plugin.should.equal('gulp-eslint7');
+				assert.strictEqual(err.plugin, 'gulp-eslint7');
 				// Remove stack trace from error message as it's machine-dependent
 				const message = err.message.split('\n')[0];
-				message.should.equal(
+				assert.strictEqual(
+					message,
 					`Failed to load plugin '${
 						pluginName
 					}' declared in 'CLIOptions': Cannot find module 'eslint-plugin-${
 						pluginName
-					}'`);
+					}'`
+				);
 
 				done();
 			})
@@ -151,13 +159,16 @@ describe('gulp-eslint7 plugin', () => {
 			eslint({useEslintrc: false, warnFileIgnored: true})
 				.on('error', done)
 				.on('data', file => {
-					should.exist(file);
-					should.exist(file.eslint);
-					file.eslint.messages.should.be.instanceof(Array).and.have.lengthOf(1);
-					file.eslint.messages[0].should.have
-						.property('message', 'File ignored because of .eslintignore file');
-					file.eslint.errorCount.should.equal(0);
-					file.eslint.warningCount.should.equal(1);
+					assert(file);
+					assert(file.eslint);
+					assert(Array.isArray(file.eslint.messages));
+					assert.strictEqual(file.eslint.messages.length, 1);
+					assert.strictEqual(
+						file.eslint.messages[0].message,
+						'File ignored because of .eslintignore file'
+					);
+					assert.strictEqual(file.eslint.errorCount, 0);
+					assert.strictEqual(file.eslint.warningCount, 1);
 					done();
 				})
 				.end(new File({
@@ -170,13 +181,16 @@ describe('gulp-eslint7 plugin', () => {
 			eslint({useEslintrc: false, warnFileIgnored: true})
 				.on('error', done)
 				.on('data', file => {
-					should.exist(file);
-					should.exist(file.eslint);
-					file.eslint.messages.should.be.instanceof(Array).and.have.lengthOf(1);
-					file.eslint.messages[0].should.have.property('message',
-						'File ignored because it has a node_modules/** path');
-					file.eslint.errorCount.should.equal(0);
-					file.eslint.warningCount.should.equal(1);
+					assert(file);
+					assert(file.eslint);
+					assert(Array.isArray(file.eslint.messages));
+					assert.strictEqual(file.eslint.messages.length, 1);
+					assert.strictEqual(
+						file.eslint.messages[0].message,
+						'File ignored because it has a node_modules/** path'
+					);
+					assert.strictEqual(file.eslint.errorCount, 0);
+					assert.strictEqual(file.eslint.warningCount, 1);
 					done();
 				})
 				.end(new File({
@@ -189,8 +203,8 @@ describe('gulp-eslint7 plugin', () => {
 			eslint({useEslintrc: false, warnFileIgnored: false})
 				.on('error', done)
 				.on('data', file => {
-					should.exist(file);
-					should.not.exist(file.eslint);
+					assert(file);
+					assert(!file.eslint);
 					done();
 				})
 				.end(new File({
@@ -206,11 +220,12 @@ describe('gulp-eslint7 plugin', () => {
 		it('when true, should remove warnings', done => {
 			eslint({quiet: true, useEslintrc: false, rules: {'no-undef': 1, 'strict': 2}})
 				.on('data', file => {
-					should.exist(file);
-					should.exist(file.eslint);
-					file.eslint.messages.should.be.instanceof(Array).and.have.lengthOf(1);
-					file.eslint.errorCount.should.equal(1);
-					file.eslint.warningCount.should.equal(0);
+					assert(file);
+					assert(file.eslint);
+					assert(Array.isArray(file.eslint.messages));
+					assert.strictEqual(file.eslint.messages.length, 1);
+					assert.strictEqual(file.eslint.errorCount, 1);
+					assert.strictEqual(file.eslint.warningCount, 0);
 					done();
 				})
 				.end(new File({
@@ -225,11 +240,12 @@ describe('gulp-eslint7 plugin', () => {
 			}
 			eslint({quiet: warningsOnly, useEslintrc: false, rules: {'no-undef': 1, 'strict': 2}})
 				.on('data', file => {
-					should.exist(file);
-					should.exist(file.eslint);
-					file.eslint.messages.should.be.instanceof(Array).and.have.lengthOf(1);
-					file.eslint.errorCount.should.equal(0);
-					file.eslint.warningCount.should.equal(1);
+					assert(file);
+					assert(file.eslint);
+					assert(Array.isArray(file.eslint.messages));
+					assert.strictEqual(file.eslint.messages.length, 1);
+					assert.strictEqual(file.eslint.errorCount, 0);
+					assert.strictEqual(file.eslint.warningCount, 1);
 					done();
 				})
 				.end(new File({
@@ -246,13 +262,14 @@ describe('gulp-eslint7 plugin', () => {
 			eslint({fix: true, useEslintrc: false, rules: {'no-trailing-spaces': 2}})
 				.on('error', done)
 				.on('data', (file) => {
-					should.exist(file);
-					should.exist(file.eslint);
-					file.eslint.messages.should.be.instanceof(Array).and.have.lengthOf(0);
-					file.eslint.errorCount.should.equal(0);
-					file.eslint.warningCount.should.equal(0);
-					file.eslint.output.should.equal('var x = 0;');
-					file.contents.toString().should.equal('var x = 0;');
+					assert(file);
+					assert(file.eslint);
+					assert(Array.isArray(file.eslint.messages));
+					assert.strictEqual(file.eslint.messages.length, 0);
+					assert.strictEqual(file.eslint.errorCount, 0);
+					assert.strictEqual(file.eslint.warningCount, 0);
+					assert.strictEqual(file.eslint.output, 'var x = 0;');
+					assert.strictEqual(file.contents.toString(), 'var x = 0;');
 					done();
 				})
 				.end(new File({

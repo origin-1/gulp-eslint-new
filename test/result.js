@@ -1,9 +1,9 @@
 /* global describe, it, beforeEach */
 'use strict';
 
+const assert = require('assert');
 const File = require('vinyl');
 const PassThrough = require('stream').PassThrough;
-const should = require('should');
 const eslint = require('..');
 
 require('mocha');
@@ -21,14 +21,15 @@ describe('gulp-eslint7 result', () => {
 
 		lintStream
 			.pipe(eslint.result(result => {
-				should.exists(result);
-				result.messages.should.be.instanceof(Array).with.a.lengthOf(2);
-				result.errorCount.should.equal(1);
-				result.warningCount.should.equal(1);
+				assert(result);
+				assert(Array.isArray(result.messages));
+				assert.strictEqual(result.messages.length, 2);
+				assert.strictEqual(result.errorCount, 1);
+				assert.strictEqual(result.warningCount, 1);
 				resultCount++;
 			}))
 			.on('finish', () => {
-				resultCount.should.equal(3);
+				assert.strictEqual(resultCount, 3);
 				done();
 			});
 
@@ -66,10 +67,10 @@ describe('gulp-eslint7 result', () => {
 		})
 			.on('error', function(error) {
 				this.removeListener('finish', finished);
-				should.exists(error);
-				error.message.should.equal('Expected Error');
-				error.name.should.equal('Error');
-				error.plugin.should.equal('gulp-eslint7');
+				assert(error);
+				assert.strictEqual(error.message, 'Expected Error');
+				assert.strictEqual(error.name, 'Error');
+				assert.strictEqual(error.plugin, 'gulp-eslint7');
 				done();
 			})
 			.on('finish', finished)
@@ -92,10 +93,10 @@ describe('gulp-eslint7 result', () => {
 		})
 			.on('error', function(error) {
 				this.removeListener('finish', finished);
-				should.exists(error);
-				error.message.should.equal('Unknown Error');
-				error.name.should.equal('Error');
-				error.plugin.should.equal('gulp-eslint7');
+				assert(error);
+				assert.strictEqual(error.message, 'Unknown Error');
+				assert.strictEqual(error.name, 'Error');
+				assert.strictEqual(error.plugin, 'gulp-eslint7');
 				done();
 			})
 			.on('finish', finished)
@@ -107,9 +108,9 @@ describe('gulp-eslint7 result', () => {
 		try {
 			eslint.result();
 		} catch (error) {
-			should.exists(error);
-			should.exists(error.message);
-			error.message.should.equal('Expected callable argument');
+			assert(error);
+			assert(error.message);
+			assert.strictEqual(error.message, 'Expected callable argument');
 			return;
 		}
 
@@ -145,15 +146,15 @@ describe('gulp-eslint7 result', () => {
 		file.eslint = resultStub;
 
 		function ended() {
-			asyncComplete.should.equal(true);
+			assert.strictEqual(asyncComplete, true);
 			done();
 		}
 
 		const resultStream = eslint.result((result, callback) => {
-			should.exists(result);
-			result.should.equal(resultStub);
+			assert(result);
+			assert.strictEqual(result, resultStub);
 
-			(typeof callback).should.equal('function');
+			assert.strictEqual(typeof callback, 'function');
 
 			setTimeout(() => {
 				asyncComplete = true;
@@ -189,14 +190,14 @@ describe('gulp-eslint7 results', () => {
 
 		lintStream
 			.pipe(eslint.results(results => {
-				should.exists(results);
-				results.should.be.instanceof(Array).with.a.lengthOf(3);
-				results.errorCount.should.equal(3);
-				results.warningCount.should.equal(3);
+				assert(Array.isArray(results));
+				assert.strictEqual(results.length, 3);
+				assert.strictEqual(results.errorCount, 3);
+				assert.strictEqual(results.warningCount, 3);
 				resultsCalled = true;
 			}))
 			.on('finish', () => {
-				resultsCalled.should.equal(true);
+				assert.strictEqual(resultsCalled, true);
 				done();
 			});
 
@@ -234,10 +235,10 @@ describe('gulp-eslint7 results', () => {
 		})
 			.on('error', function(error) {
 				this.removeListener('finish', finished);
-				should.exists(error);
-				error.message.should.equal('Expected Error');
-				error.name.should.equal('Error');
-				error.plugin.should.equal('gulp-eslint7');
+				assert(error);
+				assert.strictEqual(error.message, 'Expected Error');
+				assert.strictEqual(error.name, 'Error');
+				assert.strictEqual(error.plugin, 'gulp-eslint7');
 				done();
 			})
 			.on('finish', finished)
@@ -249,9 +250,9 @@ describe('gulp-eslint7 results', () => {
 		try {
 			eslint.results();
 		} catch (error) {
-			should.exists(error);
-			should.exists(error.message);
-			error.message.should.equal('Expected callable argument');
+			assert(error);
+			assert(error.message);
+			assert.strictEqual(error.message, 'Expected callable argument');
 			return;
 		}
 
@@ -267,13 +268,13 @@ describe('gulp-eslint7 results', () => {
 		});
 
 		function finished() {
-			resultsCalled.should.equal(true);
+			assert.strictEqual(resultsCalled, true);
 			done();
 		}
 
 		eslint.results(results => {
-			should.exists(results);
-			results.should.be.instanceof(Array).with.a.lengthOf(0);
+			assert(Array.isArray(results));
+			assert.strictEqual(results.length, 0);
 			resultsCalled = true;
 		})
 			.on('error', function(error) {
@@ -294,18 +295,18 @@ describe('gulp-eslint7 results', () => {
 		file.eslint = resultStub;
 
 		function ended() {
-			asyncComplete.should.equal(true);
+			assert.strictEqual(asyncComplete, true);
 			done();
 		}
 
 		const resultStream = eslint.results((results, callback) => {
-			should.exists(results);
-			results.should.be.instanceof(Array).with.a.lengthOf(1);
+			assert(Array.isArray(results));
+			assert.strictEqual(results.length, 1);
 
 			const result = results[0];
-			result.should.equal(resultStub);
+			assert.strictEqual(result, resultStub);
 
-			(typeof callback).should.equal('function');
+			assert.strictEqual(typeof callback, 'function');
 
 			setTimeout(() => {
 				asyncComplete = true;
