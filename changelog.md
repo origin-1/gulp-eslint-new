@@ -1,3 +1,8 @@
+<a name="0.3.0"></a>
+## [0.3.0](https://github.com/fasttime/gulp-eslint7/releases/tag/0.3.0) (2020-07-03)
+
+* Fix `plugins` option handling to accept both an array (old API) or a map-like object (new API).
+
 <a name="0.2.1"></a>
 ## [0.2.1](https://github.com/fasttime/gulp-eslint7/releases/tag/0.2.1) (2020-06-30)
 
