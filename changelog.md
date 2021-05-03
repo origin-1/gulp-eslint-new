@@ -1,3 +1,8 @@
+<a name="0.3.1"></a>
+## [0.3.1](https://github.com/fasttime/gulp-eslint7/releases/tag/0.3.1) (2021-05-03)
+
+* Update readme file.
+
 <a name="0.3.0"></a>
 ## [0.3.0](https://github.com/fasttime/gulp-eslint7/releases/tag/0.3.0) (2020-07-03)
 
