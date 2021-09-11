@@ -5,6 +5,7 @@ const assert = require('assert');
 const File = require('vinyl');
 const stream = require('stream');
 const util = require('../util');
+const path = require('path');
 
 require('mocha');
 
@@ -263,14 +264,18 @@ describe('utility methods', () => {
 		it('should default to the "stylish" formatter', () => {
 
 			const formatter = util.resolveFormatter();
-			assert.strictEqual(formatter, require('eslint/lib/cli-engine/formatters/stylish'));
+			const formatterPath
+			= path.resolve(require.resolve('eslint'), '../cli-engine/formatters/stylish');
+			assert.strictEqual(formatter, require(formatterPath));
 
 		});
 
 		it('should resolve a formatter', () => {
 
 			const formatter = util.resolveFormatter('tap');
-			assert.strictEqual(formatter, require('eslint/lib/cli-engine/formatters/tap'));
+			const formatterPath
+			= path.resolve(require.resolve('eslint'), '../cli-engine/formatters/tap');
+			assert.strictEqual(formatter, require(formatterPath));
 
 		});
 

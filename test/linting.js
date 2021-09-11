@@ -15,8 +15,8 @@ describe('gulp-eslint7 plugin', () => {
 			envs: [],
 			globals: [],
 			ignorePattern: [],
-			parser: 'babel-eslint',
-			parserOptions: { },
+			parser: '@babel/eslint-parser',
+			parserOptions: { requireConfigFile: false },
 			useEslintrc: false,
 			rules: { 'prefer-template': 'error' }
 		})

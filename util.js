@@ -3,7 +3,7 @@
 const {Transform} = require('stream');
 const PluginError = require('plugin-error');
 const fancyLog = require('fancy-log');
-const {CLIEngine} = require('eslint');
+const getFormatter = require('./legacy-get-formatter');
 
 /**
  * Convenience method for creating a transform stream in object mode
@@ -286,7 +286,7 @@ exports.resolveFormatter = (formatter) => {
 	// use ESLint to look up formatter references
 	if (typeof formatter !== 'function') {
 		// load formatter (module, relative to cwd, ESLint formatter)
-		formatter =	CLIEngine.getFormatter(formatter);
+		formatter =	getFormatter(formatter);
 	}
 
 	return formatter;
