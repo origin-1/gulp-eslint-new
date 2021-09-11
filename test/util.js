@@ -270,11 +270,20 @@ describe('utility methods', () => {
 
 		});
 
-		it('should resolve a formatter', () => {
+		it('should resolve a predefined', () => {
 
 			const formatter = util.resolveFormatter('tap');
 			const formatterPath
 			= path.resolve(require.resolve('eslint'), '../cli-engine/formatters/tap');
+			assert.strictEqual(formatter, require(formatterPath));
+
+		});
+
+		it('should resolve a custom formatter', () => {
+
+			const formatter = util.resolveFormatter('test/fixtures/custom-formatter');
+			const formatterPath
+			= path.resolve('./test/fixtures/custom-formatter');
 			assert.strictEqual(formatter, require(formatterPath));
 
 		});

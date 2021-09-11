@@ -20,7 +20,7 @@ task
 		const gulpESLint = require('.');
 
 		const stream
-		= src(['*.js', 'example/**/*.js', 'test/**/*.js', '!test/fixtures/**'])
+		= src(['*.js', 'example/**/*.js', 'test/**/*.js'])
 			.pipe(gulpESLint())
 			.pipe(gulpESLint.format())
 			.pipe(gulpESLint.failAfterError());
