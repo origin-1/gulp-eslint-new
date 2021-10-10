@@ -1,20 +1,20 @@
-# gulp-eslint7 · [![npm version][npm badge]][npm URL]
+# gulp-eslint-new · [![npm version][npm badge]][npm URL]
 
-> A [gulp](https://gulpjs.com/) plugin to lint code with [ESLint](https://eslint.org/) 7
+> A [gulp](https://gulpjs.com/) plugin to lint code with [ESLint](https://eslint.org/) 8
 
 ## Installation
 
 [Use](https://docs.npmjs.com/cli/install) [npm](https://docs.npmjs.com/about-npm).
 
 ```
-npm install gulp-eslint7
+npm install gulp-eslint-new
 ```
 
 ## Usage
 
 ```javascript
 const {src, task} = require('gulp');
-const eslint = require('gulp-eslint7');
+const eslint = require('gulp-eslint-new');
 
 task('default', () => {
     return src(['scripts/*.js'])
@@ -50,7 +50,7 @@ gulp.src(['**/*.js','!node_modules/**'])
 	.pipe(eslint.formatEach('compact', process.stderr));
 ```
 
-For additional examples, look through the [example directory](https://github.com/fasttime/gulp-eslint7/tree/master/example).
+For additional examples, look through the [example directory](https://github.com/fasttime/gulp-eslint-new/tree/master/example).
 
 ## API
 
@@ -102,7 +102,7 @@ _Prefer using `options.overrideConfig.globals` instead. Note the different forma
 
 Type: `Boolean`
 
-This option instructs ESLint to try to fix as many issues as possible. The fixes are applied to the gulp stream. The fixed content can be saved to file using `gulp.dest` (See [example/fix.js](https://github.com/fasttime/gulp-eslint7/blob/master/example/fix.js)). Rules that are fixable can be found in ESLint's [rules list](https://eslint.org/docs/rules/).
+This option instructs ESLint to try to fix as many issues as possible. The fixes are applied to the gulp stream. The fixed content can be saved to file using `gulp.dest` (See [example/fix.js](https://github.com/fasttime/gulp-eslint-new/blob/master/example/fix.js)). Rules that are fixable can be found in ESLint's [rules list](https://eslint.org/docs/rules/).
 
 When fixes are applied, a "fixed" property is set to `true` on the fixed file's ESLint result.
 
@@ -278,5 +278,5 @@ ESLint results are attached as an "eslint" property to the vinyl files that pass
 * [gulp-eslint-if-fixed](https://github.com/lukeapage/gulp-eslint-if-fixed)
 * [gulp-eslint-threshold](https://github.com/krmbkt/gulp-eslint-threshold)
 
-[npm badge]: https://badge.fury.io/js/gulp-eslint7.svg
-[npm URL]: https://www.npmjs.com/package/gulp-eslint7
+[npm badge]: https://badge.fury.io/js/gulp-eslint-new.svg
+[npm URL]: https://www.npmjs.com/package/gulp-eslint-new

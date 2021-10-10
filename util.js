@@ -138,7 +138,7 @@ exports.migrateOptions = function migrateOptions(options = { }) {
 exports.handleCallback = (callback, value) => {
 	return err => {
 		if (err != null && !(err instanceof PluginError)) {
-			err = new PluginError(err.plugin || 'gulp-eslint7', err, {
+			err = new PluginError(err.plugin || 'gulp-eslint-new', err, {
 				showStack: (err.showStack !== false)
 			});
 		}

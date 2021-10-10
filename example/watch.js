@@ -1,6 +1,6 @@
 'use strict';
 
-// npm install gulp@next gulp-eslint7 gulp-cached
+// npm install gulp@next gulp-eslint-new gulp-cached
 
 const {src, task, watch} = require('gulp');
 const {resolve} = require('path');

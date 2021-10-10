@@ -8,7 +8,7 @@ const eslint = require('..');
 
 require('mocha');
 
-describe('gulp-eslint7 result', () => {
+describe('gulp-eslint-new result', () => {
 	it('should provide an ESLint result', done => {
 		let resultCount = 0;
 		const lintStream = eslint({
@@ -70,7 +70,7 @@ describe('gulp-eslint7 result', () => {
 				assert(error);
 				assert.strictEqual(error.message, 'Expected Error');
 				assert.strictEqual(error.name, 'Error');
-				assert.strictEqual(error.plugin, 'gulp-eslint7');
+				assert.strictEqual(error.plugin, 'gulp-eslint-new');
 				done();
 			})
 			.on('finish', finished)
@@ -96,7 +96,7 @@ describe('gulp-eslint7 result', () => {
 				assert(error);
 				assert.strictEqual(error.message, 'Unknown Error');
 				assert.strictEqual(error.name, 'Error');
-				assert.strictEqual(error.plugin, 'gulp-eslint7');
+				assert.strictEqual(error.plugin, 'gulp-eslint-new');
 				done();
 			})
 			.on('finish', finished)
@@ -176,7 +176,7 @@ describe('gulp-eslint7 result', () => {
 
 });
 
-describe('gulp-eslint7 results', () => {
+describe('gulp-eslint-new results', () => {
 
 	it('should provide ESLint results', done => {
 		let resultsCalled = false;
@@ -238,7 +238,7 @@ describe('gulp-eslint7 results', () => {
 				assert(error);
 				assert.strictEqual(error.message, 'Expected Error');
 				assert.strictEqual(error.name, 'Error');
-				assert.strictEqual(error.plugin, 'gulp-eslint7');
+				assert.strictEqual(error.plugin, 'gulp-eslint-new');
 				done();
 			})
 			.on('finish', finished)

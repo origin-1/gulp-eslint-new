@@ -9,7 +9,7 @@ const stringToStream = require('from2-string');
 
 require('mocha');
 
-describe('gulp-eslint7 plugin', () => {
+describe('gulp-eslint-new plugin', () => {
 	it('should configure an alternate parser', done => {
 		eslint({
 			envs: [],
@@ -116,10 +116,10 @@ describe('gulp-eslint7 plugin', () => {
 	it('should emit an error when it takes a steam content', done => {
 		eslint({useEslintrc: false, rules: {'strict': 'error'}})
 			.on('error', err => {
-				assert.strictEqual(err.plugin, 'gulp-eslint7');
+				assert.strictEqual(err.plugin, 'gulp-eslint-new');
 				assert.strictEqual(
 					err.message,
-					'gulp-eslint7 doesn\'t support vinyl files with Stream contents.'
+					'gulp-eslint-new doesn\'t support vinyl files with Stream contents.'
 				);
 				done();
 			})
@@ -133,7 +133,7 @@ describe('gulp-eslint7 plugin', () => {
 		const pluginName = 'this-is-unknown-plugin';
 		eslint({plugins: [pluginName]})
 			.on('error', err => {
-				assert.strictEqual(err.plugin, 'gulp-eslint7');
+				assert.strictEqual(err.plugin, 'gulp-eslint-new');
 				// Remove stack trace from error message as it's machine-dependent
 				const message = err.message.split('\n')[0];
 				assert.strictEqual(

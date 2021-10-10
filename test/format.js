@@ -30,7 +30,7 @@ function getFiles() {
 	];
 }
 
-describe('gulp-eslint7 format', () => {
+describe('gulp-eslint-new format', () => {
 	let formatCount;
 	let writeCount;
 
@@ -192,7 +192,7 @@ describe('gulp-eslint7 format', () => {
 					assert(err);
 					assert.strictEqual(err.message, 'Writer Test Error: 1 messages');
 					assert.strictEqual(err.name, 'TestError');
-					assert.strictEqual(err.plugin, 'gulp-eslint7');
+					assert.strictEqual(err.plugin, 'gulp-eslint-new');
 					done();
 				})
 				.on('finish', () => {

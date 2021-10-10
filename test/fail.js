@@ -8,7 +8,7 @@ const eslint = require('../');
 
 require('mocha');
 
-describe('gulp-eslint7 failOnError', () =>  {
+describe('gulp-eslint-new failOnError', () =>  {
 	it('should fail a file immediately if an error is found', done =>  {
 		const lintStream = eslint({useEslintrc: false, rules: {'no-undef': 2}});
 
@@ -22,7 +22,7 @@ describe('gulp-eslint7 failOnError', () =>  {
 				assert(err);
 				assert.strictEqual(err.message, '\'x\' is not defined.');
 				assert.strictEqual(err.fileName, path.resolve('test/fixtures/invalid.js'));
-				assert.strictEqual(err.plugin, 'gulp-eslint7');
+				assert.strictEqual(err.plugin, 'gulp-eslint-new');
 				done();
 			})
 			.on('finish', endWithoutError);
@@ -68,7 +68,7 @@ describe('gulp-eslint7 failOnError', () =>  {
 
 });
 
-describe('gulp-eslint7 failAfterError', () =>  {
+describe('gulp-eslint-new failAfterError', () =>  {
 
 	it('should fail when the file stream ends if an error is found', done =>  {
 		const lintStream = eslint({useEslintrc: false, rules: {'no-undef': 2}});
@@ -83,7 +83,7 @@ describe('gulp-eslint7 failAfterError', () =>  {
 				assert(err);
 				assert.strictEqual(err.message, 'Failed with 1 error');
 				assert.strictEqual(err.name, 'ESLintError');
-				assert.strictEqual(err.plugin, 'gulp-eslint7');
+				assert.strictEqual(err.plugin, 'gulp-eslint-new');
 				done();
 			})
 			.on('finish', endWithoutError);
@@ -101,7 +101,7 @@ describe('gulp-eslint7 failAfterError', () =>  {
 			assert(err);
 			assert.strictEqual(err.message, 'Failed with 2 errors');
 			assert.strictEqual(err.name, 'ESLintError');
-			assert.strictEqual(err.plugin, 'gulp-eslint7');
+			assert.strictEqual(err.plugin, 'gulp-eslint-new');
 			done();
 		}));
 

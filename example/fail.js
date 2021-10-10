@@ -1,6 +1,6 @@
 'use strict';
 
-// npm install gulp@next gulp-eslint7
+// npm install gulp@next gulp-eslint-new
 
 const {src, task} = require('gulp');
 const fancyLog = require('fancy-log');
