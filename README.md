@@ -110,7 +110,7 @@ When fixes are applied, a "fixed" property is set to `true` on the fixed file's 
 
 Type: `Boolean`
 
-When `true`, this option will filter warning messages from ESLint results. This mimics the ESLint CLI [`--quiet` option](https://eslint.org/docs/user-guide/command-line-interface#-quiet).
+When `true`, this option will filter warning messages from ESLint results. This mimics the ESLint CLI [`--quiet` option](https://eslint.org/docs/user-guide/command-line-interface#--quiet).
 
 Type: `function (message, index, list) { return Boolean(); }`
 
@@ -128,13 +128,13 @@ _Prefer using `options.overrideConfig.env` instead. Note the different option na
 
 Type: `Array`
 
-This option allows you to specify additional directories from which to load rules files. This is useful when you have custom rules that aren't suitable for being bundled with ESLint. This option works much like the ESLint CLI's [`--rulesdir` option](https://eslint.org/docs/user-guide/command-line-interface#-rulesdir).
+This option allows you to specify additional directories from which to load rules files. This is useful when you have custom rules that aren't suitable for being bundled with ESLint. This option works much like the ESLint CLI's [`--rulesdir` option](https://eslint.org/docs/user-guide/command-line-interface#--rulesdir).
 
 #### `options.configFile`
 
 Type: `String`
 
-Path to the ESLint rules configuration file. For more information, see the ESLint CLI [`--config` option](https://eslint.org/docs/user-guide/command-line-interface#-c-config) and [Using Configuration Files](https://eslint.org/docs/user-guide/configuring/configuration-files#using-configuration-files).
+Path to the ESLint rules configuration file. For more information, see the ESLint CLI [`--config` option](https://eslint.org/docs/user-guide/command-line-interface#-c---config) and [Using Configuration Files](https://eslint.org/docs/user-guide/configuring/configuration-files#using-configuration-files).
 
 _Prefer using `options.overrideConfig.configFile` instead._
 
@@ -228,7 +228,7 @@ gulp.src(['**/*.js','!node_modules/**'])
 
 Format all linted files once. This should be used in the stream after piping through `eslint`; otherwise, this will find no ESLint results to format.
 
-The `formatter` argument may be a `String`, `Function`, or `undefined`. As a `String`, a formatter module by that name or path will be resolved as a module, relative to `process.cwd()`, or as one of the [ESLint-provided formatters](https://github.com/eslint/eslint/tree/master/lib/cli-engine/formatters). If `undefined`, the ESLint “stylish” formatter will be resolved. A `Function` will be called with an `Array` of file linting results to format.
+The `formatter` argument may be a `String`, `Function`, or `undefined`. As a `String`, a formatter module by that name or path will be resolved as a module, relative to `process.cwd()`, or as one of the [ESLint-provided formatters](https://github.com/eslint/eslint/tree/main/lib/cli-engine/formatters). If `undefined`, the ESLint “stylish” formatter will be resolved. A `Function` will be called with an `Array` of file linting results to format.
 
 ```javascript
 // use the default "stylish" ESLint formatter
