@@ -1,6 +1,6 @@
 {
 	"name": "gulp-eslint-new",
-	"version": "0.4.0",
+	"version": "0.5.0",
 	"description": "A gulp plugin to lint code with ESLint 8",
 	"repository": "fasttime/gulp-eslint-new",
 	"files": [
