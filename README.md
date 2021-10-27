@@ -83,7 +83,7 @@ _Prefer using `options.overrideConfig.rules` instead._
 
 #### `options.globals`
 
-Type: `Array`
+Type: `string[]`
 
 Specify [global variables](https://eslint.org/docs/user-guide/configuring/language-options#specifying-globals) to declare.
 
@@ -120,7 +120,7 @@ When provided a function, it will be used to filter ESLint result messages, remo
 
 #### `options.envs`
 
-Type: `Array`
+Type: `string[]`
 
 Specify a list of [environments](https://eslint.org/docs/user-guide/configuring/language-options#specifying-environments) to be applied.
 
@@ -128,13 +128,13 @@ _Prefer using `options.overrideConfig.env` instead. Note the different option na
 
 #### `options.rulePaths`
 
-Type: `Array`
+Type: `string[]`
 
 This option allows you to specify additional directories from which to load rules files. This is useful when you have custom rules that aren't suitable for being bundled with ESLint. This option works much like the ESLint CLI's [`--rulesdir` option](https://eslint.org/docs/user-guide/command-line-interface#--rulesdir).
 
 #### `options.configFile`
 
-Type: `String`
+Type: `string`
 
 Path to the ESLint rules configuration file. For more information, see the ESLint CLI [`--config` option](https://eslint.org/docs/user-guide/command-line-interface#-c---config) and [Using Configuration Files](https://eslint.org/docs/user-guide/configuring/configuration-files#using-configuration-files).
 
@@ -154,7 +154,7 @@ When `false`, ESLint will not load [.eslintrc files](https://eslint.org/docs/use
 
 ### `eslint(configFilePath)`
 
-Param type: `String`
+Param type: `string`
 
 Shorthand for defining `options.overrideConfigFile`.
 
@@ -230,7 +230,7 @@ gulp.src(['**/*.js','!node_modules/**'])
 
 Format all linted files once. This should be used in the stream after piping through `eslint`; otherwise, this will find no ESLint results to format.
 
-The `formatter` argument may be a `String`, `Function`, or `undefined`. As a `String`, a formatter module by that name or path will be resolved as a module, relative to `process.cwd()`, or as one of the [ESLint-provided formatters](https://github.com/eslint/eslint/tree/main/lib/cli-engine/formatters). If `undefined`, the ESLint “stylish” formatter will be resolved. A `Function` will be called with an `Array` of file linting results to format.
+The `formatter` argument may be a `string`, `Function`, or `undefined`. As a `String`, a formatter module by that name or path will be resolved as a module, relative to `process.cwd()`, or as one of the [ESLint-provided formatters](https://github.com/eslint/eslint/tree/main/lib/cli-engine/formatters). If `undefined`, the ESLint “stylish” formatter will be resolved. A `Function` will be called with an `Array` of file linting results to format.
 
 ```javascript
 // use the default "stylish" ESLint formatter
