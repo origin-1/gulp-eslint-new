@@ -277,6 +277,29 @@ describe('gulp-eslint-new plugin', () => {
 					contents: Buffer.from('var x = 0; ')
 				}));
 		});
+
+		it('when a function, should update buffered contents accordingly', done => {
+			function fix({ line }) {
+				return line > 1;
+			}
+			eslint({fix, useEslintrc: false, rules: {'no-trailing-spaces': 2}})
+				.on('error', done)
+				.on('data', (file) => {
+					assert(file);
+					assert(file.eslint);
+					assert(Array.isArray(file.eslint.messages));
+					assert.strictEqual(file.eslint.messages.length, 1);
+					assert.strictEqual(file.eslint.errorCount, 1);
+					assert.strictEqual(file.eslint.warningCount, 0);
+					assert.strictEqual(file.eslint.output, 'var x = 0; \nvar y = 1;');
+					assert.strictEqual(file.contents.toString(), 'var x = 0; \nvar y = 1;');
+					done();
+				})
+				.end(new File({
+					path: 'test/fixtures/fixable.js',
+					contents: Buffer.from('var x = 0; \nvar y = 1; ')
+				}));
+		});
 	});
 
 });

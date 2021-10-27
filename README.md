@@ -100,19 +100,21 @@ _Prefer using `options.overrideConfig.globals` instead. Note the different forma
 
 #### `options.fix`
 
-Type: `Boolean`
+Type: `boolean | (message: LintMessage) => boolean`
 
-This option instructs ESLint to try to fix as many issues as possible. The fixes are applied to the gulp stream. The fixed content can be saved to file using `gulp.dest` (See [example/fix.js](https://github.com/fasttime/gulp-eslint-new/blob/master/example/fix.js)). Rules that are fixable can be found in ESLint's [rules list](https://eslint.org/docs/rules/).
+Setting this option to `true` instructs ESLint to try to fix as many issues as possible. The fixes are applied to the gulp stream. The fixed content can be saved to file using `gulp.dest` (See [example/fix.js](https://github.com/fasttime/gulp-eslint-new/blob/master/example/fix.js)). Rules that are fixable can be found in ESLint's [rules list](https://eslint.org/docs/rules/).
+
+If a predicate function is set, it will be invoked on each message, and only problems related to those messages for which the function returned a truthy value will be fixed.
 
 When fixes are applied, a "fixed" property is set to `true` on the fixed file's ESLint result.
 
 #### `options.quiet`
 
-Type: `Boolean`
+Type: `boolean`
 
 When `true`, this option will filter warning messages from ESLint results. This mimics the ESLint CLI [`--quiet` option](https://eslint.org/docs/user-guide/command-line-interface#--quiet).
 
-Type: `function (message, index, list) { return Boolean(); }`
+Type: `(message, index, list) => boolean`
 
 When provided a function, it will be used to filter ESLint result messages, removing any messages that do not return a `true` (or truthy) value.
 
@@ -140,13 +142,13 @@ _Prefer using `options.overrideConfig.configFile` instead._
 
 #### `options.warnFileIgnored` or `options.warnIgnored`
 
-Type: `Boolean`
+Type: `boolean`
 
 When `true`, add a result warning when ESLint ignores a file. This can be used to file files that are needlessly being loaded by `gulp.src`. For example, since ESLint automatically ignores "node_modules" file paths and gulp.src does not, a gulp task may take seconds longer just reading files from the "node_modules" directory.
 
 #### `options.useEslintrc`
 
-Type: `Boolean`
+Type: `boolean`
 
 When `false`, ESLint will not load [.eslintrc files](https://eslint.org/docs/user-guide/configuring/configuration-files#using-configuration-files).
 
@@ -158,7 +160,7 @@ Shorthand for defining `options.overrideConfigFile`.
 
 ### `eslint.result(action)`
 
-Param type: `function (result) {}`
+Param type: `(result) => void`
 
 Call a function for each ESLint file result. No returned value is expected. If an error is thrown, it will be wrapped in a Gulp PluginError and emitted from the stream.
 
@@ -174,14 +176,14 @@ gulp.src(['**/*.js','!node_modules/**'])
 	}));
 ```
 
-Type: `function (result, callback) { callback(error); }`
+Type: `(result, callback) => void`
 
 Call an asynchronous function for each ESLint file result. The callback must be called for the stream to finish. If a value is passed to the callback, it will be wrapped in a Gulp PluginError and emitted from the stream.
 
 
 ### `eslint.results(action)`
 
-Param type: `function (results) {}`
+Param type: `(results) => void`
 
 Call a function once for all ESLint file results before a stream finishes. No returned value is expected. If an error is thrown, it will be wrapped in a Gulp PluginError and emitted from the stream.
 
@@ -198,7 +200,7 @@ gulp.src(['**/*.js','!node_modules/**'])
 	}));
 ```
 
-Param type: `function (results, callback) { callback(error); }`
+Param type: `(results, callback) => void`
 
 Call an asynchronous function once for all ESLint file results before a stream finishes. The callback must be called for the stream to finish. If a value is passed to the callback, it will be wrapped in a Gulp PluginError and emitted from the stream.
 
