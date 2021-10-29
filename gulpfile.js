@@ -2,8 +2,7 @@
 
 const { parallel, series, src, task } = require('gulp');
 
-task
-(
+task(
 	'clean',
 	async() => {
 		const { promises: { rm } } = require('fs');
@@ -13,8 +12,7 @@ task
 	}
 );
 
-task
-(
+task(
 	'lint',
 	() => {
 		const gulpESLint = require('.');
@@ -28,8 +26,7 @@ task
 	}
 );
 
-task
-(
+task(
 	'test',
 	callback => {
 		const { fork } = require('child_process');
@@ -38,8 +35,7 @@ task
 		const c8Path = resolve('c8/bin/c8');
 		const mochaPath = resolve('mocha/bin/mocha');
 		const childProcess
-		= fork
-		(
+		= fork(
 			c8Path,
 			[
 				'--reporter=html',

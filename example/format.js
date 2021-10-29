@@ -2,7 +2,7 @@
 
 // npm install gulp@next gulp-eslint-new
 
-const {src, task} = require('gulp');
+const { src, task } = require('gulp');
 const eslint = require('..');
 
 task('eslint-formatter', () => {

@@ -166,7 +166,7 @@ describe('utility methods', () => {
 
 		it('should fail if "overrideConfig" is not an object or null', () => {
 			assert.throws(
-				() => util.migrateOptions({ overrideConfig: 'foo' }), /\overrideConfig\b/
+				() => util.migrateOptions({ overrideConfig: 'foo' }), /\boverrideConfig\b/
 			);
 		});
 
@@ -175,7 +175,7 @@ describe('utility methods', () => {
 		});
 
 		it('should fail if "globals" is not an array or falsy', () => {
-			assert.throws(() => util.migrateOptions({ globals: { } }), /\globals\b/);
+			assert.throws(() => util.migrateOptions({ globals: { } }), /\bglobals\b/);
 		});
 
 		it('should not modify an existing overrideConfig', () => {
@@ -311,7 +311,7 @@ describe('utility methods', () => {
 		it('should write to a (writable) stream', function(done) {
 
 			let written = false;
-			const writable = new stream.Writable({objectMode: true});
+			const writable = new stream.Writable({ objectMode: true });
 			const testValue = 'Formatted Output';
 			const write = util.resolveWritable(writable);
 

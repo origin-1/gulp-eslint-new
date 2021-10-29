@@ -80,7 +80,7 @@ describe('gulp-eslint-new plugin', () => {
 	});
 
 	it('should produce expected message via buffer', done => {
-		eslint({useEslintrc: false, rules: {strict: [2, 'global']}})
+		eslint({ useEslintrc: false, rules: { strict: [2, 'global'] } })
 			.on('error', done)
 			.on('data', file => {
 				assert(file);
@@ -108,7 +108,7 @@ describe('gulp-eslint-new plugin', () => {
 	});
 
 	it('should ignore files with null content', done => {
-		eslint({useEslintrc: false, rules: {'strict': 2}})
+		eslint({ useEslintrc: false, rules: { 'strict': 2 } })
 			.on('error', done)
 			.on('data', file => {
 				assert(file);
@@ -123,7 +123,7 @@ describe('gulp-eslint-new plugin', () => {
 	});
 
 	it('should emit an error when it takes a stream content', done => {
-		eslint({useEslintrc: false, rules: {'strict': 'error'}})
+		eslint({ useEslintrc: false, rules: { 'strict': 'error' } })
 			.on('error', err => {
 				assert.strictEqual(err.plugin, 'gulp-eslint-new');
 				assert.strictEqual(
@@ -140,7 +140,7 @@ describe('gulp-eslint-new plugin', () => {
 
 	it('should throw an error when it fails to load a plugin', done => {
 		const pluginName = 'this-is-unknown-plugin';
-		eslint({plugins: [pluginName]})
+		eslint({ plugins: [pluginName] })
 			.on('error', err => {
 				assert.strictEqual(err.plugin, 'gulp-eslint-new');
 				// Remove stack trace from error message as it's machine-dependent
@@ -165,7 +165,7 @@ describe('gulp-eslint-new plugin', () => {
 	describe('"useEslintrc" option', () => {
 
 		it('when true, should consider a configuration file', done => {
-			eslint({useEslintrc: true})
+			eslint({ useEslintrc: true })
 				.on('error', done)
 				.on('data', (file) => {
 					assert(file);
@@ -188,7 +188,7 @@ describe('gulp-eslint-new plugin', () => {
 		});
 
 		it('when false, should ignore a configuration file', done => {
-			eslint({useEslintrc: false})
+			eslint({ useEslintrc: false })
 				.on('error', done)
 				.on('data', (file) => {
 					assert(file);
@@ -210,7 +210,7 @@ describe('gulp-eslint-new plugin', () => {
 	describe('"warnFileIgnored" option', () => {
 
 		it('when true, should warn when a file is ignored by .eslintignore', done => {
-			eslint({useEslintrc: false, warnFileIgnored: true})
+			eslint({ useEslintrc: false, warnFileIgnored: true })
 				.on('error', done)
 				.on('data', file => {
 					assert(file);
@@ -232,7 +232,7 @@ describe('gulp-eslint-new plugin', () => {
 		});
 
 		it('when true, should warn when a "node_modules" file is ignored', done => {
-			eslint({useEslintrc: false, warnFileIgnored: true})
+			eslint({ useEslintrc: false, warnFileIgnored: true })
 				.on('error', done)
 				.on('data', file => {
 					assert(file);
@@ -254,7 +254,7 @@ describe('gulp-eslint-new plugin', () => {
 		});
 
 		it('when not true, should silently ignore files', done => {
-			eslint({useEslintrc: false, warnFileIgnored: false})
+			eslint({ useEslintrc: false, warnFileIgnored: false })
 				.on('error', done)
 				.on('data', file => {
 					assert(file);
@@ -272,7 +272,7 @@ describe('gulp-eslint-new plugin', () => {
 	describe('"quiet" option', () => {
 
 		it('when true, should remove warnings', done => {
-			eslint({quiet: true, useEslintrc: false, rules: {'no-undef': 1, 'strict': 2}})
+			eslint({ quiet: true, useEslintrc: false, rules: { 'no-undef': 1, 'strict': 2 } })
 				.on('data', file => {
 					assert(file);
 					assert(file.eslint);
@@ -292,7 +292,9 @@ describe('gulp-eslint-new plugin', () => {
 			function warningsOnly(message) {
 				return message.severity === 1;
 			}
-			eslint({quiet: warningsOnly, useEslintrc: false, rules: {'no-undef': 1, 'strict': 2}})
+			eslint(
+				{ quiet: warningsOnly, useEslintrc: false, rules: { 'no-undef': 1, 'strict': 2 } }
+			)
 				.on('data', file => {
 					assert(file);
 					assert(file.eslint);
@@ -313,7 +315,7 @@ describe('gulp-eslint-new plugin', () => {
 	describe('"fix" option', () => {
 
 		it('when true, should update buffered contents', done => {
-			eslint({fix: true, useEslintrc: false, rules: {'no-trailing-spaces': 2}})
+			eslint({ fix: true, useEslintrc: false, rules: { 'no-trailing-spaces': 2 } })
 				.on('error', done)
 				.on('data', (file) => {
 					assert(file);
@@ -336,7 +338,7 @@ describe('gulp-eslint-new plugin', () => {
 			function fix({ line }) {
 				return line > 1;
 			}
-			eslint({fix, useEslintrc: false, rules: {'no-trailing-spaces': 2}})
+			eslint({ fix, useEslintrc: false, rules: { 'no-trailing-spaces': 2 } })
 				.on('error', done)
 				.on('data', (file) => {
 					assert(file);

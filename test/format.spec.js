@@ -89,7 +89,7 @@ describe('gulp-eslint-new format', () => {
 		it('should format all ESLint results at once', done => {
 			const files = getFiles();
 
-			const lintStream = eslint({useEslintrc: false, rules: {'strict': 2}});
+			const lintStream = eslint({ useEslintrc: false, rules: { 'strict': 2 } });
 			lintStream.on('error', done);
 
 			const formatStream = eslint.format(formatResults, outputWriter);
@@ -114,7 +114,7 @@ describe('gulp-eslint-new format', () => {
 		it('should not attempt to format when no linting results are found', done => {
 			const files = getFiles();
 
-			const passthruStream = new stream.PassThrough({objectMode: true})
+			const passthruStream = new stream.PassThrough({ objectMode: true })
 				.on('error', done);
 
 			const formatStream = eslint.format(formatResults, outputWriter);
@@ -155,7 +155,7 @@ describe('gulp-eslint-new format', () => {
 
 			const files = getFiles();
 
-			const lintStream = eslint({useEslintrc: false, rules: {'strict': 2}})
+			const lintStream = eslint({ useEslintrc: false, rules: { 'strict': 2 } })
 				.on('error', done);
 
 			const formatStream = eslint.formatEach(formatResult, outputWriter)
@@ -183,7 +183,7 @@ describe('gulp-eslint-new format', () => {
 
 			const files = getFiles();
 
-			const lintStream = eslint({useEslintrc: false, rules: {'strict': 2}})
+			const lintStream = eslint({ useEslintrc: false, rules: { 'strict': 2 } })
 				.on('error', done);
 
 			const formatStream = eslint.formatEach(formatResult, failWriter);

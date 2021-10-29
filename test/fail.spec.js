@@ -11,7 +11,7 @@ require('mocha');
 
 describe('gulp-eslint-new failOnError', () =>  {
 	it('should fail a file immediately if an error is found', done =>  {
-		const lintStream = eslint({useEslintrc: false, rules: {'no-undef': 2}});
+		const lintStream = eslint({ useEslintrc: false, rules: { 'no-undef': 2 } });
 
 		function endWithoutError() {
 			done(new Error('An error was not thrown before ending'));
@@ -38,7 +38,7 @@ describe('gulp-eslint-new failOnError', () =>  {
 
 	it('should pass a file if only warnings are found', done =>  {
 
-		const lintStream = eslint({useEslintrc: false, rules: {'no-undef': 1, 'strict': 0}});
+		const lintStream = eslint({ useEslintrc: false, rules: { 'no-undef': 1, 'strict': 0 } });
 
 		lintStream.pipe(eslint.failOnError())
 			.on('error', done)
@@ -72,7 +72,7 @@ describe('gulp-eslint-new failOnError', () =>  {
 describe('gulp-eslint-new failAfterError', () =>  {
 
 	it('should fail when the file stream ends if an error is found', done =>  {
-		const lintStream = eslint({useEslintrc: false, rules: {'no-undef': 2}});
+		const lintStream = eslint({ useEslintrc: false, rules: { 'no-undef': 2 } });
 
 		function endWithoutError() {
 			done(new Error('An error was not thrown before ending'));
@@ -96,7 +96,7 @@ describe('gulp-eslint-new failAfterError', () =>  {
 	});
 
 	it('should fail when the file stream ends if multiple errors are found', done =>  {
-		const lintStream = eslint({useEslintrc: false, rules: {'no-undef': 2}});
+		const lintStream = eslint({ useEslintrc: false, rules: { 'no-undef': 2 } });
 
 		lintStream.pipe(eslint.failAfterError().on('error', (err) =>  {
 			assert(err);
@@ -113,7 +113,7 @@ describe('gulp-eslint-new failAfterError', () =>  {
 	});
 
 	it('should pass when the file stream ends if only warnings are found', done =>  {
-		const lintStream = eslint({useEslintrc: false, rules: {'no-undef': 1, strict: 0}});
+		const lintStream = eslint({ useEslintrc: false, rules: { 'no-undef': 1, strict: 0 } });
 
 		lintStream.pipe(eslint.failAfterError())
 			.on('error', done)

@@ -2,12 +2,12 @@
 
 // npm install gulp@next gulp-eslint-new
 
-const {src, task} = require('gulp');
+const { src, task } = require('gulp');
 const eslint = require('..');
 
 task('quiet-lint', () => {
 	return src('../test/fixtures/*.js')
-		.pipe(eslint({quiet: true}))
+		.pipe(eslint({ quiet: true }))
 		.pipe(eslint.format());
 });
 
@@ -17,7 +17,7 @@ function isWarning(message) {
 
 task('lint-warnings', () => {
 	return src('../test/fixtures/*.js')
-		.pipe(eslint({quiet: isWarning}))
+		.pipe(eslint({ quiet: isWarning }))
 		.pipe(eslint.format());
 });
 

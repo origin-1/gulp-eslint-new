@@ -15,7 +15,7 @@ const {
 	tryResultAction,
 	writeResults
 } = require('./util');
-const {relative} = require('path');
+const { relative } = require('path');
 
 async function lintFile(linter, file, quiet, warnIgnored) {
 	if (file.isNull()) {
@@ -54,7 +54,7 @@ async function lintFile(linter, file, quiet, warnIgnored) {
 	}
 
 	// Update the fixed output; otherwise, fixable messages are simply ignored.
-	if (file.eslint.hasOwnProperty('output')) {
+	if (Object.prototype.hasOwnProperty.call(file.eslint, 'output')) {
 		file.contents = Buffer.from(file.eslint.output);
 		file.eslint.fixed = true;
 	}

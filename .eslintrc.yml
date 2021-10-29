@@ -1,59 +1,51 @@
 parserOptions:
   ecmaVersion: 9
 
+extends: eslint:recommended
+
 env:
   node: true
 
 rules:
-  indent: [1, 'tab']
   brace-style: [2, "1tbs"]
-  comma-style: [1, "last"]
-  default-case: 2
-  func-style: [2, "declaration"]
-  no-floating-decimal: 2
-  no-nested-ternary: 2
-  radix: 2
-  space-before-function-paren: [1, "never"]
-  keyword-spacing: [2, {after: true}]
-  space-before-blocks: 1
-  spaced-comment: [2, "always", { exceptions: ["-"]}]
-  valid-jsdoc: [1, { requireReturn: false, prefer: { return: "returns" }}]
-  wrap-iife: 2
-  guard-for-in: 2
-  strict: [2, "global"]
-  no-alert: 2
   camelcase: 1
-  curly: [2, "all"]
-  eqeqeq: [2, "allow-null"]
-  no-empty: 2
-  no-use-before-define: 2
-  no-obj-calls: 2
-  no-unused-vars: [1, {vars: "local", args: "after-used"}]
-  new-cap: 2
-  no-shadow: 1
-  no-invalid-regexp: 2
   comma-dangle: [1, "never"]
-  no-undef: 2
-  no-new: 2
-  no-extra-semi: 2
-  no-debugger: 2
-  no-caller: 1
-  semi: 2
-  quotes: [1, "single", "avoid-escape"]
-  no-unreachable: 2
+  comma-style: [1, "last"]
+  curly: [2, "all"]
+  default-case: 2
+  dot-notation: 1
   eol-last: 1
-  operator-linebreak: [1, "before", {overrides: {"?": "after", ":": "after"}}]
+  eqeqeq: [2, "allow-null"]
+  func-style: [2, "declaration"]
+  guard-for-in: 2
+  indent: [1, 'tab']
+  key-spacing: [1, {beforeColon: false, afterColon: true, mode: "minimum"}]
+  keyword-spacing: [2, {after: true}]
   max-len: [1, 98, 4, {"ignoreComments": true}]
+  new-cap: 2
+  no-alert: 2
+  no-caller: 1
+  no-floating-decimal: 2
   no-multi-str: 1
-  no-mixed-spaces-and-tabs: 1
+  no-nested-ternary: 2
+  no-new: 2
+  no-shadow: 1
   no-trailing-spaces: 1
+  no-use-before-define: 2
+  no-var: 2
+  object-curly-spacing: [1, "always"]
+  operator-linebreak: [1, "before", {overrides: {"?": "after", ":": "after"}}]
+  prefer-const: 2
+  quotes: [1, "single", "avoid-escape"]
+  radix: 2
+  semi-spacing: 1
+  semi: 2
+  space-before-blocks: 1
+  space-before-function-paren: [1, "never"]
+  space-in-parens: [1, "never"]
   space-infix-ops: 1
   space-unary-ops: 1
-  no-with: 2
-  dot-notation: 1
-  semi-spacing: 1
-  key-spacing: [1, {beforeColon: false, afterColon: true, mode: "minimum"}]
-  space-in-parens: [1, "never"]
-  no-var: 2
-  prefer-const: 2
-
+  spaced-comment: [2, "always", { exceptions: ["-"]}]
+  strict: [2, "global"]
+  valid-jsdoc: [1, { requireReturn: false, prefer: { return: "returns" }}]
+  wrap-iife: 2

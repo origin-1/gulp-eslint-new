@@ -2,8 +2,8 @@
 
 // npm install gulp@next gulp-eslint-new gulp-cached
 
-const {src, task, watch} = require('gulp');
-const {resolve} = require('path');
+const { src, task, watch } = require('gulp');
+const { resolve } = require('path');
 const eslint = require('..');
 const cache = require('gulp-cached');
 
@@ -16,7 +16,7 @@ task('lint-watch', () => {
 	return watch('../test/fixtures/*.js', event => {
 		if (event.type !== 'deleted') {
 			src(event.path)
-				.pipe(lintAndPrint, {end: false});
+				.pipe(lintAndPrint, { end: false });
 		}
 	});
 });

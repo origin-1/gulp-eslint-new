@@ -1,6 +1,6 @@
 'use strict';
 
-const {Transform} = require('stream');
+const { Transform } = require('stream');
 const PluginError = require('plugin-error');
 const fancyLog = require('fancy-log');
 const getFormatter = require('./legacy-get-formatter');

@@ -2,13 +2,13 @@
 
 // npm install gulp@next gulp-eslint-new
 
-const {src, task} = require('gulp');
+const { src, task } = require('gulp');
 const eslint = require('..');
 
 const MAX_WARNINGS = 1;
 
 task('lint-result', () => {
-	const count = 0;
+	let count = 0;
 
 	// Be sure to return the stream; otherwise, you may not get a proper exit code.
 	return src('../test/fixtures/*.js')
@@ -77,7 +77,7 @@ task('lint-results-async', () => {
 		.pipe(eslint.results((results, done) => {
 			// Another async example...
 			process.nextTick(function asyncStub() {
-				const error = null;
+				let error = null;
 				if (results.warningCount > MAX_WARNINGS) {
 					error = new Error('Too many warnings!');
 				}

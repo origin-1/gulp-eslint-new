@@ -169,7 +169,7 @@ describe('gulp-eslint-new result', () => {
 			.on('end', ended);
 
 		// drain result into pass-through stream
-		resultStream.pipe(new PassThrough({objectMode: true}));
+		resultStream.pipe(new PassThrough({ objectMode: true }));
 
 		resultStream.end(file);
 
@@ -321,7 +321,7 @@ describe('gulp-eslint-new results', () => {
 			.on('end', ended);
 
 		// drain result into pass-through stream
-		resultStream.pipe(new PassThrough({objectMode: true}));
+		resultStream.pipe(new PassThrough({ objectMode: true }));
 
 		resultStream.end(file);
 
