@@ -4,7 +4,7 @@
 const assert = require('assert');
 const File = require('vinyl');
 const path = require('path');
-const eslint = require('../');
+const eslint = require('..');
 
 require('mocha');
 

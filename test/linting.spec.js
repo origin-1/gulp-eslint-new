@@ -47,7 +47,7 @@ describe('gulp-eslint-new plugin', () => {
 	});
 
 	it('should support sharable config', done => {
-		eslint(path.resolve(__dirname, 'fixtures', 'eslintrc-sharable-config.js'))
+		eslint(path.resolve(__dirname, 'eslintrc-sharable-config.js'))
 			.on('error', done)
 			.on('data', file => {
 				assert(file);

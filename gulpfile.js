@@ -39,7 +39,16 @@ task
 		const mochaPath = resolve('mocha/bin/mocha');
 		const childProcess
 		= fork
-		(c8Path, ['--reporter=html', '--reporter=text-summary', mochaPath, '--check-leaks']);
+		(
+			c8Path,
+			[
+				'--reporter=html',
+				'--reporter=text-summary',
+				mochaPath,
+				'--check-leaks',
+				'test/*.spec.js'
+			]
+		);
 		childProcess.on('exit', code => callback(code && 'Test failed'));
 	}
 );

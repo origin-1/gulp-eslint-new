@@ -281,9 +281,8 @@ describe('utility methods', () => {
 
 		it('should resolve a custom formatter', () => {
 
-			const formatter = util.resolveFormatter('test/fixtures/custom-formatter');
-			const formatterPath
-			= path.resolve('./test/fixtures/custom-formatter');
+			const formatter = util.resolveFormatter('test/custom-formatter');
+			const formatterPath = path.resolve('./test/custom-formatter');
 			assert.strictEqual(formatter, require(formatterPath));
 
 		});
