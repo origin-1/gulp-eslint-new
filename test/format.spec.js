@@ -1,4 +1,5 @@
-/* global describe, it, beforeEach */
+/* eslint-env mocha */
+
 'use strict';
 
 const assert = require('assert');
@@ -11,20 +12,20 @@ require('mocha');
 function getFiles() {
 	return [
 		new File({
-			path: 'test/fixtures',
+			path: '.',
 			contents: null,
 			isDirectory: true
 		}),
 		new File({
-			path: 'test/fixtures/use-strict.js',
+			path: 'use-strict.js',
 			contents: Buffer.from('(function () {\n\n\tvoid 0;\n\n}());\n\n')
 		}),
 		new File({
-			path: 'test/fixtures/undeclared.js',
+			path: 'undeclared.js',
 			contents: Buffer.from('(function () {\n\t"use strict";\n\n\tx = 0;\n\n}());\n')
 		}),
 		new File({
-			path: 'test/fixtures/passing.js',
+			path: 'passing.js',
 			contents: Buffer.from('(function () {\n\n\t"use strict";\n\n}());\n')
 		})
 	];

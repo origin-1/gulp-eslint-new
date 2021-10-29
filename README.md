@@ -144,13 +144,7 @@ _Prefer using `options.overrideConfig.configFile` instead._
 
 Type: `boolean`
 
-When `true`, add a result warning when ESLint ignores a file. This can be used to file files that are needlessly being loaded by `gulp.src`. For example, since ESLint automatically ignores "node_modules" file paths and gulp.src does not, a gulp task may take seconds longer just reading files from the "node_modules" directory.
-
-#### `options.useEslintrc`
-
-Type: `boolean`
-
-When `false`, ESLint will not load [.eslintrc files](https://eslint.org/docs/user-guide/configuring/configuration-files#using-configuration-files).
+When `true`, add a result warning when ESLint ignores a file. This can be used to find files that are needlessly being loaded by `gulp.src`. For example, since ESLint automatically ignores "node_modules" file paths and gulp.src does not, a gulp task may take seconds longer just reading files from the "node_modules" directory.
 
 ### `eslint(configFilePath)`
 

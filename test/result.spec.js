@@ -1,4 +1,5 @@
-/* global describe, it, beforeEach */
+/* eslint-env mocha */
+
 'use strict';
 
 const assert = require('assert');
@@ -34,17 +35,17 @@ describe('gulp-eslint-new result', () => {
 			});
 
 		lintStream.write(new File({
-			path: 'test/fixtures/invalid-1.js',
+			path: 'invalid-1.js',
 			contents: Buffer.from('x = 1;')
 		}));
 
 		lintStream.write(new File({
-			path: 'test/fixtures/invalid-2.js',
+			path: 'invalid-2.js',
 			contents: Buffer.from('x = 2;')
 		}));
 
 		lintStream.write(new File({
-			path: 'test/fixtures/invalid-3.js',
+			path: 'invalid-3.js',
 			contents: Buffer.from('x = 3;')
 		}));
 
@@ -53,7 +54,7 @@ describe('gulp-eslint-new result', () => {
 
 	it('should catch thrown errors', done => {
 		const file = new File({
-			path: 'test/fixtures/invalid.js',
+			path: 'invalid.js',
 			contents: Buffer.from('#invalid!syntax}')
 		});
 		file.eslint = {};
@@ -79,7 +80,7 @@ describe('gulp-eslint-new result', () => {
 
 	it('should catch thrown null', done => {
 		const file = new File({
-			path: 'test/fixtures/invalid.js',
+			path: 'invalid.js',
 			contents: Buffer.from('#invalid!syntax}')
 		});
 		file.eslint = {};
@@ -121,7 +122,7 @@ describe('gulp-eslint-new result', () => {
 	it('should ignore files without an ESLint result', done => {
 
 		const file = new File({
-			path: 'test/fixtures/invalid.js',
+			path: 'invalid.js',
 			contents: Buffer.from('#invalid!syntax}')
 		});
 
@@ -139,7 +140,7 @@ describe('gulp-eslint-new result', () => {
 	it('should support an async result handler', done => {
 		let asyncComplete = false;
 		const file = new File({
-			path: 'test/fixtures/invalid.js',
+			path: 'invalid.js',
 			contents: Buffer.from('#invalid!syntax}')
 		});
 		const resultStub = {};
@@ -202,17 +203,17 @@ describe('gulp-eslint-new results', () => {
 			});
 
 		lintStream.write(new File({
-			path: 'test/fixtures/invalid-1.js',
+			path: 'invalid-1.js',
 			contents: Buffer.from('x = 1;')
 		}));
 
 		lintStream.write(new File({
-			path: 'test/fixtures/invalid-2.js',
+			path: 'invalid-2.js',
 			contents: Buffer.from('x = 2;')
 		}));
 
 		lintStream.write(new File({
-			path: 'test/fixtures/invalid-3.js',
+			path: 'invalid-3.js',
 			contents: Buffer.from('x = 3;')
 		}));
 
@@ -221,7 +222,7 @@ describe('gulp-eslint-new results', () => {
 
 	it('should catch thrown errors', done => {
 		const file = new File({
-			path: 'test/fixtures/invalid.js',
+			path: 'invalid.js',
 			contents: Buffer.from('#invalid!syntax}')
 		});
 		file.eslint = {};
@@ -263,7 +264,7 @@ describe('gulp-eslint-new results', () => {
 	it('should ignore files without an ESLint result', done => {
 		let resultsCalled = false;
 		const file = new File({
-			path: 'test/fixtures/invalid.js',
+			path: 'invalid.js',
 			contents: Buffer.from('#invalid!syntax}')
 		});
 
@@ -288,7 +289,7 @@ describe('gulp-eslint-new results', () => {
 	it('should support an async results handler', done => {
 		let asyncComplete = false;
 		const file = new File({
-			path: 'test/fixtures/invalid.js',
+			path: 'invalid.js',
 			contents: Buffer.from('#invalid!syntax}')
 		});
 		const resultStub = {};

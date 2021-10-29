@@ -1,4 +1,5 @@
-/* global describe, it*/
+/* eslint-env mocha */
+
 'use strict';
 
 const assert = require('assert');
@@ -10,6 +11,14 @@ const stringToStream = require('from2-string');
 require('mocha');
 
 describe('gulp-eslint-new plugin', () => {
+	beforeEach(() => {
+		process.chdir('test/fixtures');
+	});
+
+	afterEach(() => {
+		process.chdir('../..');
+	});
+
 	it('should configure an alternate parser', done => {
 		eslint({
 			envs: [],
@@ -27,7 +36,7 @@ describe('gulp-eslint-new plugin', () => {
 				assert(file.eslint);
 				assert.strictEqual(
 					file.eslint.filePath,
-					path.resolve('test/fixtures/stage0-class-property.js')
+					path.resolve('stage0-class-property.js')
 				);
 
 				assert(Array.isArray(file.eslint.messages));
@@ -41,7 +50,7 @@ describe('gulp-eslint-new plugin', () => {
 				done();
 			})
 			.end(new File({
-				path: 'test/fixtures/stage0-class-property.js',
+				path: 'stage0-class-property.js',
 				contents: Buffer.from('class MyClass {prop = a + "b" + c;}')
 			}));
 	});
@@ -65,7 +74,7 @@ describe('gulp-eslint-new plugin', () => {
 				done();
 			})
 			.end(new File({
-				path: 'test/fixtures/no-newline.js',
+				path: 'no-newline.js',
 				contents: Buffer.from('console.log(\'Hi\');')
 			}));
 	});
@@ -79,7 +88,7 @@ describe('gulp-eslint-new plugin', () => {
 				assert(file.eslint);
 				assert.strictEqual(
 					file.eslint.filePath,
-					path.resolve('test/fixtures/use-strict.js')
+					path.resolve('use-strict.js')
 				);
 
 				assert(Array.isArray(file.eslint.messages));
@@ -93,7 +102,7 @@ describe('gulp-eslint-new plugin', () => {
 				done();
 			})
 			.end(new File({
-				path: 'test/fixtures/use-strict.js',
+				path: 'use-strict.js',
 				contents: Buffer.from('var x = 1;')
 			}));
 	});
@@ -108,12 +117,12 @@ describe('gulp-eslint-new plugin', () => {
 				done();
 			})
 			.end(new File({
-				path: 'test/fixtures',
+				path: '.',
 				isDirectory: true
 			}));
 	});
 
-	it('should emit an error when it takes a steam content', done => {
+	it('should emit an error when it takes a stream content', done => {
 		eslint({useEslintrc: false, rules: {'strict': 'error'}})
 			.on('error', err => {
 				assert.strictEqual(err.plugin, 'gulp-eslint-new');
@@ -124,7 +133,7 @@ describe('gulp-eslint-new plugin', () => {
 				done();
 			})
 			.end(new File({
-				path: 'test/fixtures/stream.js',
+				path: 'stream.js',
 				contents: stringToStream('')
 			}));
 	});
@@ -148,9 +157,54 @@ describe('gulp-eslint-new plugin', () => {
 				done();
 			})
 			.end(new File({
-				path: 'test/fixtures/file.js',
+				path: 'file.js',
 				contents: Buffer.from('')
 			}));
+	});
+
+	describe('"useEslintrc" option', () => {
+
+		it('when true, should consider a configuration file', done => {
+			eslint({useEslintrc: true})
+				.on('error', done)
+				.on('data', (file) => {
+					assert(file);
+					assert(file.eslint);
+					assert(Array.isArray(file.eslint.messages));
+					assert.strictEqual(file.eslint.messages.length, 1);
+					assert.strictEqual(
+						file.eslint.messages[0].message,
+						'Missing semicolon.'
+					);
+					assert.strictEqual(file.eslint.errorCount, 1);
+					assert.strictEqual(file.eslint.warningCount, 0);
+					assert.strictEqual(file.contents.toString(), '$()');
+					done();
+				})
+				.end(new File({
+					path: 'semi/file.js',
+					contents: Buffer.from('$()')
+				}));
+		});
+
+		it('when false, should ignore a configuration file', done => {
+			eslint({useEslintrc: false})
+				.on('error', done)
+				.on('data', (file) => {
+					assert(file);
+					assert(file.eslint);
+					assert(Array.isArray(file.eslint.messages));
+					assert.strictEqual(file.eslint.messages.length, 0);
+					assert.strictEqual(file.eslint.errorCount, 0);
+					assert.strictEqual(file.eslint.warningCount, 0);
+					assert.strictEqual(file.contents.toString(), '$()');
+					done();
+				})
+				.end(new File({
+					path: 'semi/file.js',
+					contents: Buffer.from('$()')
+				}));
+		});
 	});
 
 	describe('"warnFileIgnored" option', () => {
@@ -172,7 +226,7 @@ describe('gulp-eslint-new plugin', () => {
 					done();
 				})
 				.end(new File({
-					path: 'test/fixtures/ignored.js',
+					path: 'ignored.js',
 					contents: Buffer.from('(function () {ignore = abc;}});')
 				}));
 		});
@@ -208,7 +262,7 @@ describe('gulp-eslint-new plugin', () => {
 					done();
 				})
 				.end(new File({
-					path: 'test/fixtures/ignored.js',
+					path: 'ignored.js',
 					contents: Buffer.from('(function () {ignore = abc;}});')
 				}));
 		});
@@ -229,7 +283,7 @@ describe('gulp-eslint-new plugin', () => {
 					done();
 				})
 				.end(new File({
-					path: 'test/fixtures/invalid.js',
+					path: 'invalid.js',
 					contents: Buffer.from('function z() { x = 0; }')
 				}));
 		});
@@ -249,7 +303,7 @@ describe('gulp-eslint-new plugin', () => {
 					done();
 				})
 				.end(new File({
-					path: 'test/fixtures/invalid.js',
+					path: 'invalid.js',
 					contents: Buffer.from('function z() { x = 0; }')
 				}));
 		});
@@ -273,7 +327,7 @@ describe('gulp-eslint-new plugin', () => {
 					done();
 				})
 				.end(new File({
-					path: 'test/fixtures/fixable.js',
+					path: 'fixable.js',
 					contents: Buffer.from('var x = 0; ')
 				}));
 		});
@@ -296,7 +350,7 @@ describe('gulp-eslint-new plugin', () => {
 					done();
 				})
 				.end(new File({
-					path: 'test/fixtures/fixable.js',
+					path: 'fixable.js',
 					contents: Buffer.from('var x = 0; \nvar y = 1; ')
 				}));
 		});

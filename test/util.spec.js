@@ -1,4 +1,5 @@
-/* global describe, it, afterEach */
+/* eslint-env mocha */
+
 'use strict';
 
 const assert = require('assert');
@@ -15,7 +16,7 @@ describe('utility methods', () => {
 		it('should handle files in a stream', done => {
 			let passedFile = false;
 			const streamFile = new File({
-				path: 'test/fixtures/invalid.js',
+				path: 'invalid.js',
 				contents: Buffer.from('x = 1;')
 			});
 			const testStream = util.transform((file, enc, cb) => {
@@ -38,11 +39,11 @@ describe('utility methods', () => {
 			let finalCount = 0;
 			const files = [
 				new File({
-					path: 'test/fixtures/invalid.js',
+					path: 'invalid.js',
 					contents: Buffer.from('x = 1;')
 				}),
 				new File({
-					path: 'test/fixtures/undeclared.js',
+					path: 'undeclared.js',
 					contents: Buffer.from('x = 0;')
 				})
 			];
@@ -76,7 +77,7 @@ describe('utility methods', () => {
 
 		it('should create a warning that the file is ignored by ".eslintignore"', () => {
 			const file = new File({
-				path: 'test/fixtures/ignored.js',
+				path: 'ignored.js',
 				contents: Buffer.from('')
 			});
 			const result = util.createIgnoreResult(file);
@@ -211,7 +212,7 @@ describe('utility methods', () => {
 	describe('filterResult', () => {
 
 		const result = {
-			filePath: 'test/fixtures/invalid.js',
+			filePath: 'invalid.js',
 			messages: [{
 				ruleId: 'error',
 				severity: 2,
@@ -239,7 +240,7 @@ describe('utility methods', () => {
 				return message.severity === 1;
 			}
 			const quietResult = util.filterResult(result, warningsOnly);
-			assert.strictEqual(quietResult.filePath, 'test/fixtures/invalid.js');
+			assert.strictEqual(quietResult.filePath, 'invalid.js');
 			assert(Array.isArray(quietResult.messages));
 			assert.strictEqual(quietResult.messages.length, 1);
 			assert.strictEqual(quietResult.errorCount, 0);
@@ -249,7 +250,7 @@ describe('utility methods', () => {
 
 		it('should remove warning messages', () => {
 			const quietResult = util.filterResult(result, true);
-			assert.strictEqual(quietResult.filePath, 'test/fixtures/invalid.js');
+			assert.strictEqual(quietResult.filePath, 'invalid.js');
 			assert(Array.isArray(quietResult.messages));
 			assert.strictEqual(quietResult.messages.length, 1);
 			assert.strictEqual(quietResult.errorCount, 1);

@@ -1,4 +1,5 @@
-/* global describe, it, beforeEach */
+/* eslint-env mocha */
+
 'use strict';
 
 const assert = require('assert');
@@ -21,14 +22,14 @@ describe('gulp-eslint-new failOnError', () =>  {
 				this.removeListener('finish', endWithoutError);
 				assert(err);
 				assert.strictEqual(err.message, '\'x\' is not defined.');
-				assert.strictEqual(err.fileName, path.resolve('test/fixtures/invalid.js'));
+				assert.strictEqual(err.fileName, path.resolve('invalid.js'));
 				assert.strictEqual(err.plugin, 'gulp-eslint-new');
 				done();
 			})
 			.on('finish', endWithoutError);
 
 		lintStream.write(new File({
-			path: 'test/fixtures/invalid.js',
+			path: 'invalid.js',
 			contents: Buffer.from('x = 1;')
 		}));
 
@@ -44,7 +45,7 @@ describe('gulp-eslint-new failOnError', () =>  {
 			.on('finish', done);
 
 		lintStream.end(new File({
-			path: 'test/fixtures/invalid.js',
+			path: 'invalid.js',
 			contents: Buffer.from('x = 0;')
 		}));
 	});
@@ -52,7 +53,7 @@ describe('gulp-eslint-new failOnError', () =>  {
 	it('should handle ESLint reports without messages', done =>  {
 
 		const file = new File({
-			path: 'test/fixtures/invalid.js',
+			path: 'invalid.js',
 			contents: Buffer.from('#invalid!syntax}')
 		});
 		file.eslint = {};
@@ -89,7 +90,7 @@ describe('gulp-eslint-new failAfterError', () =>  {
 			.on('finish', endWithoutError);
 
 		lintStream.end(new File({
-			path: 'test/fixtures/invalid.js',
+			path: 'invalid.js',
 			contents: Buffer.from('x = 1;')
 		}));
 	});
@@ -106,7 +107,7 @@ describe('gulp-eslint-new failAfterError', () =>  {
 		}));
 
 		lintStream.end(new File({
-			path: 'test/fixtures/invalid.js',
+			path: 'invalid.js',
 			contents: Buffer.from('x = 1; a = false;')
 		}));
 	});
@@ -119,14 +120,14 @@ describe('gulp-eslint-new failAfterError', () =>  {
 			.on('finish', done);
 
 		lintStream.end(new File({
-			path: 'test/fixtures/invalid.js',
+			path: 'invalid.js',
 			contents: Buffer.from('x = 0;')
 		}));
 	});
 
 	it('should handle ESLint reports without messages', done =>  {
 		const file = new File({
-			path: 'test/fixtures/invalid.js',
+			path: 'invalid.js',
 			contents: Buffer.from('#invalid!syntax}')
 		});
 		file.eslint = {};
