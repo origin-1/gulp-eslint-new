@@ -43,7 +43,7 @@ describe('gulp-eslint-new format', () => {
 	 */
 	function outputWriter(message) {
 		assert(message);
-		assert(/^\d+ messages$/.test(message));
+		assert(/^1 message|\d+ messages$/.test(message));
 		writeCount++;
 	}
 
@@ -54,7 +54,7 @@ describe('gulp-eslint-new format', () => {
 	 * @param {String} message - a message to trigger an error
 	 */
 	function failWriter(message) {
-		const error = new Error('Writer Test Error' + (message ? ': ' + message : ''));
+		const error = new Error(`Writer Test Error${message ? `: ${message}` : ''}`);
 		error.name = 'TestError';
 		throw error;
 	}
@@ -62,7 +62,7 @@ describe('gulp-eslint-new format', () => {
 	describe('format all results', () => {
 		/**
 		 * Custom ESLint result formatter for counting format passes and
-		 * returning a expected formatted result message.
+		 * returning an expected formatted result message.
 		 *
 		 * @param {Array} results - ESLint results
 		 * @param {Object} config - format config
@@ -78,7 +78,7 @@ describe('gulp-eslint-new format', () => {
 				return sum + result.messages.length;
 			}, 0);
 
-			return messageCount + ' messages';
+			return `${messageCount} ${messageCount === 1 ? 'message' : 'messages'}`;
 		}
 
 		beforeEach(() => {
@@ -105,7 +105,7 @@ describe('gulp-eslint-new format', () => {
 			assert(lintStream.pipe);
 			lintStream.pipe(formatStream);
 
-			files.forEach(function(file) {
+			files.forEach(function (file) {
 				lintStream.write(file);
 			});
 			lintStream.end();
@@ -130,7 +130,7 @@ describe('gulp-eslint-new format', () => {
 			assert(passthruStream.pipe);
 			passthruStream.pipe(formatStream);
 
-			files.forEach(function(file) {
+			files.forEach(function (file) {
 				passthruStream.write(file);
 			});
 			passthruStream.end();
@@ -160,8 +160,8 @@ describe('gulp-eslint-new format', () => {
 
 			const formatStream = eslint.formatEach(formatResult, outputWriter)
 				.on('error', done)
-				.on('finish', function() {
-				// the stream should not have emitted an error
+				.on('finish', function () {
+					// the stream should not have emitted an error
 					assert.strictEqual(this._writableState.errorEmitted, false);
 
 					const fileCount = files.length - 1;// remove directory

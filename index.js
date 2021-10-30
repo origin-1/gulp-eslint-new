@@ -30,7 +30,6 @@ async function lintFile(linter, file, quiet, warnIgnored) {
 	if (await linter.isPathIgnored(filePath)) {
 		// Note:
 		// Vinyl files can have an independently defined cwd, but ESLint works relative to `process.cwd()`.
-		// (https://github.com/gulpjs/gulp/blob/master/docs/recipes/specifying-a-cwd.md)
 		// Also, ESLint doesn't adjust file paths relative to an ancestory .eslintignore path.
 		// E.g., If ../.eslintignore has "foo/*.js", ESLint will ignore ./foo/*.js, instead of ../foo/*.js.
 		// Eslint rolls this into `ESLint.lintText`. So, gulp-eslint-new must account for this limitation.
@@ -103,7 +102,7 @@ gulpEslint.result = action => {
  * @param {Function} action - A function to handle all ESLint results
  * @returns {stream} gulp file stream
  */
-gulpEslint.results = function(action) {
+gulpEslint.results = function (action) {
 	if (typeof action !== 'function') {
 		throw new Error('Expected callable argument');
 	}
@@ -161,7 +160,7 @@ gulpEslint.failAfterError = () => {
 
 		throw new PluginError('gulp-eslint-new', {
 			name: 'ESLintError',
-			message: 'Failed with ' + count + (count === 1 ? ' error' : ' errors')
+			message: `Failed with ${count} ${count === 1 ? 'error' : 'errors'}`
 		});
 	});
 };

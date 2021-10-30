@@ -221,7 +221,7 @@ describe('utility methods', () => {
 				column: 1,
 				nodeType: 'FunctionDeclaration',
 				source: 'function a() { x = 0; }'
-			},{
+			}, {
 				ruleId: 'warning',
 				severity: 1,
 				message: 'This is a warning.',
@@ -308,7 +308,7 @@ describe('utility methods', () => {
 
 		});
 
-		it('should write to a (writable) stream', function(done) {
+		it('should write to a (writable) stream', function (done) {
 
 			let written = false;
 			const writable = new stream.Writable({ objectMode: true });

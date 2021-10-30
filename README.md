@@ -13,44 +13,46 @@ npm install gulp-eslint-new
 ## Usage
 
 ```javascript
-const {src, task} = require('gulp');
+const { src } = require('gulp');
 const eslint = require('gulp-eslint-new');
 
-task('default', () => {
-    return src(['scripts/*.js'])
-        // eslint() attaches the lint output to the "eslint" property
-        // of the file object so it can be used by other modules.
-        .pipe(eslint())
-        // eslint.format() outputs the lint results to the console.
-        // Alternatively use eslint.formatEach() (see Docs).
-        .pipe(eslint.format())
-        // To have the process exit with an error code (1) on
-        // lint error, return the stream and pipe to failAfterError last.
-        .pipe(eslint.failAfterError());
-});
+// Define the default Gulp task.
+exports.default =
+	() => src(['scripts/*.js'])
+	// eslint() attaches the lint output to the "eslint" property of
+	// the file object so it can be used by other modules.
+	.pipe(eslint())
+	// eslint.format() outputs the lint results to the console.
+	// Alternatively use eslint.formatEach() (see Docs).
+	.pipe(eslint.format())
+	// To have the process exit with an error code (1) on lint error,
+	// return the stream and pipe to failAfterError last.
+	.pipe(eslint.failAfterError());
 ```
 
 Or use the plugin API to do things like:
 
 ```javascript
-gulp.src(['**/*.js','!node_modules/**'])
+gulp.src(['**/*.js', '!node_modules/**'])
 	.pipe(eslint({
-		rules: {
-			'my-custom-rule': 1,
-			'strict': 2
-		},
-		globals: [
-			'jQuery',
-			'$'
-		],
-		envs: [
-			'browser'
-		]
+		overrideConfig: {
+			rules: {
+				'my-custom-rule': 1,
+				'strict': 2
+			},
+			globals: {
+				jQuery: 'readonly',
+				$: 'readonly'
+			},
+			env: {
+				'browser': true
+			}
+		}
 	}))
 	.pipe(eslint.formatEach('compact', process.stderr));
 ```
 
-For additional examples, look through the [example directory](https://github.com/fasttime/gulp-eslint-new/tree/master/example).
+For additional examples, look through the [example directory](https://github.com/fasttime/gulp-eslint-new/tree/main/example).
 
 ## API
 
@@ -102,7 +104,7 @@ _Prefer using `options.overrideConfig.globals` instead. Note the different forma
 
 Type: `boolean | (message: LintMessage) => boolean`
 
-Setting this option to `true` instructs ESLint to try to fix as many issues as possible. The fixes are applied to the gulp stream. The fixed content can be saved to file using `gulp.dest` (See [example/fix.js](https://github.com/fasttime/gulp-eslint-new/blob/master/example/fix.js)). Rules that are fixable can be found in ESLint's [rules list](https://eslint.org/docs/rules/).
+Setting this option to `true` instructs ESLint to try to fix as many issues as possible. The fixes are applied to the gulp stream. The fixed content can be saved to file using `gulp.dest` (See [example/fix.js](https://github.com/fasttime/gulp-eslint-new/blob/main/example/fix.js)). Rules that are fixable can be found in ESLint's [rules list](https://eslint.org/docs/rules/).
 
 If a predicate function is set, it will be invoked on each message, and only problems related to those messages for which the function returned a truthy value will be fixed.
 

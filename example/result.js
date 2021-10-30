@@ -1,25 +1,25 @@
 'use strict';
 
-// npm install gulp@next gulp-eslint-new
+// npm install gulp gulp-eslint-new
 
-const { src, task } = require('gulp');
 const eslint = require('..');
+const { src } = require('gulp');
 
 const MAX_WARNINGS = 1;
 
-task('lint-result', () => {
+function lintResult() {
 	let count = 0;
 
 	// Be sure to return the stream; otherwise, you may not get a proper exit code.
-	return src('../test/fixtures/*.js')
+	return src('../test/fixtures/**/*.js')
 		.pipe(eslint())
 		.pipe(eslint.formatEach())
 		.pipe(eslint.result(result => {
 			count += result.warningCount;
 
 			if (count > MAX_WARNINGS) {
-				// Report which file exceeded the limit
-				// The error will be wraped in a gulp PluginError
+				// Report which file exceeded the limit.
+				// The error will be wrapped in a gulp PluginError.
 				throw {
 					name: 'TooManyWarnings',
 					fileName: result.filePath,
@@ -28,12 +28,12 @@ task('lint-result', () => {
 				};
 			}
 		}));
-});
+}
 
-task('lint-resu1lt-async', () => {
+function lintResultAsync() {
 	let count = 0;
 
-	return src('../test/fixtures/*.js')
+	return src('../test/fixtures/**/*.js')
 		.pipe(eslint())
 		.pipe(eslint.formatEach())
 		.pipe(eslint.result((result, done) => {
@@ -43,7 +43,7 @@ task('lint-resu1lt-async', () => {
 
 				let error = null;
 				if (count > MAX_WARNINGS) {
-					// Define the error. Any non-null/undefined value will work
+					// Define the error. Any non-null/undefined value will work.
 					error = {
 						name: 'TooManyWarnings',
 						fileName: result.filePath,
@@ -54,24 +54,24 @@ task('lint-resu1lt-async', () => {
 				done(error);
 			}, 100);
 		}));
-});
+}
 
-task('lint-results', () => {
-	return src('../test/fixtures/*.js')
+function lintResults() {
+	return src('../test/fixtures/**/*.js')
 		.pipe(eslint())
 		.pipe(eslint.format())
 		.pipe(eslint.results(results => {
-			// results.warningCount is an array of file result
-			// that includes warningsCount and errorCount totals.
+			// results.warningCount is an array of file results that include warningsCount and
+			// errorCount totals.
 			if (results.warningCount > MAX_WARNINGS) {
 				// No specific file to complain about here.
 				throw new Error('Too many warnings!');
 			}
 		}));
-});
+}
 
-task('lint-results-async', () => {
-	return src('../test/fixtures/*.js')
+function lintResultsAsync() {
+	return src('../test/fixtures/**/*.js')
 		.pipe(eslint())
 		.pipe(eslint.format())
 		.pipe(eslint.results((results, done) => {
@@ -85,6 +85,12 @@ task('lint-results-async', () => {
 
 			}, 100);
 		}));
-});
+}
 
-task('default', ['lint-results']);
+module.exports = {
+	'default': lintResults,
+	'lint-result': lintResult,
+	'lint-result-async': lintResultAsync,
+	'lint-results': lintResults,
+	'lint-results-async': lintResultsAsync
+};

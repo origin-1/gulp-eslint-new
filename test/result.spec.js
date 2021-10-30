@@ -66,7 +66,7 @@ describe('gulp-eslint-new result', () => {
 		eslint.result(() => {
 			throw new Error('Expected Error');
 		})
-			.on('error', function(error) {
+			.on('error', function (error) {
 				this.removeListener('finish', finished);
 				assert(error);
 				assert.strictEqual(error.message, 'Expected Error');
@@ -92,7 +92,7 @@ describe('gulp-eslint-new result', () => {
 		eslint.result(() => {
 			throw null;
 		})
-			.on('error', function(error) {
+			.on('error', function (error) {
 				this.removeListener('finish', finished);
 				assert(error);
 				assert.strictEqual(error.message, 'Unknown Error');
@@ -129,7 +129,7 @@ describe('gulp-eslint-new result', () => {
 		eslint.result(() => {
 			throw new Error('Expected no call');
 		})
-			.on('error', function(error) {
+			.on('error', function (error) {
 				this.removeListener('finish', done);
 				done(error);
 			})
@@ -162,7 +162,7 @@ describe('gulp-eslint-new result', () => {
 				callback();
 			}, 10);
 		})
-			.on('error', function(error) {
+			.on('error', function (error) {
 				this.removeListener('end', ended);
 				done(error);
 			})
@@ -234,7 +234,7 @@ describe('gulp-eslint-new results', () => {
 		eslint.results(() => {
 			throw new Error('Expected Error');
 		})
-			.on('error', function(error) {
+			.on('error', function (error) {
 				this.removeListener('finish', finished);
 				assert(error);
 				assert.strictEqual(error.message, 'Expected Error');
@@ -278,7 +278,7 @@ describe('gulp-eslint-new results', () => {
 			assert.strictEqual(results.length, 0);
 			resultsCalled = true;
 		})
-			.on('error', function(error) {
+			.on('error', function (error) {
 				this.removeListener('finish', finished);
 				done(error);
 			})
@@ -314,7 +314,7 @@ describe('gulp-eslint-new results', () => {
 				callback();
 			}, 10);
 		})
-			.on('error', function(error) {
+			.on('error', function (error) {
 				this.removeListener('end', ended);
 				done(error);
 			})

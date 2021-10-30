@@ -1,31 +1,35 @@
 'use strict';
 
-// npm install gulp@next gulp-eslint-new gulp-if
+// npm install gulp gulp-eslint-new gulp-if
 
-const { dest, src, task } = require('gulp');
-const gulpIf = require('gulp-if');
 const eslint = require('..');
+const { dest, src } = require('gulp');
+const gulpIf = require('gulp-if');
 
 function isFixed(file) {
 	return file.eslint != null && file.eslint.fixed;
 }
 
-task('lint-n-fix', () => {
-	return src('../test/fixtures/*.js')
+function lintNFix() {
+	return src('../test/fixtures/**/*.js', { base: './' })
 		.pipe(eslint({ fix: true }))
 		.pipe(eslint.format())
-		// if fixed, write the file to dest
-		.pipe(gulpIf(isFixed, dest('../test/fixtures')));
-});
+		// if fixed, write the file to dest.
+		.pipe(gulpIf(isFixed, dest('./')));
+}
 
-task('flag-n-fix', () => {
+function flagNFix() {
 	const hasFixFlag = process.argv.slice(2).includes('--fix');
 
-	return src('../test/fixtures/*.js')
+	return src('../test/fixtures/**/*.js', { base: './' })
 		.pipe(eslint({ fix: hasFixFlag }))
 		.pipe(eslint.format())
-		// if fixed, write the file to dest
-		.pipe(gulpIf(isFixed, dest('../test/fixtures')));
-});
+		// if fixed, write the file to dest.
+		.pipe(gulpIf(isFixed, dest('./')));
+}
 
-task('default', ['lint-n-fix']);
+module.exports = {
+	'default': lintNFix,
+	'lint-n-fix': lintNFix,
+	'flag-n-fix': flagNFix
+};

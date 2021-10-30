@@ -1,50 +1,54 @@
 'use strict';
 
-// npm install gulp@next gulp-eslint-new gulp-cached
+// npm install gulp gulp-cached gulp-eslint-new
 
-const { src, task, watch } = require('gulp');
-const { resolve } = require('path');
 const eslint = require('..');
+const { src, watch } = require('gulp');
 const cache = require('gulp-cached');
+const { resolve } = require('path');
 
-task('lint-watch', () => {
-	// Lint only files that change after this watch starts
+function lintWatch() {
+	// Lint only files that change after this watch starts.
 	const lintAndPrint = eslint();
-	// format results with each file, since this stream won't end.
+	// Format results with each file, since this stream won't end.
 	lintAndPrint.pipe(eslint.formatEach());
 
-	return watch('../test/fixtures/*.js', event => {
-		if (event.type !== 'deleted') {
-			src(event.path)
-				.pipe(lintAndPrint, { end: false });
-		}
-	});
-});
-
-task('cached-lint', () => {
-	// Read all js files within test/fixtures
-	return src('../test/fixtures/*.js')
-		.pipe(cache('eslint'))
-		// Only uncached and changed files past this point
-		.pipe(eslint())
-		.pipe(eslint.format())
-		.pipe(eslint.result(result => {
-			if (result.warningCount > 0 || result.errorCount > 0) {
-				// If a file has errors/warnings remove uncache it
-				delete cache.caches.eslint[resolve(result.filePath)];
+	return watch('../test/fixtures/**/*.js')
+		.on('all', (eventType, path) => {
+			if (eventType === 'add' || eventType === 'change') {
+				src(path).pipe(lintAndPrint, { end: false });
 			}
-		}));
-});
+		});
+}
 
-// Run the "cached-lint" task initially...
-task('cached-lint-watch', ['cached-lint'], () => {
-	// ...and whenever a watched file changes
-	return watch('../test/fixtures/*.js', ['cached-lint'], event => {
-		if (event.type === 'deleted' && cache.caches.eslint) {
-			// remove deleted files from cache
-			delete cache.caches.eslint[event.path];
-		}
-	});
-});
+function uncache(path) {
+	delete cache.caches.eslint[path];
+}
 
-task('default', ['cached-lint-watch']);
+function cachedLintWatch() {
+	// Run the "cached-lint" task initially and whenever a watched file changes.
+	const globs = '../test/fixtures/**/*.js';
+
+	return watch(
+		globs,
+		{ ignoreInitial: false },
+		() => src(globs)
+			.pipe(cache('eslint'))
+			// Only uncached and changed files past this point.
+			.pipe(eslint())
+			.pipe(eslint.format())
+			.pipe(eslint.result(result => {
+				if (result.warningCount > 0 || result.errorCount > 0) {
+					// If a file has errors/warnings, uncache it.
+					uncache(result.filePath);
+				}
+			}))
+	)
+		.on('unlink', path => uncache(resolve(path))); // Remove deleted files from cache.
+}
+
+module.exports = {
+	'default': cachedLintWatch,
+	'lint-watch': lintWatch,
+	'cached-lint-watch': cachedLintWatch
+};

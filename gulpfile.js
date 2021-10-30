@@ -4,7 +4,7 @@ const { parallel, series, src, task } = require('gulp');
 
 task(
 	'clean',
-	async() => {
+	async () => {
 		const { promises: { rm } } = require('fs');
 
 		const options = { force: true, recursive: true };

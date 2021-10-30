@@ -1,24 +1,28 @@
 'use strict';
 
-// npm install gulp@next gulp-eslint-new
+// npm install gulp gulp-eslint-new
 
-const { src, task } = require('gulp');
 const eslint = require('..');
+const { series, src } = require('gulp');
 
-task('quiet-lint', () => {
-	return src('../test/fixtures/*.js')
+function quietLint() {
+	return src('../test/fixtures/**/*.js')
 		.pipe(eslint({ quiet: true }))
 		.pipe(eslint.format());
-});
+}
 
 function isWarning(message) {
 	return message.severity === 1;
 }
 
-task('lint-warnings', () => {
-	return src('../test/fixtures/*.js')
+function lintWarnings() {
+	return src('../test/fixtures/**/*.js')
 		.pipe(eslint({ quiet: isWarning }))
 		.pipe(eslint.format());
-});
+}
 
-task('default', ['quiet-lint','lint-warnings']);
+module.exports = {
+	'default': series(quietLint, lintWarnings),
+	'quiet-lint': quietLint,
+	'lint-warnings': lintWarnings
+};

@@ -1,29 +1,29 @@
 'use strict';
 
-// npm install gulp@next gulp-eslint-new
+// npm install gulp gulp-eslint-new
 
-const { src, task } = require('gulp');
 const eslint = require('..');
+const { series, src } = require('gulp');
 
 /**
- * Simple example of using ESLint and a formatter
+ * Simple example of using ESLint and a formatter.
  * Note: ESLint does not write to the console itself.
  * Use format or formatEach to print ESLint results.
  * @returns {stream} gulp file stream
  */
-task('basic', () => {
+function basic() {
 	return src('../test/fixtures/**/*.js')
-		// default: use local linting config
+		// default: use local linting config.
 		.pipe(eslint())
-		// format ESLint results and print them to the console
+		// Format ESLint results and print them to the console.
 		.pipe(eslint.format());
-});
+}
 
 /**
- * Inline ESLint configuration
+ * Inline ESLint configuration.
  * @returns {stream} gulp file stream
  */
-task('inline-config', () => {
+function inlineConfig() {
 	return src('../test/fixtures/**/*.js')
 		.pipe(eslint({
 			rules: {
@@ -58,41 +58,47 @@ task('inline-config', () => {
 			envs: ['node']
 		}))
 		.pipe(eslint.format());
-});
+}
 
 /**
- * Load configuration file
+ * Load configuration file.
  * @returns {stream} gulp file stream
  */
-task('load-config', () => {
+function loadConfig() {
 	return src('../test/fixtures/**/*.js')
 		.pipe(eslint({
 			// Load a specific ESLint config
 			configFile: 'config.json'
 		}))
 		.pipe(eslint.format());
-});
+}
 
 /**
- * Shorthand way to load a configuration file
+ * Shorthand way to load a configuration file.
  * @returns {stream} gulp file stream
  */
-task('load-config-shorthand', () => {
+function loadConfigShorthand() {
 	return src('../test/fixtures/**/*.js')
 		// Load a specific ESLint config
 		.pipe(eslint('config.json'))
 		.pipe(eslint.format());
-});
+}
 
 /**
- * The default task will run all above tasks
+ * The default task will run all above tasks.
  */
-task('default', [
-	'basic',
-	'inline-config',
-	'load-config',
-	'load-config-shorthand'
-
-], () => {
-	console.log('All tasks completed successfully.');
-});
+module.exports = {
+	'default': series(
+		basic,
+		inlineConfig,
+		loadConfig,
+		loadConfigShorthand,
+		async () => {
+			console.log('All tasks completed successfully.');
+		}
+	),
+	'basic': basic,
+	'inline-config': inlineConfig,
+	'load-config': loadConfig,
+	'load-config-shorthand': loadConfigShorthand
+};

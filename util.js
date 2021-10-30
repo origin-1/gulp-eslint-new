@@ -12,7 +12,7 @@ const getFormatter = require('./legacy-get-formatter');
  * @param {Function} [flush] - An async function that is called before closing the stream
  * @returns {stream} A transform stream
  */
-exports.transform = function(transform, flush) {
+exports.transform = function (transform, flush) {
 	if (typeof flush === 'function') {
 		return new Transform({
 			objectMode: true,
@@ -154,7 +154,7 @@ exports.handleCallback = (callback, value) => {
  * @param {(Object|Array)} result - An ESLint result or result list
  * @param {Function} done - An callback for when the action is complete
  */
-exports.tryResultAction = function(action, result, done) {
+exports.tryResultAction = function (action, result, done) {
 	try {
 		if (action.length > 1) {
 			// async action

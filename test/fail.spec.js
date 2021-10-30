@@ -18,7 +18,7 @@ describe('gulp-eslint-new failOnError', () =>  {
 		}
 
 		lintStream.pipe(eslint.failOnError())
-			.on('error', function(err)  {
+			.on('error', function (err)  {
 				this.removeListener('finish', endWithoutError);
 				assert(err);
 				assert.strictEqual(err.message, '\'x\' is not defined.');
@@ -79,7 +79,7 @@ describe('gulp-eslint-new failAfterError', () =>  {
 		}
 
 		lintStream.pipe(eslint.failAfterError())
-			.on('error', function(err)  {
+			.on('error', function (err)  {
 				this.removeListener('finish', endWithoutError);
 				assert(err);
 				assert.strictEqual(err.message, 'Failed with 1 error');
