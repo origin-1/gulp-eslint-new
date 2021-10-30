@@ -67,8 +67,8 @@ function inlineConfig() {
 function loadConfig() {
 	return src('../test/fixtures/**/*.js')
 		.pipe(eslint({
-			// Load a specific ESLint config
-			configFile: 'config.json'
+			// Load a specific ESLint config.
+			overrideConfigFile: 'config.json'
 		}))
 		.pipe(eslint.format());
 }

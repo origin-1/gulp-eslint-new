@@ -62,6 +62,8 @@ For additional examples, look through the [example directory](https://github.com
 
 ### `eslint(options)`
 
+Param type: `Object`
+
 [ESLint constructor options](https://eslint.org/docs/developer-guide/nodejs-api#parameters).
 Additionally, the following options are supported, mostly for backward compatibility with [gulp-eslint](https://github.com/adametry/gulp-eslint).
 
@@ -136,11 +138,9 @@ This option allows you to specify additional directories from which to load rule
 
 #### `options.configFile`
 
-Type: `string`
+Type: `string | null`
 
-Path to the ESLint rules configuration file. For more information, see the ESLint CLI [`--config` option](https://eslint.org/docs/user-guide/command-line-interface#-c---config) and [Using Configuration Files](https://eslint.org/docs/user-guide/configuring/configuration-files#using-configuration-files).
-
-_Prefer using `options.overrideConfig.configFile` instead._
+_A legacy synonym for `options.overrideConfigFile`._
 
 #### `options.warnFileIgnored` or `options.warnIgnored`
 
@@ -148,7 +148,7 @@ Type: `boolean`
 
 When `true`, add a result warning when ESLint ignores a file. This can be used to find files that are needlessly being loaded by `gulp.src`. For example, since ESLint automatically ignores "node_modules" file paths and gulp.src does not, a gulp task may take seconds longer just reading files from the "node_modules" directory.
 
-### `eslint(configFilePath)`
+### `eslint(overrideConfigFile)`
 
 Param type: `string`
 
