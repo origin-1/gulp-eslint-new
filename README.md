@@ -18,38 +18,38 @@ const eslint = require('gulp-eslint-new');
 
 // Define the default Gulp task.
 exports.default =
-	() => src(['scripts/*.js'])
-	// eslint() attaches the lint output to the "eslint" property of
-	// the file object so it can be used by other modules.
-	.pipe(eslint())
-	// eslint.format() outputs the lint results to the console.
-	// Alternatively use eslint.formatEach() (see Docs).
-	.pipe(eslint.format())
-	// To have the process exit with an error code (1) on lint error,
-	// return the stream and pipe to failAfterError last.
-	.pipe(eslint.failAfterError());
+    () => src(['scripts/*.js'])
+    // eslint() attaches the lint output to the "eslint" property of
+    // the file object so it can be used by other modules.
+    .pipe(eslint())
+    // eslint.format() outputs the lint results to the console.
+    // Alternatively use eslint.formatEach() (see Docs).
+    .pipe(eslint.format())
+    // To have the process exit with an error code (1) on lint error,
+    // return the stream and pipe to failAfterError last.
+    .pipe(eslint.failAfterError());
 ```
 
 Or use the plugin API to do things like:
 
 ```javascript
 gulp.src(['**/*.js', '!node_modules/**'])
-	.pipe(eslint({
-		overrideConfig: {
-			rules: {
-				'my-custom-rule': 1,
-				'strict': 2
-			},
-			globals: {
-				jQuery: 'readonly',
-				$: 'readonly'
-			},
-			env: {
-				'browser': true
-			}
-		}
-	}))
-	.pipe(eslint.formatEach('compact', process.stderr));
+    .pipe(eslint({
+        overrideConfig: {
+            rules: {
+                'my-custom-rule': 1,
+                'strict': 2
+            },
+            globals: {
+                jQuery: 'readonly',
+                $: 'readonly'
+            },
+            env: {
+                'browser': true
+            }
+        }
+    }))
+    .pipe(eslint.formatEach('compact', process.stderr));
 ```
 
 For additional examples, look through the [example directory](https://github.com/fasttime/gulp-eslint-new/tree/main/example).
@@ -65,7 +65,7 @@ For additional examples, look through the [example directory](https://github.com
 Param type: `Object`
 
 [ESLint constructor options](https://eslint.org/docs/developer-guide/nodejs-api#parameters).
-Additionally, the following options are supported, mostly for backward compatibility with [gulp-eslint](https://github.com/adametry/gulp-eslint).
+Additionally, the following options are supported, either to provide extra functionality to gulp-eslint-new, or for backward compatibility with [gulp-eslint](https://github.com/adametry/gulp-eslint).
 
 #### `options.rules`
 
@@ -75,11 +75,11 @@ Set [configuration](https://eslint.org/docs/user-guide/configuring/rules#configu
 
 ```javascript
 {
-	"rules":{
-		"camelcase": 1,
-		"comma-dangle": 2,
-		"quotes": 0
-	}
+    "rules": {
+        "camelcase": 1,
+        "comma-dangle": 2,
+        "quotes": 0
+    }
 }
 ```
 
@@ -93,10 +93,10 @@ Specify [global variables](https://eslint.org/docs/user-guide/configuring/langua
 
 ```javascript
 {
-	"globals":[
-		"jQuery",
-		"$"
-	]
+    "globals": [
+        "jQuery",
+        "$"
+    ]
 }
 ```
 
@@ -106,10 +106,10 @@ _Prefer using `options.overrideConfig.globals` instead. Note the different forma
 
 Type: `boolean | (message: LintMessage) => boolean`
 
-Setting this option to `true` instructs ESLint to try to fix as many issues as possible. The fixes are applied to the gulp stream. The fixed content can be saved to file using `gulp.dest` (See [example/fix.js](https://github.com/fasttime/gulp-eslint-new/blob/main/example/fix.js)). Rules that are fixable can be found in ESLint's [rules list](https://eslint.org/docs/rules/).
-
-If a predicate function is set, it will be invoked on each message, and only problems related to those messages for which the function returned a truthy value will be fixed.
-
+See the respective ESLint documentation for information about this option.
+The fixes are applied to the gulp stream.
+The fixed content can be saved to file using `gulp.dest` (See [example/fix.js](https://github.com/fasttime/gulp-eslint-new/blob/main/example/fix.js)).
+Rules that are fixable can be found in ESLint's [rules list](https://eslint.org/docs/rules/).
 When fixes are applied, a "fixed" property is set to `true` on the fixed file's ESLint result.
 
 #### `options.quiet`
@@ -129,12 +129,6 @@ Type: `string[]`
 Specify a list of [environments](https://eslint.org/docs/user-guide/configuring/language-options#specifying-environments) to be applied.
 
 _Prefer using `options.overrideConfig.env` instead. Note the different option name and format._
-
-#### `options.rulePaths`
-
-Type: `string[]`
-
-This option allows you to specify additional directories from which to load rules files. This is useful when you have custom rules that aren't suitable for being bundled with ESLint. This option works much like the ESLint CLI's [`--rulesdir` option](https://eslint.org/docs/user-guide/command-line-interface#--rulesdir).
 
 #### `options.configFile`
 
@@ -162,14 +156,14 @@ Call a function for each ESLint file result. No returned value is expected. If a
 
 ```javascript
 gulp.src(['**/*.js','!node_modules/**'])
-	.pipe(eslint())
-	.pipe(eslint.result(result => {
-	    // Called for each ESLint result.
-	    console.log(`ESLint result: ${result.filePath}`);
-	    console.log(`# Messages: ${result.messages.length}`);
-	    console.log(`# Warnings: ${result.warningCount}`);
-	    console.log(`# Errors: ${result.errorCount}`);
-	}));
+    .pipe(eslint())
+    .pipe(eslint.result(result => {
+        // Called for each ESLint result.
+        console.log(`ESLint result: ${result.filePath}`);
+        console.log(`# Messages: ${result.messages.length}`);
+        console.log(`# Warnings: ${result.warningCount}`);
+        console.log(`# Errors: ${result.errorCount}`);
+    }));
 ```
 
 Type: `(result, callback) => void`
@@ -187,13 +181,13 @@ The results list has a "warningCount" property that is the sum of warnings in al
 
 ```javascript
 gulp.src(['**/*.js','!node_modules/**'])
-	.pipe(eslint())
-	.pipe(eslint.results(results => {
-    	// Called once for all ESLint results.
-	    console.log(`Total Results: ${results.length}`);
-	    console.log(`Total Warnings: ${results.warningCount}`);
-	    console.log(`Total Errors: ${results.errorCount}`);
-	}));
+    .pipe(eslint())
+    .pipe(eslint.results(results => {
+        // Called once for all ESLint results.
+        console.log(`Total Results: ${results.length}`);
+        console.log(`Total Warnings: ${results.warningCount}`);
+        console.log(`Total Errors: ${results.errorCount}`);
+    }));
 ```
 
 Param type: `(results, callback) => void`
@@ -207,8 +201,8 @@ Stop a task/stream if an ESLint error has been reported for any file.
 ```javascript
 // Cause the stream to stop(/fail) before copying an invalid JS file to the output directory
 gulp.src(['**/*.js','!node_modules/**'])
-	.pipe(eslint())
-	.pipe(eslint.failOnError());
+    .pipe(eslint())
+    .pipe(eslint.failOnError());
 ```
 
 ### `eslint.failAfterError()`
@@ -218,8 +212,8 @@ Stop a task/stream if an ESLint error has been reported for any file, but wait f
 ```javascript
 // Cause the stream to stop(/fail) when the stream ends if any ESLint error(s) occurred.
 gulp.src(['**/*.js','!node_modules/**'])
-	.pipe(eslint())
-	.pipe(eslint.failAfterError());
+    .pipe(eslint())
+    .pipe(eslint.failAfterError());
 ```
 
 ### `eslint.format(formatter, output)`

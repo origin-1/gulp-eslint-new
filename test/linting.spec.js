@@ -11,6 +11,7 @@ const stringToStream = require('from2-string');
 require('mocha');
 
 describe('gulp-eslint-new plugin', () => {
+
 	beforeEach(() => {
 		process.chdir('test/fixtures');
 	});
@@ -38,15 +39,12 @@ describe('gulp-eslint-new plugin', () => {
 					file.eslint.filePath,
 					path.resolve('stage0-class-property.js')
 				);
-
 				assert(Array.isArray(file.eslint.messages));
 				assert.strictEqual(file.eslint.messages.length, 1);
-
 				assert('message' in file.eslint.messages[0]);
 				assert('line' in file.eslint.messages[0]);
 				assert('column' in file.eslint.messages[0]);
 				assert.strictEqual(file.eslint.messages[0].ruleId, 'prefer-template');
-
 				done();
 			})
 			.end(new File({
@@ -62,15 +60,12 @@ describe('gulp-eslint-new plugin', () => {
 				assert(file);
 				assert(file.contents);
 				assert(file.eslint);
-
 				assert(Array.isArray(file.eslint.messages));
 				assert.strictEqual(file.eslint.messages.length, 1);
-
 				assert('message' in file.eslint.messages[0]);
 				assert('line' in file.eslint.messages[0]);
 				assert('column' in file.eslint.messages[0]);
 				assert.strictEqual(file.eslint.messages[0].ruleId, 'eol-last');
-
 				done();
 			})
 			.end(new File({
@@ -90,15 +85,12 @@ describe('gulp-eslint-new plugin', () => {
 					file.eslint.filePath,
 					path.resolve('use-strict.js')
 				);
-
 				assert(Array.isArray(file.eslint.messages));
 				assert.strictEqual(file.eslint.messages.length, 1);
-
 				assert('message' in file.eslint.messages[0]);
 				assert('line' in file.eslint.messages[0]);
 				assert('column' in file.eslint.messages[0]);
 				assert.strictEqual(file.eslint.messages[0].ruleId, 'strict');
-
 				done();
 			})
 			.end(new File({
@@ -153,11 +145,33 @@ describe('gulp-eslint-new plugin', () => {
 						pluginName
 					}'`
 				);
-
 				done();
 			})
 			.end(new File({
 				path: 'file.js',
+				contents: Buffer.from('')
+			}));
+	});
+
+	it('"rulePaths" option', done => {
+		eslint({
+			useEslintrc: false,
+			rulePaths: ['../custom-rules'],
+			overrideConfig: { rules: { 'ok': 'error' } }
+		})
+			.on('error', done)
+			.on('data', (file) => {
+				assert(file);
+				assert(file.contents);
+				assert(file.eslint);
+				assert(Array.isArray(file.eslint.messages));
+				assert.strictEqual(file.eslint.messages.length, 0);
+				assert.strictEqual(file.eslint.errorCount, 0);
+				assert.strictEqual(file.eslint.warningCount, 0);
+				done();
+			})
+			.end(new File({
+				path: 'any.js',
 				contents: Buffer.from('')
 			}));
 	});
@@ -205,6 +219,7 @@ describe('gulp-eslint-new plugin', () => {
 					contents: Buffer.from('$()')
 				}));
 		});
+
 	});
 
 	describe('"warnFileIgnored" option', () => {
@@ -356,6 +371,7 @@ describe('gulp-eslint-new plugin', () => {
 					contents: Buffer.from('var x = 0; \nvar y = 1; ')
 				}));
 		});
+
 	});
 
 });
