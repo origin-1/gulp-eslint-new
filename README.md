@@ -142,6 +142,11 @@ Type: `boolean`
 
 When `true`, add a result warning when ESLint ignores a file. This can be used to find files that are needlessly being loaded by `gulp.src`. For example, since ESLint automatically ignores "node_modules" file paths and gulp.src does not, a gulp task may take seconds longer just reading files from the "node_modules" directory.
 
+#### `options.cache`, `options.cacheLocation` and `options.cacheStrategy`
+
+The cache-related options provided by ESLint are currently ignored.
+They have no effect even if specified.
+
 ### `eslint(overrideConfigFile)`
 
 Param type: `string`
@@ -199,7 +204,7 @@ Call an asynchronous function once for all ESLint file results before a stream f
 Stop a task/stream if an ESLint error has been reported for any file.
 
 ```javascript
-// Cause the stream to stop(/fail) before copying an invalid JS file to the output directory
+// Cause the stream to stop(/fail) before copying an invalid JS file to the output directory.
 gulp.src(['**/*.js','!node_modules/**'])
     .pipe(eslint())
     .pipe(eslint.failOnError());
