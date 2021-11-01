@@ -282,7 +282,7 @@ exports.filterResult = (result, filter) => {
  * @param {(String|Function)} [formatter=stylish] - A name to resolve as a formatter. If a function is provided, the same function is returned.
  * @returns {Function} An ESLint formatter
  */
-exports.resolveFormatter = (formatter) => {
+exports.resolveFormatter = formatter => {
 	// use ESLint to look up formatter references
 	if (typeof formatter !== 'function') {
 		// load formatter (module, relative to cwd, ESLint formatter)
@@ -298,7 +298,7 @@ exports.resolveFormatter = (formatter) => {
  * @param {(Function|stream)} [writable=fancyLog] - A stream or function to resolve as a format writer
  * @returns {Function} A function that writes formatted messages
  */
-exports.resolveWritable = (writable) => {
+exports.resolveWritable = writable => {
 	if (!writable) {
 		writable = fancyLog;
 	} else if (typeof writable.write === 'function') {

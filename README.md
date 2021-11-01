@@ -64,8 +64,26 @@ For additional examples, look through the [example directory](https://github.com
 
 Param type: `Object`
 
-[ESLint constructor options](https://eslint.org/docs/developer-guide/nodejs-api#parameters).
+Supported options include all [liniting options](https://eslint.org/docs/developer-guide/nodejs-api#linting) and [autofix options](https://eslint.org/docs/developer-guide/nodejs-api#autofix) of the `ESLint` constructor.
 Additionally, the following options are supported, either to provide extra functionality to gulp-eslint-new, or for backward compatibility with [gulp-eslint](https://github.com/adametry/gulp-eslint).
+
+#### `options.cwd`
+
+Type: `string`
+
+The working directory. This must be an absolute path. Default is `process.cwd()`.
+
+#### `options.ignore`
+
+Type: `boolean`
+
+When `false`, .eslintignore files or ignorePatterns in your configurations will not be respected.
+
+#### `options.ignorePath`
+
+Type: `string | null`
+
+The path to a file ESLint uses instead of `$CWD/.eslintignore`.
 
 #### `options.rules`
 
@@ -141,11 +159,6 @@ _A legacy synonym for `options.overrideConfigFile`._
 Type: `boolean`
 
 When `true`, add a result warning when ESLint ignores a file. This can be used to find files that are needlessly being loaded by `gulp.src`. For example, since ESLint automatically ignores "node_modules" file paths and gulp.src does not, a gulp task may take seconds longer just reading files from the "node_modules" directory.
-
-#### `options.cache`, `options.cacheLocation` and `options.cacheStrategy`
-
-The cache-related options provided by ESLint are currently ignored.
-They have no effect even if specified.
 
 ### `eslint(overrideConfigFile)`
 

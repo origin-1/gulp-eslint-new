@@ -53,27 +53,6 @@ describe('gulp-eslint-new plugin', () => {
 			}));
 	});
 
-	it('should support sharable config', done => {
-		eslint(path.resolve(__dirname, 'eslintrc-sharable-config.js'))
-			.on('error', done)
-			.on('data', file => {
-				assert(file);
-				assert(file.contents);
-				assert(file.eslint);
-				assert(Array.isArray(file.eslint.messages));
-				assert.strictEqual(file.eslint.messages.length, 1);
-				assert('message' in file.eslint.messages[0]);
-				assert('line' in file.eslint.messages[0]);
-				assert('column' in file.eslint.messages[0]);
-				assert.strictEqual(file.eslint.messages[0].ruleId, 'eol-last');
-				done();
-			})
-			.end(new File({
-				path: 'no-newline.js',
-				contents: Buffer.from('console.log(\'Hi\');')
-			}));
-	});
-
 	it('should produce expected message via buffer', done => {
 		eslint({ useEslintrc: false, rules: { strict: [2, 'global'] } })
 			.on('error', done)
@@ -160,7 +139,7 @@ describe('gulp-eslint-new plugin', () => {
 			overrideConfig: { rules: { 'ok': 'error' } }
 		})
 			.on('error', done)
-			.on('data', (file) => {
+			.on('data', file => {
 				assert(file);
 				assert(file.contents);
 				assert(file.eslint);
@@ -184,7 +163,7 @@ describe('gulp-eslint-new plugin', () => {
 			cacheStrategy: 'metadata'
 		})
 			.on('error', done)
-			.on('data', (file) => {
+			.on('data', file => {
 				assert(file);
 				assert(file.contents);
 				assert(file.eslint);
@@ -200,12 +179,60 @@ describe('gulp-eslint-new plugin', () => {
 			}));
 	});
 
+	describe('should support a sharable config', () => {
+
+		function test(options, filePath, done) {
+			eslint(options)
+				.on('error', done)
+				.on('data', file => {
+					assert(file);
+					assert(file.contents);
+					assert(file.eslint);
+					assert(Array.isArray(file.eslint.messages));
+					assert.strictEqual(file.eslint.messages.length, 1);
+					assert('message' in file.eslint.messages[0]);
+					assert('line' in file.eslint.messages[0]);
+					assert('column' in file.eslint.messages[0]);
+					assert.strictEqual(file.eslint.messages[0].ruleId, 'eol-last');
+					done();
+				})
+				.end(new File({
+					path: filePath,
+					contents: Buffer.from('console.log(\'Hi\');')
+				}));
+		}
+
+		it('with an absolute path', done => {
+			test(
+				{
+					overrideConfigFile: path.resolve(__dirname, 'eslintrc-sharable-config.js'),
+					useEslintrc: false
+				},
+				'no-newline.js',
+				done
+			);
+		});
+
+		it('with a relative path', done => {
+			test(
+				{
+					cwd: path.resolve(__dirname),
+					overrideConfigFile: 'eslintrc-sharable-config.js',
+					useEslintrc: false
+				},
+				'no-newline.js',
+				done
+			);
+		});
+
+	});
+
 	describe('"useEslintrc" option', () => {
 
 		it('when true, should consider a configuration file', done => {
 			eslint({ useEslintrc: true })
 				.on('error', done)
-				.on('data', (file) => {
+				.on('data', file => {
 					assert(file);
 					assert(file.eslint);
 					assert(Array.isArray(file.eslint.messages));
@@ -228,7 +255,7 @@ describe('gulp-eslint-new plugin', () => {
 		it('when false, should ignore a configuration file', done => {
 			eslint({ useEslintrc: false })
 				.on('error', done)
-				.on('data', (file) => {
+				.on('data', file => {
 					assert(file);
 					assert(file.eslint);
 					assert(Array.isArray(file.eslint.messages));
@@ -356,7 +383,7 @@ describe('gulp-eslint-new plugin', () => {
 		it('when true, should update buffered contents', done => {
 			eslint({ fix: true, useEslintrc: false, rules: { 'no-trailing-spaces': 2 } })
 				.on('error', done)
-				.on('data', (file) => {
+				.on('data', file => {
 					assert(file);
 					assert(file.eslint);
 					assert(Array.isArray(file.eslint.messages));
@@ -379,7 +406,7 @@ describe('gulp-eslint-new plugin', () => {
 			}
 			eslint({ fix, useEslintrc: false, rules: { 'no-trailing-spaces': 2 } })
 				.on('error', done)
-				.on('data', (file) => {
+				.on('data', file => {
 					assert(file);
 					assert(file.eslint);
 					assert(Array.isArray(file.eslint.messages));

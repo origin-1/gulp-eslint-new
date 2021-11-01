@@ -59,7 +59,7 @@ describe('gulp-eslint-new failOnError', () =>  {
 		file.eslint = {};
 
 		eslint.failOnError()
-			.on('error', (err) =>  {
+			.on('error', err =>  {
 				this.removeListener('finish', done);
 				done(err);
 			})
@@ -98,7 +98,7 @@ describe('gulp-eslint-new failAfterError', () =>  {
 	it('should fail when the file stream ends if multiple errors are found', done =>  {
 		const lintStream = eslint({ useEslintrc: false, rules: { 'no-undef': 2 } });
 
-		lintStream.pipe(eslint.failAfterError().on('error', (err) =>  {
+		lintStream.pipe(eslint.failAfterError().on('error', err =>  {
 			assert(err);
 			assert.strictEqual(err.message, 'Failed with 2 errors');
 			assert.strictEqual(err.name, 'ESLintError');
