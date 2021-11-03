@@ -264,7 +264,8 @@ describe('gulp-eslint-new plugin', () => {
 					assert.strictEqual(file.eslint.messages.length, 1);
 					assert.strictEqual(
 						file.eslint.messages[0].message,
-						'File ignored because of .eslintignore file'
+						'File ignored because of a matching ignore pattern. Set "ignore" option '
+						+ 'to false to override.'
 					);
 					assert.strictEqual(file.eslint.errorCount, 0);
 					assert.strictEqual(file.eslint.warningCount, 1);
@@ -283,7 +284,8 @@ describe('gulp-eslint-new plugin', () => {
 					assert.strictEqual(file.eslint.messages.length, 1);
 					assert.strictEqual(
 						file.eslint.messages[0].message,
-						'File ignored because it has a node_modules/** path'
+						'File ignored by default. Use a negated ignore pattern like '
+						+ '"!node_modules/*" to override.'
 					);
 					assert.strictEqual(file.eslint.errorCount, 0);
 					assert.strictEqual(file.eslint.warningCount, 1);

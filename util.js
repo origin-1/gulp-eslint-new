@@ -2,6 +2,7 @@
 
 const getFormatter  = require('./legacy-get-formatter');
 const fancyLog      = require('fancy-log');
+const { relative }  = require('path');
 const PluginError   = require('plugin-error');
 const { Transform } = require('stream');
 
@@ -27,25 +28,41 @@ exports.transform = function (transform, flush) {
 	});
 };
 
+const isHiddenRegExp = /(?<![^/\\])\.(?!\.)/u;
+const isInNodeModulesRegExp = /(?<![^/\\])node_modules[/\\]/u;
 /**
- * Mimic the CLIEngine's createIgnoreResult function,
- * only without the ESLint CLI reference.
- *
- * @param {Object} file - file with a "path" property
- * @returns {Object} An ESLint report with an ignore warning
+ * This is a remake of the CLI object createIgnoreResult function with no reference to ESLint
+ * CLI options and with a better detection of the ignore reason in some edge cases.
+ * @param {string} filePath Absolute path of checked code file
+ * @param {string} baseDir Absolute path of base directory
+ * @returns {LintResult} Result with warning by ignore settings
+ * @private
  */
-exports.createIgnoreResult = file => {
+exports.createIgnoreResult = (filePath, baseDir) => {
+	let message;
+	const relativePath = relative(baseDir, filePath);
+
+	if (isHiddenRegExp.test(relativePath)) {
+		message
+			= 'File ignored by default. Use a negated ignore pattern (like '
+			+ '"!<relative/path/to/filename>") to override.';
+	} else if (isInNodeModulesRegExp.test(relativePath)) {
+		message
+			= 'File ignored by default. Use a negated ignore pattern like "!node_modules/*" to '
+			+ 'override.';
+	} else {
+		message
+			= 'File ignored because of a matching ignore pattern. Set "ignore" option to false '
+			+ 'to override.';
+	}
+
 	return {
-		filePath: file.path,
-		messages: [{
-			fatal: false,
-			severity: 1,
-			message: file.path.includes('node_modules/') ?
-				'File ignored because it has a node_modules/** path' :
-				'File ignored because of .eslintignore file'
-		}],
+		filePath,
+		messages: [{ fatal: false, severity: 1, message }],
 		errorCount: 0,
-		warningCount: 1
+		warningCount: 1,
+		fixableErrorCount: 0,
+		fixableWarningCount: 0
 	};
 };
 

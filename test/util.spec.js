@@ -5,7 +5,7 @@
 const util                = require('../util');
 const { createVinylFile } = require('./test-util');
 const assert              = require('assert');
-const path                = require('path');
+const { resolve }         = require('path');
 const stream              = require('stream');
 
 require('mocha');
@@ -67,35 +67,51 @@ describe('utility methods', () => {
 	describe('createIgnoreResult', () => {
 
 		it('should create a warning that the file is ignored by ".eslintignore"', () => {
-			const file = createVinylFile('ignored.js', '');
-			const result = util.createIgnoreResult(file);
+			const filePath = resolve('ignored.js');
+			const result = util.createIgnoreResult(filePath, process.cwd());
 			assert(result);
-			assert.strictEqual(result.filePath, file.path);
+			assert.strictEqual(result.filePath, filePath);
 			assert.strictEqual(result.errorCount, 0);
 			assert.strictEqual(result.warningCount, 1);
 			assert(Array.isArray(result.messages));
 			assert.strictEqual(result.messages.length, 1);
 			assert.strictEqual(
 				result.messages[0].message,
-				'File ignored because of .eslintignore file'
+				'File ignored because of a matching ignore pattern. Set "ignore" option to false '
+				+ 'to override.'
 			);
+		});
 
+		it('should create a warning for hidden files', () => {
+			const filePath = resolve('.hidden.js');
+			const result = util.createIgnoreResult(filePath, process.cwd());
+			assert(result);
+			assert.strictEqual(result.filePath, filePath);
+			assert.strictEqual(result.errorCount, 0);
+			assert.strictEqual(result.warningCount, 1);
+			assert(Array.isArray(result.messages));
+			assert.strictEqual(result.messages.length, 1);
+			assert.strictEqual(
+				result.messages[0].message,
+				'File ignored by default. Use a negated ignore pattern (like '
+				+ '"!<relative/path/to/filename>") to override.'
+			);
 		});
 
 		it('should create a warning for paths that include "node_modules"', () => {
-			const file = createVinylFile('node_modules/test/index.js', '');
-			const result = util.createIgnoreResult(file);
+			const filePath = resolve('node_modules/test/index.js');
+			const result = util.createIgnoreResult(filePath, process.cwd());
 			assert(result);
-			assert.strictEqual(result.filePath, file.path);
+			assert.strictEqual(result.filePath, filePath);
 			assert.strictEqual(result.errorCount, 0);
 			assert.strictEqual(result.warningCount, 1);
 			assert(Array.isArray(result.messages));
 			assert.strictEqual(result.messages.length, 1);
 			assert.strictEqual(
 				result.messages[0].message,
-				'File ignored because it has a node_modules/** path'
+				'File ignored by default. Use a negated ignore pattern like "!node_modules/*" to '
+				+ 'override.'
 			);
-
 		});
 
 	});
@@ -251,7 +267,7 @@ describe('utility methods', () => {
 
 			const formatter = util.resolveFormatter();
 			const formatterPath
-			= path.resolve(require.resolve('eslint'), '../cli-engine/formatters/stylish');
+			= resolve(require.resolve('eslint'), '../cli-engine/formatters/stylish');
 			assert.strictEqual(formatter, require(formatterPath));
 
 		});
@@ -260,7 +276,7 @@ describe('utility methods', () => {
 
 			const formatter = util.resolveFormatter('tap');
 			const formatterPath
-			= path.resolve(require.resolve('eslint'), '../cli-engine/formatters/tap');
+			= resolve(require.resolve('eslint'), '../cli-engine/formatters/tap');
 			assert.strictEqual(formatter, require(formatterPath));
 
 		});
@@ -268,7 +284,7 @@ describe('utility methods', () => {
 		it('should resolve a custom formatter', () => {
 
 			const formatter = util.resolveFormatter('test/custom-formatter');
-			const formatterPath = path.resolve('./test/custom-formatter');
+			const formatterPath = resolve('./test/custom-formatter');
 			assert.strictEqual(formatter, require(formatterPath));
 
 		});

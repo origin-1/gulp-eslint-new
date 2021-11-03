@@ -13,11 +13,10 @@ const {
 	tryResultAction,
 	writeResults
 } = require('./util');
-const { ESLint }   = require('eslint');
-const { relative } = require('path');
-const PluginError  = require('plugin-error');
+const { ESLint }  = require('eslint');
+const PluginError = require('plugin-error');
 
-async function lintFile(linter, file, quiet, warnIgnored) {
+async function lintFile(linter, file, cwd, quiet, warnIgnored) {
 	if (file.isNull()) {
 		return;
 	}
@@ -26,17 +25,17 @@ async function lintFile(linter, file, quiet, warnIgnored) {
 		throw 'gulp-eslint-new doesn\'t support vinyl files with Stream contents.';
 	}
 
-	const filePath = relative(process.cwd(), file.path);
+	// The "path" property of a Vinyl file should be always an absolute path.
+	// See https://gulpjs.com/docs/en/api/vinyl/#instance-properties.
+	const filePath = file.path;
 	if (await linter.isPathIgnored(filePath)) {
-		// Note:
-		// Vinyl files can have an independently defined cwd, but ESLint works relative to `process.cwd()`.
-		// Also, ESLint doesn't adjust file paths relative to an ancestory .eslintignore path.
+		// Note: ESLint doesn't adjust file paths relative to an ancestory .eslintignore path.
 		// E.g., If ../.eslintignore has "foo/*.js", ESLint will ignore ./foo/*.js, instead of ../foo/*.js.
 		// Eslint rolls this into `ESLint.lintText`. So, gulp-eslint-new must account for this limitation.
 
 		if (warnIgnored) {
 			// Warn that gulp.src is needlessly reading files that ESLint ignores
-			file.eslint = createIgnoreResult(file);
+			file.eslint = createIgnoreResult(filePath, cwd);
 		}
 		return;
 	}
@@ -68,9 +67,10 @@ async function lintFile(linter, file, quiet, warnIgnored) {
 function gulpEslint(options) {
 	const { eslintOptions, quiet, warnIgnored } = migrateOptions(options);
 	const linter = new ESLint(eslintOptions);
+	const cwd = eslintOptions.cwd || process.cwd();
 
 	return transform((file, enc, cb) => {
-		lintFile(linter, file, quiet, warnIgnored)
+		lintFile(linter, file, cwd, quiet, warnIgnored)
 			.then(() => cb(null, file))
 			.catch(error => cb(new PluginError('gulp-eslint-new', error)));
 	});
