@@ -205,22 +205,37 @@ describe('utility methods', () => {
 				extensions:              [],
 				globInputPaths:          false
 			};
-			assert
-				.throws(() => util.migrateOptions(options), Object.keys(options).join(', '));
+			assert.throws(
+				() => util.migrateOptions(options),
+				({ code, message }) =>
+					code === 'ESLINT_INVALID_OPTIONS'
+					&& message.includes(Object.keys(options).join(', '))
+			);
 		});
 
 		it('should fail if "overrideConfig" is not an object or null', () => {
 			assert.throws(
-				() => util.migrateOptions({ overrideConfig: 'foo' }), /\boverrideConfig\b/
+				() => util.migrateOptions({ overrideConfig: 'foo' }),
+				({ code, message }) =>
+					code === 'ESLINT_INVALID_OPTIONS' && /\boverrideConfig\b/.test(message)
 			);
 		});
 
 		it('should fail if "envs" is not an array or falsy', () => {
-			assert.throws(() => util.migrateOptions({ envs: 'foo' }), /\benvs\b/);
+			assert.throws(
+				() => util.migrateOptions({ envs: 'foo' }),
+				({ code, message }) =>
+					code === 'ESLINT_INVALID_OPTIONS' && /\benvs\b/.test(message)
+			);
 		});
 
 		it('should fail if "globals" is not an array or falsy', () => {
-			assert.throws(() => util.migrateOptions({ globals: { } }), /\bglobals\b/);
+			assert.throws(
+				() => util.migrateOptions({ globals: { } }),
+				({ code, message }) =>
+					code === 'ESLINT_INVALID_OPTIONS' && /\bglobals\b/.test(message)
+
+			);
 		});
 
 		it('should not modify an existing overrideConfig', () => {

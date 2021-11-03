@@ -71,6 +71,18 @@ const hasOwn = Function.prototype.call.bind(Object.prototype.hasOwnProperty);
 exports.hasOwn = hasOwn;
 
 /**
+ * Throws an error about invalid options passed to gulp-eslint-new.
+ * @param {string} message The error message.
+ * @throws An error with code "ESLINT_INVALID_OPTIONS" and the specified message.
+ */
+function throwInvalidOptionError(message) {
+	const error = Error(message);
+	Error.captureStackTrace(error, throwInvalidOptionError);
+	error.code = 'ESLINT_INVALID_OPTIONS';
+	throw error;
+}
+
+/**
  * Convert a string array to a boolean map.
  * @param {string[]|null} keys The keys to assign true.
  * @param {boolean} defaultValue The default value for each property.
@@ -79,7 +91,7 @@ exports.hasOwn = hasOwn;
  */
 function toBooleanMap(keys, defaultValue, displayName) {
 	if (keys && !Array.isArray(keys)) {
-		throw Error(`${displayName} must be an array.`);
+		throwInvalidOptionError(`Option ${displayName} must be an array`);
 	}
 	if (keys && keys.length > 0) {
 		return keys.reduce((map, def) => {
@@ -126,11 +138,11 @@ exports.migrateOptions = function migrateOptions(options = { }) {
 	{
 		const invalidOptions = forbiddenOptions.filter(option => hasOwn(options, option));
 		if (invalidOptions.length) {
-			throw Error(`Invalid options: ${invalidOptions.join(', ')}`);
+			throwInvalidOptionError(`Invalid options: ${invalidOptions.join(', ')}`);
 		}
 	}
 	if (originalOverrideConfig != null && typeof originalOverrideConfig !== 'object') {
-		throw Error('\'overrideConfig\' must be an object or null.');
+		throwInvalidOptionError('Option overrideConfig must be an object or null');
 	}
 	const overrideConfig = eslintOptions.overrideConfig
 	= originalOverrideConfig != null ? { ...originalOverrideConfig } : { };

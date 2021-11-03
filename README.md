@@ -4,9 +4,9 @@
 
 ## Installation
 
-[Use](https://docs.npmjs.com/cli/install) [npm](https://docs.npmjs.com/about-npm).
+[Use](https://docs.npmjs.com/cli/install) [npm](https://docs.npmjs.com/about-npm):
 
-```
+```console
 npm install gulp-eslint-new
 ```
 
@@ -16,7 +16,7 @@ npm install gulp-eslint-new
 const { src } = require('gulp');
 const eslint = require('gulp-eslint-new');
 
-// Define the default Gulp task.
+// Define the default gulp task.
 exports.default =
     () => src(['scripts/*.js'])
     // eslint() attaches the lint output to the "eslint" property of
@@ -174,7 +174,7 @@ Shorthand for defining `options.overrideConfigFile`.
 
 Param type: `(result) => void`
 
-Call a function for each ESLint file result. No returned value is expected. If an error is thrown, it will be wrapped in a Gulp PluginError and emitted from the stream.
+Call a function for each ESLint file result. No returned value is expected. If an error is thrown, it will be wrapped in a gulp PluginError and emitted from the stream.
 
 ```javascript
 gulp.src(['**/*.js','!node_modules/**'])
@@ -190,15 +190,15 @@ gulp.src(['**/*.js','!node_modules/**'])
 
 Type: `(result, callback) => void`
 
-Call an asynchronous function for each ESLint file result. The callback must be called for the stream to finish. If a value is passed to the callback, it will be wrapped in a Gulp PluginError and emitted from the stream.
+Call an asynchronous function for each ESLint file result. The callback must be called for the stream to finish. If a value is passed to the callback, it will be wrapped in a gulp PluginError and emitted from the stream.
 
 ### `eslint.results(action)`
 
 Param type: `(results) => void`
 
-Call a function once for all ESLint file results before a stream finishes. No returned value is expected. If an error is thrown, it will be wrapped in a Gulp PluginError and emitted from the stream.
+Call a function once for all ESLint file results before a stream finishes. No returned value is expected. If an error is thrown, it will be wrapped in a gulp PluginError and emitted from the stream.
 
-The results list has a `warningCount` property that is the sum of warnings in all results; likewise, an "errorCount" property is set to the sum of errors in all results.
+The results list has a `warningCount` property that is the sum of warnings in all results; likewise, an `errorCount` property is set to the sum of errors in all results.
 
 ```javascript
 gulp.src(['**/*.js','!node_modules/**'])
@@ -213,7 +213,7 @@ gulp.src(['**/*.js','!node_modules/**'])
 
 Param type: `(results, callback) => void`
 
-Call an asynchronous function once for all ESLint file results before a stream finishes. The callback must be called for the stream to finish. If a value is passed to the callback, it will be wrapped in a Gulp PluginError and emitted from the stream.
+Call an asynchronous function once for all ESLint file results before a stream finishes. The callback must be called for the stream to finish. If a value is passed to the callback, it will be wrapped in a gulp PluginError and emitted from the stream.
 
 ### `eslint.failOnError()`
 
@@ -255,7 +255,7 @@ eslint.format('checkstyle')
 eslint.format('node_modules/eslint-path-formatter')
 ```
 
-The `output` argument may be a `WritableStream`, `Function`, or `undefined`. As a `WritableStream`, the formatter results will be written to the stream. If `undefined`, the formatter results will be written to [Gulp's log](https://github.com/gulpjs/fancy-log#logmsg). A `Function` will be called with the formatter results as the only parameter.
+The `output` argument may be a `WritableStream`, `Function`, or `undefined`. As a `WritableStream`, the formatter results will be written to the stream. If `undefined`, the formatter results will be written to [gulp's log](https://github.com/gulpjs/fancy-log#logmsg). A `Function` will be called with the formatter results as the only parameter.
 
 ```javascript
 // write to gulp's log (default)
@@ -277,9 +277,9 @@ ESLint may be configured explicity by using any of the supported [configuration 
 
 ## Custom Extensions
 
-ESLint results are attached as an `eslint` property to the Vinyl files that pass through a Gulp.js stream pipeline. This is available to streams that follow the initial gulp-eslint-new stream. The [`eslint.result`](#eslintresultaction) and [`eslint.results`](#eslintresultsaction) methods are made available to support extensions and custom handling of ESLint results.
+ESLint results are attached as an `eslint` property to the Vinyl files that pass through a gulp stream pipeline. This is available to streams that follow the initial gulp-eslint-new stream. The [`eslint.result`](#eslintresultaction) and [`eslint.results`](#eslintresultsaction) methods are made available to support extensions and custom handling of ESLint results.
 
-#### Extension Packages:
+### Extension Packages
 
 * [gulp-eslint-if-fixed](https://github.com/lukeapage/gulp-eslint-if-fixed)
 * [gulp-eslint-threshold](https://github.com/krmbkt/gulp-eslint-threshold)
