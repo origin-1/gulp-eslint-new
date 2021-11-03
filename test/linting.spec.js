@@ -146,27 +146,6 @@ describe('gulp-eslint-new plugin', () => {
 			.end(createVinylFile('any.js', ''));
 	});
 
-	it('Cache-related options should be ignored', done => {
-		eslint({
-			useEslintrc: false,
-			cache: true,
-			cacheLocation: '\0',
-			cacheStrategy: 'metadata'
-		})
-			.on('error', done)
-			.on('data', file => {
-				assert(file);
-				assert(file.contents);
-				assert(file.eslint);
-				assert(Array.isArray(file.eslint.messages));
-				assert.strictEqual(file.eslint.messages.length, 0);
-				assert.strictEqual(file.eslint.errorCount, 0);
-				assert.strictEqual(file.eslint.warningCount, 0);
-				done();
-			})
-			.end(createVinylFile('any.js', ''));
-	});
-
 	describe('should support a sharable config', () => {
 
 		function test(options, filePath, done) {

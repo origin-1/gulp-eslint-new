@@ -90,6 +90,16 @@ function toBooleanMap(keys, defaultValue, displayName) {
 	}
 }
 
+const forbiddenOptions = [
+	'cache',
+	'cacheFile',
+	'cacheLocation',
+	'cacheStrategy',
+	'errorOnUnmatchedPattern',
+	'extensions',
+	'globInputPaths'
+];
+const propertyIsEnumerable = Function.prototype.call.bind(Object.prototype.propertyIsEnumerable);
 /**
  * Create config helper to merge various config sources
  *
@@ -98,9 +108,16 @@ function toBooleanMap(keys, defaultValue, displayName) {
  */
 exports.migrateOptions = function migrateOptions(options = { }) {
 	if (typeof options === 'string') {
-		// basic config path overload: gulpEslint('path/to/config.json')
+		// Basic config path overload: `eslint('path/to/config.json')`.
 		const returnValue = { eslintOptions: { overrideConfigFile: options } };
 		return returnValue;
+	}
+	{
+		const invalidOptions
+			= forbiddenOptions.filter(option => propertyIsEnumerable(options, option));
+		if (invalidOptions.length) {
+			throw Error(`Invalid options: ${invalidOptions.join(', ')}`);
+		}
 	}
 	const {
 		overrideConfig: originalOverrideConfig,

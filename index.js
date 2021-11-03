@@ -16,6 +16,7 @@ const {
 const { ESLint }  = require('eslint');
 const PluginError = require('plugin-error');
 
+const hasOwnProperty = Function.prototype.call.bind(Object.prototype.hasOwnProperty);
 async function lintFile(linter, file, cwd, quiet, warnIgnored) {
 	if (file.isNull()) {
 		return;
@@ -31,7 +32,7 @@ async function lintFile(linter, file, cwd, quiet, warnIgnored) {
 	if (await linter.isPathIgnored(filePath)) {
 		// Note: ESLint doesn't adjust file paths relative to an ancestory .eslintignore path.
 		// E.g., If ../.eslintignore has "foo/*.js", ESLint will ignore ./foo/*.js, instead of ../foo/*.js.
-		// Eslint rolls this into `ESLint.lintText`. So, gulp-eslint-new must account for this limitation.
+		// ESLint rolls this into `ESLint.prototype.lintText`. So, gulp-eslint-new must account for this limitation.
 
 		if (warnIgnored) {
 			// Warn that gulp.src is needlessly reading files that ESLint ignores
@@ -52,7 +53,7 @@ async function lintFile(linter, file, cwd, quiet, warnIgnored) {
 	}
 
 	// Update the fixed output; otherwise, fixable messages are simply ignored.
-	if (Object.prototype.hasOwnProperty.call(file.eslint, 'output')) {
+	if (hasOwnProperty(file.eslint, 'output')) {
 		file.contents = Buffer.from(file.eslint.output);
 		file.eslint.fixed = true;
 	}

@@ -165,6 +165,20 @@ describe('utility methods', () => {
 			);
 		});
 
+		it('should fail if a forbidden option is specified', () => {
+			const options = {
+				cache:                   true,
+				cacheFile:               '\0',
+				cacheLocation:           '\0',
+				cacheStrategy:           'metadata',
+				errorOnUnmatchedPattern: true,
+				extensions:              [],
+				globInputPaths:          false
+			};
+			assert
+				.throws(() => util.migrateOptions(options), Object.keys(options).join(', '));
+		});
+
 		it('should fail if "overrideConfig" is not an object or null', () => {
 			assert.throws(
 				() => util.migrateOptions({ overrideConfig: 'foo' }), /\boverrideConfig\b/
