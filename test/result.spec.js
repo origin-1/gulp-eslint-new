@@ -2,10 +2,10 @@
 
 'use strict';
 
-const assert = require('assert');
-const File = require('vinyl');
-const PassThrough = require('stream').PassThrough;
-const eslint = require('..');
+const eslint              = require('..');
+const { createVinylFile } = require('./test-util');
+const assert              = require('assert');
+const { PassThrough }     = require('stream');
 
 require('mocha');
 
@@ -34,29 +34,17 @@ describe('gulp-eslint-new result', () => {
 				done();
 			});
 
-		lintStream.write(new File({
-			path: 'invalid-1.js',
-			contents: Buffer.from('x = 1;')
-		}));
+		lintStream.write(createVinylFile('invalid-1.js', 'x = 1;'));
 
-		lintStream.write(new File({
-			path: 'invalid-2.js',
-			contents: Buffer.from('x = 2;')
-		}));
+		lintStream.write(createVinylFile('invalid-2.js', 'x = 2;'));
 
-		lintStream.write(new File({
-			path: 'invalid-3.js',
-			contents: Buffer.from('x = 3;')
-		}));
+		lintStream.write(createVinylFile('invalid-3.js', 'x = 3;'));
 
 		lintStream.end();
 	});
 
 	it('should catch thrown errors', done => {
-		const file = new File({
-			path: 'invalid.js',
-			contents: Buffer.from('#invalid!syntax}')
-		});
+		const file = createVinylFile('invalid.js', '#invalid!syntax}');
 		file.eslint = {};
 
 		function finished() {
@@ -79,10 +67,7 @@ describe('gulp-eslint-new result', () => {
 	});
 
 	it('should catch thrown null', done => {
-		const file = new File({
-			path: 'invalid.js',
-			contents: Buffer.from('#invalid!syntax}')
-		});
+		const file = createVinylFile('invalid.js', '#invalid!syntax}');
 		file.eslint = {};
 
 		function finished() {
@@ -121,10 +106,7 @@ describe('gulp-eslint-new result', () => {
 
 	it('should ignore files without an ESLint result', done => {
 
-		const file = new File({
-			path: 'invalid.js',
-			contents: Buffer.from('#invalid!syntax}')
-		});
+		const file = createVinylFile('invalid.js', '#invalid!syntax}');
 
 		eslint.result(() => {
 			throw new Error('Expected no call');
@@ -139,10 +121,7 @@ describe('gulp-eslint-new result', () => {
 
 	it('should support an async result handler', done => {
 		let asyncComplete = false;
-		const file = new File({
-			path: 'invalid.js',
-			contents: Buffer.from('#invalid!syntax}')
-		});
+		const file = createVinylFile('invalid.js', '#invalid!syntax}');
 		const resultStub = {};
 		file.eslint = resultStub;
 
@@ -202,29 +181,17 @@ describe('gulp-eslint-new results', () => {
 				done();
 			});
 
-		lintStream.write(new File({
-			path: 'invalid-1.js',
-			contents: Buffer.from('x = 1;')
-		}));
+		lintStream.write(createVinylFile('invalid-1.js', 'x = 1;'));
 
-		lintStream.write(new File({
-			path: 'invalid-2.js',
-			contents: Buffer.from('x = 2;')
-		}));
+		lintStream.write(createVinylFile('invalid-2.js', 'x = 2;'));
 
-		lintStream.write(new File({
-			path: 'invalid-3.js',
-			contents: Buffer.from('x = 3;')
-		}));
+		lintStream.write(createVinylFile('invalid-3.js', 'x = 3;'));
 
 		lintStream.end();
 	});
 
 	it('should catch thrown errors', done => {
-		const file = new File({
-			path: 'invalid.js',
-			contents: Buffer.from('#invalid!syntax}')
-		});
+		const file = createVinylFile('invalid.js', '#invalid!syntax}');
 		file.eslint = {};
 
 		function finished() {
@@ -263,10 +230,7 @@ describe('gulp-eslint-new results', () => {
 
 	it('should ignore files without an ESLint result', done => {
 		let resultsCalled = false;
-		const file = new File({
-			path: 'invalid.js',
-			contents: Buffer.from('#invalid!syntax}')
-		});
+		const file = createVinylFile('invalid.js', '#invalid!syntax}');
 
 		function finished() {
 			assert.strictEqual(resultsCalled, true);
@@ -288,10 +252,7 @@ describe('gulp-eslint-new results', () => {
 
 	it('should support an async results handler', done => {
 		let asyncComplete = false;
-		const file = new File({
-			path: 'invalid.js',
-			contents: Buffer.from('#invalid!syntax}')
-		});
+		const file = createVinylFile('invalid.js', '#invalid!syntax}');
 		const resultStub = {};
 		file.eslint = resultStub;
 

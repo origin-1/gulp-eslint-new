@@ -2,10 +2,10 @@
 
 'use strict';
 
-const assert = require('assert');
-const File = require('vinyl');
-const path = require('path');
-const eslint = require('..');
+const eslint              = require('..');
+const { createVinylFile } = require('./test-util');
+const assert              = require('assert');
+const path                = require('path');
 
 require('mocha');
 
@@ -28,10 +28,7 @@ describe('gulp-eslint-new failOnError', () =>  {
 			})
 			.on('finish', endWithoutError);
 
-		lintStream.write(new File({
-			path: 'invalid.js',
-			contents: Buffer.from('x = 1;')
-		}));
+		lintStream.write(createVinylFile('invalid.js', 'x = 1;'));
 
 		lintStream.end();
 	});
@@ -44,18 +41,12 @@ describe('gulp-eslint-new failOnError', () =>  {
 			.on('error', done)
 			.on('finish', done);
 
-		lintStream.end(new File({
-			path: 'invalid.js',
-			contents: Buffer.from('x = 0;')
-		}));
+		lintStream.end(createVinylFile('invalid.js', 'x = 0;'));
 	});
 
 	it('should handle ESLint reports without messages', done =>  {
 
-		const file = new File({
-			path: 'invalid.js',
-			contents: Buffer.from('#invalid!syntax}')
-		});
+		const file = createVinylFile('invalid.js', '#invalid!syntax}');
 		file.eslint = {};
 
 		eslint.failOnError()
@@ -89,10 +80,7 @@ describe('gulp-eslint-new failAfterError', () =>  {
 			})
 			.on('finish', endWithoutError);
 
-		lintStream.end(new File({
-			path: 'invalid.js',
-			contents: Buffer.from('x = 1;')
-		}));
+		lintStream.end(createVinylFile('invalid.js', 'x = 1;'));
 	});
 
 	it('should fail when the file stream ends if multiple errors are found', done =>  {
@@ -106,10 +94,7 @@ describe('gulp-eslint-new failAfterError', () =>  {
 			done();
 		}));
 
-		lintStream.end(new File({
-			path: 'invalid.js',
-			contents: Buffer.from('x = 1; a = false;')
-		}));
+		lintStream.end(createVinylFile('invalid.js', 'x = 1; a = false;'));
 	});
 
 	it('should pass when the file stream ends if only warnings are found', done =>  {
@@ -119,17 +104,11 @@ describe('gulp-eslint-new failAfterError', () =>  {
 			.on('error', done)
 			.on('finish', done);
 
-		lintStream.end(new File({
-			path: 'invalid.js',
-			contents: Buffer.from('x = 0;')
-		}));
+		lintStream.end(createVinylFile('invalid.js', 'x = 0;'));
 	});
 
 	it('should handle ESLint reports without messages', done =>  {
-		const file = new File({
-			path: 'invalid.js',
-			contents: Buffer.from('#invalid!syntax}')
-		});
+		const file = createVinylFile('invalid.js', '#invalid!syntax}');
 		file.eslint = {};
 
 		eslint.failAfterError()

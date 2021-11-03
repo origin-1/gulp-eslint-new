@@ -2,11 +2,12 @@
 
 'use strict';
 
-const assert = require('assert');
-const path = require('path');
-const eslint = require('..');
-const File = require('vinyl');
-const stringToStream = require('from2-string');
+const eslint              = require('..');
+const { createVinylFile } = require('./test-util');
+const assert              = require('assert');
+const stringToStream      = require('from2-string');
+const { resolve }         = require('path');
+const File                = require('vinyl');
 
 require('mocha');
 
@@ -37,7 +38,7 @@ describe('gulp-eslint-new plugin', () => {
 				assert(file.eslint);
 				assert.strictEqual(
 					file.eslint.filePath,
-					path.resolve('stage0-class-property.js')
+					resolve('stage0-class-property.js')
 				);
 				assert(Array.isArray(file.eslint.messages));
 				assert.strictEqual(file.eslint.messages.length, 1);
@@ -47,10 +48,9 @@ describe('gulp-eslint-new plugin', () => {
 				assert.strictEqual(file.eslint.messages[0].ruleId, 'prefer-template');
 				done();
 			})
-			.end(new File({
-				path: 'stage0-class-property.js',
-				contents: Buffer.from('class MyClass {prop = a + "b" + c;}')
-			}));
+			.end(
+				createVinylFile('stage0-class-property.js', 'class MyClass {prop = a + "b" + c;}')
+			);
 	});
 
 	it('should produce expected message via buffer', done => {
@@ -62,7 +62,7 @@ describe('gulp-eslint-new plugin', () => {
 				assert(file.eslint);
 				assert.strictEqual(
 					file.eslint.filePath,
-					path.resolve('use-strict.js')
+					resolve('use-strict.js')
 				);
 				assert(Array.isArray(file.eslint.messages));
 				assert.strictEqual(file.eslint.messages.length, 1);
@@ -72,10 +72,7 @@ describe('gulp-eslint-new plugin', () => {
 				assert.strictEqual(file.eslint.messages[0].ruleId, 'strict');
 				done();
 			})
-			.end(new File({
-				path: 'use-strict.js',
-				contents: Buffer.from('var x = 1;')
-			}));
+			.end(createVinylFile('use-strict.js', 'var x = 1;'));
 	});
 
 	it('should ignore files with null content', done => {
@@ -88,7 +85,7 @@ describe('gulp-eslint-new plugin', () => {
 				done();
 			})
 			.end(new File({
-				path: '.',
+				path: process.cwd(),
 				isDirectory: true
 			}));
 	});
@@ -104,7 +101,7 @@ describe('gulp-eslint-new plugin', () => {
 				done();
 			})
 			.end(new File({
-				path: 'stream.js',
+				path: resolve('stream.js'),
 				contents: stringToStream('')
 			}));
 	});
@@ -126,10 +123,7 @@ describe('gulp-eslint-new plugin', () => {
 				);
 				done();
 			})
-			.end(new File({
-				path: 'file.js',
-				contents: Buffer.from('')
-			}));
+			.end(createVinylFile('file.js', ''));
 	});
 
 	it('"rulePaths" option should be considered', done => {
@@ -149,10 +143,7 @@ describe('gulp-eslint-new plugin', () => {
 				assert.strictEqual(file.eslint.warningCount, 0);
 				done();
 			})
-			.end(new File({
-				path: 'any.js',
-				contents: Buffer.from('')
-			}));
+			.end(createVinylFile('any.js', ''));
 	});
 
 	it('Cache-related options should be ignored', done => {
@@ -173,10 +164,7 @@ describe('gulp-eslint-new plugin', () => {
 				assert.strictEqual(file.eslint.warningCount, 0);
 				done();
 			})
-			.end(new File({
-				path: 'any.js',
-				contents: Buffer.from('')
-			}));
+			.end(createVinylFile('any.js', ''));
 	});
 
 	describe('should support a sharable config', () => {
@@ -196,16 +184,13 @@ describe('gulp-eslint-new plugin', () => {
 					assert.strictEqual(file.eslint.messages[0].ruleId, 'eol-last');
 					done();
 				})
-				.end(new File({
-					path: filePath,
-					contents: Buffer.from('console.log(\'Hi\');')
-				}));
+				.end(createVinylFile(filePath, 'console.log(\'Hi\');'));
 		}
 
 		it('with an absolute path', done => {
 			test(
 				{
-					overrideConfigFile: path.resolve(__dirname, 'eslintrc-sharable-config.js'),
+					overrideConfigFile: resolve(__dirname, 'eslintrc-sharable-config.js'),
 					useEslintrc: false
 				},
 				'no-newline.js',
@@ -216,7 +201,7 @@ describe('gulp-eslint-new plugin', () => {
 		it('with a relative path', done => {
 			test(
 				{
-					cwd: path.resolve(__dirname),
+					cwd: __dirname,
 					overrideConfigFile: 'eslintrc-sharable-config.js',
 					useEslintrc: false
 				},
@@ -246,10 +231,7 @@ describe('gulp-eslint-new plugin', () => {
 					assert.strictEqual(file.contents.toString(), '$()');
 					done();
 				})
-				.end(new File({
-					path: 'semi/file.js',
-					contents: Buffer.from('$()')
-				}));
+				.end(createVinylFile('semi/file.js', '$()'));
 		});
 
 		it('when false, should ignore a configuration file', done => {
@@ -265,10 +247,7 @@ describe('gulp-eslint-new plugin', () => {
 					assert.strictEqual(file.contents.toString(), '$()');
 					done();
 				})
-				.end(new File({
-					path: 'semi/file.js',
-					contents: Buffer.from('$()')
-				}));
+				.end(createVinylFile('semi/file.js', '$()'));
 		});
 
 	});
@@ -291,10 +270,7 @@ describe('gulp-eslint-new plugin', () => {
 					assert.strictEqual(file.eslint.warningCount, 1);
 					done();
 				})
-				.end(new File({
-					path: 'ignored.js',
-					contents: Buffer.from('(function () {ignore = abc;}});')
-				}));
+				.end(createVinylFile('ignored.js', '(function () {ignore = abc;}});'));
 		});
 
 		it('when true, should warn when a "node_modules" file is ignored', done => {
@@ -313,10 +289,12 @@ describe('gulp-eslint-new plugin', () => {
 					assert.strictEqual(file.eslint.warningCount, 1);
 					done();
 				})
-				.end(new File({
-					path: 'node_modules/test/index.js',
-					contents: Buffer.from('(function () {ignore = abc;}});')
-				}));
+				.end(
+					createVinylFile(
+						'node_modules/test/index.js',
+						'(function () {ignore = abc;}});'
+					)
+				);
 		});
 
 		it('when not true, should silently ignore files', done => {
@@ -327,10 +305,7 @@ describe('gulp-eslint-new plugin', () => {
 					assert(!file.eslint);
 					done();
 				})
-				.end(new File({
-					path: 'ignored.js',
-					contents: Buffer.from('(function () {ignore = abc;}});')
-				}));
+				.end(createVinylFile('ignored.js', '(function () {ignore = abc;}});'));
 		});
 
 	});
@@ -348,10 +323,7 @@ describe('gulp-eslint-new plugin', () => {
 					assert.strictEqual(file.eslint.warningCount, 0);
 					done();
 				})
-				.end(new File({
-					path: 'invalid.js',
-					contents: Buffer.from('function z() { x = 0; }')
-				}));
+				.end(createVinylFile('invalid.js', 'function z() { x = 0; }'));
 		});
 
 		it('when a function, should filter messages', done => {
@@ -370,10 +342,7 @@ describe('gulp-eslint-new plugin', () => {
 					assert.strictEqual(file.eslint.warningCount, 1);
 					done();
 				})
-				.end(new File({
-					path: 'invalid.js',
-					contents: Buffer.from('function z() { x = 0; }')
-				}));
+				.end(createVinylFile('invalid.js', 'function z() { x = 0; }'));
 		});
 
 	});
@@ -394,10 +363,7 @@ describe('gulp-eslint-new plugin', () => {
 					assert.strictEqual(file.contents.toString(), 'var x = 0;');
 					done();
 				})
-				.end(new File({
-					path: 'fixable.js',
-					contents: Buffer.from('var x = 0; ')
-				}));
+				.end(createVinylFile('fixable.js', 'var x = 0; '));
 		});
 
 		it('when a function, should update buffered contents accordingly', done => {
@@ -417,10 +383,7 @@ describe('gulp-eslint-new plugin', () => {
 					assert.strictEqual(file.contents.toString(), 'var x = 0; \nvar y = 1;');
 					done();
 				})
-				.end(new File({
-					path: 'fixable.js',
-					contents: Buffer.from('var x = 0; \nvar y = 1; ')
-				}));
+				.end(createVinylFile('fixable.js', 'var x = 0; \nvar y = 1; '));
 		});
 
 	});

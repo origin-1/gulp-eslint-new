@@ -8,9 +8,9 @@
 // Requirements
 //------------------------------------------------------------------------------
 
-const path = require('path');
-
 const { Legacy: { naming, ModuleResolver } } = require('@eslint/eslintrc');
+
+const path = require('path');
 
 /**
  * Returns the formatter representing the given format or null if the `format` is not a string.

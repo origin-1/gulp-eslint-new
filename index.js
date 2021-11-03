@@ -1,7 +1,5 @@
 'use strict';
 
-const PluginError = require('plugin-error');
-const { ESLint } = require('eslint');
 const {
 	createIgnoreResult,
 	filterResult,
@@ -15,7 +13,9 @@ const {
 	tryResultAction,
 	writeResults
 } = require('./util');
+const { ESLint }   = require('eslint');
 const { relative } = require('path');
+const PluginError  = require('plugin-error');
 
 async function lintFile(linter, file, quiet, warnIgnored) {
 	if (file.isNull()) {

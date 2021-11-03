@@ -2,11 +2,11 @@
 
 'use strict';
 
-const assert = require('assert');
-const File = require('vinyl');
-const stream = require('stream');
-const util = require('../util');
-const path = require('path');
+const util                = require('../util');
+const { createVinylFile } = require('./test-util');
+const assert              = require('assert');
+const path                = require('path');
+const stream              = require('stream');
 
 require('mocha');
 
@@ -15,10 +15,7 @@ describe('utility methods', () => {
 
 		it('should handle files in a stream', done => {
 			let passedFile = false;
-			const streamFile = new File({
-				path: 'invalid.js',
-				contents: Buffer.from('x = 1;')
-			});
+			const streamFile = createVinylFile('invalid.js', 'x = 1;');
 			const testStream = util.transform((file, enc, cb) => {
 				assert(file);
 				assert(cb);
@@ -38,14 +35,8 @@ describe('utility methods', () => {
 			let count = 0;
 			let finalCount = 0;
 			const files = [
-				new File({
-					path: 'invalid.js',
-					contents: Buffer.from('x = 1;')
-				}),
-				new File({
-					path: 'undeclared.js',
-					contents: Buffer.from('x = 0;')
-				})
+				createVinylFile('invalid.js', 'x = 1;'),
+				createVinylFile('undeclared.js', 'x = 0;')
 			];
 			const testStream = util.transform((file, enc, cb) => {
 				assert(file);
@@ -76,10 +67,7 @@ describe('utility methods', () => {
 	describe('createIgnoreResult', () => {
 
 		it('should create a warning that the file is ignored by ".eslintignore"', () => {
-			const file = new File({
-				path: 'ignored.js',
-				contents: Buffer.from('')
-			});
+			const file = createVinylFile('ignored.js', '');
 			const result = util.createIgnoreResult(file);
 			assert(result);
 			assert.strictEqual(result.filePath, file.path);
@@ -95,10 +83,7 @@ describe('utility methods', () => {
 		});
 
 		it('should create a warning for paths that include "node_modules"', () => {
-			const file = new File({
-				path: 'node_modules/test/index.js',
-				contents: Buffer.from('')
-			});
+			const file = createVinylFile('node_modules/test/index.js', '');
 			const result = util.createIgnoreResult(file);
 			assert(result);
 			assert.strictEqual(result.filePath, file.path);

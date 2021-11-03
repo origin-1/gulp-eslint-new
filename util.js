@@ -1,9 +1,9 @@
 'use strict';
 
+const getFormatter  = require('./legacy-get-formatter');
+const fancyLog      = require('fancy-log');
+const PluginError   = require('plugin-error');
 const { Transform } = require('stream');
-const PluginError = require('plugin-error');
-const fancyLog = require('fancy-log');
-const getFormatter = require('./legacy-get-formatter');
 
 /**
  * Convenience method for creating a transform stream in object mode

@@ -2,32 +2,33 @@
 
 'use strict';
 
-const assert = require('assert');
-const File = require('vinyl');
-const stream = require('stream');
-const eslint = require('..');
+const eslint              = require('..');
+const { createVinylFile } = require('./test-util');
+const assert              = require('assert');
+const stream              = require('stream');
+const File                = require('vinyl');
 
 require('mocha');
 
 function getFiles() {
 	return [
 		new File({
-			path: '.',
+			path: process.cwd(),
 			contents: null,
 			isDirectory: true
 		}),
-		new File({
-			path: 'use-strict.js',
-			contents: Buffer.from('(function () {\n\n\tvoid 0;\n\n}());\n\n')
-		}),
-		new File({
-			path: 'undeclared.js',
-			contents: Buffer.from('(function () {\n\t"use strict";\n\n\tx = 0;\n\n}());\n')
-		}),
-		new File({
-			path: 'passing.js',
-			contents: Buffer.from('(function () {\n\n\t"use strict";\n\n}());\n')
-		})
+		createVinylFile(
+			'use-strict.js',
+			'(function () {\n\n\tvoid 0;\n\n}());\n\n'
+		),
+		createVinylFile(
+			'undeclared.js',
+			'(function () {\n\t"use strict";\n\n\tx = 0;\n\n}());\n'
+		),
+		createVinylFile(
+			'passing.js',
+			'(function () {\n\n\t"use strict";\n\n}());\n'
+		)
 	];
 }
 
