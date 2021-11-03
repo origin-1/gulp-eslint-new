@@ -64,53 +64,83 @@ describe('utility methods', () => {
 
 	});
 
-	describe('createIgnoreResult', () => {
+	describe('createIgnoreResult should create a warning', () => {
 
-		it('should create a warning that the file is ignored by ".eslintignore"', () => {
-			const filePath = resolve('ignored.js');
-			const result = util.createIgnoreResult(filePath, process.cwd());
+		function test(filePath, baseDir, expectedMessage) {
+			const result = util.createIgnoreResult(filePath, baseDir);
 			assert(result);
 			assert.strictEqual(result.filePath, filePath);
 			assert.strictEqual(result.errorCount, 0);
 			assert.strictEqual(result.warningCount, 1);
+			assert.strictEqual(result.fixableErrorCount, 0);
+			assert.strictEqual(result.fixableWarningCount, 0);
 			assert(Array.isArray(result.messages));
-			assert.strictEqual(result.messages.length, 1);
-			assert.strictEqual(
-				result.messages[0].message,
-				'File ignored because of a matching ignore pattern. Set "ignore" option to false '
-				+ 'to override.'
+			assert.deepStrictEqual(
+				result.messages,
+				[{ fatal: false, severity: 1, message: expectedMessage }]
 			);
-		});
+		}
 
-		it('should create a warning for hidden files', () => {
-			const filePath = resolve('.hidden.js');
-			const result = util.createIgnoreResult(filePath, process.cwd());
-			assert(result);
-			assert.strictEqual(result.filePath, filePath);
-			assert.strictEqual(result.errorCount, 0);
-			assert.strictEqual(result.warningCount, 1);
-			assert(Array.isArray(result.messages));
-			assert.strictEqual(result.messages.length, 1);
-			assert.strictEqual(
-				result.messages[0].message,
+		it('for a hidden file', () => {
+			test(
+				resolve('.hidden.js'),
+				process.cwd(),
 				'File ignored by default. Use a negated ignore pattern (like '
 				+ '"!<relative/path/to/filename>") to override.'
 			);
 		});
 
-		it('should create a warning for paths that include "node_modules"', () => {
-			const filePath = resolve('node_modules/test/index.js');
-			const result = util.createIgnoreResult(filePath, process.cwd());
-			assert(result);
-			assert.strictEqual(result.filePath, filePath);
-			assert.strictEqual(result.errorCount, 0);
-			assert.strictEqual(result.warningCount, 1);
-			assert(Array.isArray(result.messages));
-			assert.strictEqual(result.messages.length, 1);
-			assert.strictEqual(
-				result.messages[0].message,
+		it('for a file in a hidden folder', () => {
+			test(
+				resolve('.hidden/file.js'),
+				process.cwd(),
+				'File ignored by default. Use a negated ignore pattern (like '
+				+ '"!<relative/path/to/filename>") to override.'
+			);
+		});
+
+		it('for a file outside the base directory', () => {
+			test(
+				resolve('../file.js'),
+				process.cwd(),
+				'File ignored because of a matching ignore pattern. Set "ignore" option to false '
+				+ 'to override.'
+			);
+		});
+
+		it('for a path that includes "node_modules"', () => {
+			test(
+				resolve('node_modules/test/index.js'),
+				process.cwd(),
 				'File ignored by default. Use a negated ignore pattern like "!node_modules/*" to '
 				+ 'override.'
+			);
+		});
+
+		it('for a path that includes "node_modules" in the base directory', () => {
+			test(
+				resolve('node_modules/file.js'),
+				resolve('node_modules'),
+				'File ignored because of a matching ignore pattern. Set "ignore" option to false '
+				+ 'to override.'
+			);
+		});
+
+		it('for a path with a part that starts with "node_modules"', () => {
+			test(
+				resolve('node_modules_bak/file.js'),
+				process.cwd(),
+				'File ignored because of a matching ignore pattern. Set "ignore" option to false '
+				+ 'to override.'
+			);
+		});
+
+		it('for a file ignored by ".eslintignore"', () => {
+			test(
+				resolve('ignored.js'),
+				process.cwd(),
+				'File ignored because of a matching ignore pattern. Set "ignore" option to false '
+				+ 'to override.'
 			);
 		});
 

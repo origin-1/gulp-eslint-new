@@ -66,6 +66,10 @@ exports.createIgnoreResult = (filePath, baseDir) => {
 	};
 };
 
+/* Determine if the specified object has the indicated property as its own property. */
+const hasOwn = Function.prototype.call.bind(Object.prototype.hasOwnProperty);
+exports.hasOwn = hasOwn;
+
 /**
  * Convert a string array to a boolean map.
  * @param {string[]|null} keys The keys to assign true.
@@ -99,7 +103,6 @@ const forbiddenOptions = [
 	'extensions',
 	'globInputPaths'
 ];
-const propertyIsEnumerable = Function.prototype.call.bind(Object.prototype.propertyIsEnumerable);
 /**
  * Create config helper to merge various config sources
  *
@@ -112,13 +115,6 @@ exports.migrateOptions = function migrateOptions(options = { }) {
 		const returnValue = { eslintOptions: { overrideConfigFile: options } };
 		return returnValue;
 	}
-	{
-		const invalidOptions
-			= forbiddenOptions.filter(option => propertyIsEnumerable(options, option));
-		if (invalidOptions.length) {
-			throw Error(`Invalid options: ${invalidOptions.join(', ')}`);
-		}
-	}
 	const {
 		overrideConfig: originalOverrideConfig,
 		quiet,
@@ -127,6 +123,12 @@ exports.migrateOptions = function migrateOptions(options = { }) {
 		...eslintOptions
 	}
 	= options;
+	{
+		const invalidOptions = forbiddenOptions.filter(option => hasOwn(options, option));
+		if (invalidOptions.length) {
+			throw Error(`Invalid options: ${invalidOptions.join(', ')}`);
+		}
+	}
 	if (originalOverrideConfig != null && typeof originalOverrideConfig !== 'object') {
 		throw Error('\'overrideConfig\' must be an object or null.');
 	}

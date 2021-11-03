@@ -5,8 +5,8 @@
 const eslint              = require('..');
 const { createVinylFile } = require('./test-util');
 const assert              = require('assert');
-const stringToStream      = require('from2-string');
 const { resolve }         = require('path');
+const { Readable }        = require('stream');
 const File                = require('vinyl');
 
 require('mocha');
@@ -60,10 +60,7 @@ describe('gulp-eslint-new plugin', () => {
 				assert(file);
 				assert(file.contents);
 				assert(file.eslint);
-				assert.strictEqual(
-					file.eslint.filePath,
-					resolve('use-strict.js')
-				);
+				assert.strictEqual(file.eslint.filePath, resolve('use-strict.js'));
 				assert(Array.isArray(file.eslint.messages));
 				assert.strictEqual(file.eslint.messages.length, 1);
 				assert('message' in file.eslint.messages[0]);
@@ -100,10 +97,7 @@ describe('gulp-eslint-new plugin', () => {
 				);
 				done();
 			})
-			.end(new File({
-				path: resolve('stream.js'),
-				contents: stringToStream('')
-			}));
+			.end(new File({ path: resolve('stream.js'), contents: Readable.from('') }));
 	});
 
 	it('should throw an error when it fails to load a plugin', done => {
@@ -143,7 +137,7 @@ describe('gulp-eslint-new plugin', () => {
 				assert.strictEqual(file.eslint.warningCount, 0);
 				done();
 			})
-			.end(createVinylFile('any.js', ''));
+			.end(createVinylFile('file.js', ''));
 	});
 
 	describe('should support a sharable config', () => {

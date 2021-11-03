@@ -5,6 +5,7 @@ const {
 	filterResult,
 	firstResultMessage,
 	handleCallback,
+	hasOwn,
 	isErrorMessage,
 	migrateOptions,
 	resolveFormatter,
@@ -16,7 +17,6 @@ const {
 const { ESLint }  = require('eslint');
 const PluginError = require('plugin-error');
 
-const hasOwnProperty = Function.prototype.call.bind(Object.prototype.hasOwnProperty);
 async function lintFile(linter, file, cwd, quiet, warnIgnored) {
 	if (file.isNull()) {
 		return;
@@ -53,7 +53,7 @@ async function lintFile(linter, file, cwd, quiet, warnIgnored) {
 	}
 
 	// Update the fixed output; otherwise, fixable messages are simply ignored.
-	if (hasOwnProperty(file.eslint, 'output')) {
+	if (hasOwn(file.eslint, 'output')) {
 		file.contents = Buffer.from(file.eslint.output);
 		file.eslint.fixed = true;
 	}
