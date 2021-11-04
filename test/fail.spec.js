@@ -7,8 +7,6 @@ const { createVinylFile } = require('./test-util');
 const assert              = require('assert');
 const path                = require('path');
 
-require('mocha');
-
 describe('gulp-eslint-new failOnError', () =>  {
 	it('should fail a file immediately if an error is found', done =>  {
 		const lintStream = eslint({ useEslintrc: false, rules: { 'no-undef': 2 } });

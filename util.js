@@ -62,7 +62,8 @@ exports.createIgnoreResult = (filePath, baseDir) => {
 		errorCount: 0,
 		warningCount: 1,
 		fixableErrorCount: 0,
-		fixableWarningCount: 0
+		fixableWarningCount: 0,
+		fatalErrorCount: 0
 	};
 };
 
@@ -206,10 +207,10 @@ exports.tryResultAction = function (action, result, done) {
 	try {
 		if (action.length > 1) {
 			// async action
-			action.call(this, result, done);
+			action(result, done);
 		} else {
 			// sync action
-			action.call(this, result);
+			action(result);
 			done();
 		}
 	} catch (error) {
@@ -238,16 +239,21 @@ exports.firstResultMessage = (result, condition) => {
  * @param {Object} message - an ESLint message
  * @returns {Boolean} whether the message is an error message
  */
-function isErrorMessage(message) {
-	const level = message.fatal ? 2 : message.severity;
-
-	if (Array.isArray(level)) {
-		return level[0] > 1;
-	}
-
-	return level > 1;
+function isErrorMessage({ severity }) {
+	return severity > 1;
 }
 exports.isErrorMessage = isErrorMessage;
+
+/**
+ * Determine if a message is a warning
+ *
+ * @param {Object} message - an ESLint message
+ * @returns {Boolean} whether the message is a warning message
+ */
+function isWarningMessage({ severity }) {
+	return severity === 1;
+}
+exports.isWarningMessage = isWarningMessage;
 
 /**
  * Increment count if message is an error
@@ -268,15 +274,15 @@ function countErrorMessage(count, message) {
  * @returns {Number} The number of warnings, message included
  */
 function countWarningMessage(count, message) {
-	return count + Number(message.severity === 1);
+	return count + Number(isWarningMessage(message));
 }
 
 /**
  * Increment count if message is a fixable error
  *
- * @param {Number} count - count of errors
+ * @param {Number} count - count of fixable errors
  * @param {Object} message - an ESLint message
- * @returns {Number} The number of errors, message included
+ * @returns {Number} The number of fixable errors, message included
  */
 function countFixableErrorMessage(count, message) {
 	return count + Number(isErrorMessage(message) && message.fix !== undefined);
@@ -285,12 +291,23 @@ function countFixableErrorMessage(count, message) {
 /**
  * Increment count if message is a fixable warning
  *
- * @param {Number} count - count of errors
+ * @param {Number} count - count of fixable warnings
  * @param {Object} message - an ESLint message
- * @returns {Number} The number of errors, message included
+ * @returns {Number} The number of fixable warnings, message included
  */
 function countFixableWarningMessage(count, message) {
-	return count + Number(message.severity === 1 && message.fix !== undefined);
+	return count + Number(isWarningMessage(message) && message.fix !== undefined);
+}
+
+/**
+ * Increment count if message is a fatal error
+ *
+ * @param {Number} count - count of fatal errors
+ * @param {Object} message - an ESLint message
+ * @returns {Number} The number of fatal errors, message included
+ */
+function countFatalErrorMessage(count, message) {
+	return count + Number(isErrorMessage(message) && message.fatal);
 }
 
 /**
@@ -311,7 +328,8 @@ exports.filterResult = (result, filter) => {
 		errorCount: messages.reduce(countErrorMessage, 0),
 		warningCount: messages.reduce(countWarningMessage, 0),
 		fixableErrorCount: messages.reduce(countFixableErrorMessage, 0),
-		fixableWarningCount: messages.reduce(countFixableWarningMessage, 0)
+		fixableWarningCount: messages.reduce(countFixableWarningMessage, 0),
+		fatalErrorCount: messages.reduce(countFatalErrorMessage, 0)
 	};
 
 	if (result.output !== undefined) {

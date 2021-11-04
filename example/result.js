@@ -61,8 +61,6 @@ function lintResults() {
 		.pipe(eslint())
 		.pipe(eslint.format())
 		.pipe(eslint.results(results => {
-			// results.warningCount is an array of file results that include warningsCount and
-			// errorCount totals.
 			if (results.warningCount > MAX_WARNINGS) {
 				// No specific file to complain about here.
 				throw new Error('Too many warnings!');

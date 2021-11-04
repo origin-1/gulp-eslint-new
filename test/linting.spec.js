@@ -4,12 +4,10 @@
 
 const eslint              = require('..');
 const { createVinylFile } = require('./test-util');
-const assert              = require('assert');
+const { strict: assert }  = require('assert');
 const { resolve }         = require('path');
 const { Readable }        = require('stream');
 const File                = require('vinyl');
-
-require('mocha');
 
 describe('gulp-eslint-new plugin', () => {
 
@@ -36,16 +34,13 @@ describe('gulp-eslint-new plugin', () => {
 				assert(file);
 				assert(file.contents);
 				assert(file.eslint);
-				assert.strictEqual(
-					file.eslint.filePath,
-					resolve('stage0-class-property.js')
-				);
+				assert.equal(file.eslint.filePath, resolve('stage0-class-property.js'));
 				assert(Array.isArray(file.eslint.messages));
-				assert.strictEqual(file.eslint.messages.length, 1);
+				assert.equal(file.eslint.messages.length, 1);
 				assert('message' in file.eslint.messages[0]);
 				assert('line' in file.eslint.messages[0]);
 				assert('column' in file.eslint.messages[0]);
-				assert.strictEqual(file.eslint.messages[0].ruleId, 'prefer-template');
+				assert.equal(file.eslint.messages[0].ruleId, 'prefer-template');
 				done();
 			})
 			.end(
@@ -60,13 +55,13 @@ describe('gulp-eslint-new plugin', () => {
 				assert(file);
 				assert(file.contents);
 				assert(file.eslint);
-				assert.strictEqual(file.eslint.filePath, resolve('use-strict.js'));
+				assert.equal(file.eslint.filePath, resolve('use-strict.js'));
 				assert(Array.isArray(file.eslint.messages));
-				assert.strictEqual(file.eslint.messages.length, 1);
+				assert.equal(file.eslint.messages.length, 1);
 				assert('message' in file.eslint.messages[0]);
 				assert('line' in file.eslint.messages[0]);
 				assert('column' in file.eslint.messages[0]);
-				assert.strictEqual(file.eslint.messages[0].ruleId, 'strict');
+				assert.equal(file.eslint.messages[0].ruleId, 'strict');
 				done();
 			})
 			.end(createVinylFile('use-strict.js', 'var x = 1;'));
@@ -90,24 +85,24 @@ describe('gulp-eslint-new plugin', () => {
 	it('should emit an error when it takes a stream content', done => {
 		eslint({ useEslintrc: false, rules: { 'strict': 'error' } })
 			.on('error', err => {
-				assert.strictEqual(err.plugin, 'gulp-eslint-new');
-				assert.strictEqual(
+				assert.equal(err.plugin, 'gulp-eslint-new');
+				assert.equal(
 					err.message,
 					'gulp-eslint-new doesn\'t support vinyl files with Stream contents.'
 				);
 				done();
 			})
-			.end(new File({ path: resolve('stream.js'), contents: Readable.from('') }));
+			.end(new File({ path: resolve('stream.js'), contents: Readable.from(['']) }));
 	});
 
 	it('should throw an error when it fails to load a plugin', done => {
 		const pluginName = 'this-is-unknown-plugin';
 		eslint({ plugins: [pluginName] })
 			.on('error', err => {
-				assert.strictEqual(err.plugin, 'gulp-eslint-new');
+				assert.equal(err.plugin, 'gulp-eslint-new');
 				// Remove stack trace from error message as it's machine-dependent
 				const message = err.message.split('\n')[0];
-				assert.strictEqual(
+				assert.equal(
 					message,
 					`Failed to load plugin '${
 						pluginName
@@ -132,9 +127,9 @@ describe('gulp-eslint-new plugin', () => {
 				assert(file.contents);
 				assert(file.eslint);
 				assert(Array.isArray(file.eslint.messages));
-				assert.strictEqual(file.eslint.messages.length, 0);
-				assert.strictEqual(file.eslint.errorCount, 0);
-				assert.strictEqual(file.eslint.warningCount, 0);
+				assert.equal(file.eslint.messages.length, 0);
+				assert.equal(file.eslint.errorCount, 0);
+				assert.equal(file.eslint.warningCount, 0);
 				done();
 			})
 			.end(createVinylFile('file.js', ''));
@@ -150,11 +145,11 @@ describe('gulp-eslint-new plugin', () => {
 					assert(file.contents);
 					assert(file.eslint);
 					assert(Array.isArray(file.eslint.messages));
-					assert.strictEqual(file.eslint.messages.length, 1);
+					assert.equal(file.eslint.messages.length, 1);
 					assert('message' in file.eslint.messages[0]);
 					assert('line' in file.eslint.messages[0]);
 					assert('column' in file.eslint.messages[0]);
-					assert.strictEqual(file.eslint.messages[0].ruleId, 'eol-last');
+					assert.equal(file.eslint.messages[0].ruleId, 'eol-last');
 					done();
 				})
 				.end(createVinylFile(filePath, 'console.log(\'Hi\');'));
@@ -194,14 +189,14 @@ describe('gulp-eslint-new plugin', () => {
 					assert(file);
 					assert(file.eslint);
 					assert(Array.isArray(file.eslint.messages));
-					assert.strictEqual(file.eslint.messages.length, 1);
-					assert.strictEqual(
+					assert.equal(file.eslint.messages.length, 1);
+					assert.equal(
 						file.eslint.messages[0].message,
 						'Missing semicolon.'
 					);
-					assert.strictEqual(file.eslint.errorCount, 1);
-					assert.strictEqual(file.eslint.warningCount, 0);
-					assert.strictEqual(file.contents.toString(), '$()');
+					assert.equal(file.eslint.errorCount, 1);
+					assert.equal(file.eslint.warningCount, 0);
+					assert.equal(file.contents.toString(), '$()');
 					done();
 				})
 				.end(createVinylFile('semi/file.js', '$()'));
@@ -214,10 +209,10 @@ describe('gulp-eslint-new plugin', () => {
 					assert(file);
 					assert(file.eslint);
 					assert(Array.isArray(file.eslint.messages));
-					assert.strictEqual(file.eslint.messages.length, 0);
-					assert.strictEqual(file.eslint.errorCount, 0);
-					assert.strictEqual(file.eslint.warningCount, 0);
-					assert.strictEqual(file.contents.toString(), '$()');
+					assert.equal(file.eslint.messages.length, 0);
+					assert.equal(file.eslint.errorCount, 0);
+					assert.equal(file.eslint.warningCount, 0);
+					assert.equal(file.contents.toString(), '$()');
 					done();
 				})
 				.end(createVinylFile('semi/file.js', '$()'));
@@ -234,14 +229,14 @@ describe('gulp-eslint-new plugin', () => {
 					assert(file);
 					assert(file.eslint);
 					assert(Array.isArray(file.eslint.messages));
-					assert.strictEqual(file.eslint.messages.length, 1);
-					assert.strictEqual(
+					assert.equal(file.eslint.messages.length, 1);
+					assert.equal(
 						file.eslint.messages[0].message,
 						'File ignored because of a matching ignore pattern. Set "ignore" option '
 						+ 'to false to override.'
 					);
-					assert.strictEqual(file.eslint.errorCount, 0);
-					assert.strictEqual(file.eslint.warningCount, 1);
+					assert.equal(file.eslint.errorCount, 0);
+					assert.equal(file.eslint.warningCount, 1);
 					done();
 				})
 				.end(createVinylFile('ignored.js', '(function () {ignore = abc;}});'));
@@ -254,14 +249,14 @@ describe('gulp-eslint-new plugin', () => {
 					assert(file);
 					assert(file.eslint);
 					assert(Array.isArray(file.eslint.messages));
-					assert.strictEqual(file.eslint.messages.length, 1);
-					assert.strictEqual(
+					assert.equal(file.eslint.messages.length, 1);
+					assert.equal(
 						file.eslint.messages[0].message,
 						'File ignored by default. Use a negated ignore pattern like '
 						+ '"!node_modules/*" to override.'
 					);
-					assert.strictEqual(file.eslint.errorCount, 0);
-					assert.strictEqual(file.eslint.warningCount, 1);
+					assert.equal(file.eslint.errorCount, 0);
+					assert.equal(file.eslint.warningCount, 1);
 					done();
 				})
 				.end(
@@ -293,9 +288,9 @@ describe('gulp-eslint-new plugin', () => {
 					assert(file);
 					assert(file.eslint);
 					assert(Array.isArray(file.eslint.messages));
-					assert.strictEqual(file.eslint.messages.length, 1);
-					assert.strictEqual(file.eslint.errorCount, 1);
-					assert.strictEqual(file.eslint.warningCount, 0);
+					assert.equal(file.eslint.messages.length, 1);
+					assert.equal(file.eslint.errorCount, 1);
+					assert.equal(file.eslint.warningCount, 0);
 					done();
 				})
 				.end(createVinylFile('invalid.js', 'function z() { x = 0; }'));
@@ -312,9 +307,9 @@ describe('gulp-eslint-new plugin', () => {
 					assert(file);
 					assert(file.eslint);
 					assert(Array.isArray(file.eslint.messages));
-					assert.strictEqual(file.eslint.messages.length, 1);
-					assert.strictEqual(file.eslint.errorCount, 0);
-					assert.strictEqual(file.eslint.warningCount, 1);
+					assert.equal(file.eslint.messages.length, 1);
+					assert.equal(file.eslint.errorCount, 0);
+					assert.equal(file.eslint.warningCount, 1);
 					done();
 				})
 				.end(createVinylFile('invalid.js', 'function z() { x = 0; }'));
@@ -331,11 +326,11 @@ describe('gulp-eslint-new plugin', () => {
 					assert(file);
 					assert(file.eslint);
 					assert(Array.isArray(file.eslint.messages));
-					assert.strictEqual(file.eslint.messages.length, 0);
-					assert.strictEqual(file.eslint.errorCount, 0);
-					assert.strictEqual(file.eslint.warningCount, 0);
-					assert.strictEqual(file.eslint.output, 'var x = 0;');
-					assert.strictEqual(file.contents.toString(), 'var x = 0;');
+					assert.equal(file.eslint.messages.length, 0);
+					assert.equal(file.eslint.errorCount, 0);
+					assert.equal(file.eslint.warningCount, 0);
+					assert.equal(file.eslint.output, 'var x = 0;');
+					assert.equal(file.contents.toString(), 'var x = 0;');
 					done();
 				})
 				.end(createVinylFile('fixable.js', 'var x = 0; '));
@@ -351,11 +346,11 @@ describe('gulp-eslint-new plugin', () => {
 					assert(file);
 					assert(file.eslint);
 					assert(Array.isArray(file.eslint.messages));
-					assert.strictEqual(file.eslint.messages.length, 1);
-					assert.strictEqual(file.eslint.errorCount, 1);
-					assert.strictEqual(file.eslint.warningCount, 0);
-					assert.strictEqual(file.eslint.output, 'var x = 0; \nvar y = 1;');
-					assert.strictEqual(file.contents.toString(), 'var x = 0; \nvar y = 1;');
+					assert.equal(file.eslint.messages.length, 1);
+					assert.equal(file.eslint.errorCount, 1);
+					assert.equal(file.eslint.warningCount, 0);
+					assert.equal(file.eslint.output, 'var x = 0; \nvar y = 1;');
+					assert.equal(file.contents.toString(), 'var x = 0; \nvar y = 1;');
 					done();
 				})
 				.end(createVinylFile('fixable.js', 'var x = 0; \nvar y = 1; '));

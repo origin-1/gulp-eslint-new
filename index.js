@@ -100,7 +100,7 @@ gulpEslint.result = action => {
 /**
  * Handle all ESLint results at the end of the stream.
  *
- * @param {Function} action - A function to handle all ESLint results
+ * @param {Function} action - A function to handle all ESLint results.
  * @returns {stream} gulp file stream
  */
 gulpEslint.results = function (action) {
@@ -111,13 +111,20 @@ gulpEslint.results = function (action) {
 	const results = [];
 	results.errorCount = 0;
 	results.warningCount = 0;
+	results.fixableErrorCount = 0;
+	results.fixableWarningCount = 0;
+	results.fatalErrorCount = 0;
 
 	return transform((file, enc, done) => {
-		if (file.eslint) {
-			results.push(file.eslint);
-			// collect total error/warning count
-			results.errorCount += file.eslint.errorCount;
-			results.warningCount += file.eslint.warningCount;
+		const { eslint } = file;
+		if (eslint) {
+			results.push(eslint);
+			// Collect total error/warning count.
+			results.errorCount          += eslint.errorCount;
+			results.warningCount        += eslint.warningCount;
+			results.fixableErrorCount   += eslint.fixableErrorCount;
+			results.fixableWarningCount += eslint.fixableWarningCount;
+			results.fatalErrorCount     += eslint.fatalErrorCount;
 		}
 		done(null, file);
 

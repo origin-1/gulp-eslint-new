@@ -4,11 +4,9 @@
 
 const util                = require('../util');
 const { createVinylFile } = require('./test-util');
-const assert              = require('assert');
+const { strict: assert }  = require('assert');
 const { resolve }         = require('path');
 const stream              = require('stream');
-
-require('mocha');
 
 describe('utility methods', () => {
 	describe('transform', () => {
@@ -24,7 +22,7 @@ describe('utility methods', () => {
 			})
 				.on('error', done)
 				.on('finish', () => {
-					assert.strictEqual(passedFile, true);
+					assert.equal(passedFile, true);
 					done();
 				});
 
@@ -45,14 +43,14 @@ describe('utility methods', () => {
 				cb();
 			}, cb => {
 				assert(cb);
-				assert.strictEqual(count, files.length);
-				assert.strictEqual(testStream._writableState.ending, true);
+				assert.equal(count, files.length);
+				assert.equal(testStream._writableState.ending, true);
 				finalCount = count;
 				cb();
 			})
 				.on('error', done)
 				.on('finish', () => {
-					assert.strictEqual(finalCount, files.length);
+					assert.equal(finalCount, files.length);
 					done();
 				});
 
@@ -69,11 +67,12 @@ describe('utility methods', () => {
 		function test(filePath, baseDir, expectedMessage) {
 			const result = util.createIgnoreResult(filePath, baseDir);
 			assert(result);
-			assert.strictEqual(result.filePath, filePath);
-			assert.strictEqual(result.errorCount, 0);
-			assert.strictEqual(result.warningCount, 1);
-			assert.strictEqual(result.fixableErrorCount, 0);
-			assert.strictEqual(result.fixableWarningCount, 0);
+			assert.equal(result.filePath, filePath);
+			assert.equal(result.errorCount, 0);
+			assert.equal(result.warningCount, 1);
+			assert.equal(result.fixableErrorCount, 0);
+			assert.equal(result.fixableWarningCount, 0);
+			assert.equal(result.fatalErrorCount, 0);
 			assert(Array.isArray(result.messages));
 			assert.deepStrictEqual(
 				result.messages,
@@ -246,29 +245,6 @@ describe('utility methods', () => {
 
 	});
 
-	describe('isErrorMessage', () => {
-
-		it('should determine severity a "fatal" message flag', () => {
-			const errorMessage = {
-				fatal: true,
-				severity: 0
-			};
-			const isError = util.isErrorMessage(errorMessage);
-			assert.strictEqual(isError, true);
-
-		});
-
-		it('should determine severity from an config array', () => {
-			const errorMessage = {
-				severity: [2, 1]
-			};
-			const isError = util.isErrorMessage(errorMessage);
-			assert.strictEqual(isError, true);
-
-		});
-
-	});
-
 	describe('filterResult', () => {
 
 		const result = {
@@ -300,22 +276,22 @@ describe('utility methods', () => {
 				return message.severity === 1;
 			}
 			const quietResult = util.filterResult(result, warningsOnly);
-			assert.strictEqual(quietResult.filePath, 'invalid.js');
+			assert.equal(quietResult.filePath, 'invalid.js');
 			assert(Array.isArray(quietResult.messages));
-			assert.strictEqual(quietResult.messages.length, 1);
-			assert.strictEqual(quietResult.errorCount, 0);
-			assert.strictEqual(quietResult.warningCount, 1);
-			assert.strictEqual(quietResult.output, 'function a () { x = 0; }');
+			assert.equal(quietResult.messages.length, 1);
+			assert.equal(quietResult.errorCount, 0);
+			assert.equal(quietResult.warningCount, 1);
+			assert.equal(quietResult.output, 'function a () { x = 0; }');
 		});
 
 		it('should remove warning messages', () => {
 			const quietResult = util.filterResult(result, true);
-			assert.strictEqual(quietResult.filePath, 'invalid.js');
+			assert.equal(quietResult.filePath, 'invalid.js');
 			assert(Array.isArray(quietResult.messages));
-			assert.strictEqual(quietResult.messages.length, 1);
-			assert.strictEqual(quietResult.errorCount, 1);
-			assert.strictEqual(quietResult.warningCount, 0);
-			assert.strictEqual(quietResult.output, 'function a () { x = 0; }');
+			assert.equal(quietResult.messages.length, 1);
+			assert.equal(quietResult.errorCount, 1);
+			assert.equal(quietResult.warningCount, 0);
+			assert.equal(quietResult.output, 'function a () { x = 0; }');
 		});
 
 	});
@@ -327,7 +303,7 @@ describe('utility methods', () => {
 			const formatter = util.resolveFormatter();
 			const formatterPath
 			= resolve(require.resolve('eslint'), '../cli-engine/formatters/stylish');
-			assert.strictEqual(formatter, require(formatterPath));
+			assert.equal(formatter, require(formatterPath));
 
 		});
 
@@ -336,7 +312,7 @@ describe('utility methods', () => {
 			const formatter = util.resolveFormatter('tap');
 			const formatterPath
 			= resolve(require.resolve('eslint'), '../cli-engine/formatters/tap');
-			assert.strictEqual(formatter, require(formatterPath));
+			assert.equal(formatter, require(formatterPath));
 
 		});
 
@@ -344,7 +320,7 @@ describe('utility methods', () => {
 
 			const formatter = util.resolveFormatter('test/custom-formatter');
 			const formatterPath = resolve('./test/custom-formatter');
-			assert.strictEqual(formatter, require(formatterPath));
+			assert.equal(formatter, require(formatterPath));
 
 		});
 
@@ -364,7 +340,7 @@ describe('utility methods', () => {
 		it('should default to fancyLog', () => {
 
 			const write = util.resolveWritable();
-			assert.strictEqual(write, require('fancy-log'));
+			assert.equal(write, require('fancy-log'));
 
 		});
 
@@ -377,7 +353,7 @@ describe('utility methods', () => {
 
 			writable._write = function writeChunk(chunk, encoding, cb) {
 				assert(chunk);
-				assert.strictEqual(chunk, testValue);
+				assert.equal(chunk, testValue);
 				written = true;
 				cb();
 			};
@@ -385,7 +361,7 @@ describe('utility methods', () => {
 			writable
 				.on('error', done)
 				.on('finish', () => {
-					assert.strictEqual(written, true);
+					assert.equal(written, true);
 					done();
 				});
 			write(testValue);
@@ -409,16 +385,16 @@ describe('utility methods', () => {
 
 			function testFormatter(results, config) {
 				assert(results);
-				assert.strictEqual(results, testResults);
+				assert.equal(results, testResults);
 				assert(config);
-				assert.strictEqual(config, testConfig);
+				assert.equal(config, testConfig);
 
 				return testValue;
 			}
 
 			function testWriter(value) {
 				assert(value);
-				assert.strictEqual(value, testValue);
+				assert.equal(value, testValue);
 			}
 
 			util.writeResults(testResults, testFormatter, testWriter);
@@ -429,9 +405,9 @@ describe('utility methods', () => {
 
 			function testFormatter(results, config) {
 				assert(results);
-				assert.strictEqual(results, testResults);
+				assert.equal(results, testResults);
 				assert(config);
-				assert.strictEqual(config, testConfig);
+				assert.equal(config, testConfig);
 
 				return '';
 			}
@@ -449,7 +425,7 @@ describe('utility methods', () => {
 			function testFormatter(results, config) {
 				assert(results);
 				assert(Array.isArray(results));
-				assert.strictEqual(results.length, 0);
+				assert.equal(results.length, 0);
 				assert(config);
 
 				return results.length + ' results';
@@ -457,7 +433,7 @@ describe('utility methods', () => {
 
 			function testWriter(value) {
 				assert(value);
-				assert.strictEqual(value, '0 results');
+				assert.equal(value, '0 results');
 			}
 
 			util.writeResults(null, testFormatter, testWriter);

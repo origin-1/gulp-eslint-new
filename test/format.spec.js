@@ -8,8 +8,6 @@ const assert              = require('assert');
 const stream              = require('stream');
 const File                = require('vinyl');
 
-require('mocha');
-
 function getFiles() {
 	return [
 		new File({
@@ -146,8 +144,8 @@ describe('gulp-eslint-new format', () => {
 			assert(Array.isArray(results));
 			assert.strictEqual(results.length, 1);
 			formatCount++;
-
-			return `${results.reduce((sum, result) => sum + result.messages.length, 0)} messages`;
+			const messageCount = results.reduce((sum, result) => sum + result.messages.length, 0);
+			return `${messageCount} ${messageCount === 1 ? 'message' : 'messages'}`;
 		}
 
 		it('should format individual ESLint results', done => {
@@ -192,7 +190,7 @@ describe('gulp-eslint-new format', () => {
 			formatStream
 				.on('error', err => {
 					assert(err);
-					assert.strictEqual(err.message, 'Writer Test Error: 1 messages');
+					assert.strictEqual(err.message, 'Writer Test Error: 1 message');
 					assert.strictEqual(err.name, 'TestError');
 					assert.strictEqual(err.plugin, 'gulp-eslint-new');
 					done();

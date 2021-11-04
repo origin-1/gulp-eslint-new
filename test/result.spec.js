@@ -4,10 +4,8 @@
 
 const eslint              = require('..');
 const { createVinylFile } = require('./test-util');
-const assert              = require('assert');
+const { strict: assert }  = require('assert');
 const { PassThrough }     = require('stream');
-
-require('mocha');
 
 describe('gulp-eslint-new result', () => {
 	it('should provide an ESLint result', done => {
@@ -15,31 +13,61 @@ describe('gulp-eslint-new result', () => {
 		const lintStream = eslint({
 			useEslintrc: false,
 			rules: {
-				'no-undef': 2,
-				'strict': [1, 'global']
+				'camelcase': 1,         // not fixable
+				'no-extra-parens': 1,   // fixable
+				'no-undef': 2,          // not fixable
+				'quotes': [2, 'single'] // fixable
 			}
 		});
-
+		const testDataList = [
+			{
+				path:                'invalid-1.js',
+				contents:            'x_1 = (""); x_2 = "";',
+				errorCount:          4,
+				warningCount:        3,
+				fixableErrorCount:   2,
+				fixableWarningCount: 1,
+				fatalErrorCount:     0
+			},
+			{
+				path:                'invalid-2.js',
+				contents:            'x_1 = (""); x_2 = (0);',
+				errorCount:          3,
+				warningCount:        4,
+				fixableErrorCount:   1,
+				fixableWarningCount: 2,
+				fatalErrorCount:     0
+			},
+			{
+				path:                'invalid-3.js',
+				contents:            '#@?!',
+				errorCount:          1,
+				warningCount:        0,
+				fixableErrorCount:   0,
+				fixableWarningCount: 0,
+				fatalErrorCount:     1
+			}
+		];
 		lintStream
 			.pipe(eslint.result(result => {
+				const testData = testDataList[resultCount];
 				assert(result);
 				assert(Array.isArray(result.messages));
-				assert.strictEqual(result.messages.length, 2);
-				assert.strictEqual(result.errorCount, 1);
-				assert.strictEqual(result.warningCount, 1);
+				assert.equal(result.messages.length, testData.errorCount + testData.warningCount);
+				assert.equal(result.errorCount, testData.errorCount);
+				assert.equal(result.warningCount, testData.warningCount);
+				assert.equal(result.fixableErrorCount, testData.fixableErrorCount);
+				assert.equal(result.fixableWarningCount, testData.fixableWarningCount);
+				assert.equal(result.fatalErrorCount, testData.fatalErrorCount);
 				resultCount++;
 			}))
 			.on('finish', () => {
-				assert.strictEqual(resultCount, 3);
+				assert.equal(resultCount, 3);
 				done();
 			});
-
-		lintStream.write(createVinylFile('invalid-1.js', 'x = 1;'));
-
-		lintStream.write(createVinylFile('invalid-2.js', 'x = 2;'));
-
-		lintStream.write(createVinylFile('invalid-3.js', 'x = 3;'));
-
+		for (const { path, contents } of testDataList) {
+			lintStream.write(createVinylFile(path, contents));
+		}
 		lintStream.end();
 	});
 
@@ -57,9 +85,9 @@ describe('gulp-eslint-new result', () => {
 			.on('error', function (error) {
 				this.removeListener('finish', finished);
 				assert(error);
-				assert.strictEqual(error.message, 'Expected Error');
-				assert.strictEqual(error.name, 'Error');
-				assert.strictEqual(error.plugin, 'gulp-eslint-new');
+				assert.equal(error.message, 'Expected Error');
+				assert.equal(error.name, 'Error');
+				assert.equal(error.plugin, 'gulp-eslint-new');
 				done();
 			})
 			.on('finish', finished)
@@ -80,9 +108,9 @@ describe('gulp-eslint-new result', () => {
 			.on('error', function (error) {
 				this.removeListener('finish', finished);
 				assert(error);
-				assert.strictEqual(error.message, 'Unknown Error');
-				assert.strictEqual(error.name, 'Error');
-				assert.strictEqual(error.plugin, 'gulp-eslint-new');
+				assert.equal(error.message, 'Unknown Error');
+				assert.equal(error.name, 'Error');
+				assert.equal(error.plugin, 'gulp-eslint-new');
 				done();
 			})
 			.on('finish', finished)
@@ -96,7 +124,7 @@ describe('gulp-eslint-new result', () => {
 		} catch (error) {
 			assert(error);
 			assert(error.message);
-			assert.strictEqual(error.message, 'Expected callable argument');
+			assert.equal(error.message, 'Expected callable argument');
 			return;
 		}
 
@@ -126,15 +154,15 @@ describe('gulp-eslint-new result', () => {
 		file.eslint = resultStub;
 
 		function ended() {
-			assert.strictEqual(asyncComplete, true);
+			assert.equal(asyncComplete, true);
 			done();
 		}
 
 		const resultStream = eslint.result((result, callback) => {
 			assert(result);
-			assert.strictEqual(result, resultStub);
+			assert.equal(result, resultStub);
 
-			assert.strictEqual(typeof callback, 'function');
+			assert.equal(typeof callback, 'function');
 
 			setTimeout(() => {
 				asyncComplete = true;
@@ -163,30 +191,32 @@ describe('gulp-eslint-new results', () => {
 		const lintStream = eslint({
 			useEslintrc: false,
 			rules: {
-				'no-undef': 2,
-				'strict': [1, 'global']
-			}
+				'camelcase': 1,         // not fixable
+				'no-extra-parens': 1,   // fixable
+				'no-undef': 2,          // not fixable
+				'quotes': [2, 'single'] // fixable
+			},
+			warnIgnored: true
 		});
-
 		lintStream
 			.pipe(eslint.results(results => {
 				assert(Array.isArray(results));
-				assert.strictEqual(results.length, 3);
-				assert.strictEqual(results.errorCount, 3);
-				assert.strictEqual(results.warningCount, 3);
+				assert.equal(results.length, 4);
+				assert.equal(results.errorCount, 5);
+				assert.equal(results.warningCount, 4);
+				assert.equal(results.fixableErrorCount, 3);
+				assert.equal(results.fixableWarningCount, 2);
+				assert.equal(results.fatalErrorCount, 1);
 				resultsCalled = true;
 			}))
 			.on('finish', () => {
-				assert.strictEqual(resultsCalled, true);
+				assert.equal(resultsCalled, true);
 				done();
 			});
-
-		lintStream.write(createVinylFile('invalid-1.js', 'x = 1;'));
-
-		lintStream.write(createVinylFile('invalid-2.js', 'x = 2;'));
-
-		lintStream.write(createVinylFile('invalid-3.js', 'x = 3;'));
-
+		lintStream.write(createVinylFile('invalid-1.js', '#@?!'));
+		lintStream.write(createVinylFile('invalid-2.js', 'x_1 = ("" + "");'));
+		lintStream.write(createVinylFile('invalid-3.js', 'var x = ("");'));
+		lintStream.write(createVinylFile('node_modules/file.js', ''));
 		lintStream.end();
 	});
 
@@ -204,9 +234,9 @@ describe('gulp-eslint-new results', () => {
 			.on('error', function (error) {
 				this.removeListener('finish', finished);
 				assert(error);
-				assert.strictEqual(error.message, 'Expected Error');
-				assert.strictEqual(error.name, 'Error');
-				assert.strictEqual(error.plugin, 'gulp-eslint-new');
+				assert.equal(error.message, 'Expected Error');
+				assert.equal(error.name, 'Error');
+				assert.equal(error.plugin, 'gulp-eslint-new');
 				done();
 			})
 			.on('finish', finished)
@@ -220,7 +250,7 @@ describe('gulp-eslint-new results', () => {
 		} catch (error) {
 			assert(error);
 			assert(error.message);
-			assert.strictEqual(error.message, 'Expected callable argument');
+			assert.equal(error.message, 'Expected callable argument');
 			return;
 		}
 
@@ -233,13 +263,13 @@ describe('gulp-eslint-new results', () => {
 		const file = createVinylFile('invalid.js', '#invalid!syntax}');
 
 		function finished() {
-			assert.strictEqual(resultsCalled, true);
+			assert.equal(resultsCalled, true);
 			done();
 		}
 
 		eslint.results(results => {
 			assert(Array.isArray(results));
-			assert.strictEqual(results.length, 0);
+			assert.equal(results.length, 0);
 			resultsCalled = true;
 		})
 			.on('error', function (error) {
@@ -257,18 +287,18 @@ describe('gulp-eslint-new results', () => {
 		file.eslint = resultStub;
 
 		function ended() {
-			assert.strictEqual(asyncComplete, true);
+			assert.equal(asyncComplete, true);
 			done();
 		}
 
 		const resultStream = eslint.results((results, callback) => {
 			assert(Array.isArray(results));
-			assert.strictEqual(results.length, 1);
+			assert.equal(results.length, 1);
 
 			const result = results[0];
-			assert.strictEqual(result, resultStub);
+			assert.equal(result, resultStub);
 
-			assert.strictEqual(typeof callback, 'function');
+			assert.equal(typeof callback, 'function');
 
 			setTimeout(() => {
 				asyncComplete = true;
