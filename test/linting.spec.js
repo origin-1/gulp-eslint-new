@@ -128,8 +128,6 @@ describe('gulp-eslint-new plugin', () => {
 				assert(file.eslint);
 				assert(Array.isArray(file.eslint.messages));
 				assert.equal(file.eslint.messages.length, 0);
-				assert.equal(file.eslint.errorCount, 0);
-				assert.equal(file.eslint.warningCount, 0);
 				done();
 			})
 			.end(createVinylFile('file.js', ''));
@@ -196,6 +194,9 @@ describe('gulp-eslint-new plugin', () => {
 					);
 					assert.equal(file.eslint.errorCount, 1);
 					assert.equal(file.eslint.warningCount, 0);
+					assert.equal(file.eslint.fixableErrorCount, 1);
+					assert.equal(file.eslint.fixableWarningCount, 0);
+					assert.equal(file.eslint.fatalErrorCount, 0);
 					assert.equal(file.contents.toString(), '$()');
 					done();
 				})
@@ -210,8 +211,6 @@ describe('gulp-eslint-new plugin', () => {
 					assert(file.eslint);
 					assert(Array.isArray(file.eslint.messages));
 					assert.equal(file.eslint.messages.length, 0);
-					assert.equal(file.eslint.errorCount, 0);
-					assert.equal(file.eslint.warningCount, 0);
 					assert.equal(file.contents.toString(), '$()');
 					done();
 				})
@@ -237,6 +236,9 @@ describe('gulp-eslint-new plugin', () => {
 					);
 					assert.equal(file.eslint.errorCount, 0);
 					assert.equal(file.eslint.warningCount, 1);
+					assert.equal(file.eslint.fixableErrorCount, 0);
+					assert.equal(file.eslint.fixableWarningCount, 0);
+					assert.equal(file.eslint.fatalErrorCount, 0);
 					done();
 				})
 				.end(createVinylFile('ignored.js', '(function () {ignore = abc;}});'));
@@ -257,6 +259,9 @@ describe('gulp-eslint-new plugin', () => {
 					);
 					assert.equal(file.eslint.errorCount, 0);
 					assert.equal(file.eslint.warningCount, 1);
+					assert.equal(file.eslint.fixableErrorCount, 0);
+					assert.equal(file.eslint.fixableWarningCount, 0);
+					assert.equal(file.eslint.fatalErrorCount, 0);
 					done();
 				})
 				.end(
@@ -291,6 +296,9 @@ describe('gulp-eslint-new plugin', () => {
 					assert.equal(file.eslint.messages.length, 1);
 					assert.equal(file.eslint.errorCount, 1);
 					assert.equal(file.eslint.warningCount, 0);
+					assert.equal(file.eslint.fixableErrorCount, 0);
+					assert.equal(file.eslint.fixableWarningCount, 0);
+					assert.equal(file.eslint.fatalErrorCount, 0);
 					done();
 				})
 				.end(createVinylFile('invalid.js', 'function z() { x = 0; }'));
@@ -310,6 +318,9 @@ describe('gulp-eslint-new plugin', () => {
 					assert.equal(file.eslint.messages.length, 1);
 					assert.equal(file.eslint.errorCount, 0);
 					assert.equal(file.eslint.warningCount, 1);
+					assert.equal(file.eslint.fixableErrorCount, 0);
+					assert.equal(file.eslint.fixableWarningCount, 0);
+					assert.equal(file.eslint.fatalErrorCount, 0);
 					done();
 				})
 				.end(createVinylFile('invalid.js', 'function z() { x = 0; }'));
@@ -329,6 +340,9 @@ describe('gulp-eslint-new plugin', () => {
 					assert.equal(file.eslint.messages.length, 0);
 					assert.equal(file.eslint.errorCount, 0);
 					assert.equal(file.eslint.warningCount, 0);
+					assert.equal(file.eslint.fixableErrorCount, 0);
+					assert.equal(file.eslint.fixableWarningCount, 0);
+					assert.equal(file.eslint.fatalErrorCount, 0);
 					assert.equal(file.eslint.output, 'var x = 0;');
 					assert.equal(file.contents.toString(), 'var x = 0;');
 					done();
@@ -349,6 +363,9 @@ describe('gulp-eslint-new plugin', () => {
 					assert.equal(file.eslint.messages.length, 1);
 					assert.equal(file.eslint.errorCount, 1);
 					assert.equal(file.eslint.warningCount, 0);
+					assert.equal(file.eslint.fixableErrorCount, 1);
+					assert.equal(file.eslint.fixableWarningCount, 0);
+					assert.equal(file.eslint.fatalErrorCount, 0);
 					assert.equal(file.eslint.output, 'var x = 0; \nvar y = 1;');
 					assert.equal(file.contents.toString(), 'var x = 0; \nvar y = 1;');
 					done();

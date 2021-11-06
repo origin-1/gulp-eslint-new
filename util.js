@@ -7,25 +7,14 @@ const PluginError   = require('plugin-error');
 const { Transform } = require('stream');
 
 /**
- * Convenience method for creating a transform stream in object mode
+ * Convenience method for creating a transform stream in object mode.
  *
- * @param {Function} transform - An async function that is called for each stream chunk
- * @param {Function} [flush] - An async function that is called before closing the stream
- * @returns {stream} A transform stream
+ * @param {Function} transform - An async function that is called for each stream chunk.
+ * @param {Function} [flush] - An async function that is called before closing the stream.
+ * @returns {Stream} A transform stream.
  */
 exports.transform = function (transform, flush) {
-	if (typeof flush === 'function') {
-		return new Transform({
-			objectMode: true,
-			transform,
-			flush
-		});
-	}
-
-	return new Transform({
-		objectMode: true,
-		transform
-	});
+	return new Transform({ objectMode: true, transform, flush });
 };
 
 const isHiddenRegExp = /(?<![^/\\])\.(?!\.)/u;
@@ -33,9 +22,10 @@ const isInNodeModulesRegExp = /(?<![^/\\])node_modules[/\\]/u;
 /**
  * This is a remake of the CLI object createIgnoreResult function with no reference to ESLint
  * CLI options and with a better detection of the ignore reason in some edge cases.
- * @param {string} filePath Absolute path of checked code file
- * @param {string} baseDir Absolute path of base directory
- * @returns {LintResult} Result with warning by ignore settings
+ *
+ * @param {string} filePath - Absolute path of checked code file.
+ * @param {string} baseDir - Absolute path of base directory.
+ * @returns {LintResult} Result with warning by ignore settings.
  * @private
  */
 exports.createIgnoreResult = (filePath, baseDir) => {
@@ -73,7 +63,8 @@ exports.hasOwn = hasOwn;
 
 /**
  * Throws an error about invalid options passed to gulp-eslint-new.
- * @param {string} message The error message.
+ *
+ * @param {string} message - The error message.
  * @throws An error with code "ESLINT_INVALID_OPTIONS" and the specified message.
  */
 function throwInvalidOptionError(message) {
@@ -85,6 +76,7 @@ function throwInvalidOptionError(message) {
 
 /**
  * Convert a string array to a boolean map.
+ *
  * @param {string[]|null} keys The keys to assign true.
  * @param {boolean} defaultValue The default value for each property.
  * @param {string} displayName The property name which is used in error message.
@@ -117,10 +109,10 @@ const forbiddenOptions = [
 	'globInputPaths'
 ];
 /**
- * Create config helper to merge various config sources
+ * Create config helper to merge various config sources.
  *
- * @param {Object} options - options to migrate
- * @returns {Object} migrated options
+ * @param {Object} options - Options to migrate.
+ * @returns {Object} Migrated options.
  */
 exports.migrateOptions = function migrateOptions(options = { }) {
 	if (typeof options === 'string') {
@@ -178,11 +170,11 @@ exports.migrateOptions = function migrateOptions(options = { }) {
 };
 
 /**
- * Ensure that callback errors are wrapped in a gulp PluginError
+ * Ensure that callback errors are wrapped in a gulp PluginError.
  *
- * @param {Function} callback - callback to wrap
- * @param {Object} [value=] - A value to pass to the callback
- * @returns {Function} A callback to call(back) the callback
+ * @param {Function} callback - Callback to wrap.
+ * @param {Object} [value] - A value to pass to the callback.
+ * @returns {Function} A callback to call(back) the callback.
  */
 exports.handleCallback = (callback, value) => {
 	return err => {
@@ -197,11 +189,11 @@ exports.handleCallback = (callback, value) => {
 };
 
 /**
- * Call sync or async action and handle any thrown or async error
+ * Call sync or async action and handle any thrown or async error.
  *
- * @param {Function} action - Result action to call
- * @param {(Object|Array)} result - An ESLint result or result list
- * @param {Function} done - An callback for when the action is complete
+ * @param {Function} action - Result action to call.
+ * @param {LintResult|LintResult[]} result - An ESLint result or result list.
+ * @param {Function} done - An callback for when the action is complete.
  */
 exports.tryResultAction = function (action, result, done) {
 	try {
@@ -219,11 +211,11 @@ exports.tryResultAction = function (action, result, done) {
 };
 
 /**
- * Get first message in an ESLint result to meet a condition
+ * Get first message in an ESLint result to meet a condition.
  *
- * @param {Object} result - An ESLint result
- * @param {Function} condition - A condition function that is passed a message and returns a boolean
- * @returns {Object} The first message to pass the condition or null
+ * @param {LintResult} result - An ESLint result.
+ * @param {Function} condition - A condition function that is passed a message and returns a boolean.
+ * @returns {Object} The first message to pass the condition or null.
  */
 exports.firstResultMessage = (result, condition) => {
 	if (!result.messages) {
@@ -234,10 +226,10 @@ exports.firstResultMessage = (result, condition) => {
 };
 
 /**
- * Determine if a message is an error
+ * Determine if a message is an error.
  *
- * @param {Object} message - an ESLint message
- * @returns {Boolean} whether the message is an error message
+ * @param {Object} message - An ESLint message.
+ * @returns {boolean} Whether the message is an error message.
  */
 function isErrorMessage({ severity }) {
 	return severity > 1;
@@ -245,10 +237,10 @@ function isErrorMessage({ severity }) {
 exports.isErrorMessage = isErrorMessage;
 
 /**
- * Determine if a message is a warning
+ * Determine if a message is a warning.
  *
- * @param {Object} message - an ESLint message
- * @returns {Boolean} whether the message is a warning message
+ * @param {Object} message - An ESLint message.
+ * @returns {boolean} Whether the message is a warning message.
  */
 function isWarningMessage({ severity }) {
 	return severity === 1;
@@ -256,71 +248,68 @@ function isWarningMessage({ severity }) {
 exports.isWarningMessage = isWarningMessage;
 
 /**
- * Increment count if message is an error
+ * Increment count if message is an error.
  *
- * @param {Number} count - count of errors
- * @param {Object} message - an ESLint message
- * @returns {Number} The number of errors, message included
+ * @param {number} count - Number of errors.
+ * @param {Object} message - An ESLint message.
+ * @returns {number} The number of errors, message included.
  */
 function countErrorMessage(count, message) {
 	return count + Number(isErrorMessage(message));
 }
 
 /**
- * Increment count if message is a warning
+ * Increment count if message is a warning.
  *
- * @param {Number} count - count of warnings
- * @param {Object} message - an ESLint message
- * @returns {Number} The number of warnings, message included
+ * @param {number} count - Number of warnings.
+ * @param {Object} message - An ESLint message.
+ * @returns {number} The number of warnings, message included.
  */
 function countWarningMessage(count, message) {
 	return count + Number(isWarningMessage(message));
 }
 
 /**
- * Increment count if message is a fixable error
+ * Increment count if message is a fixable error.
  *
- * @param {Number} count - count of fixable errors
- * @param {Object} message - an ESLint message
- * @returns {Number} The number of fixable errors, message included
+ * @param {number} count - Number of fixable errors.
+ * @param {Object} message - An ESLint message.
+ * @returns {number} The number of fixable errors, message included.
  */
 function countFixableErrorMessage(count, message) {
 	return count + Number(isErrorMessage(message) && message.fix !== undefined);
 }
 
 /**
- * Increment count if message is a fixable warning
+ * Increment count if message is a fixable warning.
  *
- * @param {Number} count - count of fixable warnings
- * @param {Object} message - an ESLint message
- * @returns {Number} The number of fixable warnings, message included
+ * @param {Number} count - Number of fixable warnings.
+ * @param {Object} message - An ESLint message.
+ * @returns {Number} The number of fixable warnings, message included.
  */
 function countFixableWarningMessage(count, message) {
 	return count + Number(isWarningMessage(message) && message.fix !== undefined);
 }
 
 /**
- * Increment count if message is a fatal error
+ * Increment count if message is a fatal error.
  *
- * @param {Number} count - count of fatal errors
- * @param {Object} message - an ESLint message
- * @returns {Number} The number of fatal errors, message included
+ * @param {Number} count - Number of fatal errors.
+ * @param {Object} message - An ESLint message.
+ * @returns {Number} The number of fatal errors, message included.
  */
 function countFatalErrorMessage(count, message) {
-	return count + Number(isErrorMessage(message) && message.fatal);
+	return count + Number(isErrorMessage(message) && !!message.fatal);
 }
 
 /**
- * Filter result messages, update error and warning counts
+ * Filter result messages, update error and warning counts.
  *
- * @param {Object} result - an ESLint result
- * @param {Function} [filter=isErrorMessage] - A function that evaluates what messages to keep
- * @returns {Object} A filtered ESLint result
+ * @param {LintResult} result - An ESLint result.
+ * @param {Function} filter - A function that evaluates what messages to keep.
+ * @returns {LintResult} A filtered ESLint result.
  */
 exports.filterResult = (result, filter) => {
-	if (typeof filter !== 'function') {
-		filter = isErrorMessage;
-	}
 	const messages = result.messages.filter(filter, result);
 	const newResult = {
 		filePath: result.filePath,
@@ -331,22 +320,21 @@ exports.filterResult = (result, filter) => {
 		fixableWarningCount: messages.reduce(countFixableWarningMessage, 0),
 		fatalErrorCount: messages.reduce(countFatalErrorMessage, 0)
 	};
-
-	if (result.output !== undefined) {
+	if ('output' in result) {
 		newResult.output = result.output;
-	} else {
+	}
+	if ('source' in result) {
 		newResult.source = result.source;
 	}
-
 	return newResult;
 };
 
 /**
- * Resolve formatter from unknown type (accepts string or function)
+ * Resolve formatter from unknown type (accepts string or function).
  *
- * @throws TypeError thrown if unable to resolve the formatter type
- * @param {(String|Function)} [formatter=stylish] - A name to resolve as a formatter. If a function is provided, the same function is returned.
- * @returns {Function} An ESLint formatter
+ * @throws TypeError thrown if unable to resolve the formatter type.
+ * @param {string|Function} [formatter=stylish] - A name to resolve as a formatter. If a function is provided, the same function is returned.
+ * @returns {Function} An ESLint formatter.
  */
 exports.resolveFormatter = formatter => {
 	// use ESLint to look up formatter references
@@ -359,26 +347,24 @@ exports.resolveFormatter = formatter => {
 };
 
 /**
- * Resolve writable
+ * Resolve writable.
  *
- * @param {(Function|stream)} [writable=fancyLog] - A stream or function to resolve as a format writer
- * @returns {Function} A function that writes formatted messages
+ * @param {Function|Stream} [writable=fancyLog] - A stream or function to resolve as a format writer.
+ * @returns {Function} A function that writes formatted messages.
  */
-exports.resolveWritable = writable => {
-	if (!writable) {
-		writable = fancyLog;
-	} else if (typeof writable.write === 'function') {
+exports.resolveWritable = (writable = fancyLog) => {
+	if (typeof writable.write === 'function') {
 		writable = writable.write.bind(writable);
 	}
 	return writable;
 };
 
 /**
- * Write formatter results to writable/output
+ * Write formatter results to writable/output.
  *
- * @param {Object[]} results - A list of ESLint results
- * @param {Function} formatter - A function used to format ESLint results
- * @param {Function} writable - A function used to write formatted ESLint results
+ * @param {LintResult[]} results - A list of ESLint results.
+ * @param {Function} formatter - A function used to format ESLint results.
+ * @param {Function} writable - A function used to write formatted ESLint results.
  */
 exports.writeResults = (results, formatter, writable) => {
 	if (!results) {

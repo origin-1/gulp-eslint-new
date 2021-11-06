@@ -251,46 +251,57 @@ describe('utility methods', () => {
 			filePath: 'invalid.js',
 			messages: [{
 				ruleId: 'error',
-				severity: 2,
 				message: 'This is an error.',
-				line: 1,
-				column: 1,
-				nodeType: 'FunctionDeclaration',
-				source: 'function a() { x = 0; }'
+				severity: 2
 			}, {
 				ruleId: 'warning',
-				severity: 1,
 				message: 'This is a warning.',
-				line: 1,
-				column: 1,
-				nodeType: 'FunctionDeclaration',
-				source: 'function a() { x = 0; }'
+				severity: 1
+			}, {
+				ruleId: 'fixable error',
+				message: 'This is a fixable error.',
+				severity: 2,
+				fix: { }
+			}, {
+				ruleId: 'fixable warning',
+				message: 'This is a fixable warning.',
+				severity: 1,
+				fix: { }
+			}, {
+				ruleId: 'fatal error',
+				message: 'This is a fatal error.',
+				fatal: true,
+				severity: 2
 			}],
-			errorCount: 1,
-			warningCount: 1,
+			errorCount: 3,
+			warningCount: 2,
+			fatalErrorCount: 1,
 			output: 'function a () { x = 0; }'
 		};
 
-		it('should filter messages', () => {
-			function warningsOnly(message) {
-				return message.severity === 1;
-			}
-			const quietResult = util.filterResult(result, warningsOnly);
+		it('should remove error messages', () => {
+			const quietResult = util.filterResult(result, util.isWarningMessage);
 			assert.equal(quietResult.filePath, 'invalid.js');
 			assert(Array.isArray(quietResult.messages));
-			assert.equal(quietResult.messages.length, 1);
+			assert.equal(quietResult.messages.length, 2);
 			assert.equal(quietResult.errorCount, 0);
-			assert.equal(quietResult.warningCount, 1);
+			assert.equal(quietResult.warningCount, 2);
+			assert.equal(quietResult.fixableErrorCount, 0);
+			assert.equal(quietResult.fixableWarningCount, 1);
+			assert.equal(quietResult.fatalErrorCount, 0);
 			assert.equal(quietResult.output, 'function a () { x = 0; }');
 		});
 
 		it('should remove warning messages', () => {
-			const quietResult = util.filterResult(result, true);
+			const quietResult = util.filterResult(result, util.isErrorMessage);
 			assert.equal(quietResult.filePath, 'invalid.js');
 			assert(Array.isArray(quietResult.messages));
-			assert.equal(quietResult.messages.length, 1);
-			assert.equal(quietResult.errorCount, 1);
+			assert.equal(quietResult.messages.length, 3);
+			assert.equal(quietResult.errorCount, 3);
 			assert.equal(quietResult.warningCount, 0);
+			assert.equal(quietResult.fixableErrorCount, 1);
+			assert.equal(quietResult.fixableWarningCount, 0);
+			assert.equal(quietResult.fatalErrorCount, 1);
 			assert.equal(quietResult.output, 'function a () { x = 0; }');
 		});
 
