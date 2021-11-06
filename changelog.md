@@ -1,3 +1,9 @@
+<a name="0.6.0"></a>
+## [0.6.0](https://github.com/fasttime/gulp-eslint-new/releases/tag/0.6.0) (2021-11-06)
+
+* Using ESLint 8.2.
+* Results lists have now the same "Count" properties of a single result: `fixableErrorCount`, `fixableWarningCount` and `fatalErrorCount`, in addition to the previously featured `errorCount` and `warningCount`.
+
 <a name="0.5.1"></a>
 ## [0.5.1](https://github.com/fasttime/gulp-eslint-new/releases/tag/0.5.1) (2021-11-04)
 
