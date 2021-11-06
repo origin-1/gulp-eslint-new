@@ -174,7 +174,7 @@ Shorthand for defining `options.overrideConfigFile`.
 
 Param type: `(result) => void`
 
-Call a function for each ESLint file result. No returned value is expected. If an error is thrown, it will be wrapped in a gulp PluginError and emitted from the stream.
+Call a function for each ESLint file result. No returned value is expected. If an error is thrown, it will be wrapped in a gulp `PluginError` and emitted from the stream.
 
 ```javascript
 gulp.src(['**/*.js','!node_modules/**'])
@@ -183,22 +183,46 @@ gulp.src(['**/*.js','!node_modules/**'])
         // Called for each ESLint result.
         console.log(`ESLint result: ${result.filePath}`);
         console.log(`# Messages: ${result.messages.length}`);
-        console.log(`# Warnings: ${result.warningCount}`);
-        console.log(`# Errors: ${result.errorCount}`);
+        console.log(`# Warnings: ${result.warningCount} (${result.fixableWarningCount} fixable)`);
+        console.log(`# Errors: ${result.errorCount} (${result.fixableErrorCount} fixable, ${
+            result.fatalErrorCount} fatal)`);
     }));
 ```
 
 Type: `(result, callback) => void`
 
-Call an asynchronous function for each ESLint file result. The callback must be called for the stream to finish. If a value is passed to the callback, it will be wrapped in a gulp PluginError and emitted from the stream.
+Call an asynchronous function for each ESLint file result. The callback must be called for the stream to finish. If a value is passed to the callback, it will be wrapped in a gulp `PluginError` and emitted from the stream.
 
 ### `eslint.results(action)`
 
 Param type: `(results) => void`
 
-Call a function once for all ESLint file results before a stream finishes. No returned value is expected. If an error is thrown, it will be wrapped in a gulp PluginError and emitted from the stream.
+Call a function once for all ESLint file results before a stream finishes. No returned value is expected. If an error is thrown, it will be wrapped in a gulp `PluginError` and emitted from the stream.
 
-The results list has a `warningCount` property that is the sum of warnings in all results; likewise, an `errorCount` property is set to the sum of errors in all results.
+The results list has additional properties that indicate the number of messages of a certain kind.
+
+<table>
+    <tr>
+        <td><code>errorCount</code></td>
+        <td>number of errors</td>
+    </tr>
+    <tr>
+        <td><code>warningCount</code></td>
+        <td>number of warnings</td>
+    </tr>
+    <tr>
+        <td><code>fixableErrorCount</code></td>
+        <td>number of fixable errors</td>
+    </tr>
+    <tr>
+        <td><code>fixableWarningCount</code></td>
+        <td>number of fixable warnings</td>
+    </tr>
+    <tr>
+        <td><code>fatalErrorCount</code></td>
+        <td>number of fatal errors</td>
+    </tr>
+</table>
 
 ```javascript
 gulp.src(['**/*.js','!node_modules/**'])
@@ -206,14 +230,16 @@ gulp.src(['**/*.js','!node_modules/**'])
     .pipe(eslint.results(results => {
         // Called once for all ESLint results.
         console.log(`Total Results: ${results.length}`);
-        console.log(`Total Warnings: ${results.warningCount}`);
-        console.log(`Total Errors: ${results.errorCount}`);
+        console.log(`Total Warnings: ${results.warningCount} (${
+            results.fixableWarningCount} fixable)`);
+        console.log(`Total Errors: ${results.errorCount} (${results.fixableErrorCount} fixable, ${
+            results.fatalErrorCount} fatal)`);
     }));
 ```
 
 Param type: `(results, callback) => void`
 
-Call an asynchronous function once for all ESLint file results before a stream finishes. The callback must be called for the stream to finish. If a value is passed to the callback, it will be wrapped in a gulp PluginError and emitted from the stream.
+Call an asynchronous function once for all ESLint file results before a stream finishes. The callback must be called for the stream to finish. If a value is passed to the callback, it will be wrapped in a gulp `PluginError` and emitted from the stream.
 
 ### `eslint.failOnError()`
 
