@@ -2,9 +2,9 @@
 
 'use strict';
 
-const eslint              = require('..');
 const { createVinylFile } = require('./test-util');
-const assert              = require('assert');
+const { strict: assert }  = require('assert');
+const eslint              = require('gulp-eslint-new');
 const stream              = require('stream');
 const File                = require('vinyl');
 
@@ -70,7 +70,7 @@ describe('gulp-eslint-new format', () => {
 		function formatResults(results, config) {
 			assert(config);
 			assert(Array.isArray(results));
-			assert.strictEqual(results.length, 3);
+			assert.equal(results.length, 3);
 			formatCount++;
 
 			const messageCount = results.reduce((sum, result) => {
@@ -96,8 +96,8 @@ describe('gulp-eslint-new format', () => {
 			formatStream
 				.on('error', done)
 				.on('finish', () => {
-					assert.strictEqual(formatCount, 1);
-					assert.strictEqual(writeCount, 1);
+					assert.equal(formatCount, 1);
+					assert.equal(writeCount, 1);
 					done();
 				});
 
@@ -121,8 +121,8 @@ describe('gulp-eslint-new format', () => {
 			formatStream
 				.on('error', done)
 				.on('finish', () => {
-					assert.strictEqual(formatCount, 0);
-					assert.strictEqual(writeCount, 0);
+					assert.equal(formatCount, 0);
+					assert.equal(writeCount, 0);
 					done();
 				});
 
@@ -142,7 +142,7 @@ describe('gulp-eslint-new format', () => {
 		function formatResult(results, config) {
 			assert(config);
 			assert(Array.isArray(results));
-			assert.strictEqual(results.length, 1);
+			assert.equal(results.length, 1);
 			formatCount++;
 			const messageCount = results.reduce((sum, result) => sum + result.messages.length, 0);
 			return `${messageCount} ${messageCount === 1 ? 'message' : 'messages'}`;
@@ -161,11 +161,11 @@ describe('gulp-eslint-new format', () => {
 				.on('error', done)
 				.on('finish', function () {
 					// the stream should not have emitted an error
-					assert.strictEqual(this._writableState.errorEmitted, false);
+					assert.equal(this._writableState.errorEmitted, false);
 
-					const fileCount = files.length - 1;// remove directory
-					assert.strictEqual(formatCount, fileCount);
-					assert.strictEqual(writeCount, fileCount);
+					const fileCount = files.length - 1; // remove directory
+					assert.equal(formatCount, fileCount);
+					assert.equal(writeCount, fileCount);
 					done();
 				});
 
@@ -190,9 +190,9 @@ describe('gulp-eslint-new format', () => {
 			formatStream
 				.on('error', err => {
 					assert(err);
-					assert.strictEqual(err.message, 'Writer Test Error: 1 message');
-					assert.strictEqual(err.name, 'TestError');
-					assert.strictEqual(err.plugin, 'gulp-eslint-new');
+					assert.equal(err.message, 'Writer Test Error: 1 message');
+					assert.equal(err.name, 'TestError');
+					assert.equal(err.plugin, 'gulp-eslint-new');
 					done();
 				})
 				.on('finish', () => {

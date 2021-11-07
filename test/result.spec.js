@@ -2,9 +2,9 @@
 
 'use strict';
 
-const eslint              = require('..');
 const { createVinylFile } = require('./test-util');
 const { strict: assert }  = require('assert');
+const eslint              = require('gulp-eslint-new');
 const { PassThrough }     = require('stream');
 
 describe('gulp-eslint-new result', () => {

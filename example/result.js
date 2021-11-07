@@ -2,8 +2,8 @@
 
 // npm install gulp gulp-eslint-new
 
-const eslint = require('..');
 const { src } = require('gulp');
+const eslint  = require('gulp-eslint-new');
 
 const MAX_WARNINGS = 1;
 

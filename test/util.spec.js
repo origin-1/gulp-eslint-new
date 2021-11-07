@@ -74,7 +74,7 @@ describe('utility methods', () => {
 			assert.equal(result.fixableWarningCount, 0);
 			assert.equal(result.fatalErrorCount, 0);
 			assert(Array.isArray(result.messages));
-			assert.deepStrictEqual(
+			assert.deepEqual(
 				result.messages,
 				[{ fatal: false, severity: 1, message: expectedMessage }]
 			);
@@ -149,12 +149,12 @@ describe('utility methods', () => {
 
 		it('should migrate a string config value to "overrideConfigFile"', () => {
 			const { eslintOptions } = util.migrateOptions('Config/Path');
-			assert.deepStrictEqual(eslintOptions, { overrideConfigFile: 'Config/Path' });
+			assert.deepEqual(eslintOptions, { overrideConfigFile: 'Config/Path' });
 		});
 
 		it('should migrate "configFile" to "overrideConfigFile"', () => {
 			const { eslintOptions } = util.migrateOptions({ configFile: 'Config/Path' });
-			assert.deepStrictEqual(
+			assert.deepEqual(
 				eslintOptions,
 				{ overrideConfig: { }, overrideConfigFile: 'Config/Path' }
 			);
@@ -163,7 +163,7 @@ describe('utility methods', () => {
 		it('should migrate an "envs" array to an "env" object', () => {
 			const { eslintOptions }
 			= util.migrateOptions({ envs: ['foo:true', 'bar:false', 'baz'] });
-			assert.deepStrictEqual(
+			assert.deepEqual(
 				eslintOptions,
 				{ overrideConfig: { env: { foo: true, bar: false, baz: true } } }
 			);
@@ -172,7 +172,7 @@ describe('utility methods', () => {
 		it('should migrate a "globals" array to an object', () => {
 			const { eslintOptions }
 			= util.migrateOptions({ globals: ['foo:true', 'bar:false', 'baz'] });
-			assert.deepStrictEqual(
+			assert.deepEqual(
 				eslintOptions,
 				{ overrideConfig: { globals: { foo: true, bar: false, baz: false } } }
 			);
@@ -180,7 +180,7 @@ describe('utility methods', () => {
 
 		it('should migrate a "plugins" arrays', () => {
 			const { eslintOptions } = util.migrateOptions({ plugins: ['foo', 'bar'] });
-			assert.deepStrictEqual(
+			assert.deepEqual(
 				eslintOptions,
 				{ overrideConfig: { plugins: ['foo', 'bar'] } }
 			);
@@ -188,7 +188,7 @@ describe('utility methods', () => {
 
 		it('should not migrate a "plugins" object', () => {
 			const { eslintOptions } = util.migrateOptions({ plugins: { foo: 'bar' } });
-			assert.deepStrictEqual(
+			assert.deepEqual(
 				eslintOptions,
 				{ overrideConfig: { }, plugins: { foo: 'bar' } }
 			);
@@ -240,7 +240,7 @@ describe('utility methods', () => {
 		it('should not modify an existing overrideConfig', () => {
 			const options = { overrideConfig: { }, parser: 'foo' };
 			util.migrateOptions(options);
-			assert.deepStrictEqual(options.overrideConfig, { });
+			assert.deepEqual(options.overrideConfig, { });
 		});
 
 	});

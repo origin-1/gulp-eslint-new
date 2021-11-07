@@ -2,8 +2,8 @@
 
 // npm install gulp gulp-eslint-new
 
-const eslint = require('..');
 const { series, src } = require('gulp');
+const eslint          = require('gulp-eslint-new');
 
 /**
  * Simple example of using ESLint and a formatter.

@@ -2,9 +2,9 @@
 
 // npm install fancy-log gulp gulp-eslint-new
 
-const eslint = require('..');
 const fancyLog = require('fancy-log');
-const { src } = require('gulp');
+const { src }  = require('gulp');
+const eslint   = require('gulp-eslint-new');
 
 function failImmediately() {
 	return src('../test/fixtures/**/*.js')

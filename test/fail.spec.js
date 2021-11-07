@@ -2,9 +2,9 @@
 
 'use strict';
 
-const eslint              = require('..');
 const { createVinylFile } = require('./test-util');
-const assert              = require('assert');
+const { strict: assert }  = require('assert');
+const eslint              = require('gulp-eslint-new');
 const path                = require('path');
 
 describe('gulp-eslint-new failOnError', () =>  {
@@ -19,9 +19,9 @@ describe('gulp-eslint-new failOnError', () =>  {
 			.on('error', function (err)  {
 				this.removeListener('finish', endWithoutError);
 				assert(err);
-				assert.strictEqual(err.message, '\'x\' is not defined.');
-				assert.strictEqual(err.fileName, path.resolve('invalid.js'));
-				assert.strictEqual(err.plugin, 'gulp-eslint-new');
+				assert.equal(err.message, '\'x\' is not defined.');
+				assert.equal(err.fileName, path.resolve('invalid.js'));
+				assert.equal(err.plugin, 'gulp-eslint-new');
 				done();
 			})
 			.on('finish', endWithoutError);
@@ -71,9 +71,9 @@ describe('gulp-eslint-new failAfterError', () =>  {
 			.on('error', function (err)  {
 				this.removeListener('finish', endWithoutError);
 				assert(err);
-				assert.strictEqual(err.message, 'Failed with 1 error');
-				assert.strictEqual(err.name, 'ESLintError');
-				assert.strictEqual(err.plugin, 'gulp-eslint-new');
+				assert.equal(err.message, 'Failed with 1 error');
+				assert.equal(err.name, 'ESLintError');
+				assert.equal(err.plugin, 'gulp-eslint-new');
 				done();
 			})
 			.on('finish', endWithoutError);
@@ -86,9 +86,9 @@ describe('gulp-eslint-new failAfterError', () =>  {
 
 		lintStream.pipe(eslint.failAfterError().on('error', err =>  {
 			assert(err);
-			assert.strictEqual(err.message, 'Failed with 2 errors');
-			assert.strictEqual(err.name, 'ESLintError');
-			assert.strictEqual(err.plugin, 'gulp-eslint-new');
+			assert.equal(err.message, 'Failed with 2 errors');
+			assert.equal(err.name, 'ESLintError');
+			assert.equal(err.plugin, 'gulp-eslint-new');
 			done();
 		}));
 

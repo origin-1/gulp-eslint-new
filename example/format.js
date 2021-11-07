@@ -2,8 +2,8 @@
 
 // npm install gulp gulp-eslint-new
 
-const eslint = require('..');
 const { series, src } = require('gulp');
+const eslint          = require('gulp-eslint-new');
 
 function eslintFormatter() {
 	// Lint each file, and format all files at once.

@@ -2,10 +2,10 @@
 
 // npm install gulp gulp-cached gulp-eslint-new
 
-const eslint = require('..');
 const { src, watch } = require('gulp');
-const cache = require('gulp-cached');
-const { resolve } = require('path');
+const cache          = require('gulp-cached');
+const eslint         = require('gulp-eslint-new');
+const { resolve }    = require('path');
 
 function lintWatch() {
 	// Lint only files that change after this watch starts.

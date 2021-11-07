@@ -2,9 +2,9 @@
 
 // npm install gulp gulp-eslint-new gulp-if
 
-const eslint = require('..');
 const { dest, src } = require('gulp');
-const gulpIf = require('gulp-if');
+const eslint        = require('gulp-eslint-new');
+const gulpIf        = require('gulp-if');
 
 function isFixed(file) {
 	return file.eslint != null && file.eslint.fixed;
