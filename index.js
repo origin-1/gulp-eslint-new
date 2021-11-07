@@ -62,12 +62,6 @@ async function lintFile(linter, file, cwd, quiet, warnIgnored) {
 	}
 }
 
-/**
- * Append ESLint result to each file.
- *
- * @param {Object|string} [options] - Configure options for running ESLint.
- * @returns {Stream} gulp file stream.
- */
 function gulpEslint(options) {
 	const { eslintOptions, quiet, warnIgnored } = migrateOptions(options);
 	const linter = new ESLint(eslintOptions);
@@ -80,12 +74,6 @@ function gulpEslint(options) {
 	});
 }
 
-/**
- * Handle each ESLint result as it passes through the stream.
- *
- * @param {Function} action - A function to handle each ESLint result.
- * @returns {Stream} gulp file stream.
- */
 gulpEslint.result = action => {
 	if (typeof action !== 'function') {
 		throw new Error('Expected callable argument');
@@ -100,12 +88,6 @@ gulpEslint.result = action => {
 	});
 };
 
-/**
- * Handle all ESLint results at the end of the stream.
- *
- * @param {Function} action - A function to handle all ESLint results.
- * @returns {Stream} gulp file stream.
- */
 gulpEslint.results = function (action) {
 	if (typeof action !== 'function') {
 		throw new Error('Expected callable argument');
@@ -130,17 +112,11 @@ gulpEslint.results = function (action) {
 			results.fatalErrorCount     += eslint.fatalErrorCount;
 		}
 		done(null, file);
-
 	}, done => {
 		tryResultAction(action, results, handleCallback(done));
 	});
 };
 
-/**
- * Fail when an ESLint error is found in ESLint results.
- *
- * @returns {Stream} gulp file stream.
- */
 gulpEslint.failOnError = () => {
 	return gulpEslint.result(result => {
 		const error = firstResultMessage(result, isErrorMessage);
@@ -157,11 +133,6 @@ gulpEslint.failOnError = () => {
 	});
 };
 
-/**
- * Fail when the stream ends if any ESLint error(s) occurred.
- *
- * @returns {Stream} gulp file stream
- */
 gulpEslint.failAfterError = () => {
 	return gulpEslint.results(results => {
 		const count = results.errorCount;
@@ -176,13 +147,6 @@ gulpEslint.failAfterError = () => {
 	});
 };
 
-/**
- * Format the results of each file individually.
- *
- * @param {string|Function} [formatter=stylish] - The name or function for a ESLint result formatter.
- * @param {Function|Stream} [writable=fancy-log] - A funtion or stream to write the formatted ESLint results.
- * @returns {Stream} gulp file stream.
- */
 gulpEslint.formatEach = (formatter, writable) => {
 	formatter = resolveFormatter(formatter);
 	writable = resolveWritable(writable);
@@ -190,25 +154,16 @@ gulpEslint.formatEach = (formatter, writable) => {
 	return gulpEslint.result(result => writeResults([result], formatter, writable));
 };
 
-/**
- * Wait until all files have been linted and format all results at once.
- *
- * @param {string|Function} [formatter=stylish] - The name or function for a ESLint result formatter.
- * @param {Function|Stream} [writable=fancy-log] - A funtion or stream to write the formatted ESLint results.
- * @returns {Stream} gulp file stream.
- */
 gulpEslint.format = (formatter, writable) => {
 	formatter = resolveFormatter(formatter);
 	writable = resolveWritable(writable);
 
 	return gulpEslint.results(results => {
-		// Only format results if files has been lint'd
+		// Only format results if some file has been linted.
 		if (results.length) {
 			writeResults(results, formatter, writable);
 		}
 	});
 };
-
-gulpEslint.PluginError = PluginError;
 
 module.exports = gulpEslint;

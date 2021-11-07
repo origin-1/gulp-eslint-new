@@ -8,8 +8,9 @@ const eslint          = require('gulp-eslint-new');
 /**
  * Simple example of using ESLint and a formatter.
  * Note: ESLint does not write to the console itself.
- * Use format or formatEach to print ESLint results.
- * @returns {stream} gulp file stream
+ * Use `format` or `formatEach` to print ESLint results.
+ *
+ * @returns {NodeJS.ReadWriteStream} gulp file stream.
  */
 function basic() {
 	return src('../test/fixtures/**/*.js')
@@ -21,7 +22,8 @@ function basic() {
 
 /**
  * Inline ESLint configuration.
- * @returns {stream} gulp file stream
+ *
+ * @returns {NodeJS.ReadWriteStream} gulp file stream.
  */
 function inlineConfig() {
 	return src('../test/fixtures/**/*.js')
@@ -62,7 +64,8 @@ function inlineConfig() {
 
 /**
  * Load configuration file.
- * @returns {stream} gulp file stream
+ *
+ * @returns {NodeJS.ReadWriteStream} gulp file stream.
  */
 function loadConfig() {
 	return src('../test/fixtures/**/*.js')
@@ -75,7 +78,8 @@ function loadConfig() {
 
 /**
  * Shorthand way to load a configuration file.
- * @returns {stream} gulp file stream
+ *
+ * @returns {NodeJS.ReadWriteStream} gulp file stream.
  */
 function loadConfigShorthand() {
 	return src('../test/fixtures/**/*.js')

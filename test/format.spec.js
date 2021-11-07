@@ -35,10 +35,9 @@ describe('gulp-eslint-new format', () => {
 	let writeCount;
 
 	/**
-	 * Custom ESLint formatted result writer for counting write attempts
-	 * rather than writing to the console.
+	 * Custom ESLint formatted result writer for counting write attempts rather than writing to the console.
 	 *
-	 * @param {String} message - a message to count as written
+	 * @param {string} message - A message to count as written.
 	 */
 	function outputWriter(message) {
 		assert(message);
@@ -47,10 +46,10 @@ describe('gulp-eslint-new format', () => {
 	}
 
 	/**
-	 * Custom ESLint formatted result writer that will throw an exception
+	 * Custom ESLint formatted result writer that will throw an exception.
 	 *
-	 * @throws Error Always thrown to test error handling in writers
-	 * @param {String} message - a message to trigger an error
+	 * @throws Error always thrown to test error handling in writers.
+	 * @param {string} message - A message to trigger an error.
 	 */
 	function failWriter(message) {
 		const error = new Error(`Writer Test Error${message ? `: ${message}` : ''}`);
@@ -65,7 +64,7 @@ describe('gulp-eslint-new format', () => {
 		 *
 		 * @param {Array} results - ESLint results
 		 * @param {Object} config - format config
-		 * @returns {String} formatted results
+		 * @returns {string} formatted results
 		 */
 		function formatResults(results, config) {
 			assert(config);

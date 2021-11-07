@@ -158,7 +158,7 @@ Type: `string | null`
 
 _A legacy synonym for `options.overrideConfigFile`._
 
-#### `options.warnFileIgnored` or `options.warnIgnored`
+#### `options.warnIgnored` (or `options.warnFileIgnored`)
 
 Type: `boolean`
 
@@ -246,7 +246,7 @@ Call an asynchronous function once for all ESLint file results before a stream f
 Stop a task/stream if an ESLint error has been reported for any file.
 
 ```javascript
-// Cause the stream to stop(/fail) before copying an invalid JS file to the output directory.
+// Cause the stream to stop (fail) before copying an invalid JS file to the output directory.
 gulp.src(['**/*.js','!node_modules/**'])
     .pipe(eslint())
     .pipe(eslint.failOnError());
