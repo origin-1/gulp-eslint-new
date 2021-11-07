@@ -8,7 +8,9 @@ const eslint              = require('gulp-eslint-new');
 const path                = require('path');
 
 describe('gulp-eslint-new failOnError', () =>  {
+
 	it('should fail a file immediately if an error is found', done =>  {
+		const file = createVinylFile('invalid.js', 'x = 1;');
 		const lintStream = eslint({ useEslintrc: false, rules: { 'no-undef': 2 } });
 
 		function endWithoutError() {
@@ -19,6 +21,7 @@ describe('gulp-eslint-new failOnError', () =>  {
 			.on('error', function (err)  {
 				this.removeListener('finish', endWithoutError);
 				assert(err);
+				assert(err.fileName, file.path);
 				assert.equal(err.message, '\'x\' is not defined.');
 				assert.equal(err.fileName, path.resolve('invalid.js'));
 				assert.equal(err.plugin, 'gulp-eslint-new');
@@ -26,9 +29,7 @@ describe('gulp-eslint-new failOnError', () =>  {
 			})
 			.on('finish', endWithoutError);
 
-		lintStream.write(createVinylFile('invalid.js', 'x = 1;'));
-
-		lintStream.end();
+		lintStream.end(file);
 	});
 
 	it('should pass a file if only warnings are found', done =>  {

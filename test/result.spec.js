@@ -118,18 +118,7 @@ describe('gulp-eslint-new result', () => {
 	});
 
 	it('should throw an error if not provided a function argument', () => {
-
-		try {
-			eslint.result();
-		} catch (error) {
-			assert(error);
-			assert(error.message);
-			assert.equal(error.message, 'Expected callable argument');
-			return;
-		}
-
-		throw new Error('Expected exception to be thrown');
-
+		assert.throws(() => eslint.result(), { message: 'Expected callable argument' });
 	});
 
 	it('should ignore files without an ESLint result', done => {
@@ -244,18 +233,7 @@ describe('gulp-eslint-new results', () => {
 	});
 
 	it('should throw an error if not provided a function argument', () => {
-
-		try {
-			eslint.results();
-		} catch (error) {
-			assert(error);
-			assert(error.message);
-			assert.equal(error.message, 'Expected callable argument');
-			return;
-		}
-
-		throw new Error('Expected exception to be thrown');
-
+		assert.throws(() => eslint.results(), { message: 'Expected callable argument' });
 	});
 
 	it('should ignore files without an ESLint result', done => {

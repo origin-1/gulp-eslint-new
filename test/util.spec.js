@@ -384,71 +384,61 @@ describe('utility methods', () => {
 
 	describe('writeResults', () => {
 
-		const testConfig = {},
-			testResult = {
-				config: testConfig
-			},
-			testResults = [testResult];
+		const testResults = [];
+		const testRulesMeta = { };
+		const testInstance = {
+			getRulesMetaForResults(results) {
+				assert.strictEqual(results, testResults);
+				return testRulesMeta;
+			}
+		};
 
 		it('should pass the value returned from the formatter to the writer', () => {
-
-			const testValue = {};
-
-			function testFormatter(results, config) {
-				assert(results);
-				assert.equal(results, testResults);
-				assert(config);
-				assert.equal(config, testConfig);
-
-				return testValue;
-			}
-
-			function testWriter(value) {
-				assert(value);
-				assert.equal(value, testValue);
-			}
-
-			util.writeResults(testResults, testFormatter, testWriter);
-
+			let writableCallCount = 0;
+			const formattedText = 'something happened';
+			util.writeResults(
+				testResults,
+				testInstance,
+				(results, { rulesMeta }) => {
+					assert(results);
+					assert.equal(results, testResults);
+					assert.equal(rulesMeta, testRulesMeta);
+					return formattedText;
+				},
+				value => {
+					assert(value);
+					assert.equal(value, formattedText);
+					++writableCallCount;
+				}
+			);
+			assert.equal(writableCallCount, 1);
 		});
 
-		it('should not write an empty or missing value', () => {
-
-			function testFormatter(results, config) {
-				assert(results);
-				assert.equal(results, testResults);
-				assert(config);
-				assert.equal(config, testConfig);
-
-				return '';
-			}
-
-			function testWriter(value) {
-				assert(!value);
-			}
-
-			util.writeResults(testResults, testFormatter, testWriter);
-
+		it('should not write an empty formatted text', () => {
+			util.writeResults(
+				testResults,
+				testInstance,
+				(results, { rulesMeta }) => {
+					assert(results);
+					assert.equal(results, testResults);
+					assert.equal(rulesMeta, testRulesMeta);
+					return '';
+				},
+				() => assert.fail('Unexpected call')
+			);
 		});
 
-		it('should default undefined results to an empty array', () => {
-
-			function testFormatter(results, config) {
-				assert(results);
-				assert(Array.isArray(results));
-				assert.equal(results.length, 0);
-				assert(config);
-
-				return results.length + ' results';
-			}
-
-			function testWriter(value) {
-				assert(value);
-				assert.equal(value, '0 results');
-			}
-
-			util.writeResults(null, testFormatter, testWriter);
-
+		it('should not write an undefined', () => {
+			util.writeResults(
+				testResults,
+				testInstance,
+				(results, { rulesMeta }) => {
+					assert(results);
+					assert.equal(results, testResults);
+					assert.equal(rulesMeta, testRulesMeta);
+				},
+				() => assert.fail('Unexpected call')
+			);
 		});
 
 	});

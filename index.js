@@ -11,13 +11,26 @@ const {
 	resolveFormatter,
 	resolveWritable,
 	transform,
-	tryResultAction,
+	tryAction,
 	writeResults
 } = require('./util');
 const { ESLint }  = require('eslint');
 const PluginError = require('plugin-error');
 
-async function lintFile(linter, file, cwd, quiet, warnIgnored) {
+function createPluginError(...args) {
+	return new PluginError('gulp-eslint-new', ...args);
+}
+
+function getESLintInstance(file, done) {
+	const eslintInstance = file._eslintInstance;
+	if (eslintInstance != null) {
+		return eslintInstance;
+	}
+
+	done(createPluginError({ fileName: file.path, message: 'ESLint instance not found' }));
+}
+
+async function lintFile(eslintInstance, file, cwd, quiet, warnIgnored) {
 	if (file.isNull()) {
 		return;
 	}
@@ -29,7 +42,7 @@ async function lintFile(linter, file, cwd, quiet, warnIgnored) {
 	// The "path" property of a Vinyl file should be always an absolute path.
 	// See https://gulpjs.com/docs/en/api/vinyl/#instance-properties.
 	const filePath = file.path;
-	if (await linter.isPathIgnored(filePath)) {
+	if (await eslintInstance.isPathIgnored(filePath)) {
 		// Note: ESLint doesn't adjust file paths relative to an ancestory .eslintignore path.
 		// E.g., If ../.eslintignore has "foo/*.js", ESLint will ignore ./foo/*.js, instead of ../foo/*.js.
 		// ESLint rolls this into `ESLint.prototype.lintText`. So, gulp-eslint-new must account for this limitation.
@@ -41,7 +54,7 @@ async function lintFile(linter, file, cwd, quiet, warnIgnored) {
 		return;
 	}
 
-	const [result] = await linter.lintText(file.contents.toString(), { filePath });
+	const [result] = await eslintInstance.lintText(file.contents.toString(), { filePath });
 	// Note: Fixes are applied as part of `lintText`.
 	// Any applied fix messages have been removed from the result.
 
@@ -54,6 +67,7 @@ async function lintFile(linter, file, cwd, quiet, warnIgnored) {
 		eslint = result;
 	}
 	file.eslint = eslint;
+	file._eslintInstance = eslintInstance;
 
 	// Update the fixed output; otherwise, fixable messages are simply ignored.
 	if (hasOwn(eslint, 'output')) {
@@ -64,13 +78,13 @@ async function lintFile(linter, file, cwd, quiet, warnIgnored) {
 
 function gulpEslint(options) {
 	const { eslintOptions, quiet, warnIgnored } = migrateOptions(options);
-	const linter = new ESLint(eslintOptions);
+	const eslintInstance = new ESLint(eslintOptions);
 	const cwd = eslintOptions.cwd || process.cwd();
 
 	return transform((file, enc, cb) => {
-		lintFile(linter, file, cwd, quiet, warnIgnored)
+		lintFile(eslintInstance, file, cwd, quiet, warnIgnored)
 			.then(() => cb(null, file))
-			.catch(error => cb(new PluginError('gulp-eslint-new', error)));
+			.catch(error => cb(createPluginError(error)));
 	});
 }
 
@@ -81,7 +95,7 @@ gulpEslint.result = action => {
 
 	return transform((file, enc, done) => {
 		if (file.eslint) {
-			tryResultAction(action, file.eslint, handleCallback(done, file));
+			tryAction(action, file.eslint, handleCallback(done, file));
 		} else {
 			done(null, file);
 		}
@@ -113,7 +127,7 @@ gulpEslint.results = function (action) {
 		}
 		done(null, file);
 	}, done => {
-		tryResultAction(action, results, handleCallback(done));
+		tryAction(action, results, handleCallback(done));
 	});
 };
 
@@ -124,7 +138,7 @@ gulpEslint.failOnError = () => {
 			return;
 		}
 
-		throw new PluginError('gulp-eslint-new', {
+		throw createPluginError({
 			name: 'ESLintError',
 			fileName: result.filePath,
 			message: error.message,
@@ -140,7 +154,7 @@ gulpEslint.failAfterError = () => {
 			return;
 		}
 
-		throw new PluginError('gulp-eslint-new', {
+		throw createPluginError({
 			name: 'ESLintError',
 			message: `Failed with ${count} ${count === 1 ? 'error' : 'errors'}`
 		});
@@ -151,18 +165,57 @@ gulpEslint.formatEach = (formatter, writable) => {
 	formatter = resolveFormatter(formatter);
 	writable = resolveWritable(writable);
 
-	return gulpEslint.result(result => writeResults([result], formatter, writable));
+	return transform((file, enc, done) => {
+		const { eslint } = file;
+		if (eslint) {
+			const eslintInstance = getESLintInstance(file, done);
+			if (eslintInstance) {
+				tryAction(
+					() => writeResults([eslint], eslintInstance, formatter, writable),
+					null,
+					handleCallback(done, file)
+				);
+			}
+		} else {
+			done(null, file);
+		}
+	});
 };
 
 gulpEslint.format = (formatter, writable) => {
 	formatter = resolveFormatter(formatter);
 	writable = resolveWritable(writable);
 
-	return gulpEslint.results(results => {
-		// Only format results if some file has been linted.
-		if (results.length) {
-			writeResults(results, formatter, writable);
+	const results = [];
+	let commonInstance;
+	return transform((file, enc, done) => {
+		const { eslint } = file;
+		if (eslint) {
+			const eslintInstance = getESLintInstance(file, done);
+			if (!eslintInstance) {
+				return;
+			}
+			if (commonInstance === undefined) {
+				commonInstance = eslintInstance;
+			} else {
+				if (eslintInstance !== commonInstance) {
+					done(createPluginError({
+						name: 'ESLintError',
+						message: 'The files in the stream were not processes by the same '
+							+ 'instance of ESLint'
+					}));
+					return;
+				}
+			}
+			results.push(eslint);
 		}
+		done(null, file);
+	}, done => {
+		tryAction(() => {
+			if (results.length) {
+				writeResults(results, commonInstance, formatter, writable);
+			}
+		}, null, handleCallback(done));
 	});
 };
 

@@ -4,8 +4,9 @@
 
 const { createVinylFile } = require('./test-util');
 const { strict: assert }  = require('assert');
+const { ESLint }          = require('eslint');
 const eslint              = require('gulp-eslint-new');
-const stream              = require('stream');
+const { PassThrough }     = require('stream');
 const File                = require('vinyl');
 
 function getFiles() {
@@ -30,7 +31,8 @@ function getFiles() {
 	];
 }
 
-describe('gulp-eslint-new format', () => {
+describe('gulp-eslint-new format function', () => {
+
 	let formatCount;
 	let writeCount;
 
@@ -45,19 +47,8 @@ describe('gulp-eslint-new format', () => {
 		writeCount++;
 	}
 
-	/**
-	 * Custom ESLint formatted result writer that will throw an exception.
-	 *
-	 * @throws Error always thrown to test error handling in writers.
-	 * @param {string} message - A message to trigger an error.
-	 */
-	function failWriter(message) {
-		const error = new Error(`Writer Test Error${message ? `: ${message}` : ''}`);
-		error.name = 'TestError';
-		throw error;
-	}
+	describe('format', () => {
 
-	describe('format all results', () => {
 		/**
 		 * Custom ESLint result formatter for counting format passes and
 		 * returning an expected formatted result message.
@@ -112,8 +103,7 @@ describe('gulp-eslint-new format', () => {
 		it('should not attempt to format when no linting results are found', done => {
 			const files = getFiles();
 
-			const passthruStream = new stream.PassThrough({ objectMode: true })
-				.on('error', done);
+			const passthruStream = new PassThrough({ objectMode: true }).on('error', done);
 
 			const formatStream = eslint.format(formatResults, outputWriter);
 
@@ -134,9 +124,51 @@ describe('gulp-eslint-new format', () => {
 			passthruStream.end();
 		});
 
+		it('should fail the stream if a linted file has no ESLint instance', done => {
+			const file = createVinylFile('file.js', '');
+			file.eslint = { };
+			eslint.format()
+				.on('error', err => {
+					assert(err);
+					assert.equal(err.fileName, file.path);
+					assert.equal(err.message, 'ESLint instance not found');
+					assert.equal(err.plugin, 'gulp-eslint-new');
+					done();
+				})
+				.on('finish', () => done(new Error('Expected PluginError to fail stream')))
+				.end(file);
+		});
+
+		it('should fail the stream if the linted files have different ESLint instances', done => {
+
+			const formatStream = eslint.format()
+				.on('error', err => {
+					assert(err);
+					assert.equal(
+						err.message,
+						'The files in the stream were not processes by the same instance of '
+						+ 'ESLint'
+					);
+					assert.equal(err.plugin, 'gulp-eslint-new');
+					done();
+				})
+				.on('finish', () => done(new Error('Expected PluginError to fail stream')));
+
+			function addFile(path) {
+				const file = createVinylFile(path, '');
+				file.eslint = { };
+				file._eslintInstance = new ESLint();
+				formatStream.write(file);
+			}
+
+			addFile('file1.js');
+			addFile('file2.js');
+			formatStream.end();
+		});
+
 	});
 
-	describe('format each result', () => {
+	describe('formatEach', () => {
 
 		function formatResult(results, config) {
 			assert(config);
@@ -159,10 +191,10 @@ describe('gulp-eslint-new format', () => {
 			const formatStream = eslint.formatEach(formatResult, outputWriter)
 				.on('error', done)
 				.on('finish', function () {
-					// the stream should not have emitted an error
+					// The stream should not have emitted an error.
 					assert.equal(this._writableState.errorEmitted, false);
 
-					const fileCount = files.length - 1; // remove directory
+					const fileCount = files.length - 1; // Remove directory.
 					assert.equal(formatCount, fileCount);
 					assert.equal(writeCount, fileCount);
 					done();
@@ -181,28 +213,47 @@ describe('gulp-eslint-new format', () => {
 
 			const files = getFiles();
 
-			const lintStream = eslint({ useEslintrc: false, rules: { 'strict': 2 } })
-				.on('error', done);
+			const lintStream
+				= eslint({ useEslintrc: false, rules: { 'strict': 2 } }).on('error', done);
 
-			const formatStream = eslint.formatEach(formatResult, failWriter);
-
-			formatStream
+			const testMessage = 'Writer Test Error';
+			const testErrorName = 'TestError';
+			const formatStream = eslint
+				.formatEach(formatResult, message => {
+					assert.equal(message, '1 message');
+					const error = new Error(testMessage);
+					error.name = testErrorName;
+					throw error;
+				})
 				.on('error', err => {
 					assert(err);
-					assert.equal(err.message, 'Writer Test Error: 1 message');
-					assert.equal(err.name, 'TestError');
+					assert.equal(err.message, testMessage);
+					assert.equal(err.name, testErrorName);
 					assert.equal(err.plugin, 'gulp-eslint-new');
 					done();
 				})
-				.on('finish', () => {
-					done(new Error('Expected PluginError to fail stream'));
-				});
+				.on('finish', () => done(new Error('Expected PluginError to fail stream')));
 
 			assert(lintStream.pipe);
 			lintStream.pipe(formatStream);
 
 			files.forEach(file => lintStream.write(file));
 			lintStream.end();
+		});
+
+		it('should fail the stream if a linted file has no ESLint instance', done => {
+			const file = createVinylFile('file.js', '');
+			file.eslint = { };
+			eslint.formatEach()
+				.on('error', err => {
+					assert(err);
+					assert.equal(err.fileName, file.path);
+					assert.equal(err.message, 'ESLint instance not found');
+					assert.equal(err.plugin, 'gulp-eslint-new');
+					done();
+				})
+				.on('finish', () => done(new Error('Expected PluginError to fail stream')))
+				.end(file);
 		});
 
 	});

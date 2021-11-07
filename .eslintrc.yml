@@ -28,6 +28,7 @@ rules:
   no-trailing-spaces: 1
   no-var: 2
   object-curly-spacing: [1, "always"]
+  one-var: [1, "never"]
   operator-linebreak: [1, "before", { overrides: { "?": "after", ":": "after" } }]
   prefer-const: 2
   radix: 2

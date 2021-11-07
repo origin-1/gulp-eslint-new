@@ -192,17 +192,17 @@ exports.handleCallback = (callback, value) => {
  * Call sync or async action and handle any thrown or async error.
  *
  * @param {Function} action - Result action to call.
- * @param {LintResult|LintResult[]} result - An ESLint result or result list.
+ * @param {unknown} value - A parameter to call the action.
  * @param {Function} done - An callback for when the action is complete.
  */
-exports.tryResultAction = function (action, result, done) {
+exports.tryAction = function (action, value, done) {
 	try {
 		if (action.length > 1) {
 			// async action
-			action(result, done);
+			action(value, done);
 		} else {
 			// sync action
-			action(result);
+			action(value);
 			done();
 		}
 	} catch (error) {
@@ -362,18 +362,14 @@ exports.resolveWritable = (writable = fancyLog) => {
 /**
  * Write formatter results to writable/output.
  *
- * @param {LintResult[]} results - A list of ESLint results.
- * @param {Function} formatter - A function used to format ESLint results.
+ * @param {GulpESLintResults} results - A list of ESLint results.
+ * @param {ESLint} eslintInstance - Instance of ESLint, used to extract rule metadata.
+ * @param {CLIEngine.Formatter} formatter - A function used to format ESLint results.
  * @param {Function} writable - A function used to write formatted ESLint results.
  */
-exports.writeResults = (results, formatter, writable) => {
-	if (!results) {
-		results = [];
-	}
-
-	const firstResult = results.find(result => result.config);
-
-	const message = formatter(results, firstResult ? firstResult.config : {});
+exports.writeResults = (results, eslintInstance, formatter, writable) => {
+	const rulesMeta = eslintInstance.getRulesMetaForResults(results);
+	const message = formatter(results, { rulesMeta });
 	if (writable && message != null && message !== '') {
 		writable(message);
 	}

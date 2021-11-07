@@ -58,10 +58,12 @@ describe('gulp-eslint-new plugin', () => {
 				assert.equal(file.eslint.filePath, resolve('use-strict.js'));
 				assert(Array.isArray(file.eslint.messages));
 				assert.equal(file.eslint.messages.length, 1);
-				assert('message' in file.eslint.messages[0]);
-				assert('line' in file.eslint.messages[0]);
-				assert('column' in file.eslint.messages[0]);
-				assert.equal(file.eslint.messages[0].ruleId, 'strict');
+				const message = file.eslint.messages[0];
+				assert('message' in message);
+				assert('line' in message);
+				assert('column' in message);
+				assert.equal(message.ruleId, 'strict');
+				assert.equal(message.severity, 2);
 				done();
 			})
 			.end(createVinylFile('use-strict.js', 'var x = 1;'));
@@ -144,10 +146,12 @@ describe('gulp-eslint-new plugin', () => {
 					assert(file.eslint);
 					assert(Array.isArray(file.eslint.messages));
 					assert.equal(file.eslint.messages.length, 1);
-					assert('message' in file.eslint.messages[0]);
-					assert('line' in file.eslint.messages[0]);
-					assert('column' in file.eslint.messages[0]);
-					assert.equal(file.eslint.messages[0].ruleId, 'eol-last');
+					const message = file.eslint.messages[0];
+					assert('message' in message);
+					assert('line' in message);
+					assert('column' in message);
+					assert.equal(message.ruleId, 'eol-last');
+					assert.equal(message.severity, 2);
 					done();
 				})
 				.end(createVinylFile(filePath, 'console.log(\'Hi\');'));
@@ -289,6 +293,7 @@ describe('gulp-eslint-new plugin', () => {
 
 		it('when true, should remove warnings', done => {
 			eslint({ quiet: true, useEslintrc: false, rules: { 'no-undef': 1, 'strict': 2 } })
+				.on('error', done)
 				.on('data', file => {
 					assert(file);
 					assert(file.eslint);
@@ -311,6 +316,7 @@ describe('gulp-eslint-new plugin', () => {
 			eslint(
 				{ quiet: warningsOnly, useEslintrc: false, rules: { 'no-undef': 1, 'strict': 2 } }
 			)
+				.on('error', done)
 				.on('data', file => {
 					assert(file);
 					assert(file.eslint);
