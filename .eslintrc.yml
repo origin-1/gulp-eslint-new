@@ -38,6 +38,7 @@ rules:
   object-curly-spacing: [1, "always"]
   operator-linebreak: [1, "before", { overrides: { "?": "after", ":": "after" } }]
   prefer-const: 2
+  prefer-rest-params: 2
   quotes: [1, "single", "avoid-escape"]
   radix: 2
   semi: 2
@@ -52,3 +53,12 @@ rules:
   strict: [2, "global"]
   valid-jsdoc: [1, { requireReturn: false, prefer: { return: "returns" }}]
   wrap-iife: 2
+
+overrides:
+
+  - files: ["*.ts"]
+
+    extends: [plugin:@typescript-eslint/recommended]
+
+    rules:
+      "@typescript-eslint/member-delimiter-style": 2
