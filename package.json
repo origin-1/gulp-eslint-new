@@ -59,6 +59,9 @@
 		"typescript": "^4.4.4",
 		"vinyl": "^2.2.1"
 	},
-	"exports": "./index.js",
+	"exports": {
+		".": "./index.js",
+		"./package.json": "./package.json"
+	},
 	"types": "index.d.ts"
 }
