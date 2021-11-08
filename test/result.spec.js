@@ -2,10 +2,10 @@
 
 'use strict';
 
-const { createVinylFile } = require('./test-util');
-const { strict: assert }  = require('assert');
-const eslint              = require('gulp-eslint-new');
-const { PassThrough }     = require('stream');
+const { createVinylFile, endWithoutError } = require('./test-util');
+const { strict: assert }                   = require('assert');
+const eslint                               = require('gulp-eslint-new');
+const { PassThrough }                      = require('stream');
 
 describe('gulp-eslint-new result', () => {
 	it('should provide an ESLint result', done => {
@@ -73,47 +73,40 @@ describe('gulp-eslint-new result', () => {
 
 	it('should catch thrown errors', done => {
 		const file = createVinylFile('invalid.js', '#invalid!syntax}');
-		file.eslint = {};
+		file.eslint = { };
 
-		function finished() {
-			done(new Error('Unexpected Finish'));
-		}
-
-		eslint.result(() => {
-			throw new Error('Expected Error');
-		})
+		eslint
+			.result(() => {
+				throw new Error('Expected Error');
+			})
 			.on('error', function (error) {
-				this.removeListener('finish', finished);
+				this.off('finish', this._events.finish);
 				assert(error);
 				assert.equal(error.message, 'Expected Error');
 				assert.equal(error.name, 'Error');
 				assert.equal(error.plugin, 'gulp-eslint-new');
 				done();
 			})
-			.on('finish', finished)
+			.on('finish', endWithoutError(done))
 			.end(file);
 	});
 
 	it('should catch thrown null', done => {
 		const file = createVinylFile('invalid.js', '#invalid!syntax}');
-		file.eslint = {};
-
-		function finished() {
-			done(new Error('Unexpected Finish'));
-		}
+		file.eslint = { };
 
 		eslint.result(() => {
 			throw null;
 		})
 			.on('error', function (error) {
-				this.removeListener('finish', finished);
+				this.off('finish', this._events.finish);
 				assert(error);
 				assert.equal(error.message, 'Unknown Error');
 				assert.equal(error.name, 'Error');
 				assert.equal(error.plugin, 'gulp-eslint-new');
 				done();
 			})
-			.on('finish', finished)
+			.on('finish', endWithoutError(done))
 			.end(file);
 	});
 
@@ -129,7 +122,7 @@ describe('gulp-eslint-new result', () => {
 			throw new Error('Expected no call');
 		})
 			.on('error', function (error) {
-				this.removeListener('finish', done);
+				this.off('finish', done);
 				done(error);
 			})
 			.on('finish', done)
@@ -139,7 +132,7 @@ describe('gulp-eslint-new result', () => {
 	it('should support an async result handler', done => {
 		let asyncComplete = false;
 		const file = createVinylFile('invalid.js', '#invalid!syntax}');
-		const resultStub = {};
+		const resultStub = { };
 		file.eslint = resultStub;
 
 		function ended() {
@@ -147,22 +140,23 @@ describe('gulp-eslint-new result', () => {
 			done();
 		}
 
-		const resultStream = eslint.result((result, callback) => {
-			assert(result);
-			assert.equal(result, resultStub);
+		const resultStream = eslint
+			.result((result, callback) => {
+				assert(result);
+				assert.equal(result, resultStub);
 
-			assert.equal(typeof callback, 'function');
+				assert.equal(typeof callback, 'function');
 
-			setTimeout(() => {
-				asyncComplete = true;
-				callback();
-			}, 10);
-		})
+				setTimeout(() => {
+					asyncComplete = true;
+					callback();
+				}, 10);
+			})
 			.on('error', function (error) {
-				this.removeListener('end', ended);
+				this.off('finish', ended);
 				done(error);
 			})
-			.on('end', ended);
+			.on('finish', ended);
 
 		// drain result into pass-through stream
 		resultStream.pipe(new PassThrough({ objectMode: true }));
@@ -211,24 +205,21 @@ describe('gulp-eslint-new results', () => {
 
 	it('should catch thrown errors', done => {
 		const file = createVinylFile('invalid.js', '#invalid!syntax}');
-		file.eslint = {};
+		file.eslint = { };
 
-		function finished() {
-			done(new Error('Unexpected Finish'));
-		}
-
-		eslint.results(() => {
-			throw new Error('Expected Error');
-		})
+		eslint
+			.results(() => {
+				throw new Error('Expected Error');
+			})
 			.on('error', function (error) {
-				this.removeListener('finish', finished);
+				this.off('finish', this._events.finish);
 				assert(error);
 				assert.equal(error.message, 'Expected Error');
 				assert.equal(error.name, 'Error');
 				assert.equal(error.plugin, 'gulp-eslint-new');
 				done();
 			})
-			.on('finish', finished)
+			.on('finish', endWithoutError(done))
 			.end(file);
 	});
 
@@ -245,13 +236,14 @@ describe('gulp-eslint-new results', () => {
 			done();
 		}
 
-		eslint.results(results => {
-			assert(Array.isArray(results));
-			assert.equal(results.length, 0);
-			resultsCalled = true;
-		})
+		eslint
+			.results(results => {
+				assert(Array.isArray(results));
+				assert.equal(results.length, 0);
+				resultsCalled = true;
+			})
 			.on('error', function (error) {
-				this.removeListener('finish', finished);
+				this.off('finish', finished);
 				done(error);
 			})
 			.on('finish', finished)
@@ -261,39 +253,27 @@ describe('gulp-eslint-new results', () => {
 	it('should support an async results handler', done => {
 		let asyncComplete = false;
 		const file = createVinylFile('invalid.js', '#invalid!syntax}');
-		const resultStub = {};
+		const resultStub = { };
 		file.eslint = resultStub;
-
-		function ended() {
-			assert.equal(asyncComplete, true);
-			done();
-		}
-
-		const resultStream = eslint.results((results, callback) => {
-			assert(Array.isArray(results));
-			assert.equal(results.length, 1);
-
-			const result = results[0];
-			assert.equal(result, resultStub);
-
-			assert.equal(typeof callback, 'function');
-
-			setTimeout(() => {
-				asyncComplete = true;
-				callback();
-			}, 10);
-		})
-			.on('error', function (error) {
-				this.removeListener('end', ended);
-				done(error);
+		const resultStream = eslint
+			.results((results, callback) => {
+				assert(Array.isArray(results));
+				assert.equal(results.length, 1);
+				assert.equal(results[0], resultStub);
+				assert.equal(typeof callback, 'function');
+				setImmediate(() => {
+					asyncComplete = true;
+					callback();
+				});
 			})
-			.on('end', ended);
-
-		// drain result into pass-through stream
+			.on('error', done)
+			.on('end', () => {
+				assert.equal(asyncComplete, true);
+				done();
+			});
+		// Drain result into pass-through stream.
 		resultStream.pipe(new PassThrough({ objectMode: true }));
-
 		resultStream.end(file);
-
 	});
 
 });

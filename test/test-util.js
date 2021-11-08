@@ -3,9 +3,9 @@
 const { resolve } = require('path');
 const File        = require('vinyl');
 
-function createVinylFile(path, contents) {
+exports.createVinylFile = (path, contents) => {
 	const file = new File({ path: resolve(path), contents: Buffer.from(contents) });
 	return file;
-}
+};
 
-exports.createVinylFile = createVinylFile;
+exports.endWithoutError = done => () => done(new Error('Error expected but not emitted'));

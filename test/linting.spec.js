@@ -2,12 +2,12 @@
 
 'use strict';
 
-const { createVinylFile } = require('./test-util');
-const { strict: assert }  = require('assert');
-const eslint              = require('gulp-eslint-new');
-const { resolve }         = require('path');
-const { Readable }        = require('stream');
-const File                = require('vinyl');
+const { createVinylFile, endWithoutError } = require('./test-util');
+const { strict: assert }                   = require('assert');
+const eslint                               = require('gulp-eslint-new');
+const { resolve }                          = require('path');
+const { Readable }                         = require('stream');
+const File                                 = require('vinyl');
 
 describe('gulp-eslint-new plugin', () => {
 
@@ -86,24 +86,29 @@ describe('gulp-eslint-new plugin', () => {
 
 	it('should emit an error when it takes a stream content', done => {
 		eslint({ useEslintrc: false, rules: { 'strict': 'error' } })
-			.on('error', err => {
+			.on('error', function (err) {
+				this.off('finish', this._events.finish);
 				assert.equal(err.plugin, 'gulp-eslint-new');
 				assert.equal(
 					err.message,
-					'gulp-eslint-new doesn\'t support vinyl files with Stream contents.'
+					'gulp-eslint-new doesn\'t support Vinyl files with Stream contents.'
 				);
 				done();
 			})
+			.on('finish', endWithoutError(done))
 			.end(new File({ path: resolve('stream.js'), contents: Readable.from(['']) }));
 	});
 
-	it('should throw an error when it fails to load a plugin', done => {
+	it('should emit an error when it fails to load a plugin', done => {
 		const pluginName = 'this-is-unknown-plugin';
 		eslint({ plugins: [pluginName] })
-			.on('error', err => {
+			.on('error', function (err) {
+				this.off('finish', this._events.finish);
 				assert.equal(err.plugin, 'gulp-eslint-new');
+				assert.equal(err.name, 'Error');
+				assert.equal(err.code, 'MODULE_NOT_FOUND');
 				// Remove stack trace from error message as it's machine-dependent
-				const message = err.message.split('\n')[0];
+				const [message] = err.message.split('\n');
 				assert.equal(
 					message,
 					`Failed to load plugin '${
@@ -114,6 +119,7 @@ describe('gulp-eslint-new plugin', () => {
 				);
 				done();
 			})
+			.on('finish', endWithoutError(done))
 			.end(createVinylFile('file.js', ''));
 	});
 

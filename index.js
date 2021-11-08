@@ -36,7 +36,7 @@ async function lintFile(eslintInstance, file, cwd, quiet, warnIgnored) {
 	}
 
 	if (file.isStream()) {
-		throw 'gulp-eslint-new doesn\'t support vinyl files with Stream contents.';
+		throw 'gulp-eslint-new doesn\'t support Vinyl files with Stream contents.';
 	}
 
 	// The "path" property of a Vinyl file should be always an absolute path.

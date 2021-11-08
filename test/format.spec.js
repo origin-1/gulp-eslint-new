@@ -2,12 +2,12 @@
 
 'use strict';
 
-const { createVinylFile } = require('./test-util');
-const { strict: assert }  = require('assert');
-const { ESLint }          = require('eslint');
-const eslint              = require('gulp-eslint-new');
-const { PassThrough }     = require('stream');
-const File                = require('vinyl');
+const { createVinylFile, endWithoutError } = require('./test-util');
+const { strict: assert }                   = require('assert');
+const { ESLint }                           = require('eslint');
+const eslint                               = require('gulp-eslint-new');
+const { PassThrough }                      = require('stream');
+const File                                 = require('vinyl');
 
 function getFiles() {
 	return [
@@ -124,26 +124,26 @@ describe('gulp-eslint-new format function', () => {
 			passthruStream.end();
 		});
 
-		it('should fail the stream if a linted file has no ESLint instance', done => {
+		it('should emit an error if a linted file has no ESLint instance', done => {
 			const file = createVinylFile('file.js', '');
 			file.eslint = { };
 			eslint.format()
-				.on('error', err => {
-					assert(err);
+				.on('error', function (err) {
+					this.off('finish', this._events.finish);
 					assert.equal(err.fileName, file.path);
 					assert.equal(err.message, 'ESLint instance not found');
 					assert.equal(err.plugin, 'gulp-eslint-new');
 					done();
 				})
-				.on('finish', () => done(new Error('Expected PluginError to fail stream')))
+				.on('finish', endWithoutError(done))
 				.end(file);
 		});
 
-		it('should fail the stream if the linted files have different ESLint instances', done => {
+		it('should emit an error if the linted files have different ESLint instances', done => {
 
 			const formatStream = eslint.format()
-				.on('error', err => {
-					assert(err);
+				.on('error', function (err) {
+					this.off('finish', this._events.finish);
 					assert.equal(
 						err.message,
 						'The files in the stream were not processes by the same instance of '
@@ -152,7 +152,7 @@ describe('gulp-eslint-new format function', () => {
 					assert.equal(err.plugin, 'gulp-eslint-new');
 					done();
 				})
-				.on('finish', () => done(new Error('Expected PluginError to fail stream')));
+				.on('finish', endWithoutError(done));
 
 			function addFile(path) {
 				const file = createVinylFile(path, '');
@@ -225,14 +225,14 @@ describe('gulp-eslint-new format function', () => {
 					error.name = testErrorName;
 					throw error;
 				})
-				.on('error', err => {
-					assert(err);
+				.on('error', function (err) {
+					this.off('finish', this._events.finish);
 					assert.equal(err.message, testMessage);
 					assert.equal(err.name, testErrorName);
 					assert.equal(err.plugin, 'gulp-eslint-new');
 					done();
 				})
-				.on('finish', () => done(new Error('Expected PluginError to fail stream')));
+				.on('finish', endWithoutError(done));
 
 			assert(lintStream.pipe);
 			lintStream.pipe(formatStream);
@@ -241,18 +241,18 @@ describe('gulp-eslint-new format function', () => {
 			lintStream.end();
 		});
 
-		it('should fail the stream if a linted file has no ESLint instance', done => {
+		it('should emit an error if a linted file has no ESLint instance', done => {
 			const file = createVinylFile('file.js', '');
 			file.eslint = { };
 			eslint.formatEach()
-				.on('error', err => {
-					assert(err);
+				.on('error', function (err) {
+					this.off('finish', this._events.finish);
 					assert.equal(err.fileName, file.path);
 					assert.equal(err.message, 'ESLint instance not found');
 					assert.equal(err.plugin, 'gulp-eslint-new');
 					done();
 				})
-				.on('finish', () => done(new Error('Expected PluginError to fail stream')))
+				.on('finish', endWithoutError(done))
 				.end(file);
 		});
 
