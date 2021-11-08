@@ -195,7 +195,7 @@ gulpEslint.format = (formatter, writable) => {
 			if (!eslintInstance) {
 				return;
 			}
-			if (commonInstance === undefined) {
+			if (commonInstance == null) {
 				commonInstance = eslintInstance;
 			} else {
 				if (eslintInstance !== commonInstance) {

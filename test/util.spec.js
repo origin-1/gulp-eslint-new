@@ -5,7 +5,7 @@
 const util                = require('../util');
 const { createVinylFile } = require('./test-util');
 const { strict: assert }  = require('assert');
-const { resolve }         = require('path');
+const { join, resolve }   = require('path');
 const stream              = require('stream');
 
 describe('utility methods', () => {
@@ -313,7 +313,7 @@ describe('utility methods', () => {
 
 			const formatter = util.resolveFormatter();
 			const formatterPath
-			= resolve(require.resolve('eslint'), '../cli-engine/formatters/stylish');
+			= join(require.resolve('eslint'), '../cli-engine/formatters/stylish');
 			assert.equal(formatter, require(formatterPath));
 
 		});
@@ -321,8 +321,7 @@ describe('utility methods', () => {
 		it('should resolve a predefined', () => {
 
 			const formatter = util.resolveFormatter('tap');
-			const formatterPath
-			= resolve(require.resolve('eslint'), '../cli-engine/formatters/tap');
+			const formatterPath = join(require.resolve('eslint'), '../cli-engine/formatters/tap');
 			assert.equal(formatter, require(formatterPath));
 
 		});

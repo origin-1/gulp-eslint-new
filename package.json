@@ -5,7 +5,6 @@
 	"repository": "fasttime/gulp-eslint-new",
 	"files": [
 		"index.js",
-		"legacy-get-formatter.js",
 		"util.js"
 	],
 	"directories": {

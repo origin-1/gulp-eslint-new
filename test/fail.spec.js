@@ -5,7 +5,7 @@
 const { createVinylFile, endWithoutError } = require('./test-util');
 const { strict: assert }                   = require('assert');
 const eslint                               = require('gulp-eslint-new');
-const path                                 = require('path');
+const { resolve }                          = require('path');
 
 describe('gulp-eslint-new failOnError', () => {
 
@@ -18,7 +18,7 @@ describe('gulp-eslint-new failOnError', () => {
 				this.off('finish', this._events.finish);
 				assert(err.fileName, file.path);
 				assert.equal(err.message, '\'x\' is not defined.');
-				assert.equal(err.fileName, path.resolve('invalid.js'));
+				assert.equal(err.fileName, resolve('invalid.js'));
 				assert.equal(err.plugin, 'gulp-eslint-new');
 				done();
 			})

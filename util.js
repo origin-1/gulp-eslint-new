@@ -1,10 +1,9 @@
 'use strict';
 
-const getFormatter  = require('./legacy-get-formatter');
-const fancyLog      = require('fancy-log');
-const { relative }  = require('path');
-const PluginError   = require('plugin-error');
-const { Transform } = require('stream');
+const fancyLog                    = require('fancy-log');
+const { dirname, join, relative } = require('path');
+const PluginError                 = require('plugin-error');
+const { Transform }               = require('stream');
 
 /**
  * Convenience method for creating a transform stream in object mode.
@@ -327,6 +326,19 @@ exports.filterResult = (result, filter) => {
 		newResult.source = result.source;
 	}
 	return newResult;
+};
+
+/**
+ * Returns the formatter representing the given format or null if the `format` is not a string.
+ * @param {string} [format] The name of the format to load or the path to a custom formatter.
+ * @throws {any} As may be thrown by requiring the formatter.
+ * @returns {Function} The formatter function.
+ */
+let getFormatter = format => {
+	const baseDir = dirname(require.resolve('eslint'));
+	const cliEnginePath = join(baseDir, 'cli-engine');
+	({ getFormatter } = require(cliEnginePath).CLIEngine);
+	return getFormatter(format);
 };
 
 /**

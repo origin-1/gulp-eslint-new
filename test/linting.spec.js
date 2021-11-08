@@ -5,7 +5,7 @@
 const { createVinylFile, endWithoutError } = require('./test-util');
 const { strict: assert }                   = require('assert');
 const eslint                               = require('gulp-eslint-new');
-const { resolve }                          = require('path');
+const { join, resolve }                    = require('path');
 const { Readable }                         = require('stream');
 const File                                 = require('vinyl');
 
@@ -166,7 +166,7 @@ describe('gulp-eslint-new plugin', () => {
 		it('with an absolute path', done => {
 			test(
 				{
-					overrideConfigFile: resolve(__dirname, 'eslintrc-sharable-config.js'),
+					overrideConfigFile: join(__dirname, 'eslintrc-sharable-config.js'),
 					useEslintrc: false
 				},
 				'no-newline.js',
