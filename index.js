@@ -2,32 +2,26 @@
 
 const {
 	createIgnoreResult,
+	createPluginError,
 	filterResult,
 	firstResultMessage,
-	handleCallback,
 	hasOwn,
 	isErrorMessage,
 	migrateOptions,
 	resolveFormatter,
 	resolveWritable,
-	transform,
-	tryAction,
+	createTransform,
 	writeResults
 } = require('./util');
-const { ESLint }  = require('eslint');
-const PluginError = require('plugin-error');
+const { ESLint }    = require('eslint');
+const { promisify } = require('util');
 
-function createPluginError(...args) {
-	return new PluginError('gulp-eslint-new', ...args);
-}
-
-function getESLintInstance(file, done) {
+function getESLintInstance(file) {
 	const eslintInstance = file._eslintInstance;
 	if (eslintInstance != null) {
 		return eslintInstance;
 	}
-
-	done(createPluginError({ fileName: file.path, message: 'ESLint instance not found' }));
+	throw createPluginError({ fileName: file.path, message: 'ESLint instance not found' });
 }
 
 async function lintFile(eslintInstance, file, cwd, quiet, warnIgnored) {
@@ -80,24 +74,22 @@ function gulpEslint(options) {
 	const { eslintOptions, quiet, warnIgnored } = migrateOptions(options);
 	const eslintInstance = new ESLint(eslintOptions);
 	const cwd = eslintOptions.cwd || process.cwd();
-
-	return transform((file, enc, cb) => {
-		lintFile(eslintInstance, file, cwd, quiet, warnIgnored)
-			.then(() => cb(null, file))
-			.catch(error => cb(createPluginError(error)));
-	});
+	return createTransform(
+		file => lintFile(eslintInstance, file, cwd, quiet, warnIgnored)
+	);
 }
 
 gulpEslint.result = action => {
 	if (typeof action !== 'function') {
 		throw new Error('Expected callable argument');
 	}
-
-	return transform((file, enc, done) => {
-		if (file.eslint) {
-			tryAction(action, file.eslint, handleCallback(done, file));
-		} else {
-			done(null, file);
+	if (action.length > 1) {
+		action = promisify(action);
+	}
+	return createTransform(async file => {
+		const { eslint } = file;
+		if (eslint) {
+			await action(eslint);
 		}
 	});
 };
@@ -106,15 +98,16 @@ gulpEslint.results = function (action) {
 	if (typeof action !== 'function') {
 		throw new Error('Expected callable argument');
 	}
-
+	if (action.length > 1) {
+		action = promisify(action);
+	}
 	const results = [];
 	results.errorCount = 0;
 	results.warningCount = 0;
 	results.fixableErrorCount = 0;
 	results.fixableWarningCount = 0;
 	results.fatalErrorCount = 0;
-
-	return transform((file, enc, done) => {
+	return createTransform(file => {
 		const { eslint } = file;
 		if (eslint) {
 			results.push(eslint);
@@ -125,9 +118,8 @@ gulpEslint.results = function (action) {
 			results.fixableWarningCount += eslint.fixableWarningCount;
 			results.fatalErrorCount     += eslint.fatalErrorCount;
 		}
-		done(null, file);
-	}, done => {
-		tryAction(action, results, handleCallback(done));
+	}, async () => {
+		await action(results);
 	});
 };
 
@@ -164,20 +156,11 @@ gulpEslint.failAfterError = () => {
 gulpEslint.formatEach = (formatter, writable) => {
 	formatter = resolveFormatter(formatter);
 	writable = resolveWritable(writable);
-
-	return transform((file, enc, done) => {
+	return createTransform(file => {
 		const { eslint } = file;
 		if (eslint) {
-			const eslintInstance = getESLintInstance(file, done);
-			if (eslintInstance) {
-				tryAction(
-					() => writeResults([eslint], eslintInstance, formatter, writable),
-					null,
-					handleCallback(done, file)
-				);
-			}
-		} else {
-			done(null, file);
+			const eslintInstance = getESLintInstance(file);
+			writeResults([eslint], eslintInstance, formatter, writable);
 		}
 	});
 };
@@ -185,37 +168,29 @@ gulpEslint.formatEach = (formatter, writable) => {
 gulpEslint.format = (formatter, writable) => {
 	formatter = resolveFormatter(formatter);
 	writable = resolveWritable(writable);
-
 	const results = [];
 	let commonInstance;
-	return transform((file, enc, done) => {
+	return createTransform(file => {
 		const { eslint } = file;
 		if (eslint) {
-			const eslintInstance = getESLintInstance(file, done);
-			if (!eslintInstance) {
-				return;
-			}
+			const eslintInstance = getESLintInstance(file);
 			if (commonInstance == null) {
 				commonInstance = eslintInstance;
 			} else {
 				if (eslintInstance !== commonInstance) {
-					done(createPluginError({
+					throw createPluginError({
 						name: 'ESLintError',
 						message: 'The files in the stream were not processes by the same '
 							+ 'instance of ESLint'
-					}));
-					return;
+					});
 				}
 			}
 			results.push(eslint);
 		}
-		done(null, file);
-	}, done => {
-		tryAction(() => {
-			if (results.length) {
-				writeResults(results, commonInstance, formatter, writable);
-			}
-		}, null, handleCallback(done));
+	}, () => {
+		if (results.length) {
+			writeResults(results, commonInstance, formatter, writable);
+		}
 	});
 };
 

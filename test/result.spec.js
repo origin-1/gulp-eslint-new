@@ -2,10 +2,10 @@
 
 'use strict';
 
-const { createVinylFile, endWithoutError } = require('./test-util');
-const { strict: assert }                   = require('assert');
-const eslint                               = require('gulp-eslint-new');
-const { PassThrough }                      = require('stream');
+const { createVinylFile, noop } = require('./test-util');
+const { strict: assert }        = require('assert');
+const eslint                    = require('gulp-eslint-new');
+const { PassThrough }           = require('stream');
 
 describe('gulp-eslint-new result', () => {
 	it('should provide an ESLint result', done => {
@@ -49,6 +49,7 @@ describe('gulp-eslint-new result', () => {
 			}
 		];
 		lintStream
+			.pipe(eslint.result(noop)) // Test that files are passed through.
 			.pipe(eslint.result(result => {
 				const testData = testDataList[resultCount];
 				assert(result);
@@ -80,14 +81,12 @@ describe('gulp-eslint-new result', () => {
 				throw new Error('Expected Error');
 			})
 			.on('error', function (error) {
-				this.off('finish', this._events.finish);
 				assert(error);
 				assert.equal(error.message, 'Expected Error');
 				assert.equal(error.name, 'Error');
 				assert.equal(error.plugin, 'gulp-eslint-new');
 				done();
 			})
-			.on('finish', endWithoutError(done))
 			.end(file);
 	});
 
@@ -95,18 +94,17 @@ describe('gulp-eslint-new result', () => {
 		const file = createVinylFile('invalid.js', '#invalid!syntax}');
 		file.eslint = { };
 
-		eslint.result(() => {
-			throw null;
-		})
+		eslint
+			.result(() => {
+				throw null;
+			})
 			.on('error', function (error) {
-				this.off('finish', this._events.finish);
 				assert(error);
 				assert.equal(error.message, 'Unknown Error');
 				assert.equal(error.name, 'Error');
 				assert.equal(error.plugin, 'gulp-eslint-new');
 				done();
 			})
-			.on('finish', endWithoutError(done))
 			.end(file);
 	});
 
@@ -118,13 +116,11 @@ describe('gulp-eslint-new result', () => {
 
 		const file = createVinylFile('invalid.js', '#invalid!syntax}');
 
-		eslint.result(() => {
-			throw new Error('Expected no call');
-		})
-			.on('error', function (error) {
-				this.off('finish', done);
-				done(error);
+		eslint
+			.result(() => {
+				throw new Error('Expected no call');
 			})
+			.on('error', done)
 			.on('finish', done)
 			.end(file);
 	});
@@ -152,11 +148,8 @@ describe('gulp-eslint-new result', () => {
 					callback();
 				}, 10);
 			})
-			.on('error', function (error) {
-				this.off('finish', ended);
-				done(error);
-			})
-			.on('finish', ended);
+			.on('error', done)
+			.on('end', ended);
 
 		// drain result into pass-through stream
 		resultStream.pipe(new PassThrough({ objectMode: true }));
@@ -170,7 +163,7 @@ describe('gulp-eslint-new result', () => {
 describe('gulp-eslint-new results', () => {
 
 	it('should provide ESLint results', done => {
-		let resultsCalled = false;
+		let actualResults;
 		const lintStream = eslint({
 			useEslintrc: false,
 			rules: {
@@ -190,10 +183,13 @@ describe('gulp-eslint-new results', () => {
 				assert.equal(results.fixableErrorCount, 3);
 				assert.equal(results.fixableWarningCount, 2);
 				assert.equal(results.fatalErrorCount, 1);
-				resultsCalled = true;
+				actualResults = results;
+			}))
+			.pipe(eslint.results(results => {
+				assert.deepEqual(results, actualResults);
 			}))
 			.on('finish', () => {
-				assert.equal(resultsCalled, true);
+				assert(actualResults);
 				done();
 			});
 		lintStream.write(createVinylFile('invalid-1.js', '#@?!'));
@@ -212,14 +208,12 @@ describe('gulp-eslint-new results', () => {
 				throw new Error('Expected Error');
 			})
 			.on('error', function (error) {
-				this.off('finish', this._events.finish);
 				assert(error);
 				assert.equal(error.message, 'Expected Error');
 				assert.equal(error.name, 'Error');
 				assert.equal(error.plugin, 'gulp-eslint-new');
 				done();
 			})
-			.on('finish', endWithoutError(done))
 			.end(file);
 	});
 
@@ -242,10 +236,7 @@ describe('gulp-eslint-new results', () => {
 				assert.equal(results.length, 0);
 				resultsCalled = true;
 			})
-			.on('error', function (error) {
-				this.off('finish', finished);
-				done(error);
-			})
+			.on('error', done)
 			.on('finish', finished)
 			.end(file);
 	});

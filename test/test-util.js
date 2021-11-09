@@ -8,4 +8,4 @@ exports.createVinylFile = (path, contents) => {
 	return file;
 };
 
-exports.endWithoutError = done => () => done(new Error('Error expected but not emitted'));
+exports.noop = () => { };

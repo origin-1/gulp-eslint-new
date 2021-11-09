@@ -5,22 +5,58 @@ const { dirname, join, relative } = require('path');
 const PluginError                 = require('plugin-error');
 const { Transform }               = require('stream');
 
+function createPluginError(error) {
+	if (error instanceof PluginError) {
+		return error;
+	}
+	if (error == null) {
+		error = 'Unknown Error';
+	}
+	return new PluginError('gulp-eslint-new', error);
+}
+exports.createPluginError = createPluginError;
+
+function awaitHandler(handler, data, done) {
+	const promise = handler();
+	promise.then(() => done(null, data)).catch(() => { });
+	promise.catch(reason => done(createPluginError(reason)));
+}
+
 /**
- * Convenience method for creating a transform stream in object mode.
+ * Create a transform stream in object mode from synchronous or asynchronous handler functions.
+ * All files are passed through the stream.
+ * Errors thrown by the handlers will be wrapped inside a `PluginError` and emitted from the stream.
  *
- * @param {Function} transform - An async function that is called for each stream chunk.
- * @param {Function} [flush] - An async function that is called before closing the stream.
+ * @param {Function} handleFile
+ * A function that is called for each file, with the file object as the only parameter.
+ * If the function returns a promise, the file will be passed through the stream after the promise is resolved.
+ *
+ * @param {Function} [handleFlush]
+ * A function that is called with no parameters before closing the stream.
+ * If the function returns a promise, the stream will be closed after the promise is resolved.
+ *
  * @returns {Stream} A transform stream.
  */
-exports.transform = function (transform, flush) {
+exports.createTransform = (handleFile, handleFlush) => {
+	let flush;
+	if (handleFlush) {
+		flush = done => {
+			awaitHandler(async () => await handleFlush(), null, done);
+		};
+	}
+	const transform = (file, enc, done) => {
+		awaitHandler(async () => await handleFile(file), file, done);
+	};
 	return new Transform({ objectMode: true, transform, flush });
 };
 
 const isHiddenRegExp = /(?<![^/\\])\.(?!\.)/u;
 const isInNodeModulesRegExp = /(?<![^/\\])node_modules[/\\]/u;
 /**
- * This is a remake of the CLI object createIgnoreResult function with no reference to ESLint
+ * This is a remake of the CLI object `createIgnoreResult` function with no reference to ESLint
  * CLI options and with a better detection of the ignore reason in some edge cases.
+ * Additionally, this function addresses an issue in ESLint that consists in the property
+ * `fatalErrorCount` not being set in the result.
  *
  * @param {string} filePath - Absolute path of checked code file.
  * @param {string} baseDir - Absolute path of base directory.
@@ -166,47 +202,6 @@ exports.migrateOptions = function migrateOptions(options = { }) {
 	const warnIgnored = warnFileIgnored !== undefined ? warnFileIgnored : originalWarnIgnored;
 	const returnValue = { eslintOptions, quiet, warnIgnored };
 	return returnValue;
-};
-
-/**
- * Ensure that callback errors are wrapped in a gulp PluginError.
- *
- * @param {Function} callback - Callback to wrap.
- * @param {Object} [value] - A value to pass to the callback.
- * @returns {Function} A callback to call(back) the callback.
- */
-exports.handleCallback = (callback, value) => {
-	return err => {
-		if (err != null && !(err instanceof PluginError)) {
-			err = new PluginError(err.plugin || 'gulp-eslint-new', err, {
-				showStack: (err.showStack !== false)
-			});
-		}
-
-		callback(err, value);
-	};
-};
-
-/**
- * Call sync or async action and handle any thrown or async error.
- *
- * @param {Function} action - Result action to call.
- * @param {unknown} value - A parameter to call the action.
- * @param {Function} done - An callback for when the action is complete.
- */
-exports.tryAction = function (action, value, done) {
-	try {
-		if (action.length > 1) {
-			// async action
-			action(value, done);
-		} else {
-			// sync action
-			action(value);
-			done();
-		}
-	} catch (error) {
-		done(error == null ? new Error('Unknown Error') : error);
-	}
 };
 
 /**
@@ -365,8 +360,9 @@ exports.resolveFormatter = formatter => {
  * @returns {Function} A function that writes formatted messages.
  */
 exports.resolveWritable = (writable = fancyLog) => {
-	if (typeof writable.write === 'function') {
-		writable = writable.write.bind(writable);
+	const { write } = writable;
+	if (typeof write === 'function') {
+		writable = write.bind(writable);
 	}
 	return writable;
 };

@@ -2,12 +2,12 @@
 
 'use strict';
 
-const { createVinylFile, endWithoutError } = require('./test-util');
-const { strict: assert }                   = require('assert');
-const eslint                               = require('gulp-eslint-new');
-const { join, resolve }                    = require('path');
-const { Readable }                         = require('stream');
-const File                                 = require('vinyl');
+const { createVinylFile } = require('./test-util');
+const { strict: assert }  = require('assert');
+const eslint              = require('gulp-eslint-new');
+const { join, resolve }   = require('path');
+const { Readable }        = require('stream');
+const File                = require('vinyl');
 
 describe('gulp-eslint-new plugin', () => {
 
@@ -87,7 +87,6 @@ describe('gulp-eslint-new plugin', () => {
 	it('should emit an error when it takes a stream content', done => {
 		eslint({ useEslintrc: false, rules: { 'strict': 'error' } })
 			.on('error', function (err) {
-				this.off('finish', this._events.finish);
 				assert.equal(err.plugin, 'gulp-eslint-new');
 				assert.equal(
 					err.message,
@@ -95,7 +94,6 @@ describe('gulp-eslint-new plugin', () => {
 				);
 				done();
 			})
-			.on('finish', endWithoutError(done))
 			.end(new File({ path: resolve('stream.js'), contents: Readable.from(['']) }));
 	});
 
@@ -103,7 +101,6 @@ describe('gulp-eslint-new plugin', () => {
 		const pluginName = 'this-is-unknown-plugin';
 		eslint({ plugins: [pluginName] })
 			.on('error', function (err) {
-				this.off('finish', this._events.finish);
 				assert.equal(err.plugin, 'gulp-eslint-new');
 				assert.equal(err.name, 'Error');
 				assert.equal(err.code, 'MODULE_NOT_FOUND');
@@ -119,7 +116,6 @@ describe('gulp-eslint-new plugin', () => {
 				);
 				done();
 			})
-			.on('finish', endWithoutError(done))
 			.end(createVinylFile('file.js', ''));
 	});
 

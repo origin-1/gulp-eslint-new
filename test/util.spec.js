@@ -2,24 +2,23 @@
 
 'use strict';
 
-const util                = require('../util');
-const { createVinylFile } = require('./test-util');
-const { strict: assert }  = require('assert');
-const { join, resolve }   = require('path');
-const stream              = require('stream');
+const util                      = require('../util');
+const { createVinylFile, noop } = require('./test-util');
+const { strict: assert }        = require('assert');
+const { join, resolve }         = require('path');
+const { Writable }              = require('stream');
 
 describe('utility methods', () => {
-	describe('transform', () => {
+	describe('createTransform', () => {
 
 		it('should handle files in a stream', done => {
 			let passedFile = false;
 			const streamFile = createVinylFile('invalid.js', 'x = 1;');
-			const testStream = util.transform((file, enc, cb) => {
-				assert(file);
-				assert(cb);
-				passedFile = (streamFile === file);
-				cb();
-			})
+			const testStream = util
+				.createTransform(file => {
+					assert(file);
+					passedFile = (streamFile === file);
+				})
 				.on('error', done)
 				.on('finish', () => {
 					assert.equal(passedFile, true);
@@ -36,18 +35,17 @@ describe('utility methods', () => {
 				createVinylFile('invalid.js', 'x = 1;'),
 				createVinylFile('undeclared.js', 'x = 0;')
 			];
-			const testStream = util.transform((file, enc, cb) => {
-				assert(file);
-				assert(cb);
-				count += 1;
-				cb();
-			}, cb => {
-				assert(cb);
-				assert.equal(count, files.length);
-				assert.equal(testStream._writableState.ending, true);
-				finalCount = count;
-				cb();
-			})
+			const testStream = util
+				.createTransform(
+					file => {
+						assert(file);
+						count += 1;
+					}, () => {
+						assert.equal(count, files.length);
+						assert.equal(testStream._writableState.ending, true);
+						finalCount = count;
+					}
+				)
 				.on('error', done)
 				.on('finish', () => {
 					assert.equal(finalCount, files.length);
@@ -58,6 +56,35 @@ describe('utility methods', () => {
 
 			testStream.end();
 
+		});
+
+		it('should catch errors in an asynchronous file handler', done => {
+			util
+				.createTransform(() => new Promise((_, reject) => {
+					setImmediate(() => reject('foo'));
+				}))
+				.on('error', function (err) {
+					assert(err.message, 'foo');
+					assert(err.plugin, 'gulp-eslint-new');
+					done();
+				})
+				.end(createVinylFile('file.js', ''));
+		});
+
+		it('should catch errors in an asynchronous flush handler', done => {
+			util
+				.createTransform(
+					noop,
+					() => new Promise((_, reject) => {
+						setImmediate(reject('foo'));
+					})
+				)
+				.on('error', function (err) {
+					assert(err.message, 'foo');
+					assert(err.plugin, 'gulp-eslint-new');
+					done();
+				})
+				.end(createVinylFile('file.js', ''));
 		});
 
 	});
@@ -357,7 +384,7 @@ describe('utility methods', () => {
 		it('should write to a (writable) stream', function (done) {
 
 			let written = false;
-			const writable = new stream.Writable({ objectMode: true });
+			const writable = new Writable({ objectMode: true });
 			const testValue = 'Formatted Output';
 			const write = util.resolveWritable(writable);
 

@@ -1,5 +1,9 @@
 import { CLIEngine, ESLint, Linter } from 'eslint';
-import 'node';
+import                                    'node';
+import { TransformCallback }         from 'stream';
+
+export type GulpESLintAction<Type>
+	= ((value: Type, callback: TransformCallback) => void) | ((value: Type) => Promise<void>);
 
 export type GulpESLintOptions =
 	Omit<
@@ -66,7 +70,7 @@ declare const gulpESLint: {
 	 * @param action - A function to handle each ESLint result.
 	 * @returns gulp file stream.
 	 */
-	result(action: (result: GulpESLintResult) => void): NodeJS.ReadWriteStream;
+	result(action: GulpESLintAction<GulpESLintResult>): NodeJS.ReadWriteStream;
 
 	/**
 	 * Handle all ESLint results at the end of the stream.
@@ -74,7 +78,7 @@ declare const gulpESLint: {
 	 * @param action - A function to handle all ESLint results.
 	 * @returns gulp file stream.
 	 */
-	results(action: (results: GulpESLintResults) => void): NodeJS.ReadWriteStream;
+	results(action: GulpESLintAction<GulpESLintResults>): NodeJS.ReadWriteStream;
 
 	/**
 	 * Fail when an ESLint error is found in an ESLint result.

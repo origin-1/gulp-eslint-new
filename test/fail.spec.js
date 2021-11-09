@@ -2,10 +2,10 @@
 
 'use strict';
 
-const { createVinylFile, endWithoutError } = require('./test-util');
-const { strict: assert }                   = require('assert');
-const eslint                               = require('gulp-eslint-new');
-const { resolve }                          = require('path');
+const { createVinylFile } = require('./test-util');
+const { strict: assert }  = require('assert');
+const eslint              = require('gulp-eslint-new');
+const { resolve }         = require('path');
 
 describe('gulp-eslint-new failOnError', () => {
 
@@ -15,14 +15,12 @@ describe('gulp-eslint-new failOnError', () => {
 		lintStream
 			.pipe(eslint.failOnError())
 			.on('error', function (err) {
-				this.off('finish', this._events.finish);
 				assert(err.fileName, file.path);
 				assert.equal(err.message, '\'x\' is not defined.');
 				assert.equal(err.fileName, resolve('invalid.js'));
 				assert.equal(err.plugin, 'gulp-eslint-new');
 				done();
-			})
-			.on('finish', endWithoutError(done));
+			});
 		lintStream.end(file);
 	});
 
@@ -52,13 +50,11 @@ describe('gulp-eslint-new failAfterError', () => {
 		lintStream
 			.pipe(eslint.failAfterError())
 			.on('error', function (err) {
-				this.off('finish', this._events.finish);
 				assert.equal(err.message, 'Failed with 1 error');
 				assert.equal(err.name, 'ESLintError');
 				assert.equal(err.plugin, 'gulp-eslint-new');
 				done();
-			})
-			.on('finish', endWithoutError(done));
+			});
 		lintStream.end(createVinylFile('invalid.js', 'x = 1;'));
 	});
 
@@ -67,13 +63,11 @@ describe('gulp-eslint-new failAfterError', () => {
 		lintStream
 			.pipe(eslint.failAfterError())
 			.on('error', function (err) {
-				this.off('finish', this._events.finish);
 				assert.equal(err.message, 'Failed with 2 errors');
 				assert.equal(err.name, 'ESLintError');
 				assert.equal(err.plugin, 'gulp-eslint-new');
 				done();
-			})
-			.on('finish', endWithoutError(done));
+			});
 		lintStream.end(createVinylFile('invalid.js', 'x = 1; a = false;'));
 	});
 
