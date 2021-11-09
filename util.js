@@ -16,10 +16,14 @@ function createPluginError(error) {
 }
 exports.createPluginError = createPluginError;
 
-function awaitHandler(handler, data, done) {
-	const promise = handler();
-	promise.then(() => done(null, data)).catch(() => { });
-	promise.catch(reason => done(createPluginError(reason)));
+async function awaitHandler(handler, data, done) {
+	try {
+		await handler();
+	} catch (err) {
+		done(createPluginError(err));
+		return;
+	}
+	done(null, data);
 }
 
 /**
@@ -38,15 +42,8 @@ function awaitHandler(handler, data, done) {
  * @returns {Stream} A transform stream.
  */
 exports.createTransform = (handleFile, handleFlush) => {
-	let flush;
-	if (handleFlush) {
-		flush = done => {
-			awaitHandler(async () => await handleFlush(), null, done);
-		};
-	}
-	const transform = (file, enc, done) => {
-		awaitHandler(async () => await handleFile(file), file, done);
-	};
+	const transform = (file, enc, done) => void awaitHandler(() => handleFile(file), file, done);
+	const flush = handleFlush ? done => void awaitHandler(handleFlush, null, done) : undefined;
 	return new Transform({ objectMode: true, transform, flush });
 };
 
@@ -325,7 +322,7 @@ exports.filterResult = (result, filter) => {
 
 /**
  * Returns the formatter representing the given format or null if the `format` is not a string.
- * @param {string} [format] The name of the format to load or the path to a custom formatter.
+ * @param {string} [format] - The name of the format to load or the path to a custom formatter.
  * @throws {any} As may be thrown by requiring the formatter.
  * @returns {Function} The formatter function.
  */

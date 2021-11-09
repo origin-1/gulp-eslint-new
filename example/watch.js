@@ -26,7 +26,7 @@ function uncache(path) {
 }
 
 function cachedLintWatch() {
-	// Run the "cached-lint" task initially and whenever a watched file changes.
+	// Run the "cached-lint-watch" task initially and whenever a watched file changes.
 	const globs = '../test/fixtures/**/*.js';
 
 	return watch(

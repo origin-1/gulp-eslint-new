@@ -151,7 +151,7 @@ describe('gulp-eslint-new result', () => {
 			.on('error', done)
 			.on('end', ended);
 
-		// drain result into pass-through stream
+		// Drain result into pass-through stream.
 		resultStream.pipe(new PassThrough({ objectMode: true }));
 
 		resultStream.end(file);
