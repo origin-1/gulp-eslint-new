@@ -16,23 +16,33 @@ export type GulpESLintOptions =
 	| 'globInputPaths'
 	>
 	& {
-		/** @deprecated Use `overrideConfig.rules` instead. */
-		rules?: Partial<Linter.RulesRecord> | undefined;
+		/** @deprecated Use `overrideConfigFile` instead. */
+		configFile?: string | undefined;
+
+		/** @deprecated Use `overrideConfig.env` instead. Note the different option name and format. */
+		envs?: string[] | undefined;
+
 		/** @deprecated Use `overrideConfig.globals` instead. Note the different format. */
 		globals?: string[] | undefined;
+
+		/** @deprecated Use `overrideConfig.parser` instead. */
+		parser?: string | undefined;
+
+		/** @deprecated Use `overrideConfig.parserOptions` instead. */
+		parserOptions?: Linter.ParserOptions | undefined;
+
 		quiet?:
 		| boolean
 		| ((message: Linter.LintMessage, index: number, list: Linter.LintMessage[]) => unknown)
 		| undefined;
-		/**
-		 * @deprecated Use `overrideConfig.env` instead. Note the different option name and format.
-		 */
-		envs?: string[] | undefined;
-		/** @deprecated Use `overrideConfigFile` instead. */
-		configFile?: string | undefined;
-		warnIgnored?: boolean | undefined;
+
+		/** @deprecated Use `overrideConfig.rules` instead. */
+		rules?: Partial<Linter.RulesRecord> | undefined;
+
 		/** @deprecated Use `warnIgnored` instead. */
 		warnFileIgnored?: boolean | undefined;
+
+		warnIgnored?: boolean | undefined;
 	};
 
 export type GulpESLintResult = ESLint.LintResult;
