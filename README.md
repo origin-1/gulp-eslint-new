@@ -65,9 +65,13 @@ For additional examples, look through the [example directory](https://github.com
 Param type: `Object`
 
 Supported options include all [linting options](https://eslint.org/docs/developer-guide/nodejs-api#linting) and [autofix options](https://eslint.org/docs/developer-guide/nodejs-api#autofix) of the `ESLint` constructor.
-Additionally, the following options are supported, either to provide extra functionality to gulp-eslint-new, or for backward compatibility with [gulp-eslint](https://github.com/adametry/gulp-eslint).
+Please, refer to the ESLint documentation for information about the usage of those options.
+Check also the notes about the [Autofix Function](#autofix-function).
+Additionally, gulp-eslint-new supports the options listed below.
 
-#### `options.cwd`
+#### Additional Options
+
+##### `options.cwd`
 
 Type: `string`
 
@@ -77,19 +81,83 @@ The working directory is where ESLint will look for a `.eslintignore` file by de
 It is also the base directory for any relative paths specified in the options (e.g. `options.overrideConfigFile`, `options.resolvePluginsRelativeTo`, `options.rulePaths`, `options.overrideConfig.extends`, etc.).
 The location of the files to be linted is not related to the working directory.
 
-#### `options.ignore`
+##### `options.ignore`
 
 Type: `boolean`
 
-When `false`, .eslintignore files or ignorePatterns in your configurations will not be respected.
+When `false`, .eslintignore files or ignore patterns in your configurations will not be respected.
 
-#### `options.ignorePath`
+##### `options.ignorePath`
 
 Type: `string | null`
 
-The path to a file ESLint uses instead of `$CWD/.eslintignore`.
+The path to a file ESLint uses instead of `.eslintignore` in the current working directory.
 
-#### `options.rules`
+##### `options.quiet`
+
+Type: `boolean`
+
+When `true`, this option will filter warning messages from ESLint results. This mimics the ESLint CLI [`--quiet` option](https://eslint.org/docs/user-guide/command-line-interface#--quiet).
+
+Type: `(message, index, list) => boolean`
+
+When a function is provided, it will be used to filter ESLint result messages, removing any messages that do not return a `true` (or truthy) value.
+
+##### `options.warnIgnored`
+
+Type: `boolean`
+
+When `true`, add a result warning when ESLint ignores a file. This can be used to find files that are needlessly being loaded by `gulp.src`. For example, since ESLint automatically ignores "node_modules" file paths and `gulp.src` does not, a gulp task may take seconds longer just reading files from the "node_modules" directory.
+
+#### Legacy Options
+
+The following options are provided for backward compatibility with [gulp-eslint](https://github.com/adametry/gulp-eslint).
+Their usage is discouraged because preferable alternatives exist, that are more in line with the present ESLint conventions.
+
+##### `options.configFile`
+
+Type: `string`
+
+_A legacy synonym for `options.overrideConfigFile`._
+
+##### `options.envs`
+
+Type: `string[]`
+
+Specify a list of [environments](https://eslint.org/docs/user-guide/configuring/language-options#specifying-environments) to be applied.
+
+_Prefer using `options.overrideConfig.env` instead. Note the different option name and format._
+
+##### `options.globals`
+
+Type: `string[]`
+
+Specify [global variables](https://eslint.org/docs/user-guide/configuring/language-options#specifying-globals) to declare.
+
+```javascript
+{
+    "globals": [
+        "jQuery",
+        "$"
+    ]
+}
+```
+
+_Prefer using `options.overrideConfig.globals` instead. Note the different format._
+
+##### `options.parser`
+
+Type: `string`
+
+_Prefer using `options.overrideConfig.parser` instead._
+
+##### `options.parserOptions`
+
+Type: `Object`
+
+_Prefer using `options.overrideConfig.parserOptions` instead._
+
+##### `options.rules`
 
 Type: `Object`
 
@@ -107,62 +175,18 @@ Set [configuration](https://eslint.org/docs/user-guide/configuring/rules#configu
 
 _Prefer using `options.overrideConfig.rules` instead._
 
-#### `options.globals`
+##### `options.warnFileIgnored`
 
-Type: `string[]`
+Type: `boolean`
 
-Specify [global variables](https://eslint.org/docs/user-guide/configuring/language-options#specifying-globals) to declare.
+_A legacy synonym for `options.warnIgnored`._
 
-```javascript
-{
-    "globals": [
-        "jQuery",
-        "$"
-    ]
-}
-```
+#### Autofix Function
 
-_Prefer using `options.overrideConfig.globals` instead. Note the different format._
-
-#### `options.fix`
-
-Type: `boolean | (message: LintMessage) => boolean`
-
-See the respective ESLint documentation for information about this option.
-The fixes are applied to the gulp stream.
+When the `fix` option is specified, fixes are applied to the gulp stream.
 The fixed content can be saved to file using `gulp.dest` (See [example/fix.js](https://github.com/fasttime/gulp-eslint-new/blob/main/example/fix.js)).
 Rules that are fixable can be found in ESLint's [rules list](https://eslint.org/docs/rules/).
 When fixes are applied, a "fixed" property is set to `true` on the fixed file's ESLint result.
-
-#### `options.quiet`
-
-Type: `boolean`
-
-When `true`, this option will filter warning messages from ESLint results. This mimics the ESLint CLI [`--quiet` option](https://eslint.org/docs/user-guide/command-line-interface#--quiet).
-
-Type: `(message, index, list) => boolean`
-
-When provided a function, it will be used to filter ESLint result messages, removing any messages that do not return a `true` (or truthy) value.
-
-#### `options.envs`
-
-Type: `string[]`
-
-Specify a list of [environments](https://eslint.org/docs/user-guide/configuring/language-options#specifying-environments) to be applied.
-
-_Prefer using `options.overrideConfig.env` instead. Note the different option name and format._
-
-#### `options.configFile`
-
-Type: `string | null`
-
-_A legacy synonym for `options.overrideConfigFile`._
-
-#### `options.warnIgnored` (or `options.warnFileIgnored`)
-
-Type: `boolean`
-
-When `true`, add a result warning when ESLint ignores a file. This can be used to find files that are needlessly being loaded by `gulp.src`. For example, since ESLint automatically ignores "node_modules" file paths and `gulp.src` does not, a gulp task may take seconds longer just reading files from the "node_modules" directory.
 
 ### `eslint(overrideConfigFile)`
 
@@ -191,7 +215,11 @@ gulp.src(['**/*.js','!node_modules/**'])
 
 Type: `(result, callback) => void`
 
-Call an asynchronous function for each ESLint file result. The callback must be called for the stream to finish. If a value is passed to the callback, it will be wrapped in a gulp `PluginError` and emitted from the stream.
+Call an asynchronous, Node-style callback-based function for each ESLint file result. The callback must be called for the stream to finish. If an error is passed to the callback, it will be wrapped in a gulp `PluginError` and emitted from the stream.
+
+Type: `result => Promise<void>`
+
+Call an asynchronous, promise-based function for each ESLint file result. If the promise is rejected, the rejection reason will be wrapped in a gulp `PluginError` and emitted from the stream.
 
 ### `eslint.results(action)`
 
@@ -239,7 +267,11 @@ gulp.src(['**/*.js','!node_modules/**'])
 
 Param type: `(results, callback) => void`
 
-Call an asynchronous function once for all ESLint file results before a stream finishes. The callback must be called for the stream to finish. If a value is passed to the callback, it will be wrapped in a gulp `PluginError` and emitted from the stream.
+Call an asynchronous, Node-style callback-based function once for all ESLint file results before a stream finishes. The callback must be called for the stream to finish. If an error is passed to the callback, it will be wrapped in a gulp `PluginError` and emitted from the stream.
+
+Param type: `results => Promise<void>`
+
+Call an asynchronous, promise-based function once for all ESLint file results before a stream finishes. If the promise is rejected, the rejection reason will be wrapped in a gulp `PluginError` and emitted from the stream.
 
 ### `eslint.failOnError()`
 
