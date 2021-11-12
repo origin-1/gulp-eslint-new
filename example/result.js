@@ -38,7 +38,7 @@ function lintResultAsync() {
 		.pipe(eslint.formatEach())
 		.pipe(eslint.result((result, done) => {
 			// As a basic example, we'll use process.nextTick as an async process.
-			process.nextTick(function asyncStub() {
+			process.nextTick(() => {
 				count += result.warningCount;
 
 				let error = null;
@@ -74,7 +74,7 @@ function lintResultsAsync() {
 		.pipe(eslint.format())
 		.pipe(eslint.results((results, done) => {
 			// Another async example...
-			process.nextTick(function asyncStub() {
+			process.nextTick(() => {
 				let error = null;
 				if (results.warningCount > MAX_WARNINGS) {
 					error = new Error('Too many warnings!');

@@ -5,7 +5,8 @@
 const util                      = require('../util');
 const { createVinylFile, noop } = require('./test-util');
 const { strict: assert }        = require('assert');
-const { join, resolve }         = require('path');
+const { ESLint }                = require('eslint');
+const { resolve }               = require('path');
 const { Writable }              = require('stream');
 
 describe('utility methods', () => {
@@ -336,38 +337,62 @@ describe('utility methods', () => {
 
 	describe('resolveFormatter', () => {
 
-		it('should default to the "stylish" formatter', () => {
-
-			const formatter = util.resolveFormatter();
-			const formatterPath
-			= join(require.resolve('eslint'), '../cli-engine/formatters/stylish');
-			assert.equal(formatter, require(formatterPath));
-
-		});
-
-		it('should resolve a predefined', () => {
-
-			const formatter = util.resolveFormatter('tap');
-			const formatterPath = join(require.resolve('eslint'), '../cli-engine/formatters/tap');
-			assert.equal(formatter, require(formatterPath));
-
-		});
-
-		it('should resolve a custom formatter', () => {
-
-			const formatter = util.resolveFormatter('test/custom-formatter');
-			const formatterPath = resolve('./test/custom-formatter');
-			assert.equal(formatter, require(formatterPath));
-
-		});
-
-		it('should throw an error if a formatter cannot be resolved', () => {
-
-			function resolveMissingFormatter() {
-				util.resolveFormatter('missing-formatter');
+		const testResults = [
+			{
+				filePath: 'foo',
+				messages: [{ column: 99, line: 42, message: 'bar' }],
+				errorCount: 1,
+				warningCount: 0
 			}
-			assert.throws(resolveMissingFormatter, /\bThere was a problem loading formatter\b/);
+		];
 
+		it('should default to the "stylish" formatter', async () => {
+			const eslintInstance = new ESLint();
+			const formatter = await util.resolveFormatter(eslintInstance);
+			const text = formatter.format(testResults);
+			assert.equal(
+				text.replace(/\x1b\[\d+m/g, ''), // eslint-disable-line no-control-regex
+				'\nfoo\n  42:99  warning  bar\n\n✖ 1 problem (1 error, 0 warnings)\n'
+			);
+		});
+
+		it('should resolve a predefined formatter', async () => {
+			const eslintInstance = new ESLint();
+			const formatter = await util.resolveFormatter(eslintInstance, 'compact');
+			const text = formatter.format(testResults);
+			assert.equal(
+				text.replace(/\x1b\[\d+m/g, ''), // eslint-disable-line no-control-regex
+				'foo: line 42, col 99, Warning - bar\n\n1 problem'
+			);
+		});
+
+		it('should resolve a custom formatter', async () => {
+			const eslintInstance = new ESLint({ cwd: __dirname });
+			const formatter = await util.resolveFormatter(eslintInstance, './custom-formatter');
+			formatter.format(testResults);
+			const { args } = require('./custom-formatter');
+			assert.equal(args[0], testResults);
+			assert(args[1].rulesMeta);
+		});
+
+		it('should wrap an ESLint 6 style formatter function into a formatter', async () => {
+			const eslintInstance = new ESLint();
+			const legacyFormatter = (actualResults, data) => {
+				assert.equal(actualResults, testResults);
+				assert(data.rulesMeta);
+				return 'foo';
+			};
+			const formatter = await util.resolveFormatter(eslintInstance, legacyFormatter);
+			const text = await formatter.format(testResults);
+			assert.equal(text, 'foo');
+		});
+
+		it('should throw an error if a formatter cannot be resolved', async () => {
+			const eslintInstance = new ESLint();
+			await assert.rejects(
+				() => util.resolveFormatter(eslintInstance, 'missing-formatter'),
+				/\bThere was a problem loading formatter\b/
+			);
 		});
 
 	});
@@ -375,26 +400,21 @@ describe('utility methods', () => {
 	describe('resolveWritable', () => {
 
 		it('should default to fancyLog', () => {
-
 			const write = util.resolveWritable();
 			assert.equal(write, require('fancy-log'));
-
 		});
 
 		it('should write to a (writable) stream', function (done) {
-
 			let written = false;
 			const writable = new Writable({ objectMode: true });
 			const testValue = 'Formatted Output';
 			const write = util.resolveWritable(writable);
-
 			writable._write = function writeChunk(chunk, encoding, cb) {
 				assert(chunk);
 				assert.equal(chunk, testValue);
 				written = true;
 				cb();
 			};
-
 			writable
 				.on('error', done)
 				.on('finish', () => {
@@ -403,7 +423,6 @@ describe('utility methods', () => {
 				});
 			write(testValue);
 			writable.end();
-
 		});
 
 	});
@@ -419,10 +438,10 @@ describe('utility methods', () => {
 			}
 		};
 
-		it('should pass the value returned from the formatter to the writer', () => {
+		it('should pass the value returned from the formatter to the writer', async () => {
 			let writableCallCount = 0;
 			const formattedText = 'something happened';
-			util.writeResults(
+			await util.writeResults(
 				testResults,
 				testInstance,
 				(results, { rulesMeta }) => {
@@ -440,8 +459,8 @@ describe('utility methods', () => {
 			assert.equal(writableCallCount, 1);
 		});
 
-		it('should not write an empty formatted text', () => {
-			util.writeResults(
+		it('should not write an empty formatted text', async () => {
+			await util.writeResults(
 				testResults,
 				testInstance,
 				(results, { rulesMeta }) => {
@@ -454,8 +473,8 @@ describe('utility methods', () => {
 			);
 		});
 
-		it('should not write an undefined', () => {
-			util.writeResults(
+		it('should not write an undefined', async () => {
+			await util.writeResults(
 				testResults,
 				testInstance,
 				(results, { rulesMeta }) => {

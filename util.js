@@ -1,9 +1,9 @@
 'use strict';
 
-const fancyLog                    = require('fancy-log');
-const { dirname, join, relative } = require('path');
-const PluginError                 = require('plugin-error');
-const { Transform }               = require('stream');
+const fancyLog      = require('fancy-log');
+const { relative }  = require('path');
+const PluginError   = require('plugin-error');
+const { Transform } = require('stream');
 
 function createPluginError(error) {
 	if (error instanceof PluginError) {
@@ -49,6 +49,7 @@ exports.createTransform = (handleFile, handleFlush) => {
 
 const isHiddenRegExp = /(?<![^/\\])\.(?!\.)/u;
 const isInNodeModulesRegExp = /(?<![^/\\])node_modules[/\\]/u;
+
 /**
  * This is a remake of the CLI object `createIgnoreResult` function with no reference to ESLint
  * CLI options and with a better detection of the ignore reason in some edge cases.
@@ -140,6 +141,7 @@ const forbiddenOptions = [
 	'extensions',
 	'globInputPaths'
 ];
+
 /**
  * Create config helper to merge various config sources.
  *
@@ -320,35 +322,53 @@ exports.filterResult = (result, filter) => {
 	return newResult;
 };
 
-/**
- * Returns the formatter representing the given format or null if the `format` is not a string.
- * @param {string} [format] - The name of the format to load or the path to a custom formatter.
- * @throws {any} As may be thrown by requiring the formatter.
- * @returns {Function} The formatter function.
- */
-let getFormatter = format => {
-	const baseDir = dirname(require.resolve('eslint'));
-	const cliEnginePath = join(baseDir, 'cli-engine');
-	({ getFormatter } = require(cliEnginePath).CLIEngine);
-	return getFormatter(format);
-};
-
-/**
- * Resolve formatter from unknown type (accepts string or function).
- *
- * @throws TypeError thrown if unable to resolve the formatter type.
- * @param {string|Function} [formatter=stylish] - A name to resolve as a formatter. If a function is provided, the same function is returned.
- * @returns {Function} An ESLint formatter.
- */
-exports.resolveFormatter = formatter => {
-	// use ESLint to look up formatter references
-	if (typeof formatter !== 'function') {
-		// load formatter (module, relative to cwd, ESLint formatter)
-		formatter =	getFormatter(formatter);
+function compareResultsByFilePath({ filePath: filePath1 }, { filePath: filePath2 }) {
+	if (filePath1 > filePath2) {
+		return 1;
 	}
+	if (filePath1 < filePath2) {
+		return -1;
+	}
+	return 0;
+}
 
-	return formatter;
-};
+const { defineProperty } = Object;
+
+/**
+ * Resolve formatter from string.
+ * If a function is specified, it will be treated as an ESLint 6 style formatter function and
+ * wrapped into an object appropriately.
+ *
+ * @param {ESLint} eslintInstance
+ * Instance of ESLint used to load the formatter.
+ *
+ * @param {string|CLIEngine.Formatter} [formatter]
+ * A name or path of a formatter, or an ESLint 6 style formatter function to resolve as a formatter.
+ *
+ * @returns {ESLint.Formatter} An ESLint formatter.
+ */
+async function resolveFormatter(eslintInstance, formatter) {
+	if (typeof formatter === 'function') {
+		return {
+			format: results => {
+				results.sort(compareResultsByFilePath);
+				return formatter(
+					results,
+					{
+						get rulesMeta() {
+							const rulesMeta = eslintInstance.getRulesMetaForResults(results);
+							defineProperty(this, 'rulesMeta', { value: rulesMeta });
+							return rulesMeta;
+						}
+					}
+				);
+			}
+		};
+	}
+	// Use ESLint to look up formatter references.
+	return eslintInstance.loadFormatter(formatter);
+}
+exports.resolveFormatter = resolveFormatter;
 
 /**
  * Resolve writable.
@@ -367,14 +387,21 @@ exports.resolveWritable = (writable = fancyLog) => {
 /**
  * Write formatter results to writable/output.
  *
- * @param {GulpESLintResults} results - A list of ESLint results.
- * @param {ESLint} eslintInstance - Instance of ESLint, used to extract rule metadata.
- * @param {CLIEngine.Formatter} formatter - A function used to format ESLint results.
- * @param {Function} writable - A function used to write formatted ESLint results.
+ * @param {ESLint.LintResult[]} results
+ * A list of ESLint results.
+ *
+ * @param {ESLint} eslintInstance
+ * Instance of ESLint, used to resolve the formatter.
+ *
+ * @param {string|CLIEngine.Formatter} [formatter]
+ * A name or path of a formatter, or an ESLint 6 style formatter function to resolve as a formatter.
+ *
+ * @param {Function} [writable]
+ * A function used to write formatted ESLint results.
  */
-exports.writeResults = (results, eslintInstance, formatter, writable) => {
-	const rulesMeta = eslintInstance.getRulesMetaForResults(results);
-	const message = formatter(results, { rulesMeta });
+exports.writeResults = async (results, eslintInstance, formatter, writable) => {
+	const formatterObj = await resolveFormatter(eslintInstance, formatter);
+	const message = formatterObj.format(results);
 	if (writable && message != null && message !== '') {
 		writable(message);
 	}

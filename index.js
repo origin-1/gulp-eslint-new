@@ -8,7 +8,6 @@ const {
 	hasOwn,
 	isErrorMessage,
 	migrateOptions,
-	resolveFormatter,
 	resolveWritable,
 	createTransform,
 	writeResults
@@ -154,19 +153,17 @@ gulpEslint.failAfterError = () => {
 };
 
 gulpEslint.formatEach = (formatter, writable) => {
-	formatter = resolveFormatter(formatter);
 	writable = resolveWritable(writable);
-	return createTransform(file => {
+	return createTransform(async file => {
 		const { eslint } = file;
 		if (eslint) {
 			const eslintInstance = getESLintInstance(file);
-			writeResults([eslint], eslintInstance, formatter, writable);
+			await writeResults([eslint], eslintInstance, formatter, writable);
 		}
 	});
 };
 
 gulpEslint.format = (formatter, writable) => {
-	formatter = resolveFormatter(formatter);
 	writable = resolveWritable(writable);
 	const results = [];
 	let commonInstance;
@@ -187,9 +184,9 @@ gulpEslint.format = (formatter, writable) => {
 			}
 			results.push(eslint);
 		}
-	}, () => {
+	}, async () => {
 		if (results.length) {
-			writeResults(results, commonInstance, formatter, writable);
+			await writeResults(results, commonInstance, formatter, writable);
 		}
 	});
 };
