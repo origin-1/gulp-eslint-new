@@ -35,16 +35,16 @@ async function awaitHandler(handler, data, done) {
  * A function that is called for each file, with the file object as the only parameter.
  * If the function returns a promise, the file will be passed through the stream after the promise is resolved.
  *
- * @param {Function} [handleFlush]
+ * @param {Function} [handleFinal]
  * A function that is called with no parameters before closing the stream.
  * If the function returns a promise, the stream will be closed after the promise is resolved.
  *
  * @returns {Stream} A transform stream.
  */
-exports.createTransform = (handleFile, handleFlush) => {
+exports.createTransform = (handleFile, handleFinal) => {
 	const transform = (file, enc, done) => void awaitHandler(() => handleFile(file), file, done);
-	const flush = handleFlush ? done => void awaitHandler(handleFlush, null, done) : undefined;
-	return new Transform({ objectMode: true, transform, flush });
+	const final = handleFinal ? done => void awaitHandler(handleFinal, null, done) : undefined;
+	return new Transform({ objectMode: true, transform, final });
 };
 
 const isHiddenRegExp = /(?<![^/\\])\.(?!\.)/u;
@@ -331,6 +331,7 @@ function compareResultsByFilePath({ filePath: filePath1 }, { filePath: filePath2
 	}
 	return 0;
 }
+exports.compareResultsByFilePath = compareResultsByFilePath;
 
 const { defineProperty } = Object;
 

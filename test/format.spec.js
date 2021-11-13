@@ -77,10 +77,6 @@ describe('gulp-eslint-new format function', () => {
 
 		it('should format all ESLint results at once', done => {
 			const files = getFiles();
-
-			const lintStream = eslint({ useEslintrc: false, rules: { 'strict': 2 } });
-			lintStream.on('error', done);
-
 			const formatStream = eslint
 				.format(formatResults, outputWriter)
 				.on('error', done)
@@ -89,37 +85,28 @@ describe('gulp-eslint-new format function', () => {
 					assert.equal(writeCount, 1);
 					done();
 				});
-
+			const lintStream
+				= eslint({ useEslintrc: false, rules: { 'strict': 2 } }).on('error', done);
 			lintStream
 				.pipe(eslint.format(noop, noop)) // Test that files are passed through.
 				.pipe(formatStream);
-
-			files.forEach(function (file) {
-				lintStream.write(file);
-			});
+			files.forEach(file => lintStream.write(file));
 			lintStream.end();
 		});
 
 		it('should not attempt to format when no linting results are found', done => {
 			const files = getFiles();
-
-			const passthruStream = new PassThrough({ objectMode: true }).on('error', done);
-
-			const formatStream = eslint.format(formatResults, outputWriter);
-
-			formatStream
+			const formatStream = eslint
+				.format(formatResults, outputWriter)
 				.on('error', done)
 				.on('finish', () => {
 					assert.equal(formatCount, 0);
 					assert.equal(writeCount, 0);
 					done();
 				});
-
+			const passthruStream = new PassThrough({ objectMode: true }).on('error', done);
 			passthruStream.pipe(formatStream);
-
-			files.forEach(function (file) {
-				passthruStream.write(file);
-			});
+			files.forEach(file => passthruStream.write(file));
 			passthruStream.end();
 		});
 
@@ -127,7 +114,7 @@ describe('gulp-eslint-new format function', () => {
 			const file = createVinylFile('file.js', '');
 			file.eslint = { };
 			eslint.format()
-				.on('error', function (err) {
+				.on('error', err => {
 					assert.equal(err.fileName, file.path);
 					assert.equal(err.message, 'ESLint instance not found');
 					assert.equal(err.plugin, 'gulp-eslint-new');
@@ -137,9 +124,9 @@ describe('gulp-eslint-new format function', () => {
 		});
 
 		it('should emit an error if the linted files have different ESLint instances', done => {
-
-			const formatStream = eslint.format()
-				.on('error', function (err) {
+			const formatStream = eslint
+				.format()
+				.on('error', err => {
 					assert.equal(
 						err.message,
 						'The files in the stream were not processes by the same instance of '
@@ -222,7 +209,7 @@ describe('gulp-eslint-new format function', () => {
 					error.name = testErrorName;
 					throw error;
 				})
-				.on('error', function (err) {
+				.on('error', err => {
 					assert.equal(err.message, testMessage);
 					assert.equal(err.name, testErrorName);
 					assert.equal(err.plugin, 'gulp-eslint-new');
@@ -239,7 +226,7 @@ describe('gulp-eslint-new format function', () => {
 			const file = createVinylFile('file.js', '');
 			file.eslint = { };
 			eslint.formatEach()
-				.on('error', function (err) {
+				.on('error', err => {
 					assert.equal(err.fileName, file.path);
 					assert.equal(err.message, 'ESLint instance not found');
 					assert.equal(err.plugin, 'gulp-eslint-new');

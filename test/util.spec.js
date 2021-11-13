@@ -10,6 +10,7 @@ const { resolve }               = require('path');
 const { Writable }              = require('stream');
 
 describe('utility methods', () => {
+
 	describe('createTransform', () => {
 
 		it('should handle files in a stream', done => {
@@ -331,6 +332,34 @@ describe('utility methods', () => {
 			assert.equal(quietResult.fixableWarningCount, 0);
 			assert.equal(quietResult.fatalErrorCount, 1);
 			assert.equal(quietResult.output, 'function a () { x = 0; }');
+		});
+
+	});
+
+	describe('compareResultsByFilePath', () => {
+
+		it('should return 1 if the first path goes after the second one', () => {
+			assert.equal(
+				util.compareResultsByFilePath(
+					{ filePath: '/a/b/file.js' },
+					{ filePath: '/a/b/FILE.js' }
+				),
+				1
+			);
+		});
+
+		it('should return -1 if the first path goes before the second one', () => {
+			assert.equal(
+				util.compareResultsByFilePath({ filePath: 'C:' }, { filePath: 'D:' }),
+				-1
+			);
+		});
+
+		it('should return 0 if both paths are equal', () => {
+			assert.equal(
+				util.compareResultsByFilePath({ filePath: '' }, { filePath: '' }),
+				0
+			);
 		});
 
 	});
