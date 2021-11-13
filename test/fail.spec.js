@@ -5,7 +5,6 @@
 const { createVinylFile } = require('./test-util');
 const { strict: assert }  = require('assert');
 const eslint              = require('gulp-eslint-new');
-const { resolve }         = require('path');
 
 describe('gulp-eslint-new failOnError', () => {
 
@@ -14,10 +13,9 @@ describe('gulp-eslint-new failOnError', () => {
 		const lintStream = eslint({ useEslintrc: false, rules: { 'no-undef': 2 } });
 		lintStream
 			.pipe(eslint.failOnError())
-			.on('error', function (err) {
-				assert(err.fileName, file.path);
+			.on('error', err => {
+				assert.equal(err.fileName, file.path);
 				assert.equal(err.message, '\'x\' is not defined.');
-				assert.equal(err.fileName, resolve('invalid.js'));
 				assert.equal(err.plugin, 'gulp-eslint-new');
 				done();
 			});
@@ -49,7 +47,7 @@ describe('gulp-eslint-new failAfterError', () => {
 		const lintStream = eslint({ useEslintrc: false, rules: { 'no-undef': 2 } });
 		lintStream
 			.pipe(eslint.failAfterError())
-			.on('error', function (err) {
+			.on('error', err => {
 				assert.equal(err.message, 'Failed with 1 error');
 				assert.equal(err.name, 'ESLintError');
 				assert.equal(err.plugin, 'gulp-eslint-new');
@@ -62,7 +60,7 @@ describe('gulp-eslint-new failAfterError', () => {
 		const lintStream = eslint({ useEslintrc: false, rules: { 'no-undef': 2 } });
 		lintStream
 			.pipe(eslint.failAfterError())
-			.on('error', function (err) {
+			.on('error', err => {
 				assert.equal(err.message, 'Failed with 2 errors');
 				assert.equal(err.name, 'ESLintError');
 				assert.equal(err.plugin, 'gulp-eslint-new');

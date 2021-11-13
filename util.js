@@ -59,7 +59,6 @@ const isInNodeModulesRegExp = /(?<![^/\\])node_modules[/\\]/u;
  * @param {string} filePath - Absolute path of checked code file.
  * @param {string} baseDir - Absolute path of base directory.
  * @returns {LintResult} Result with warning by ignore settings.
- * @private
  */
 exports.createIgnoreResult = (filePath, baseDir) => {
 	let message;
@@ -346,7 +345,7 @@ const { defineProperty } = Object;
  * @param {string|CLIEngine.Formatter} [formatter]
  * A name or path of a formatter, or an ESLint 6 style formatter function to resolve as a formatter.
  *
- * @returns {ESLint.Formatter} An ESLint formatter.
+ * @returns {Promise<ESLint.Formatter>} An ESLint formatter.
  */
 async function resolveFormatter(eslintInstance, formatter) {
 	if (typeof formatter === 'function') {

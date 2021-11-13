@@ -2,10 +2,9 @@
 
 'use strict';
 
-const { createVinylFile, noop } = require('./test-util');
-const { strict: assert }        = require('assert');
-const eslint                    = require('gulp-eslint-new');
-const { PassThrough }           = require('stream');
+const { createVinylFile, finished, noop } = require('./test-util');
+const { strict: assert }                  = require('assert');
+const eslint                              = require('gulp-eslint-new');
 
 describe('gulp-eslint-new result', () => {
 	it('should provide an ESLint result', done => {
@@ -72,40 +71,34 @@ describe('gulp-eslint-new result', () => {
 		lintStream.end();
 	});
 
-	it('should catch thrown errors', done => {
+	it('should catch thrown errors', async () => {
 		const file = createVinylFile('invalid.js', '#invalid!syntax}');
 		file.eslint = { };
-
-		eslint
-			.result(() => {
-				throw new Error('Expected Error');
-			})
-			.on('error', function (error) {
-				assert(error);
-				assert.equal(error.message, 'Expected Error');
-				assert.equal(error.name, 'Error');
-				assert.equal(error.plugin, 'gulp-eslint-new');
-				done();
-			})
-			.end(file);
+		await assert.rejects(
+			finished(
+				eslint
+					.result(() => {
+						throw new Error('Expected Error');
+					})
+					.end(file)
+			),
+			{ message: 'Expected Error', name: 'Error', plugin: 'gulp-eslint-new' }
+		);
 	});
 
-	it('should catch thrown null', done => {
+	it('should catch thrown null', async () => {
 		const file = createVinylFile('invalid.js', '#invalid!syntax}');
 		file.eslint = { };
-
-		eslint
-			.result(() => {
-				throw null;
-			})
-			.on('error', function (error) {
-				assert(error);
-				assert.equal(error.message, 'Unknown Error');
-				assert.equal(error.name, 'Error');
-				assert.equal(error.plugin, 'gulp-eslint-new');
-				done();
-			})
-			.end(file);
+		await assert.rejects(
+			finished(
+				eslint
+					.result(() => {
+						throw null;
+					})
+					.end(file)
+			),
+			{ message: 'Unknown Error', name: 'Error', plugin: 'gulp-eslint-new' }
+		);
 	});
 
 	it('should throw an error if not provided a function argument', () => {
@@ -113,49 +106,33 @@ describe('gulp-eslint-new result', () => {
 	});
 
 	it('should ignore files without an ESLint result', done => {
-
-		const file = createVinylFile('invalid.js', '#invalid!syntax}');
-
 		eslint
 			.result(() => {
-				throw new Error('Expected no call');
+				assert.fail('Expected no call');
 			})
 			.on('error', done)
 			.on('finish', done)
-			.end(file);
+			.end(createVinylFile('invalid.js', '#invalid!syntax}'));
 	});
 
-	it('should support an async result handler', done => {
-		let asyncComplete = false;
+	it('should support an async result handler', async () => {
+		let result;
 		const file = createVinylFile('invalid.js', '#invalid!syntax}');
 		const resultStub = { };
 		file.eslint = resultStub;
-
-		function ended() {
-			assert.equal(asyncComplete, true);
-			done();
-		}
-
-		const resultStream = eslint
-			.result((result, callback) => {
-				assert(result);
-				assert.equal(result, resultStub);
-
-				assert.equal(typeof callback, 'function');
-
-				setTimeout(() => {
-					asyncComplete = true;
-					callback();
-				}, 10);
-			})
-			.on('error', done)
-			.on('end', ended);
-
-		// Drain result into pass-through stream.
-		resultStream.pipe(new PassThrough({ objectMode: true }));
-
-		resultStream.end(file);
-
+		await finished(
+			eslint
+				.result((actualResult, callback) => {
+					setImmediate(() => {
+						result = actualResult;
+						callback();
+					});
+				})
+				.on('data', noop)
+				.on('end', () => assert(result))
+				.end(file)
+		);
+		assert.equal(result, resultStub);
 	});
 
 });
@@ -199,72 +176,75 @@ describe('gulp-eslint-new results', () => {
 		lintStream.end();
 	});
 
-	it('should catch thrown errors', done => {
+
+	it('should catch thrown errors', async () => {
 		const file = createVinylFile('invalid.js', '#invalid!syntax}');
 		file.eslint = { };
+		await assert.rejects(
+			finished(
+				eslint
+					.results(() => {
+						throw new Error('Expected Error');
+					})
+					.end(file)
+			),
+			{ message: 'Expected Error', name: 'Error', plugin: 'gulp-eslint-new' }
+		);
+	});
 
-		eslint
-			.results(() => {
-				throw new Error('Expected Error');
-			})
-			.on('error', function (error) {
-				assert(error);
-				assert.equal(error.message, 'Expected Error');
-				assert.equal(error.name, 'Error');
-				assert.equal(error.plugin, 'gulp-eslint-new');
-				done();
-			})
-			.end(file);
+	it('should catch thrown null', async () => {
+		const file = createVinylFile('invalid.js', '#invalid!syntax}');
+		file.eslint = { };
+		await assert.rejects(
+			finished(
+				eslint
+					.results(() => {
+						throw null;
+					})
+					.end(file)
+			),
+			{ message: 'Unknown Error', name: 'Error', plugin: 'gulp-eslint-new' }
+		);
 	});
 
 	it('should throw an error if not provided a function argument', () => {
 		assert.throws(() => eslint.results(), { message: 'Expected callable argument' });
 	});
 
-	it('should ignore files without an ESLint result', done => {
-		let resultsCalled = false;
-		const file = createVinylFile('invalid.js', '#invalid!syntax}');
-
-		function finished() {
-			assert.equal(resultsCalled, true);
-			done();
-		}
-
-		eslint
-			.results(results => {
-				assert(Array.isArray(results));
-				assert.equal(results.length, 0);
-				resultsCalled = true;
-			})
-			.on('error', done)
-			.on('finish', finished)
-			.end(file);
+	it('should ignore files without an ESLint result', async () => {
+		let results;
+		await finished(
+			eslint
+				.results(actualResults => {
+					results = actualResults;
+				})
+				.on('data', noop)
+				.end(createVinylFile('invalid.js', '#invalid!syntax}'))
+		);
+		assert(Array.isArray(results));
+		assert.equal(results.length, 0);
 	});
 
-	it('should support an async results handler', done => {
-		let asyncComplete = false;
+	it('should support an async results handler', async () => {
+		let results;
 		const file = createVinylFile('invalid.js', '#invalid!syntax}');
 		const resultStub = { };
 		file.eslint = resultStub;
-		const resultStream = eslint
-			.results((results, callback) => {
-				assert(Array.isArray(results));
-				assert.equal(results.length, 1);
-				assert.equal(results[0], resultStub);
-				assert.equal(typeof callback, 'function');
-				setImmediate(() => {
-					asyncComplete = true;
-					callback();
-				});
-			})
-			.on('error', done)
-			.on('end', () => {
-				assert.equal(asyncComplete, true);
-				done();
-			});
-		// Drain result into pass-through stream.
-		resultStream.pipe(new PassThrough({ objectMode: true }));
-		resultStream.end(file);
+		await finished(
+			eslint
+				.results((actualResults, callback) => {
+					setImmediate(() => {
+						results = actualResults;
+						callback();
+					});
+				})
+				.on('data', noop)
+				.on('end', () => assert(results))
+				.end(file)
+		);
+		assert(Array.isArray(results));
+		assert.equal(results.length, 1);
+		assert.equal(results[0], resultStub);
 	});
 
 });

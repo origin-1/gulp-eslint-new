@@ -2,9 +2,9 @@
 
 module.exports = {
 	root: true,
-	extends: '@shinnn',
+	extends: 'eslint:recommended',
 	rules: {
-		'no-redeclare': 'off',
-		'no-use-before-define': 'off'
+		'eol-last': 'error',
+		'no-undef': 'off'
 	}
 };
