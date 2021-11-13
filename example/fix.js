@@ -11,20 +11,19 @@ function isFixed(file) {
 }
 
 function lintNFix() {
-	return src('../test/fixtures/**/*.js', { base: './' })
+	return src('demo/**/*.js', { base: './' })
 		.pipe(eslint({ fix: true }))
 		.pipe(eslint.format())
-		// if fixed, write the file to dest.
+		// If fixed, write the file to dest.
 		.pipe(gulpIf(isFixed, dest('./')));
 }
 
 function flagNFix() {
 	const hasFixFlag = process.argv.slice(2).includes('--fix');
-
-	return src('../test/fixtures/**/*.js', { base: './' })
+	return src('demo/**/*.js', { base: './' })
 		.pipe(eslint({ fix: hasFixFlag }))
 		.pipe(eslint.format())
-		// if fixed, write the file to dest.
+		// If fixed, write the file to dest.
 		.pipe(gulpIf(isFixed, dest('./')));
 }
 

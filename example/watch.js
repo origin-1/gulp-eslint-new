@@ -12,8 +12,7 @@ function lintWatch() {
 	const lintAndPrint = eslint();
 	// Format results with each file, since this stream won't end.
 	lintAndPrint.pipe(eslint.formatEach());
-
-	return watch('../test/fixtures/**/*.js')
+	return watch('demo/**/*.js')
 		.on('all', (eventType, path) => {
 			if (eventType === 'add' || eventType === 'change') {
 				src(path).pipe(lintAndPrint, { end: false });
@@ -27,8 +26,7 @@ function uncache(path) {
 
 function cachedLintWatch() {
 	// Run the "cached-lint-watch" task initially and whenever a watched file changes.
-	const globs = '../test/fixtures/**/*.js';
-
+	const globs = 'demo/**/*.js';
 	return watch(
 		globs,
 		{ ignoreInitial: false },
@@ -38,7 +36,7 @@ function cachedLintWatch() {
 			.pipe(eslint())
 			.pipe(eslint.format())
 			.pipe(eslint.result(result => {
-				if (result.warningCount > 0 || result.errorCount > 0) {
+				if (result.messages.length > 0) {
 					// If a file has errors/warnings, uncache it.
 					uncache(result.filePath);
 				}

@@ -78,7 +78,7 @@ describe('gulp-eslint-new result', () => {
 			finished(
 				eslint
 					.result(() => {
-						throw new Error('Expected Error');
+						throw Error('Expected Error');
 					})
 					.end(file)
 			),
@@ -184,7 +184,7 @@ describe('gulp-eslint-new results', () => {
 			finished(
 				eslint
 					.results(() => {
-						throw new Error('Expected Error');
+						throw Error('Expected Error');
 					})
 					.end(file)
 			),

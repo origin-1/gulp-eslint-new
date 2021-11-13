@@ -6,18 +6,14 @@ const { series, src } = require('gulp');
 const eslint          = require('gulp-eslint-new');
 
 function quietLint() {
-	return src('../test/fixtures/**/*.js')
+	return src('demo/**/*.js')
 		.pipe(eslint({ quiet: true }))
 		.pipe(eslint.format());
 }
 
-function isWarning(message) {
-	return message.severity === 1;
-}
-
 function lintWarnings() {
-	return src('../test/fixtures/**/*.js')
-		.pipe(eslint({ quiet: isWarning }))
+	return src('demo/**/*.js')
+		.pipe(eslint({ quiet: ({ severity }) => severity === 1 }))
 		.pipe(eslint.format());
 }
 

@@ -80,7 +80,7 @@ function gulpEslint(options) {
 
 gulpEslint.result = action => {
 	if (typeof action !== 'function') {
-		throw new Error('Expected callable argument');
+		throw Error('Expected callable argument');
 	}
 	if (action.length > 1) {
 		action = promisify(action);
@@ -95,17 +95,17 @@ gulpEslint.result = action => {
 
 gulpEslint.results = function (action) {
 	if (typeof action !== 'function') {
-		throw new Error('Expected callable argument');
+		throw Error('Expected callable argument');
 	}
 	if (action.length > 1) {
 		action = promisify(action);
 	}
 	const results = [];
-	results.errorCount = 0;
-	results.warningCount = 0;
-	results.fixableErrorCount = 0;
+	results.errorCount          = 0;
+	results.warningCount        = 0;
+	results.fixableErrorCount   = 0;
 	results.fixableWarningCount = 0;
-	results.fatalErrorCount = 0;
+	results.fatalErrorCount     = 0;
 	return createTransform(file => {
 		const { eslint } = file;
 		if (eslint) {
@@ -128,7 +128,6 @@ gulpEslint.failOnError = () => {
 		if (!error) {
 			return;
 		}
-
 		throw createPluginError({
 			name: 'ESLintError',
 			fileName: result.filePath,
@@ -167,28 +166,31 @@ gulpEslint.format = (formatter, writable) => {
 	writable = resolveWritable(writable);
 	const results = [];
 	let commonInstance;
-	return createTransform(file => {
-		const { eslint } = file;
-		if (eslint) {
-			const eslintInstance = getESLintInstance(file);
-			if (commonInstance == null) {
-				commonInstance = eslintInstance;
-			} else {
-				if (eslintInstance !== commonInstance) {
-					throw createPluginError({
-						name: 'ESLintError',
-						message: 'The files in the stream were not processes by the same '
-							+ 'instance of ESLint'
-					});
+	return createTransform(
+		file => {
+			const { eslint } = file;
+			if (eslint) {
+				const eslintInstance = getESLintInstance(file);
+				if (commonInstance == null) {
+					commonInstance = eslintInstance;
+				} else {
+					if (eslintInstance !== commonInstance) {
+						throw createPluginError({
+							name: 'ESLintError',
+							message: 'The files in the stream were not processes by the same '
+								+ 'instance of ESLint'
+						});
+					}
 				}
+				results.push(eslint);
 			}
-			results.push(eslint);
+		},
+		async () => {
+			if (results.length) {
+				await writeResults(results, commonInstance, formatter, writable);
+			}
 		}
-	}, async () => {
-		if (results.length) {
-			await writeResults(results, commonInstance, formatter, writable);
-		}
-	});
+	);
 };
 
 module.exports = gulpEslint;

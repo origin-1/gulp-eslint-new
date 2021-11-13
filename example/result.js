@@ -5,83 +5,73 @@
 const { src } = require('gulp');
 const eslint  = require('gulp-eslint-new');
 
-const MAX_WARNINGS = 1;
+const MAX_PROBLEMS = 1;
 
 function lintResult() {
-	let count = 0;
-
 	// Be sure to return the stream; otherwise, you may not get a proper exit code.
-	return src('../test/fixtures/**/*.js')
+	return src('demo/**/*.js')
 		.pipe(eslint())
 		.pipe(eslint.formatEach())
 		.pipe(eslint.result(result => {
-			count += result.warningCount;
-
-			if (count > MAX_WARNINGS) {
+			if (result.messages.length > MAX_PROBLEMS) {
 				// Report which file exceeded the limit.
 				// The error will be wrapped in a gulp PluginError.
 				throw {
-					name: 'TooManyWarnings',
+					name: 'TooManyProblems',
 					fileName: result.filePath,
-					message: 'Too many warnings!',
-					showStack: false
+					message: 'Too many problems!'
 				};
 			}
 		}));
 }
 
 function lintResultAsync() {
-	let count = 0;
-
-	return src('../test/fixtures/**/*.js')
+	return src('demo/**/*.js')
 		.pipe(eslint())
 		.pipe(eslint.formatEach())
 		.pipe(eslint.result((result, done) => {
-			// As a basic example, we'll use process.nextTick as an async process.
-			process.nextTick(() => {
-				count += result.warningCount;
-
+			// As a basic example, we'll use setImmediate as an async process.
+			setImmediate(() => {
 				let error = null;
-				if (count > MAX_WARNINGS) {
+				if (result.messages.length > MAX_PROBLEMS) {
 					// Define the error. Any non-null/undefined value will work.
 					error = {
-						name: 'TooManyWarnings',
+						name: 'TooManyProblems',
 						fileName: result.filePath,
-						message: 'Too many warnings!',
+						message: 'Too many problems!',
 						showStack: false
 					};
 				}
 				done(error);
-			}, 100);
+			});
 		}));
 }
 
 function lintResults() {
-	return src('../test/fixtures/**/*.js')
+	return src('demo/**/*.js')
 		.pipe(eslint())
 		.pipe(eslint.format())
 		.pipe(eslint.results(results => {
-			if (results.warningCount > MAX_WARNINGS) {
+			if (results.errorCount + results.warningCount > MAX_PROBLEMS) {
 				// No specific file to complain about here.
-				throw new Error('Too many warnings!');
+				throw Error('Too many problems!');
 			}
 		}));
 }
 
 function lintResultsAsync() {
-	return src('../test/fixtures/**/*.js')
+	return src('demo/**/*.js')
 		.pipe(eslint())
 		.pipe(eslint.format())
 		.pipe(eslint.results((results, done) => {
 			// Another async example...
-			process.nextTick(() => {
+			setTimeout(() => {
 				let error = null;
-				if (results.warningCount > MAX_WARNINGS) {
-					error = new Error('Too many warnings!');
+				if (results.errorCount + results.warningCount > MAX_PROBLEMS) {
+					error = Error('Too many problems!');
 				}
 				done(error);
-
-			}, 100);
+			});
 		}));
 }
 

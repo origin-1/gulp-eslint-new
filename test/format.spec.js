@@ -194,7 +194,7 @@ describe('gulp-eslint-new format function', () => {
 			lintStream.pipe(
 				eslint.formatEach(formatResult, message => {
 					assert.equal(message, '1 message');
-					const error = new Error(testMessage);
+					const error = Error(testMessage);
 					error.name = testErrorName;
 					throw error;
 				})

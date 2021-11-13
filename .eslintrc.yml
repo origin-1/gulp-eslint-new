@@ -1,11 +1,13 @@
-parserOptions:
-  ecmaVersion: 9
-
-extends: eslint:recommended
-
 env:
   es6: true
   node: true
+
+extends: eslint:recommended
+
+ignorePatterns: "/example/demo"
+
+parserOptions:
+  ecmaVersion: 9
 
 rules:
   arrow-parens: [2, "as-needed"]
