@@ -1,3 +1,13 @@
+<a name="1.0.0"></a>
+## [1.0.0](https://github.com/fasttime/gulp-eslint-new/releases/tag/1.0.0) (2021-11-14)
+
+* Using the new ESLint formatter API.
+* Added TypeScript type declarations.
+* `result` and `results` streams now support async functions as handlers.
+* Updated examples and documentation.
+* Added package.json to package exports.
+* Fix: `format` and `results` streams now stay open until the end of asynchronous operations in all supported versions of Node.js.
+
 <a name="0.6.0"></a>
 ## [0.6.0](https://github.com/fasttime/gulp-eslint-new/releases/tag/0.6.0) (2021-11-06)
 
