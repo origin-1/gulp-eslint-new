@@ -4,6 +4,7 @@
 	"description": "A gulp plugin to lint code with ESLint 8",
 	"repository": "fasttime/gulp-eslint-new",
 	"files": [
+		"index.d.ts",
 		"index.js",
 		"util.js"
 	],
