@@ -4,6 +4,7 @@
 
 const { createVinylFile, finished, noop } = require('./test-util');
 const { strict: assert }                  = require('assert');
+const { promises: { realpath } }          = require('fs');
 const eslint                              = require('gulp-eslint-new');
 
 describe('gulp-eslint-new result', () => {
@@ -115,11 +116,10 @@ describe('gulp-eslint-new result', () => {
 			.end(createVinylFile('invalid.js', '#invalid!syntax}'));
 	});
 
-	it('should support an async result handler', async () => {
+	it('should support a Node-style callback-based handler', async () => {
 		let result;
 		const file = createVinylFile('invalid.js', '#invalid!syntax}');
-		const resultStub = { };
-		file.eslint = resultStub;
+		file.eslint = { };
 		await finished(
 			eslint
 				.result((actualResult, callback) => {
@@ -132,7 +132,23 @@ describe('gulp-eslint-new result', () => {
 				.on('end', () => assert(result))
 				.end(file)
 		);
-		assert.equal(result, resultStub);
+		assert.equal(result, file.eslint);
+	});
+
+	it('should support a promise-based handler', async () => {
+		let cwd;
+		const file = createVinylFile('invalid.js', '#invalid!syntax}');
+		file.eslint = { cwd: process.cwd() };
+		await finished(
+			eslint
+				.result(async result => {
+					cwd = await realpath(result.cwd);
+				})
+				.on('data', noop)
+				.on('end', () => assert(cwd))
+				.end(file)
+		);
+		assert.equal(cwd, file.cwd);
 	});
 
 });
@@ -225,11 +241,10 @@ describe('gulp-eslint-new results', () => {
 		assert.equal(results.length, 0);
 	});
 
-	it('should support an async results handler', async () => {
+	it('should support a Node-style callback-based handler', async () => {
 		let results;
 		const file = createVinylFile('invalid.js', '#invalid!syntax}');
-		const resultStub = { };
-		file.eslint = resultStub;
+		file.eslint = { };
 		await finished(
 			eslint
 				.results((actualResults, callback) => {
@@ -244,7 +259,23 @@ describe('gulp-eslint-new results', () => {
 		);
 		assert(Array.isArray(results));
 		assert.equal(results.length, 1);
-		assert.equal(results[0], resultStub);
+		assert.equal(results[0], file.eslint);
+	});
+
+	it('should support a promise-based handler', async () => {
+		let cwd;
+		const file = createVinylFile('invalid.js', '#invalid!syntax}');
+		file.eslint = { };
+		await finished(
+			eslint
+				.results(async () => {
+					cwd = await realpath(process.cwd());
+				})
+				.on('data', noop)
+				.on('end', () => assert(cwd))
+				.end(file)
+		);
+		assert.equal(cwd, process.cwd());
 	});
 
 });
