@@ -1,3 +1,12 @@
+<a name="1.1.0"></a>
+## [1.1.0](https://github.com/fasttime/gulp-eslint-new/releases/tag/1.1.0) (2021-12-06)
+
+* Added support for new formatter features in ESLint 8.4:
+  * [Async formatters](https://github.com/eslint/eslint/pull/15243)
+  * [`cwd` in formatter context](https://github.com/eslint/eslint/pull/13392)
+* Updated TypeScript type declarations.
+* Updated a link in the readme file.
+
 <a name="1.0.0"></a>
 ## [1.0.0](https://github.com/fasttime/gulp-eslint-new/releases/tag/1.0.0) (2021-11-14)
 
