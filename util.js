@@ -342,7 +342,7 @@ const { defineProperty } = Object;
  * @param {{ cwd: string, eslint: ESLint }} eslintInfo
  * Current directory and instance of ESLint used to load and configure the formatter.
  *
- * @param {string|CLIEngine.Formatter} [formatter]
+ * @param {string|Function} [formatter]
  * A name or path of a formatter, or an ESLint 6 style formatter function to resolve as a formatter.
  *
  * @returns {Promise<ESLint.Formatter>} An ESLint formatter.
@@ -394,7 +394,7 @@ exports.resolveWritable = (writable = fancyLog) => {
  * @param {{ cwd: string, eslint: ESLint }} eslintInfo
  * Current directory and instance of ESLint used to load and configure the formatter.
  *
- * @param {string|CLIEngine.Formatter} [formatter]
+ * @param {string|Function} [formatter]
  * A name or path of a formatter, or an ESLint 6 style formatter function to resolve as a formatter.
  *
  * @param {Function} [writable]

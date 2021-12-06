@@ -1,6 +1,6 @@
-import { CLIEngine, ESLint, Linter } from 'eslint';
-import                                    'node';
-import { TransformCallback }         from 'stream';
+import { ESLint, Linter }    from 'eslint';
+import                            'node';
+import { TransformCallback } from 'stream';
 
 export type GulpESLintAction<Type>
 	= ((value: Type, callback: TransformCallback) => void) | ((value: Type) => Promise<void>);
@@ -116,7 +116,7 @@ declare const gulpESLint: {
 	 * @returns gulp file stream.
 	 */
 	formatEach(
-		formatter?: string | CLIEngine.Formatter,
+		formatter?: string | ESLint.Formatter['format'],
 		writable?: ((str: string) => void) | NodeJS.WritableStream
 	): NodeJS.ReadWriteStream;
 
@@ -132,7 +132,7 @@ declare const gulpESLint: {
 	 * @returns gulp file stream.
 	 */
 	format(
-		formatter?: string | CLIEngine.Formatter,
+		formatter?: string | ESLint.Formatter['format'],
 		writable?: ((str: string) => void) | NodeJS.WritableStream
 	): NodeJS.ReadWriteStream;
 };
