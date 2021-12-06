@@ -402,7 +402,7 @@ exports.resolveWritable = (writable = fancyLog) => {
  */
 exports.writeResults = async (results, eslintInfo, formatter, writable) => {
 	const formatterObj = await resolveFormatter(eslintInfo, formatter);
-	const message = formatterObj.format(results);
+	const message = await formatterObj.format(results);
 	if (writable && message != null && message !== '') {
 		writable(message);
 	}

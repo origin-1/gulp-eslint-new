@@ -1,6 +1,9 @@
 'use strict';
 
-function formatter(...args) {
-	formatter.args = args;
-}
+const formatter = (...args) => new Promise(resolve => {
+	setImmediate(() => {
+		formatter.args = args;
+		resolve();
+	});
+});
 module.exports = formatter;

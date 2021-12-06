@@ -382,7 +382,7 @@ describe('utility methods', () => {
 		it('should default to the "stylish" formatter', async () => {
 			const eslintInfo = { eslint: new ESLint() };
 			const formatter = await util.resolveFormatter(eslintInfo);
-			const text = formatter.format(testResults);
+			const text = await formatter.format(testResults);
 			assert.equal(
 				text.replace(/\x1b\[\d+m/g, ''), // eslint-disable-line no-control-regex
 				'\nfoo\n  42:99  warning  bar\n\n✖ 1 problem (1 error, 0 warnings)\n'
@@ -392,7 +392,7 @@ describe('utility methods', () => {
 		it('should resolve a predefined formatter', async () => {
 			const eslintInfo = { eslint: new ESLint() };
 			const formatter = await util.resolveFormatter(eslintInfo, 'compact');
-			const text = formatter.format(testResults);
+			const text = await formatter.format(testResults);
 			assert.equal(
 				text.replace(/\x1b\[\d+m/g, ''), // eslint-disable-line no-control-regex
 				'foo: line 42, col 99, Warning - bar\n\n1 problem'
@@ -402,7 +402,7 @@ describe('utility methods', () => {
 		it('should resolve a custom formatter', async () => {
 			const eslintInfo = { eslint: new ESLint({ cwd: __dirname }) };
 			const formatter = await util.resolveFormatter(eslintInfo, './custom-formatter');
-			formatter.format(testResults);
+			await formatter.format(testResults);
 			const { args } = require('./custom-formatter');
 			assert.equal(args[0], testResults);
 			assert.equal(args[1].cwd, __dirname);
