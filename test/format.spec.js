@@ -116,7 +116,7 @@ describe('gulp-eslint-new format function', () => {
 				.format()
 				.on('error', err => {
 					assert.equal(err.fileName, file.path);
-					assert.equal(err.message, 'ESLint instance not found');
+					assert.equal(err.message, 'ESLint information not available');
 					assert.equal(err.plugin, 'gulp-eslint-new');
 					done();
 				})
@@ -139,7 +139,7 @@ describe('gulp-eslint-new format function', () => {
 			function addFile(path) {
 				const file = createVinylFile(path, '');
 				file.eslint = { };
-				file._eslintInstance = new ESLint();
+				file._eslintInfo = { cwd: process.cwd(), eslint: new ESLint() };
 				formatStream.write(file);
 			}
 
@@ -216,7 +216,7 @@ describe('gulp-eslint-new format function', () => {
 				.formatEach()
 				.on('error', err => {
 					assert.equal(err.fileName, file.path);
-					assert.equal(err.message, 'ESLint instance not found');
+					assert.equal(err.message, 'ESLint information not available');
 					assert.equal(err.plugin, 'gulp-eslint-new');
 					done();
 				})

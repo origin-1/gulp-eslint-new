@@ -339,15 +339,15 @@ const { defineProperty } = Object;
  * If a function is specified, it will be treated as an ESLint 6 style formatter function and
  * wrapped into an object appropriately.
  *
- * @param {ESLint} eslintInstance
- * Instance of ESLint used to load the formatter.
+ * @param {{ cwd: string, eslint: ESLint }} eslintInfo
+ * Current directory and instance of ESLint used to load and configure the formatter.
  *
  * @param {string|CLIEngine.Formatter} [formatter]
  * A name or path of a formatter, or an ESLint 6 style formatter function to resolve as a formatter.
  *
  * @returns {Promise<ESLint.Formatter>} An ESLint formatter.
  */
-async function resolveFormatter(eslintInstance, formatter) {
+async function resolveFormatter({ cwd, eslint }, formatter) {
 	if (typeof formatter === 'function') {
 		return {
 			format: results => {
@@ -355,8 +355,9 @@ async function resolveFormatter(eslintInstance, formatter) {
 				return formatter(
 					results,
 					{
+						cwd,
 						get rulesMeta() {
-							const rulesMeta = eslintInstance.getRulesMetaForResults(results);
+							const rulesMeta = eslint.getRulesMetaForResults(results);
 							defineProperty(this, 'rulesMeta', { value: rulesMeta });
 							return rulesMeta;
 						}
@@ -366,7 +367,7 @@ async function resolveFormatter(eslintInstance, formatter) {
 		};
 	}
 	// Use ESLint to look up formatter references.
-	return eslintInstance.loadFormatter(formatter);
+	return eslint.loadFormatter(formatter);
 }
 exports.resolveFormatter = resolveFormatter;
 
@@ -390,8 +391,8 @@ exports.resolveWritable = (writable = fancyLog) => {
  * @param {ESLint.LintResult[]} results
  * A list of ESLint results.
  *
- * @param {ESLint} eslintInstance
- * Instance of ESLint, used to resolve the formatter.
+ * @param {{ cwd: string, eslint: ESLint }} eslintInfo
+ * Current directory and instance of ESLint used to load and configure the formatter.
  *
  * @param {string|CLIEngine.Formatter} [formatter]
  * A name or path of a formatter, or an ESLint 6 style formatter function to resolve as a formatter.
@@ -399,8 +400,8 @@ exports.resolveWritable = (writable = fancyLog) => {
  * @param {Function} [writable]
  * A function used to write formatted ESLint results.
  */
-exports.writeResults = async (results, eslintInstance, formatter, writable) => {
-	const formatterObj = await resolveFormatter(eslintInstance, formatter);
+exports.writeResults = async (results, eslintInfo, formatter, writable) => {
+	const formatterObj = await resolveFormatter(eslintInfo, formatter);
 	const message = formatterObj.format(results);
 	if (writable && message != null && message !== '') {
 		writable(message);

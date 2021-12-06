@@ -380,8 +380,8 @@ describe('utility methods', () => {
 		];
 
 		it('should default to the "stylish" formatter', async () => {
-			const eslintInstance = new ESLint();
-			const formatter = await util.resolveFormatter(eslintInstance);
+			const eslintInfo = { eslint: new ESLint() };
+			const formatter = await util.resolveFormatter(eslintInfo);
 			const text = formatter.format(testResults);
 			assert.equal(
 				text.replace(/\x1b\[\d+m/g, ''), // eslint-disable-line no-control-regex
@@ -390,8 +390,8 @@ describe('utility methods', () => {
 		});
 
 		it('should resolve a predefined formatter', async () => {
-			const eslintInstance = new ESLint();
-			const formatter = await util.resolveFormatter(eslintInstance, 'compact');
+			const eslintInfo = { eslint: new ESLint() };
+			const formatter = await util.resolveFormatter(eslintInfo, 'compact');
 			const text = formatter.format(testResults);
 			assert.equal(
 				text.replace(/\x1b\[\d+m/g, ''), // eslint-disable-line no-control-regex
@@ -400,30 +400,32 @@ describe('utility methods', () => {
 		});
 
 		it('should resolve a custom formatter', async () => {
-			const eslintInstance = new ESLint({ cwd: __dirname });
-			const formatter = await util.resolveFormatter(eslintInstance, './custom-formatter');
+			const eslintInfo = { eslint: new ESLint({ cwd: __dirname }) };
+			const formatter = await util.resolveFormatter(eslintInfo, './custom-formatter');
 			formatter.format(testResults);
 			const { args } = require('./custom-formatter');
 			assert.equal(args[0], testResults);
+			assert.equal(args[1].cwd, __dirname);
 			assert(args[1].rulesMeta);
 		});
 
 		it('should wrap an ESLint 6 style formatter function into a formatter', async () => {
-			const eslintInstance = new ESLint();
+			const eslintInfo = { cwd: 'TEST CWD', eslint: new ESLint() };
 			const legacyFormatter = (actualResults, data) => {
 				assert.equal(actualResults, testResults);
 				assert(data.rulesMeta);
+				assert.equal(data.cwd, 'TEST CWD');
 				return 'foo';
 			};
-			const formatter = await util.resolveFormatter(eslintInstance, legacyFormatter);
+			const formatter = await util.resolveFormatter(eslintInfo, legacyFormatter);
 			const text = await formatter.format(testResults);
 			assert.equal(text, 'foo');
 		});
 
 		it('should throw an error if a formatter cannot be resolved', async () => {
-			const eslintInstance = new ESLint();
+			const eslintInfo = { eslint: new ESLint() };
 			await assert.rejects(
-				() => util.resolveFormatter(eslintInstance, 'missing-formatter'),
+				() => util.resolveFormatter(eslintInfo, 'missing-formatter'),
 				/\bThere was a problem loading formatter\b/
 			);
 		});
@@ -476,7 +478,7 @@ describe('utility methods', () => {
 			const formattedText = 'something happened';
 			await util.writeResults(
 				testResults,
-				testInstance,
+				{ cwd: process.cwd(), eslint: testInstance },
 				(results, { rulesMeta }) => {
 					assert(results);
 					assert.equal(results, testResults);
@@ -495,7 +497,7 @@ describe('utility methods', () => {
 		it('should not write an empty formatted text', async () => {
 			await util.writeResults(
 				testResults,
-				testInstance,
+				{ cwd: process.cwd(), eslint: testInstance },
 				(results, { rulesMeta }) => {
 					assert(results);
 					assert.equal(results, testResults);
@@ -509,7 +511,7 @@ describe('utility methods', () => {
 		it('should not write an undefined', async () => {
 			await util.writeResults(
 				testResults,
-				testInstance,
+				{ cwd: process.cwd(), eslint: testInstance },
 				(results, { rulesMeta }) => {
 					assert(results);
 					assert.equal(results, testResults);

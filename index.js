@@ -15,15 +15,15 @@ const {
 const { ESLint }    = require('eslint');
 const { promisify } = require('util');
 
-function getESLintInstance(file) {
-	const eslintInstance = file._eslintInstance;
-	if (eslintInstance != null) {
-		return eslintInstance;
+function getESLintInfo(file) {
+	const eslintInfo = file._eslintInfo;
+	if (eslintInfo != null) {
+		return eslintInfo;
 	}
-	throw createPluginError({ fileName: file.path, message: 'ESLint instance not found' });
+	throw createPluginError({ fileName: file.path, message: 'ESLint information not available' });
 }
 
-async function lintFile(eslintInstance, file, cwd, quiet, warnIgnored) {
+async function lintFile(eslintInfo, file, quiet, warnIgnored) {
 	if (file.isNull()) {
 		return;
 	}
@@ -32,49 +32,48 @@ async function lintFile(eslintInstance, file, cwd, quiet, warnIgnored) {
 		throw 'gulp-eslint-new doesn\'t support Vinyl files with Stream contents.';
 	}
 
+	const { eslint } = eslintInfo;
 	// The "path" property of a Vinyl file should be always an absolute path.
 	// See https://gulpjs.com/docs/en/api/vinyl/#instance-properties.
 	const filePath = file.path;
-	if (await eslintInstance.isPathIgnored(filePath)) {
+	if (await eslint.isPathIgnored(filePath)) {
 		// Note: ESLint doesn't adjust file paths relative to an ancestory .eslintignore path.
 		// E.g., If ../.eslintignore has "foo/*.js", ESLint will ignore ./foo/*.js, instead of ../foo/*.js.
 		// ESLint rolls this into `ESLint.prototype.lintText`. So, gulp-eslint-new must account for this limitation.
 
 		if (warnIgnored) {
 			// Warn that gulp.src is needlessly reading files that ESLint ignores.
-			file.eslint = createIgnoreResult(filePath, cwd);
+			file.eslint = createIgnoreResult(filePath, eslintInfo.cwd);
 		}
 		return;
 	}
 
-	const [result] = await eslintInstance.lintText(file.contents.toString(), { filePath });
+	let [result] = await eslint.lintText(file.contents.toString(), { filePath });
 	// Note: Fixes are applied as part of `lintText`.
 	// Any applied fix messages have been removed from the result.
 
-	let eslint;
 	if (quiet) {
 		// Ignore some messages.
 		const filter = typeof quiet === 'function' ? quiet : isErrorMessage;
-		eslint = filterResult(result, filter);
-	} else {
-		eslint = result;
+		result = filterResult(result, filter);
 	}
-	file.eslint = eslint;
-	file._eslintInstance = eslintInstance;
+	file.eslint = result;
+	file._eslintInfo = eslintInfo;
 
 	// Update the fixed output; otherwise, fixable messages are simply ignored.
-	if (hasOwn(eslint, 'output')) {
-		file.contents = Buffer.from(eslint.output);
-		eslint.fixed = true;
+	if (hasOwn(result, 'output')) {
+		file.contents = Buffer.from(result.output);
+		result.fixed = true;
 	}
 }
 
 function gulpEslint(options) {
 	const { eslintOptions, quiet, warnIgnored } = migrateOptions(options);
-	const eslintInstance = new ESLint(eslintOptions);
 	const cwd = eslintOptions.cwd || process.cwd();
+	const eslint = new ESLint(eslintOptions);
+	const eslintInfo = { cwd, eslint };
 	return createTransform(
-		file => lintFile(eslintInstance, file, cwd, quiet, warnIgnored)
+		file => lintFile(eslintInfo, file, quiet, warnIgnored)
 	);
 }
 
@@ -156,8 +155,8 @@ gulpEslint.formatEach = (formatter, writable) => {
 	return createTransform(async file => {
 		const { eslint } = file;
 		if (eslint) {
-			const eslintInstance = getESLintInstance(file);
-			await writeResults([eslint], eslintInstance, formatter, writable);
+			const eslintInfo = getESLintInfo(file);
+			await writeResults([eslint], eslintInfo, formatter, writable);
 		}
 	});
 };
@@ -165,16 +164,16 @@ gulpEslint.formatEach = (formatter, writable) => {
 gulpEslint.format = (formatter, writable) => {
 	writable = resolveWritable(writable);
 	const results = [];
-	let commonInstance;
+	let commonInfo;
 	return createTransform(
 		file => {
 			const { eslint } = file;
 			if (eslint) {
-				const eslintInstance = getESLintInstance(file);
-				if (commonInstance == null) {
-					commonInstance = eslintInstance;
+				const eslintInfo = getESLintInfo(file);
+				if (commonInfo == null) {
+					commonInfo = eslintInfo;
 				} else {
-					if (eslintInstance !== commonInstance) {
+					if (eslintInfo !== commonInfo) {
 						throw createPluginError({
 							name: 'ESLintError',
 							message: 'The files in the stream were not processes by the same '
@@ -187,7 +186,7 @@ gulpEslint.format = (formatter, writable) => {
 		},
 		async () => {
 			if (results.length) {
-				await writeResults(results, commonInstance, formatter, writable);
+				await writeResults(results, commonInfo, formatter, writable);
 			}
 		}
 	);
