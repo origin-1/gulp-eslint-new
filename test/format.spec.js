@@ -61,11 +61,7 @@ describe('gulp-eslint-new format function', () => {
 			assert(Array.isArray(results));
 			assert.equal(results.length, 3);
 			formatCount++;
-
-			const messageCount = results.reduce((sum, result) => {
-				return sum + result.messages.length;
-			}, 0);
-
+			const messageCount = results.reduce((sum, result) => sum + result.messages.length, 0);
 			return `${messageCount} ${messageCount === 1 ? 'message' : 'messages'}`;
 		}
 
@@ -129,7 +125,7 @@ describe('gulp-eslint-new format function', () => {
 				.on('error', err => {
 					assert.equal(
 						err.message,
-						'The files in the stream were not processes by the same instance of '
+						'The files in the stream were not processed by the same instance of '
 						+ 'ESLint'
 					);
 					assert.equal(err.plugin, 'gulp-eslint-new');

@@ -176,7 +176,7 @@ gulpEslint.format = (formatter, writable) => {
 					if (eslintInfo !== commonInfo) {
 						throw createPluginError({
 							name: 'ESLintError',
-							message: 'The files in the stream were not processes by the same '
+							message: 'The files in the stream were not processed by the same '
 								+ 'instance of ESLint'
 						});
 					}
