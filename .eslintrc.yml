@@ -2,12 +2,18 @@ env:
   es2017: true
   node: true
 
-extends: eslint:recommended
+extends:
+  - eslint:recommended
+  - plugin:eslint-comments/recommended
 
-ignorePatterns: "/example/demo"
+ignorePatterns:
+  - /coverage
+  - /example/demo
 
 parserOptions:
   ecmaVersion: 9
+
+reportUnusedDisableDirectives: true
 
 rules:
   arrow-parens: [2, "as-needed"]
@@ -52,7 +58,7 @@ overrides:
       brace-style: [2, "1tbs"]
       comma-dangle: [1, "never"]
       comma-spacing: 2
-      indent: [1, 'tab']
+      indent: [1, "tab"]
       keyword-spacing: 2
       no-shadow: 1
       no-use-before-define: 2
@@ -65,13 +71,13 @@ overrides:
 
   - files: ["*.ts"]
 
-    extends: [plugin:@typescript-eslint/recommended]
+    extends: plugin:@typescript-eslint/recommended
 
     rules:
       "@typescript-eslint/brace-style": [2, "1tbs"]
       "@typescript-eslint/comma-dangle": [1, "never"]
       "@typescript-eslint/comma-spacing": 2
-      "@typescript-eslint/indent": [1, 'tab']
+      "@typescript-eslint/indent": [1, "tab"]
       "@typescript-eslint/keyword-spacing": 2
       "@typescript-eslint/member-delimiter-style": 2
       "@typescript-eslint/no-shadow": 1
