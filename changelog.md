@@ -1,3 +1,9 @@
+<a name="1.1.1"></a>
+## [1.1.1](https://github.com/fasttime/gulp-eslint-new/releases/tag/1.1.1) (2022-01-08)
+
+* Changed installation instructions so that gulp-eslint-new gets added to the devDependencies.
+* Fixed a typo in an error message.
+
 <a name="1.1.0"></a>
 ## [1.1.0](https://github.com/fasttime/gulp-eslint-new/releases/tag/1.1.0) (2021-12-06)
 
