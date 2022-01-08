@@ -116,6 +116,23 @@ describe('gulp-eslint-new plugin', () => {
 		);
 	});
 
+	it('"reportUnusedDisableDirectives" option should be considered', async () => {
+		const file = createVinylFile('file.js', '// eslint-disable-line');
+		await
+		finished(eslint({ reportUnusedDisableDirectives: 'warn' }).on('data', noop).end(file));
+		assert.equal(file.eslint.filePath, file.path);
+		assert(Array.isArray(file.eslint.messages));
+		assert.equal(file.eslint.messages.length, 1);
+		const [message] = file.eslint.messages;
+		assert.equal(
+			message.message, 'Unused eslint-disable directive (no problems were reported).'
+		);
+		assert.equal(message.line, 1);
+		assert.equal(message.column, 1);
+		assert.equal(message.ruleId, null);
+		assert.equal(message.severity, 1);
+	});
+
 	it('"rulePaths" option should be considered', async () => {
 		const file = createVinylFile('file.js', '');
 		await finished(
@@ -176,14 +193,15 @@ describe('gulp-eslint-new plugin', () => {
 		it('when true, should consider a configuration file', async () => {
 			const file = createVinylFile('semi/file.js', '$()');
 			await finished(eslint({ useEslintrc: true }).on('data', noop).end(file));
+			assert.equal(file.eslint.filePath, file.path);
 			assert(Array.isArray(file.eslint.messages));
+			assert.equal(file.eslint.messages.length, 1);
 			const [message] = file.eslint.messages;
 			assert.equal(typeof message.message, 'string');
 			assert.equal(typeof message.line, 'number');
 			assert.equal(typeof message.column, 'number');
 			assert.equal(message.ruleId, 'semi');
 			assert.equal(message.severity, 2);
-			assert.equal(file.eslint.filePath, file.path);
 			assert.equal(file.eslint.errorCount, 1);
 			assert.equal(file.eslint.warningCount, 0);
 			assert.equal(file.eslint.fixableErrorCount, 1);
