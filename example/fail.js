@@ -16,8 +16,10 @@ function failImmediately() {
 		// Need to do something before the process exits? Try this:
 		.on('error', function (error) {
 			fancyLog(`Stream Exiting With Error: ${error.message}`);
-			this.destroy(); // This is only required in Node.js 12 for gulp to detect that the task has terminated.
-			// Expect an incongruous premature close error after this point, courtesy of gulp and end-of-stream.
+			// This is only required in Node.js 12 for gulp to detect that the task has terminated.
+			this.destroy();
+			// Expect an incongruous premature close error after this point, courtesy of gulp and
+			// end-of-stream.
 		});
 }
 

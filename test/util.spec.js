@@ -439,12 +439,12 @@ describe('utility methods', () => {
 			assert.equal(write, require('fancy-log'));
 		});
 
-		it('should write to a (writable) stream', function (done) {
+		it('should write to a (writable) stream', done => {
 			let written = false;
 			const writable = new Writable({ objectMode: true });
 			const testValue = 'Formatted Output';
 			const write = util.resolveWritable(writable);
-			writable._write = function writeChunk(chunk, encoding, cb) {
+			writable._write = (chunk, encoding, cb) => {
 				assert(chunk);
 				assert.equal(chunk, testValue);
 				written = true;

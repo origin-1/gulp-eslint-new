@@ -19,7 +19,10 @@ export type GulpESLintOptions =
 		/** @deprecated Use `overrideConfigFile` instead. */
 		configFile?: string | undefined;
 
-		/** @deprecated Use `overrideConfig.env` instead. Note the different option name and format. */
+		/**
+		 * @deprecated
+		 * Use `overrideConfig.env` instead. Note the different option name and format.
+		 */
 		envs?: string[] | undefined;
 
 		/** @deprecated Use `overrideConfig.globals` instead. Note the different format. */

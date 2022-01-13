@@ -27,31 +27,28 @@ async function lintFile(eslintInfo, file, quiet, warnIgnored) {
 	if (file.isNull()) {
 		return;
 	}
-
 	if (file.isStream()) {
 		throw 'gulp-eslint-new doesn\'t support Vinyl files with Stream contents.';
 	}
-
 	const { eslint } = eslintInfo;
 	// The "path" property of a Vinyl file should be always an absolute path.
 	// See https://gulpjs.com/docs/en/api/vinyl/#instance-properties.
 	const filePath = file.path;
 	if (await eslint.isPathIgnored(filePath)) {
 		// Note: ESLint doesn't adjust file paths relative to an ancestory .eslintignore path.
-		// E.g., If ../.eslintignore has "foo/*.js", ESLint will ignore ./foo/*.js, instead of ../foo/*.js.
-		// ESLint rolls this into `ESLint.prototype.lintText`. So, gulp-eslint-new must account for this limitation.
-
+		// E.g., If ../.eslintignore has "foo/*.js", ESLint will ignore ./foo/*.js, instead of
+		// ../foo/*.js.
+		// ESLint rolls this into `ESLint.prototype.lintText`. So, gulp-eslint-new must account for
+		// this limitation.
 		if (warnIgnored) {
 			// Warn that gulp.src is needlessly reading files that ESLint ignores.
 			file.eslint = createIgnoreResult(filePath, eslintInfo.cwd);
 		}
 		return;
 	}
-
 	let [result] = await eslint.lintText(file.contents.toString(), { filePath });
 	// Note: Fixes are applied as part of `lintText`.
 	// Any applied fix messages have been removed from the result.
-
 	if (quiet) {
 		// Ignore some messages.
 		const filter = typeof quiet === 'function' ? quiet : isErrorMessage;
@@ -59,7 +56,6 @@ async function lintFile(eslintInfo, file, quiet, warnIgnored) {
 	}
 	file.eslint = result;
 	file._eslintInfo = eslintInfo;
-
 	// Update the fixed output; otherwise, fixable messages are simply ignored.
 	if (hasOwn(result, 'output')) {
 		file.contents = Buffer.from(result.output);
@@ -105,20 +101,22 @@ gulpEslint.results = function (action) {
 	results.fixableErrorCount   = 0;
 	results.fixableWarningCount = 0;
 	results.fatalErrorCount     = 0;
-	return createTransform(file => {
-		const { eslint } = file;
-		if (eslint) {
-			results.push(eslint);
-			// Collect total error/warning count.
-			results.errorCount          += eslint.errorCount;
-			results.warningCount        += eslint.warningCount;
-			results.fixableErrorCount   += eslint.fixableErrorCount;
-			results.fixableWarningCount += eslint.fixableWarningCount;
-			results.fatalErrorCount     += eslint.fatalErrorCount;
+	return createTransform(
+		file => {
+			const { eslint } = file;
+			if (eslint) {
+				results.push(eslint);
+				// Collect total error/warning count.
+				results.errorCount          += eslint.errorCount;
+				results.warningCount        += eslint.warningCount;
+				results.fixableErrorCount   += eslint.fixableErrorCount;
+				results.fixableWarningCount += eslint.fixableWarningCount;
+				results.fatalErrorCount     += eslint.fatalErrorCount;
+			}
+		}, async () => {
+			await action(results);
 		}
-	}, async () => {
-		await action(results);
-	});
+	);
 };
 
 gulpEslint.failOnError = () => {
@@ -142,7 +140,6 @@ gulpEslint.failAfterError = () => {
 		if (!count) {
 			return;
 		}
-
 		throw createPluginError({
 			name: 'ESLintError',
 			message: `Failed with ${count} ${count === 1 ? 'error' : 'errors'}`

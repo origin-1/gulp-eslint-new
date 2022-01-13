@@ -33,7 +33,8 @@ async function awaitHandler(handler, data, done) {
  *
  * @param {Function} handleFile
  * A function that is called for each file, with the file object as the only parameter.
- * If the function returns a promise, the file will be passed through the stream after the promise is resolved.
+ * If the function returns a promise, the file will be passed through the stream after the promise
+ * is resolved.
  *
  * @param {Function} [handleFinal]
  * A function that is called with no parameters before closing the stream.
@@ -63,7 +64,6 @@ const isInNodeModulesRegExp = /(?<![^/\\])node_modules[/\\]/u;
 exports.createIgnoreResult = (filePath, baseDir) => {
 	let message;
 	const relativePath = relative(baseDir, filePath);
-
 	if (isHiddenRegExp.test(relativePath)) {
 		message
 			= 'File ignored by default. Use a negated ignore pattern (like '
@@ -77,7 +77,6 @@ exports.createIgnoreResult = (filePath, baseDir) => {
 			= 'File ignored because of a matching ignore pattern. Set "ignore" option to false '
 			+ 'to override.';
 	}
-
 	return {
 		filePath,
 		messages: [{ fatal: false, severity: 1, message }],
@@ -119,15 +118,16 @@ function toBooleanMap(keys, defaultValue, displayName) {
 		throwInvalidOptionError(`Option ${displayName} must be an array`);
 	}
 	if (keys && keys.length > 0) {
-		return keys.reduce((map, def) => {
-			const [key, value] = def.split(':');
-
-			if (key !== '__proto__') {
-				map[key] = value === undefined ? defaultValue : value === 'true';
-			}
-
-			return map;
-		}, { });
+		return keys.reduce(
+			(map, def) => {
+				const [key, value] = def.split(':');
+				if (key !== '__proto__') {
+					map[key] = value === undefined ? defaultValue : value === 'true';
+				}
+				return map;
+			},
+			{ }
+		);
 	}
 }
 
@@ -147,7 +147,7 @@ const forbiddenOptions = [
  * @param {Object} options - Options to migrate.
  * @returns {Object} Migrated options.
  */
-exports.migrateOptions = function migrateOptions(options = { }) {
+exports.migrateOptions = (options = { }) => {
 	if (typeof options === 'string') {
 		// Basic config path overload: `eslint('path/to/config.json')`.
 		const returnValue = { eslintOptions: { overrideConfigFile: options } };
@@ -205,15 +205,16 @@ exports.migrateOptions = function migrateOptions(options = { }) {
 /**
  * Get first message in an ESLint result to meet a condition.
  *
- * @param {LintResult} result - An ESLint result.
- * @param {Function} condition - A condition function that is passed a message and returns a boolean.
+ * @param {LintResult} result
+ * An ESLint result.
+ * @param {Function} condition
+ * A condition function that is passed a message and returns a boolean.
  * @returns {Object} The first message to pass the condition or null.
  */
 exports.firstResultMessage = (result, condition) => {
 	if (!result.messages) {
 		return null;
 	}
-
 	return result.messages.find(condition);
 };
 
@@ -374,7 +375,8 @@ exports.resolveFormatter = resolveFormatter;
 /**
  * Resolve writable.
  *
- * @param {Function|Stream} [writable=fancyLog] - A stream or function to resolve as a format writer.
+ * @param {Function|Stream} [writable=fancyLog]
+ * A stream or function to resolve as a format writer.
  * @returns {Function} A function that writes formatted messages.
  */
 exports.resolveWritable = (writable = fancyLog) => {

@@ -192,7 +192,6 @@ describe('gulp-eslint-new results', () => {
 		lintStream.end();
 	});
 
-
 	it('should catch thrown errors', async () => {
 		const file = createVinylFile('invalid.js', '#invalid!syntax}');
 		file.eslint = { };

@@ -37,7 +37,8 @@ describe('gulp-eslint-new format function', () => {
 	let writeCount;
 
 	/**
-	 * Custom ESLint formatted result writer for counting write attempts rather than writing to the console.
+	 * Custom ESLint formatted result writer for counting write attempts rather than writing to the
+	 * console.
 	 *
 	 * @param {string} message - A message to count as written.
 	 */
