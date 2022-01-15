@@ -1,3 +1,10 @@
+<a name="1.1.2"></a>
+## [1.1.2](https://github.com/fasttime/gulp-eslint-new/releases/tag/1.1.2) (2022-01-15)
+
+* Formatting streams with ignored files no longer throws an exception when the option `warnIgnored` is used.
+* Added migration instructions to the readme file.
+* Updated examples.
+
 <a name="1.1.1"></a>
 ## [1.1.1](https://github.com/fasttime/gulp-eslint-new/releases/tag/1.1.1) (2022-01-08)
 
