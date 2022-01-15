@@ -57,7 +57,8 @@ gulp.src(['**/*.js', '!node_modules/**'])
             env: {
                 'browser': true
             }
-        }
+        },
+        warnIgnored: true
     }))
     .pipe(eslint.formatEach('compact', process.stderr));
 ```
