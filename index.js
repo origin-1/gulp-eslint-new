@@ -34,33 +34,36 @@ async function lintFile(eslintInfo, file, quiet, warnIgnored) {
 	// The "path" property of a Vinyl file should be always an absolute path.
 	// See https://gulpjs.com/docs/en/api/vinyl/#instance-properties.
 	const filePath = file.path;
+	let result;
 	if (await eslint.isPathIgnored(filePath)) {
 		// Note: ESLint doesn't adjust file paths relative to an ancestory .eslintignore path.
 		// E.g., If ../.eslintignore has "foo/*.js", ESLint will ignore ./foo/*.js, instead of
 		// ../foo/*.js.
 		// ESLint rolls this into `ESLint.prototype.lintText`. So, gulp-eslint-new must account for
 		// this limitation.
-		if (warnIgnored) {
-			// Warn that gulp.src is needlessly reading files that ESLint ignores.
-			file.eslint = createIgnoreResult(filePath, eslintInfo.cwd);
+		if (!warnIgnored) {
+			return;
 		}
-		return;
-	}
-	let [result] = await eslint.lintText(file.contents.toString(), { filePath });
-	// Note: Fixes are applied as part of `lintText`.
-	// Any applied fix messages have been removed from the result.
-	if (quiet) {
-		// Ignore some messages.
-		const filter = typeof quiet === 'function' ? quiet : isErrorMessage;
-		result = filterResult(result, filter);
+		// Warn that gulp.src is needlessly reading files that ESLint ignores.
+		result = createIgnoreResult(filePath, eslintInfo.cwd);
+	} else {
+		[result] = await eslint.lintText(file.contents.toString(), { filePath });
+		// Note: Fixes are applied as part of `lintText`.
+		// Any applied fix messages have been removed from the result.
+		if (quiet) {
+			// Ignore some messages.
+			const filter = typeof quiet === 'function' ? quiet : isErrorMessage;
+			result = filterResult(result, filter);
+		}
+		file.eslint = result;
+		// Update the fixed output; otherwise, fixable messages are simply ignored.
+		if (hasOwn(result, 'output')) {
+			file.contents = Buffer.from(result.output);
+			result.fixed = true;
+		}
 	}
 	file.eslint = result;
 	file._eslintInfo = eslintInfo;
-	// Update the fixed output; otherwise, fixable messages are simply ignored.
-	if (hasOwn(result, 'output')) {
-		file.contents = Buffer.from(result.output);
-		result.fixed = true;
-	}
 }
 
 function gulpEslint(options) {

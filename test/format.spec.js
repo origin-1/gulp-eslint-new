@@ -27,6 +27,10 @@ function getFiles() {
 		createVinylFile(
 			'passing.js',
 			'(function () {\n\n\t"use strict";\n\n}());\n'
+		),
+		createVinylFile(
+			'.ignored.js',
+			''
 		)
 	];
 }
@@ -60,7 +64,8 @@ describe('gulp-eslint-new format function', () => {
 		function formatResults(results, config) {
 			assert(config);
 			assert(Array.isArray(results));
-			assert.equal(results.length, 3);
+			const fileCount = 4;
+			assert.equal(results.length, fileCount);
 			formatCount++;
 			const messageCount = results.reduce((sum, result) => sum + result.messages.length, 0);
 			return `${messageCount} ${messageCount === 1 ? 'message' : 'messages'}`;
@@ -82,7 +87,8 @@ describe('gulp-eslint-new format function', () => {
 					done();
 				});
 			const lintStream
-				= eslint({ useEslintrc: false, rules: { 'strict': 2 } }).on('error', done);
+				= eslint({ useEslintrc: false, rules: { 'strict': 2 }, warnIgnored: true })
+					.on('error', done);
 			lintStream
 				.pipe(eslint.format(noop, noop)) // Test that files are passed through.
 				.pipe(formatStream);
@@ -163,7 +169,8 @@ describe('gulp-eslint-new format function', () => {
 			writeCount = 0;
 			const files = getFiles();
 			const lintStream
-				= eslint({ useEslintrc: false, rules: { 'strict': 2 } }).on('error', done);
+				= eslint({ useEslintrc: false, rules: { 'strict': 2 }, warnIgnored: true })
+					.on('error', done);
 			lintStream
 				.pipe(eslint.formatEach(noop, noop)) // Test that files are passed through.
 				.pipe(

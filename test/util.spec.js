@@ -227,6 +227,11 @@ describe('utility methods', () => {
 			);
 		});
 
+		it('should treat "warnFileIgnored" as a synonym for "warnIgnored"', () => {
+			const { warnIgnored } = util.migrateOptions({ warnFileIgnored: true });
+			assert.equal(warnIgnored, true);
+		});
+
 		it('should fail if a forbidden option is specified', () => {
 			const options = {
 				cache:                   true,

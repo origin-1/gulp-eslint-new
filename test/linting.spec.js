@@ -219,12 +219,12 @@ describe('gulp-eslint-new plugin', () => {
 
 	});
 
-	describe('"warnFileIgnored" option', () => {
+	describe('"warnIgnored" option', () => {
 
 		it('when true, should warn when a file is ignored by .eslintignore', async () => {
 			const file = createVinylFile('ignored.js', '(function () {ignore = abc;}});');
 			await finished(
-				eslint({ useEslintrc: false, warnFileIgnored: true }).on('data', noop).end(file)
+				eslint({ useEslintrc: false, warnIgnored: true }).on('data', noop).end(file)
 			);
 			assert.equal(file.eslint.filePath, file.path);
 			assert(Array.isArray(file.eslint.messages));
@@ -253,7 +253,7 @@ describe('gulp-eslint-new plugin', () => {
 				'(function () {ignore = abc;}});'
 			);
 			await finished(
-				eslint({ useEslintrc: false, warnFileIgnored: true }).on('data', noop).end(file)
+				eslint({ useEslintrc: false, warnIgnored: true }).on('data', noop).end(file)
 			);
 			assert.equal(file.eslint.filePath, file.path);
 			assert(Array.isArray(file.eslint.messages));
@@ -279,7 +279,7 @@ describe('gulp-eslint-new plugin', () => {
 		it('when not true, should silently ignore files', async () => {
 			const file = createVinylFile('ignored.js', '(function () {ignore = abc;}});');
 			await finished(
-				eslint({ useEslintrc: false, warnFileIgnored: false }).on('data', noop).end(file)
+				eslint({ useEslintrc: false, warnIgnored: false }).on('data', noop).end(file)
 			);
 			assert(!file.eslint);
 		});
