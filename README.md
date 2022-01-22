@@ -12,7 +12,7 @@ npm i -D gulp-eslint-new
 
 ## Migrating
 
-If you are migrating from gulp-eslint, you probably won't need to change any settings in your Gulp task.
+If you are migrating from gulp-eslint, you probably won't need to change any settings in your gulp task.
 gulp-eslint-new can handle most of the options used with gulp-eslint, although some of them are now deprecated in favor of a new name or format.
 
 Anyway, since gulp-eslint-new uses ESLint 8 while gulp-eslint sticks to ESLint 6, you may need to make some changes to your project to address incompatibilities between the versions of ESLint.
