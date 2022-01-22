@@ -103,7 +103,10 @@ describe('gulp-eslint-new result', () => {
 	});
 
 	it('should throw an error if not provided a function argument', () => {
-		assert.throws(() => eslint.result(), { message: 'Expected callable argument' });
+		assert.throws(
+			eslint.result,
+			{ constructor: TypeError, message: 'Expected callable argument' }
+		);
 	});
 
 	it('should ignore files without an ESLint result', done => {
@@ -223,7 +226,10 @@ describe('gulp-eslint-new results', () => {
 	});
 
 	it('should throw an error if not provided a function argument', () => {
-		assert.throws(() => eslint.results(), { message: 'Expected callable argument' });
+		assert.throws(
+			eslint.results,
+			{ constructor: TypeError, message: 'Expected callable argument' }
+		);
 	});
 
 	it('should ignore files without an ESLint result', async () => {

@@ -28,7 +28,7 @@ rules:
   guard-for-in: 1
   key-spacing: [2, { beforeColon: false, afterColon: true, mode: "minimum" }]
   max-len: [1, 100, 4]
-  new-cap: 2
+  new-cap: [2, { capIsNewExceptions: ['TypeError'] }]
   no-floating-decimal: 2
   no-multi-str: 1
   no-multiple-empty-lines: 2

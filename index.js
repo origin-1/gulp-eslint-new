@@ -73,7 +73,7 @@ function gulpEslint(options) {
 
 function wrapAction(action) {
 	if (typeof action !== 'function') {
-		throw Error('Expected callable argument');
+		throw TypeError('Expected callable argument');
 	}
 	if (action.length > 1) {
 		action = promisify(action);
