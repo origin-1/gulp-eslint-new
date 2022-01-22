@@ -203,22 +203,6 @@ exports.migrateOptions = (options = { }) => {
 };
 
 /**
- * Get first message in an ESLint result to meet a condition.
- *
- * @param {LintResult} result
- * An ESLint result.
- * @param {Function} condition
- * A condition function that is passed a message and returns a boolean.
- * @returns {Object} The first message to pass the condition or null.
- */
-exports.firstResultMessage = (result, condition) => {
-	if (!result.messages) {
-		return null;
-	}
-	return result.messages.find(condition);
-};
-
-/**
  * Determine if a message is an error.
  *
  * @param {Object} message - An ESLint message.

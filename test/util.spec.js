@@ -18,9 +18,12 @@ describe('utility methods', () => {
 			let finishCalled = false;
 			const expectedFile = createVinylFile('invalid.js', 'x = 1;');
 			await finished(
-				util.createTransform(file => {
-					actualFile = file;
-				})
+				util
+					.createTransform(
+						file => {
+							actualFile = file;
+						}
+					)
 					.on('data', file => {
 						assert.equal(file, expectedFile);
 						actualFile = file;
@@ -66,9 +69,11 @@ describe('utility methods', () => {
 
 		it('should catch errors in an asynchronous file handler', done => {
 			util
-				.createTransform(() => new Promise((_, reject) => {
-					setImmediate(() => reject('foo'));
-				}))
+				.createTransform(
+					() => new Promise((_, reject) => {
+						setImmediate(() => reject('foo'));
+					})
+				)
 				.on('error', err => {
 					assert(err.message, 'foo');
 					assert(err.plugin, 'gulp-eslint-new');

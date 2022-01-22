@@ -3,13 +3,12 @@
 const {
 	createIgnoreResult,
 	createPluginError,
+	createTransform,
 	filterResult,
-	firstResultMessage,
 	hasOwn,
 	isErrorMessage,
 	migrateOptions,
 	resolveWritable,
-	createTransform,
 	writeResults
 } = require('./util');
 const { ESLint }    = require('eslint');
@@ -39,8 +38,6 @@ async function lintFile(eslintInfo, file, quiet, warnIgnored) {
 		// Note: ESLint doesn't adjust file paths relative to an ancestory .eslintignore path.
 		// E.g., If ../.eslintignore has "foo/*.js", ESLint will ignore ./foo/*.js, instead of
 		// ../foo/*.js.
-		// ESLint rolls this into `ESLint.prototype.lintText`. So, gulp-eslint-new must account for
-		// this limitation.
 		if (!warnIgnored) {
 			return;
 		}
@@ -71,33 +68,33 @@ function gulpEslint(options) {
 	const cwd = eslintOptions.cwd || process.cwd();
 	const eslint = new ESLint(eslintOptions);
 	const eslintInfo = { cwd, eslint };
-	return createTransform(
-		file => lintFile(eslintInfo, file, quiet, warnIgnored)
-	);
+	return createTransform(file => lintFile(eslintInfo, file, quiet, warnIgnored));
+}
+
+function wrapAction(action) {
+	if (typeof action !== 'function') {
+		throw Error('Expected callable argument');
+	}
+	if (action.length > 1) {
+		action = promisify(action);
+	}
+	return action;
 }
 
 gulpEslint.result = action => {
-	if (typeof action !== 'function') {
-		throw Error('Expected callable argument');
-	}
-	if (action.length > 1) {
-		action = promisify(action);
-	}
-	return createTransform(async file => {
-		const { eslint } = file;
-		if (eslint) {
-			await action(eslint);
+	action = wrapAction(action);
+	return createTransform(
+		async file => {
+			const { eslint } = file;
+			if (eslint) {
+				await action(eslint);
+			}
 		}
-	});
+	);
 };
 
-gulpEslint.results = function (action) {
-	if (typeof action !== 'function') {
-		throw Error('Expected callable argument');
-	}
-	if (action.length > 1) {
-		action = promisify(action);
-	}
+gulpEslint.results = action => {
+	action = wrapAction(action);
 	const results = [];
 	results.errorCount          = 0;
 	results.warningCount        = 0;
@@ -105,8 +102,7 @@ gulpEslint.results = function (action) {
 	results.fixableWarningCount = 0;
 	results.fatalErrorCount     = 0;
 	return createTransform(
-		file => {
-			const { eslint } = file;
+		({ eslint }) => {
 			if (eslint) {
 				results.push(eslint);
 				// Collect total error/warning count.
@@ -116,7 +112,8 @@ gulpEslint.results = function (action) {
 				results.fixableWarningCount += eslint.fixableWarningCount;
 				results.fatalErrorCount     += eslint.fatalErrorCount;
 			}
-		}, async () => {
+		},
+		async () => {
 			await action(results);
 		}
 	);
@@ -124,41 +121,43 @@ gulpEslint.results = function (action) {
 
 gulpEslint.failOnError = () => {
 	return gulpEslint.result(result => {
-		const error = firstResultMessage(result, isErrorMessage);
-		if (!error) {
-			return;
+		const { messages } = result;
+		if (messages) {
+			const error = messages.find(isErrorMessage);
+			if (error) {
+				throw createPluginError({
+					name: 'ESLintError',
+					fileName: result.filePath,
+					message: error.message,
+					lineNumber: error.line
+				});
+			}
 		}
-		throw createPluginError({
-			name: 'ESLintError',
-			fileName: result.filePath,
-			message: error.message,
-			lineNumber: error.line
-		});
 	});
 };
 
 gulpEslint.failAfterError = () => {
-	return gulpEslint.results(results => {
-		const count = results.errorCount;
-		if (!count) {
-			return;
+	return gulpEslint.results(({ errorCount }) => {
+		if (errorCount) {
+			throw createPluginError({
+				name: 'ESLintError',
+				message: `Failed with ${errorCount} ${errorCount === 1 ? 'error' : 'errors'}`
+			});
 		}
-		throw createPluginError({
-			name: 'ESLintError',
-			message: `Failed with ${count} ${count === 1 ? 'error' : 'errors'}`
-		});
 	});
 };
 
 gulpEslint.formatEach = (formatter, writable) => {
 	writable = resolveWritable(writable);
-	return createTransform(async file => {
-		const { eslint } = file;
-		if (eslint) {
-			const eslintInfo = getESLintInfo(file);
-			await writeResults([eslint], eslintInfo, formatter, writable);
+	return createTransform(
+		async file => {
+			const { eslint } = file;
+			if (eslint) {
+				const eslintInfo = getESLintInfo(file);
+				await writeResults([eslint], eslintInfo, formatter, writable);
+			}
 		}
-	});
+	);
 };
 
 gulpEslint.format = (formatter, writable) => {
