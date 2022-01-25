@@ -2,17 +2,17 @@
 
 // npm install gulp gulp-eslint-new
 
-const { src } = require('gulp');
-const eslint  = require('gulp-eslint-new');
+const { src }       = require('gulp');
+const gulpESLintNew = require('gulp-eslint-new');
 
 const MAX_PROBLEMS = 1;
 
 function lintResult() {
 	// Be sure to return the stream; otherwise, you may not get a proper exit code.
 	return src('demo/**/*.js')
-		.pipe(eslint())
-		.pipe(eslint.formatEach())
-		.pipe(eslint.result(result => {
+		.pipe(gulpESLintNew())
+		.pipe(gulpESLintNew.formatEach())
+		.pipe(gulpESLintNew.result(result => {
 			if (result.messages.length > MAX_PROBLEMS) {
 				// Report which file exceeded the limit.
 				// The error will be wrapped in a gulp PluginError.
@@ -27,9 +27,9 @@ function lintResult() {
 
 function lintResultAsync() {
 	return src('demo/**/*.js')
-		.pipe(eslint())
-		.pipe(eslint.formatEach())
-		.pipe(eslint.result((result, done) => {
+		.pipe(gulpESLintNew())
+		.pipe(gulpESLintNew.formatEach())
+		.pipe(gulpESLintNew.result((result, done) => {
 			// As a basic example, we'll use setImmediate as an async process.
 			setImmediate(() => {
 				let error = null;
@@ -49,9 +49,9 @@ function lintResultAsync() {
 
 function lintResults() {
 	return src('demo/**/*.js')
-		.pipe(eslint())
-		.pipe(eslint.format())
-		.pipe(eslint.results(results => {
+		.pipe(gulpESLintNew())
+		.pipe(gulpESLintNew.format())
+		.pipe(gulpESLintNew.results(results => {
 			if (results.errorCount + results.warningCount > MAX_PROBLEMS) {
 				// No specific file to complain about here.
 				throw Error('Too many problems!');
@@ -61,9 +61,9 @@ function lintResults() {
 
 function lintResultsAsync() {
 	return src('demo/**/*.js')
-		.pipe(eslint())
-		.pipe(eslint.format())
-		.pipe(eslint.results((results, done) => {
+		.pipe(gulpESLintNew())
+		.pipe(gulpESLintNew.format())
+		.pipe(gulpESLintNew.results((results, done) => {
 			// Another async example...
 			setTimeout(() => {
 				let error = null;

@@ -3,18 +3,18 @@
 // npm install gulp gulp-eslint-new
 
 const { series, src } = require('gulp');
-const eslint          = require('gulp-eslint-new');
+const gulpESLintNew   = require('gulp-eslint-new');
 
 function quietLint() {
 	return src('demo/**/*.js')
-		.pipe(eslint({ quiet: true }))
-		.pipe(eslint.format());
+		.pipe(gulpESLintNew({ quiet: true }))
+		.pipe(gulpESLintNew.format());
 }
 
 function lintWarnings() {
 	return src('demo/**/*.js')
-		.pipe(eslint({ quiet: ({ severity }) => severity === 1 }))
-		.pipe(eslint.format());
+		.pipe(gulpESLintNew({ quiet: ({ severity }) => severity === 1 }))
+		.pipe(gulpESLintNew.format());
 }
 
 module.exports = {

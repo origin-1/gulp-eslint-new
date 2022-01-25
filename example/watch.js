@@ -3,15 +3,15 @@
 // npm install gulp gulp-cached gulp-eslint-new
 
 const { src, watch } = require('gulp');
-const cache          = require('gulp-cached');
-const eslint         = require('gulp-eslint-new');
+const gulpCached     = require('gulp-cached');
+const gulpESLintNew  = require('gulp-eslint-new');
 const { resolve }    = require('path');
 
 function lintWatch() {
 	// Lint only files that change after this watch starts.
-	const lintAndPrint = eslint();
+	const lintAndPrint = gulpESLintNew();
 	// Format results with each file, since this stream won't end.
-	lintAndPrint.pipe(eslint.formatEach());
+	lintAndPrint.pipe(gulpESLintNew.formatEach());
 	return watch('demo/**/*.js')
 		.on('all', (eventType, path) => {
 			if (eventType === 'add' || eventType === 'change') {
@@ -20,8 +20,10 @@ function lintWatch() {
 		});
 }
 
+const CACHE_NAME = 'eslint';
+
 function uncache(path) {
-	delete cache.caches.eslint[path];
+	delete gulpCached.caches[CACHE_NAME][path];
 }
 
 function cachedLintWatch() {
@@ -31,11 +33,11 @@ function cachedLintWatch() {
 		globs,
 		{ ignoreInitial: false },
 		() => src(globs)
-			.pipe(cache('eslint'))
+			.pipe(gulpCached(CACHE_NAME))
 			// Only uncached and changed files past this point.
-			.pipe(eslint())
-			.pipe(eslint.format())
-			.pipe(eslint.result(result => {
+			.pipe(gulpESLintNew())
+			.pipe(gulpESLintNew.format())
+			.pipe(gulpESLintNew.result(result => {
 				if (result.messages.length > 0) {
 					// If a file has errors/warnings, uncache it.
 					uncache(result.filePath);

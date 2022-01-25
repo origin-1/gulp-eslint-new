@@ -3,7 +3,7 @@
 // npm install gulp gulp-eslint-new
 
 const { series, src } = require('gulp');
-const eslint          = require('gulp-eslint-new');
+const gulpESLintNew   = require('gulp-eslint-new');
 
 /**
  * Simple example of using ESLint and a formatter.
@@ -15,9 +15,9 @@ const eslint          = require('gulp-eslint-new');
 function basic() {
 	return src('demo/**/*.js')
 		// default: use local linting config.
-		.pipe(eslint())
+		.pipe(gulpESLintNew())
 		// Format ESLint results and print them to the console.
-		.pipe(eslint.format());
+		.pipe(gulpESLintNew.format());
 }
 
 /**
@@ -27,7 +27,7 @@ function basic() {
  */
 function inlineConfig() {
 	return src('demo/**/*.js')
-		.pipe(eslint({
+		.pipe(gulpESLintNew({
 			overrideConfig: {
 				rules: {
 					'no-alert': 0,
@@ -64,7 +64,7 @@ function inlineConfig() {
 			},
 			warnIgnored: true
 		}))
-		.pipe(eslint.format());
+		.pipe(gulpESLintNew.format());
 }
 
 /**
@@ -74,11 +74,11 @@ function inlineConfig() {
  */
 function loadConfig() {
 	return src('demo/**/*.js')
-		.pipe(eslint({
+		.pipe(gulpESLintNew({
 			// Load a specific ESLint config.
 			overrideConfigFile: 'config.json'
 		}))
-		.pipe(eslint.format());
+		.pipe(gulpESLintNew.format());
 }
 
 /**
@@ -89,8 +89,8 @@ function loadConfig() {
 function loadConfigShorthand() {
 	return src('demo/**/*.js')
 		// Load a specific ESLint config
-		.pipe(eslint('config.json'))
-		.pipe(eslint.format());
+		.pipe(gulpESLintNew('config.json'))
+		.pipe(gulpESLintNew.format());
 }
 
 /**
