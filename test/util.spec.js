@@ -2,14 +2,119 @@
 
 'use strict';
 
-const util                                = require('../util');
-const { createVinylFile, finished, noop } = require('./test-util');
-const { strict: assert }                  = require('assert');
-const { ESLint }                          = require('eslint');
-const { resolve }                         = require('path');
-const { Writable }                        = require('stream');
+const util                                                      = require('../util');
+const { createVinylDirectory, createVinylFile, finished, noop } = require('./test-util');
+const { strict: assert }                                        = require('assert');
+const { ESLint }                                                = require('eslint');
+const { resolve }                                               = require('path');
+const { Writable }                                              = require('stream');
 
 describe('utility methods', () => {
+
+	describe('compareResultsByFilePath', () => {
+
+		it('should return 1 if the first path goes after the second one', () => {
+			assert.equal(
+				util.compareResultsByFilePath(
+					{ filePath: '/a/b/file.js' },
+					{ filePath: '/a/b/FILE.js' }
+				),
+				1
+			);
+		});
+
+		it('should return -1 if the first path goes before the second one', () => {
+			assert.equal(util.compareResultsByFilePath({ filePath: 'C:' }, { filePath: 'D:' }), -1);
+		});
+
+		it('should return 0 if both paths are equal', () => {
+			assert.equal(util.compareResultsByFilePath({ filePath: '' }, { filePath: '' }), 0);
+		});
+
+	});
+
+	describe('createIgnoreResult should create a warning', () => {
+
+		function test(filePath, baseDir, expectedMessage) {
+			const result = util.createIgnoreResult(filePath, baseDir);
+			assert(result);
+			assert.equal(result.filePath, filePath);
+			assert.equal(result.errorCount, 0);
+			assert.equal(result.warningCount, 1);
+			assert.equal(result.fixableErrorCount, 0);
+			assert.equal(result.fixableWarningCount, 0);
+			assert.equal(result.fatalErrorCount, 0);
+			assert(Array.isArray(result.messages));
+			assert.deepEqual(
+				result.messages,
+				[{ fatal: false, severity: 1, message: expectedMessage }]
+			);
+		}
+
+		it('for a hidden file', () => {
+			test(
+				resolve('.hidden.js'),
+				process.cwd(),
+				'File ignored by default. Use a negated ignore pattern (like '
+				+ '"!<relative/path/to/filename>") to override.'
+			);
+		});
+
+		it('for a file in a hidden folder', () => {
+			test(
+				resolve('.hidden/file.js'),
+				process.cwd(),
+				'File ignored by default. Use a negated ignore pattern (like '
+				+ '"!<relative/path/to/filename>") to override.'
+			);
+		});
+
+		it('for a file outside the base directory', () => {
+			test(
+				resolve('../file.js'),
+				process.cwd(),
+				'File ignored because of a matching ignore pattern. Set "ignore" option to false '
+				+ 'to override.'
+			);
+		});
+
+		it('for a path that includes "node_modules"', () => {
+			test(
+				resolve('node_modules/test/index.js'),
+				process.cwd(),
+				'File ignored by default. Use a negated ignore pattern like "!node_modules/*" to '
+				+ 'override.'
+			);
+		});
+
+		it('for a path that includes "node_modules" in the base directory', () => {
+			test(
+				resolve('node_modules/file.js'),
+				resolve('node_modules'),
+				'File ignored because of a matching ignore pattern. Set "ignore" option to false '
+				+ 'to override.'
+			);
+		});
+
+		it('for a path with a part that starts with "node_modules"', () => {
+			test(
+				resolve('node_modules_bak/file.js'),
+				process.cwd(),
+				'File ignored because of a matching ignore pattern. Set "ignore" option to false '
+				+ 'to override.'
+			);
+		});
+
+		it('for a file ignored by ".eslintignore"', () => {
+			test(
+				resolve('ignored.js'),
+				process.cwd(),
+				'File ignored because of a matching ignore pattern. Set "ignore" option to false '
+				+ 'to override.'
+			);
+		});
+
+	});
 
 	describe('createTransform', () => {
 
@@ -100,85 +205,96 @@ describe('utility methods', () => {
 
 	});
 
-	describe('createIgnoreResult should create a warning', () => {
+	describe('filterResult', () => {
 
-		function test(filePath, baseDir, expectedMessage) {
-			const result = util.createIgnoreResult(filePath, baseDir);
-			assert(result);
-			assert.equal(result.filePath, filePath);
-			assert.equal(result.errorCount, 0);
-			assert.equal(result.warningCount, 1);
-			assert.equal(result.fixableErrorCount, 0);
-			assert.equal(result.fixableWarningCount, 0);
-			assert.equal(result.fatalErrorCount, 0);
-			assert(Array.isArray(result.messages));
-			assert.deepEqual(
-				result.messages,
-				[{ fatal: false, severity: 1, message: expectedMessage }]
-			);
-		}
+		const result = {
+			filePath: 'invalid.js',
+			messages: [{
+				ruleId: 'error',
+				message: 'This is an error.',
+				severity: 2
+			}, {
+				ruleId: 'warning',
+				message: 'This is a warning.',
+				severity: 1
+			}, {
+				ruleId: 'fixable error',
+				message: 'This is a fixable error.',
+				severity: 2,
+				fix: { }
+			}, {
+				ruleId: 'fixable warning',
+				message: 'This is a fixable warning.',
+				severity: 1,
+				fix: { }
+			}, {
+				ruleId: 'fatal error',
+				message: 'This is a fatal error.',
+				fatal: true,
+				severity: 2
+			}],
+			errorCount: 3,
+			warningCount: 2,
+			fatalErrorCount: 1,
+			output: 'function a () { x = 0; }'
+		};
 
-		it('for a hidden file', () => {
-			test(
-				resolve('.hidden.js'),
-				process.cwd(),
-				'File ignored by default. Use a negated ignore pattern (like '
-				+ '"!<relative/path/to/filename>") to override.'
-			);
+		it('should remove error messages', () => {
+			const quietResult = util.filterResult(result, util.isWarningMessage);
+			assert.equal(quietResult.filePath, 'invalid.js');
+			assert(Array.isArray(quietResult.messages));
+			assert.equal(quietResult.messages.length, 2);
+			assert.equal(quietResult.errorCount, 0);
+			assert.equal(quietResult.warningCount, 2);
+			assert.equal(quietResult.fixableErrorCount, 0);
+			assert.equal(quietResult.fixableWarningCount, 1);
+			assert.equal(quietResult.fatalErrorCount, 0);
+			assert.equal(quietResult.output, 'function a () { x = 0; }');
 		});
 
-		it('for a file in a hidden folder', () => {
-			test(
-				resolve('.hidden/file.js'),
-				process.cwd(),
-				'File ignored by default. Use a negated ignore pattern (like '
-				+ '"!<relative/path/to/filename>") to override.'
-			);
+		it('should remove warning messages', () => {
+			const quietResult = util.filterResult(result, util.isErrorMessage);
+			assert.equal(quietResult.filePath, 'invalid.js');
+			assert(Array.isArray(quietResult.messages));
+			assert.equal(quietResult.messages.length, 3);
+			assert.equal(quietResult.errorCount, 3);
+			assert.equal(quietResult.warningCount, 0);
+			assert.equal(quietResult.fixableErrorCount, 1);
+			assert.equal(quietResult.fixableWarningCount, 0);
+			assert.equal(quietResult.fatalErrorCount, 1);
+			assert.equal(quietResult.output, 'function a () { x = 0; }');
 		});
 
-		it('for a file outside the base directory', () => {
-			test(
-				resolve('../file.js'),
-				process.cwd(),
-				'File ignored because of a matching ignore pattern. Set "ignore" option to false '
-				+ 'to override.'
-			);
-		});
+	});
 
-		it('for a path that includes "node_modules"', () => {
-			test(
-				resolve('node_modules/test/index.js'),
-				process.cwd(),
-				'File ignored by default. Use a negated ignore pattern like "!node_modules/*" to '
-				+ 'override.'
-			);
-		});
+	describe('fix', () => {
 
-		it('for a path that includes "node_modules" in the base directory', () => {
-			test(
-				resolve('node_modules/file.js'),
-				resolve('node_modules'),
-				'File ignored because of a matching ignore pattern. Set "ignore" option to false '
-				+ 'to override.'
-			);
-		});
-
-		it('for a path with a part that starts with "node_modules"', () => {
-			test(
-				resolve('node_modules_bak/file.js'),
-				process.cwd(),
-				'File ignored because of a matching ignore pattern. Set "ignore" option to false '
-				+ 'to override.'
-			);
-		});
-
-		it('for a file ignored by ".eslintignore"', () => {
-			test(
-				resolve('ignored.js'),
-				process.cwd(),
-				'File ignored because of a matching ignore pattern. Set "ignore" option to false '
-				+ 'to override.'
-			);
+		it('should fix only a fixed file', done => {
+			let actualDestArg;
+			const actualFiles = [];
+			const testStream = util.fix(destArg => {
+				actualDestArg = destArg;
+				return util.createTransform(file => {
+					actualFiles.push(file);
+				});
+			});
+			const base = 'foobar';
+			assert.equal(actualDestArg({ base }), base);
+			const unfixedFile = createVinylFile('unfixed', 'unfixed');
+			unfixedFile.eslint = { };
+			const fixedFile = createVinylFile('fixed', 'fixed');
+			fixedFile.eslint = { fixed: true };
+			const ignoredFile = createVinylFile('ignored', 'ignored');
+			const directory = createVinylDirectory();
+			testStream.on('finish', () => {
+				assert.deepEqual(actualFiles, [fixedFile]);
+				done();
+			});
+			testStream.write(unfixedFile);
+			testStream.write(fixedFile);
+			testStream.write(ignoredFile);
+			testStream.write(directory);
+			testStream.end();
 		});
 
 	});
@@ -278,90 +394,6 @@ describe('utility methods', () => {
 			const options = { overrideConfig: { }, parser: 'foo' };
 			util.migrateOptions(options);
 			assert.deepEqual(options.overrideConfig, { });
-		});
-
-	});
-
-	describe('filterResult', () => {
-
-		const result = {
-			filePath: 'invalid.js',
-			messages: [{
-				ruleId: 'error',
-				message: 'This is an error.',
-				severity: 2
-			}, {
-				ruleId: 'warning',
-				message: 'This is a warning.',
-				severity: 1
-			}, {
-				ruleId: 'fixable error',
-				message: 'This is a fixable error.',
-				severity: 2,
-				fix: { }
-			}, {
-				ruleId: 'fixable warning',
-				message: 'This is a fixable warning.',
-				severity: 1,
-				fix: { }
-			}, {
-				ruleId: 'fatal error',
-				message: 'This is a fatal error.',
-				fatal: true,
-				severity: 2
-			}],
-			errorCount: 3,
-			warningCount: 2,
-			fatalErrorCount: 1,
-			output: 'function a () { x = 0; }'
-		};
-
-		it('should remove error messages', () => {
-			const quietResult = util.filterResult(result, util.isWarningMessage);
-			assert.equal(quietResult.filePath, 'invalid.js');
-			assert(Array.isArray(quietResult.messages));
-			assert.equal(quietResult.messages.length, 2);
-			assert.equal(quietResult.errorCount, 0);
-			assert.equal(quietResult.warningCount, 2);
-			assert.equal(quietResult.fixableErrorCount, 0);
-			assert.equal(quietResult.fixableWarningCount, 1);
-			assert.equal(quietResult.fatalErrorCount, 0);
-			assert.equal(quietResult.output, 'function a () { x = 0; }');
-		});
-
-		it('should remove warning messages', () => {
-			const quietResult = util.filterResult(result, util.isErrorMessage);
-			assert.equal(quietResult.filePath, 'invalid.js');
-			assert(Array.isArray(quietResult.messages));
-			assert.equal(quietResult.messages.length, 3);
-			assert.equal(quietResult.errorCount, 3);
-			assert.equal(quietResult.warningCount, 0);
-			assert.equal(quietResult.fixableErrorCount, 1);
-			assert.equal(quietResult.fixableWarningCount, 0);
-			assert.equal(quietResult.fatalErrorCount, 1);
-			assert.equal(quietResult.output, 'function a () { x = 0; }');
-		});
-
-	});
-
-	describe('compareResultsByFilePath', () => {
-
-		it('should return 1 if the first path goes after the second one', () => {
-			assert.equal(
-				util.compareResultsByFilePath(
-					{ filePath: '/a/b/file.js' },
-					{ filePath: '/a/b/FILE.js' }
-				),
-				1
-			);
-		});
-
-		it('should return -1 if the first path goes before the second one', () => {
-			assert.equal(util.compareResultsByFilePath({ filePath: 'C:' }, { filePath: 'D:' }), -1);
-		});
-
-		it('should return 0 if both paths are equal', () => {
-			assert.equal(util.compareResultsByFilePath({ filePath: '' }, { filePath: '' }), 0);
 		});
 
 	});

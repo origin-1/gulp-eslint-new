@@ -5,6 +5,7 @@ const {
 	createPluginError,
 	createTransform,
 	filterResult,
+	fix,
 	hasOwn,
 	isErrorMessage,
 	migrateOptions,
@@ -13,6 +14,7 @@ const {
 } = require('./util');
 const { ESLint }    = require('eslint');
 const { promisify } = require('util');
+const { dest }      = require('vinyl-fs');
 
 function getESLintInfo(file) {
 	const eslintInfo = file._eslintInfo;
@@ -20,6 +22,16 @@ function getESLintInfo(file) {
 		return eslintInfo;
 	}
 	throw createPluginError({ fileName: file.path, message: 'ESLint information not available' });
+}
+
+function wrapAction(action) {
+	if (typeof action !== 'function') {
+		throw TypeError('Expected callable argument');
+	}
+	if (action.length > 1) {
+		action = promisify(action);
+	}
+	return action;
 }
 
 async function lintFile(eslintInfo, file, quiet, warnIgnored) {
@@ -63,7 +75,7 @@ async function lintFile(eslintInfo, file, quiet, warnIgnored) {
 	file._eslintInfo = eslintInfo;
 }
 
-function gulpEslint(options) {
+function gulpESLint(options) {
 	const { eslintOptions, quiet, warnIgnored } = migrateOptions(options);
 	const cwd = eslintOptions.cwd || process.cwd();
 	const eslint = new ESLint(eslintOptions);
@@ -71,17 +83,7 @@ function gulpEslint(options) {
 	return createTransform(file => lintFile(eslintInfo, file, quiet, warnIgnored));
 }
 
-function wrapAction(action) {
-	if (typeof action !== 'function') {
-		throw TypeError('Expected callable argument');
-	}
-	if (action.length > 1) {
-		action = promisify(action);
-	}
-	return action;
-}
-
-gulpEslint.result = action => {
+gulpESLint.result = action => {
 	action = wrapAction(action);
 	return createTransform(
 		async file => {
@@ -93,7 +95,7 @@ gulpEslint.result = action => {
 	);
 };
 
-gulpEslint.results = action => {
+gulpESLint.results = action => {
 	action = wrapAction(action);
 	const results = [];
 	results.errorCount          = 0;
@@ -119,8 +121,8 @@ gulpEslint.results = action => {
 	);
 };
 
-gulpEslint.failOnError = () => {
-	return gulpEslint.result(result => {
+gulpESLint.failOnError = () => {
+	return gulpESLint.result(result => {
 		const { messages } = result;
 		if (messages) {
 			const error = messages.find(isErrorMessage);
@@ -136,8 +138,8 @@ gulpEslint.failOnError = () => {
 	});
 };
 
-gulpEslint.failAfterError = () => {
-	return gulpEslint.results(({ errorCount }) => {
+gulpESLint.failAfterError = () => {
+	return gulpESLint.results(({ errorCount }) => {
 		if (errorCount) {
 			throw createPluginError({
 				name: 'ESLintError',
@@ -147,7 +149,7 @@ gulpEslint.failAfterError = () => {
 	});
 };
 
-gulpEslint.formatEach = (formatter, writable) => {
+gulpESLint.formatEach = (formatter, writable) => {
 	writable = resolveWritable(writable);
 	return createTransform(
 		async file => {
@@ -160,7 +162,7 @@ gulpEslint.formatEach = (formatter, writable) => {
 	);
 };
 
-gulpEslint.format = (formatter, writable) => {
+gulpESLint.format = (formatter, writable) => {
 	writable = resolveWritable(writable);
 	const results = [];
 	let commonInfo;
@@ -191,4 +193,6 @@ gulpEslint.format = (formatter, writable) => {
 	);
 };
 
-module.exports = gulpEslint;
+gulpESLint.fix = () => fix(dest);
+
+module.exports = gulpESLint;

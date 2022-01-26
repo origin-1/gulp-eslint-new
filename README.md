@@ -177,7 +177,7 @@ _A legacy synonym for [`options.warnIgnored`](#optionswarnignored)._
 #### Autofix Function
 
 When the `fix` option is specified, fixes are applied to the gulp stream.
-The fixed content can be saved to file using `gulp.dest` (See [example/fix.js](https://github.com/fasttime/gulp-eslint-new/blob/main/example/fix.js)).
+The fixed content can be saved to file using [`gulpESLintNew.fix()`](#gulpeslintnewfix) (See [example/fix.js](https://github.com/fasttime/gulp-eslint-new/blob/main/example/fix.js)).
 Rules that are fixable can be found in ESLint's [rules list](https://eslint.org/docs/rules/).
 When fixes are applied, a "fixed" property is set to `true` on the fixed file's ESLint result.
 
@@ -194,7 +194,7 @@ Param type: `(result: Object) => void`
 Call a function for each ESLint file result. No returned value is expected. If an error is thrown, it will be wrapped in a gulp `PluginError` and emitted from the stream.
 
 ```javascript
-gulp.src(['**/*.js','!node_modules/**'])
+gulp.src(['**/*.js', '!node_modules/**'])
     .pipe(gulpESLintNew())
     .pipe(gulpESLintNew.result(result => {
         // Called for each ESLint result.
@@ -248,7 +248,7 @@ The results list has additional properties that indicate the number of messages 
 </table>
 
 ```javascript
-gulp.src(['**/*.js','!node_modules/**'])
+gulp.src(['**/*.js', '!node_modules/**'])
     .pipe(gulpESLintNew())
     .pipe(gulpESLintNew.results(results => {
         // Called once for all ESLint results.
@@ -275,7 +275,7 @@ Stop a task/stream if an ESLint error has been reported for any file.
 
 ```javascript
 // Cause the stream to stop (fail) without processing more files.
-gulp.src(['**/*.js','!node_modules/**'])
+gulp.src(['**/*.js', '!node_modules/**'])
     .pipe(gulpESLintNew())
     .pipe(gulpESLintNew.failOnError());
 ```
@@ -287,7 +287,7 @@ Stop a task/stream if an ESLint error has been reported for any file, but wait f
 ```javascript
 // Cause the stream to stop (fail) when the stream ends if any ESLint error(s)
 // occurred.
-gulp.src(['**/*.js','!node_modules/**'])
+gulp.src(['**/*.js', '!node_modules/**'])
     .pipe(gulpESLintNew())
     .pipe(gulpESLintNew.failAfterError());
 ```
@@ -334,6 +334,18 @@ This should be used in the stream after piping through `gulpESLintNew`; otherwis
 
 The arguments for `formatEach` are the same as the arguments for `format`.
 
+### `gulpESLintNew.fix()`
+
+Overwrite files with the fixed content provided by ESLint.
+This should be used in conjunction with the option `fix` in [`gulpESLintNew(options)`](#gulpeslintnewoptions).
+Files without a fixed content will be ignored.
+
+```javascript
+gulp.src(['**/*.js', '!node_modules/**'])
+    .pipe(gulpESLintNew({ fix: true }))
+    .pipe(gulpESLintNew.fix());
+```
+
 ## Configuration
 
 ESLint may be configured explicity by using any of the supported [configuration options](https://eslint.org/docs/user-guide/configuring/). Unless the `useEslintrc` option is set to `false`, ESLint will attempt to resolve a file by the name of `.eslintrc` within the same directory as the file to be linted. If not found there, parent directories will be searched until `.eslintrc` is found or the directory root is reached.
@@ -343,11 +355,6 @@ ESLint may be configured explicity by using any of the supported [configuration 
 ESLint results are attached as an `eslint` property to the Vinyl files that pass through a gulp stream pipeline.
 This is available to streams that follow the initial gulp-eslint-new stream.
 The [`gulpESLintNew.result`](#gulpeslintnewresultaction) and [`gulpESLintNew.results`](#gulpeslintnewresultsaction) methods are made available to support extensions and custom handling of ESLint results.
-
-### Extension Packages
-
-* [gulp-eslint-if-fixed](https://github.com/lukeapage/gulp-eslint-if-fixed)
-* [gulp-eslint-threshold](https://github.com/krmbkt/gulp-eslint-threshold)
 
 [gulp-eslint]: https://github.com/adametry/gulp-eslint
 [linting options]: https://eslint.org/docs/developer-guide/nodejs-api#linting

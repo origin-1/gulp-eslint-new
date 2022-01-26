@@ -4,6 +4,17 @@ const fancyLog      = require('fancy-log');
 const { relative }  = require('path');
 const PluginError   = require('plugin-error');
 const { Transform } = require('stream');
+const ternaryStream = require('ternary-stream');
+
+function compareResultsByFilePath({ filePath: filePath1 }, { filePath: filePath2 }) {
+	if (filePath1 > filePath2) {
+		return 1;
+	}
+	if (filePath1 < filePath2) {
+		return -1;
+	}
+	return 0;
+}
 
 function createPluginError(error) {
 	if (error instanceof PluginError) {
@@ -14,6 +25,109 @@ function createPluginError(error) {
 	}
 	return new PluginError('gulp-eslint-new', error);
 }
+
+const { defineProperty } = Object;
+
+/** Determine if the specified object has the indicated property as its own property. */
+const hasOwn = Function.prototype.call.bind(Object.prototype.hasOwnProperty);
+
+/**
+ * Determine if a message is an error.
+ *
+ * @param {Linter.LintMessage} { severity } - An ESLint message.
+ * @returns {boolean} Whether the message is an error message.
+ */
+function isErrorMessage({ severity }) {
+	return severity > 1;
+}
+
+const isHiddenRegExp = /(?<![^/\\])\.(?!\.)/u;
+
+const isInNodeModulesRegExp = /(?<![^/\\])node_modules[/\\]/u;
+
+/**
+ * Determine if a message is a warning.
+ *
+ * @param {Linter.LintMessage} { severity } - An ESLint message.
+ * @returns {boolean} Whether the message is a warning message.
+ */
+function isWarningMessage({ severity }) {
+	return severity === 1;
+}
+
+/**
+ * Resolve formatter from string.
+ * If a function is specified, it will be treated as an ESLint 6 style formatter function and
+ * wrapped into an object appropriately.
+ *
+ * @param {{ cwd: string, eslint: ESLint }} eslintInfo
+ * Current directory and instance of ESLint used to load and configure the formatter.
+ *
+ * @param {string|Function} [formatter]
+ * A name or path of a formatter, or an ESLint 6 style formatter function to resolve as a formatter.
+ *
+ * @returns {Promise<ESLint.Formatter>} An ESLint formatter.
+ */
+async function resolveFormatter({ cwd, eslint }, formatter) {
+	if (typeof formatter === 'function') {
+		return {
+			format: results => {
+				results.sort(compareResultsByFilePath);
+				return formatter(
+					results,
+					{
+						cwd,
+						get rulesMeta() {
+							const rulesMeta = eslint.getRulesMetaForResults(results);
+							defineProperty(this, 'rulesMeta', { value: rulesMeta });
+							return rulesMeta;
+						}
+					}
+				);
+			}
+		};
+	}
+	// Use ESLint to look up formatter references.
+	return eslint.loadFormatter(formatter);
+}
+
+exports.compareResultsByFilePath = compareResultsByFilePath;
+
+/**
+ * This is a remake of the CLI engine `createIgnoreResult` function with no reference to ESLint CLI
+ * options and with a better detection of the ignore reason in some edge cases.
+ *
+ * @param {string} filePath - Absolute path of checked code file.
+ * @param {string} baseDir - Absolute path of base directory.
+ * @returns {ESLint.LintResult} Result with warning by ignore settings.
+ */
+exports.createIgnoreResult = (filePath, baseDir) => {
+	let message;
+	const relativePath = relative(baseDir, filePath);
+	if (isHiddenRegExp.test(relativePath)) {
+		message
+			= 'File ignored by default. Use a negated ignore pattern (like '
+			+ '"!<relative/path/to/filename>") to override.';
+	} else if (isInNodeModulesRegExp.test(relativePath)) {
+		message
+			= 'File ignored by default. Use a negated ignore pattern like "!node_modules/*" to '
+			+ 'override.';
+	} else {
+		message
+			= 'File ignored because of a matching ignore pattern. Set "ignore" option to false '
+			+ 'to override.';
+	}
+	return {
+		filePath,
+		messages: [{ fatal: false, severity: 1, message }],
+		errorCount: 0,
+		warningCount: 1,
+		fixableErrorCount: 0,
+		fixableWarningCount: 0,
+		fatalErrorCount: 0
+	};
+};
+
 exports.createPluginError = createPluginError;
 
 async function awaitHandler(handler, data, done) {
@@ -48,49 +162,107 @@ exports.createTransform = (handleFile, handleFinal) => {
 	return new Transform({ objectMode: true, transform, final });
 };
 
-const isHiddenRegExp = /(?<![^/\\])\.(?!\.)/u;
-const isInNodeModulesRegExp = /(?<![^/\\])node_modules[/\\]/u;
+/**
+ * Increment count if message is an error.
+ *
+ * @param {number} count - Number of errors.
+ * @param {Linter.LintMessage} message - An ESLint message.
+ * @returns {number} The number of errors, message included.
+ */
+function countErrorMessage(count, message) {
+	return count + Number(isErrorMessage(message));
+}
 
 /**
- * This is a remake of the CLI object `createIgnoreResult` function with no reference to ESLint
- * CLI options and with a better detection of the ignore reason in some edge cases.
- * Additionally, this function addresses an issue in ESLint that consists in the property
- * `fatalErrorCount` not being set in the result.
+ * Increment count if message is a warning.
  *
- * @param {string} filePath - Absolute path of checked code file.
- * @param {string} baseDir - Absolute path of base directory.
- * @returns {LintResult} Result with warning by ignore settings.
+ * @param {number} count - Number of warnings.
+ * @param {Linter.LintMessage} message - An ESLint message.
+ * @returns {number} The number of warnings, message included.
  */
-exports.createIgnoreResult = (filePath, baseDir) => {
-	let message;
-	const relativePath = relative(baseDir, filePath);
-	if (isHiddenRegExp.test(relativePath)) {
-		message
-			= 'File ignored by default. Use a negated ignore pattern (like '
-			+ '"!<relative/path/to/filename>") to override.';
-	} else if (isInNodeModulesRegExp.test(relativePath)) {
-		message
-			= 'File ignored by default. Use a negated ignore pattern like "!node_modules/*" to '
-			+ 'override.';
-	} else {
-		message
-			= 'File ignored because of a matching ignore pattern. Set "ignore" option to false '
-			+ 'to override.';
-	}
-	return {
-		filePath,
-		messages: [{ fatal: false, severity: 1, message }],
-		errorCount: 0,
-		warningCount: 1,
-		fixableErrorCount: 0,
-		fixableWarningCount: 0,
-		fatalErrorCount: 0
+function countWarningMessage(count, message) {
+	return count + Number(isWarningMessage(message));
+}
+
+/**
+ * Increment count if message is a fixable error.
+ *
+ * @param {number} count - Number of fixable errors.
+ * @param {Linter.LintMessage} message - An ESLint message.
+ * @returns {number} The number of fixable errors, message included.
+ */
+function countFixableErrorMessage(count, message) {
+	return count + Number(isErrorMessage(message) && message.fix !== undefined);
+}
+
+/**
+ * Increment count if message is a fixable warning.
+ *
+ * @param {Number} count - Number of fixable warnings.
+ * @param {Linter.LintMessage} message - An ESLint message.
+ * @returns {Number} The number of fixable warnings, message included.
+ */
+function countFixableWarningMessage(count, message) {
+	return count + Number(isWarningMessage(message) && message.fix !== undefined);
+}
+
+/**
+ * Increment count if message is a fatal error.
+ *
+ * @param {Number} count - Number of fatal errors.
+ * @param {Linter.LintMessage} message - An ESLint message.
+ * @returns {Number} The number of fatal errors, message included.
+ */
+function countFatalErrorMessage(count, message) {
+	return count + Number(isErrorMessage(message) && !!message.fatal);
+}
+
+/**
+ * Filter result messages, update error and warning counts.
+ *
+ * @param {ESLint.LintResult} result - An ESLint result.
+ * @param {Function} filter - A function that evaluates what messages to keep.
+ * @returns {ESLint.LintResult} A filtered ESLint result.
+ */
+exports.filterResult = (result, filter) => {
+	const messages = result.messages.filter(filter, result);
+	const newResult = {
+		filePath: result.filePath,
+		messages: messages,
+		errorCount: messages.reduce(countErrorMessage, 0),
+		warningCount: messages.reduce(countWarningMessage, 0),
+		fixableErrorCount: messages.reduce(countFixableErrorMessage, 0),
+		fixableWarningCount: messages.reduce(countFixableWarningMessage, 0),
+		fatalErrorCount: messages.reduce(countFatalErrorMessage, 0)
 	};
+	if ('output' in result) {
+		newResult.output = result.output;
+	}
+	if ('source' in result) {
+		newResult.source = result.source;
+	}
+	return newResult;
 };
 
-/* Determine if the specified object has the indicated property as its own property. */
-const hasOwn = Function.prototype.call.bind(Object.prototype.hasOwnProperty);
+const isFixed = ({ eslint }) => eslint && eslint.fixed;
+const getBase = ({ base }) => base;
+exports.fix = dest => ternaryStream(isFixed, dest(getBase));
+
 exports.hasOwn = hasOwn;
+
+exports.isErrorMessage = isErrorMessage;
+
+exports.isWarningMessage = isWarningMessage;
+
+const forbiddenOptions = [
+	'cache',
+	'cacheFile',
+	'cacheLocation',
+	'cacheStrategy',
+	'errorOnUnmatchedPattern',
+	'extensions',
+	'globInputPaths'
+];
 
 /**
  * Throws an error about invalid options passed to gulp-eslint-new.
@@ -131,20 +303,10 @@ function toBooleanMap(keys, defaultValue, displayName) {
 	}
 }
 
-const forbiddenOptions = [
-	'cache',
-	'cacheFile',
-	'cacheLocation',
-	'cacheStrategy',
-	'errorOnUnmatchedPattern',
-	'extensions',
-	'globInputPaths'
-];
-
 /**
  * Create config helper to merge various config sources.
  *
- * @param {Object} options - Options to migrate.
+ * @param {Object} [options] - Options to migrate.
  * @returns {Object} Migrated options.
  */
 exports.migrateOptions = (options = { }) => {
@@ -202,158 +364,6 @@ exports.migrateOptions = (options = { }) => {
 	return returnValue;
 };
 
-/**
- * Determine if a message is an error.
- *
- * @param {Object} message - An ESLint message.
- * @returns {boolean} Whether the message is an error message.
- */
-function isErrorMessage({ severity }) {
-	return severity > 1;
-}
-exports.isErrorMessage = isErrorMessage;
-
-/**
- * Determine if a message is a warning.
- *
- * @param {Object} message - An ESLint message.
- * @returns {boolean} Whether the message is a warning message.
- */
-function isWarningMessage({ severity }) {
-	return severity === 1;
-}
-exports.isWarningMessage = isWarningMessage;
-
-/**
- * Increment count if message is an error.
- *
- * @param {number} count - Number of errors.
- * @param {Object} message - An ESLint message.
- * @returns {number} The number of errors, message included.
- */
-function countErrorMessage(count, message) {
-	return count + Number(isErrorMessage(message));
-}
-
-/**
- * Increment count if message is a warning.
- *
- * @param {number} count - Number of warnings.
- * @param {Object} message - An ESLint message.
- * @returns {number} The number of warnings, message included.
- */
-function countWarningMessage(count, message) {
-	return count + Number(isWarningMessage(message));
-}
-
-/**
- * Increment count if message is a fixable error.
- *
- * @param {number} count - Number of fixable errors.
- * @param {Object} message - An ESLint message.
- * @returns {number} The number of fixable errors, message included.
- */
-function countFixableErrorMessage(count, message) {
-	return count + Number(isErrorMessage(message) && message.fix !== undefined);
-}
-
-/**
- * Increment count if message is a fixable warning.
- *
- * @param {Number} count - Number of fixable warnings.
- * @param {Object} message - An ESLint message.
- * @returns {Number} The number of fixable warnings, message included.
- */
-function countFixableWarningMessage(count, message) {
-	return count + Number(isWarningMessage(message) && message.fix !== undefined);
-}
-
-/**
- * Increment count if message is a fatal error.
- *
- * @param {Number} count - Number of fatal errors.
- * @param {Object} message - An ESLint message.
- * @returns {Number} The number of fatal errors, message included.
- */
-function countFatalErrorMessage(count, message) {
-	return count + Number(isErrorMessage(message) && !!message.fatal);
-}
-
-/**
- * Filter result messages, update error and warning counts.
- *
- * @param {LintResult} result - An ESLint result.
- * @param {Function} filter - A function that evaluates what messages to keep.
- * @returns {LintResult} A filtered ESLint result.
- */
-exports.filterResult = (result, filter) => {
-	const messages = result.messages.filter(filter, result);
-	const newResult = {
-		filePath: result.filePath,
-		messages: messages,
-		errorCount: messages.reduce(countErrorMessage, 0),
-		warningCount: messages.reduce(countWarningMessage, 0),
-		fixableErrorCount: messages.reduce(countFixableErrorMessage, 0),
-		fixableWarningCount: messages.reduce(countFixableWarningMessage, 0),
-		fatalErrorCount: messages.reduce(countFatalErrorMessage, 0)
-	};
-	if ('output' in result) {
-		newResult.output = result.output;
-	}
-	if ('source' in result) {
-		newResult.source = result.source;
-	}
-	return newResult;
-};
-
-function compareResultsByFilePath({ filePath: filePath1 }, { filePath: filePath2 }) {
-	if (filePath1 > filePath2) {
-		return 1;
-	}
-	if (filePath1 < filePath2) {
-		return -1;
-	}
-	return 0;
-}
-exports.compareResultsByFilePath = compareResultsByFilePath;
-
-const { defineProperty } = Object;
-
-/**
- * Resolve formatter from string.
- * If a function is specified, it will be treated as an ESLint 6 style formatter function and
- * wrapped into an object appropriately.
- *
- * @param {{ cwd: string, eslint: ESLint }} eslintInfo
- * Current directory and instance of ESLint used to load and configure the formatter.
- *
- * @param {string|Function} [formatter]
- * A name or path of a formatter, or an ESLint 6 style formatter function to resolve as a formatter.
- *
- * @returns {Promise<ESLint.Formatter>} An ESLint formatter.
- */
-async function resolveFormatter({ cwd, eslint }, formatter) {
-	if (typeof formatter === 'function') {
-		return {
-			format: results => {
-				results.sort(compareResultsByFilePath);
-				return formatter(
-					results,
-					{
-						cwd,
-						get rulesMeta() {
-							const rulesMeta = eslint.getRulesMetaForResults(results);
-							defineProperty(this, 'rulesMeta', { value: rulesMeta });
-							return rulesMeta;
-						}
-					}
-				);
-			}
-		};
-	}
-	// Use ESLint to look up formatter references.
-	return eslint.loadFormatter(formatter);
-}
 exports.resolveFormatter = resolveFormatter;
 
 /**

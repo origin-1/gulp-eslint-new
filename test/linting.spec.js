@@ -2,12 +2,12 @@
 
 'use strict';
 
-const { createVinylFile, finished, noop } = require('./test-util');
-const { strict: assert }                  = require('assert');
-const gulpESLintNew                       = require('gulp-eslint-new');
-const { join, resolve }                   = require('path');
-const { Readable }                        = require('stream');
-const File                                = require('vinyl');
+const { createVinylDirectory, createVinylFile, finished, noop } = require('./test-util');
+const { strict: assert }                                        = require('assert');
+const gulpESLintNew                                             = require('gulp-eslint-new');
+const { join, resolve }                                         = require('path');
+const { Readable }                                              = require('stream');
+const File                                                      = require('vinyl');
 
 describe('gulp-eslint-new plugin', () => {
 
@@ -66,10 +66,7 @@ describe('gulp-eslint-new plugin', () => {
 	});
 
 	it('should ignore files with null content', async () => {
-		const file = new File({
-			path: process.cwd(),
-			isDirectory: true
-		});
+		const file = createVinylDirectory();
 		await finished(
 			gulpESLintNew({ useEslintrc: false, rules: { 'strict': 2 } }).on('data', noop).end(file)
 		);

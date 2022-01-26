@@ -2,20 +2,15 @@
 
 'use strict';
 
-const { createVinylFile, noop } = require('./test-util');
-const { strict: assert }        = require('assert');
-const { ESLint }                = require('eslint');
-const gulpESLintNew             = require('gulp-eslint-new');
-const { PassThrough }           = require('stream');
-const File                      = require('vinyl');
+const { createVinylDirectory, createVinylFile, noop } = require('./test-util');
+const { strict: assert }                              = require('assert');
+const { ESLint }                                      = require('eslint');
+const gulpESLintNew                                   = require('gulp-eslint-new');
+const { PassThrough }                                 = require('stream');
 
 function getFiles() {
 	return [
-		new File({
-			path: process.cwd(),
-			contents: null,
-			isDirectory: true
-		}),
+		createVinylDirectory(),
 		createVinylFile(
 			'use-strict.js',
 			'(function () {\n\n\tvoid 0;\n\n}());\n\n'
