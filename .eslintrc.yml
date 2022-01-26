@@ -55,7 +55,7 @@ overrides:
 
     rules:
       brace-style: [2, "1tbs"]
-      comma-dangle: [1, "never"]
+      comma-dangle: 1
       comma-spacing: 2
       indent: [1, "tab"]
       keyword-spacing: 2
@@ -75,7 +75,7 @@ overrides:
 
     rules:
       "@typescript-eslint/brace-style": [2, "1tbs"]
-      "@typescript-eslint/comma-dangle": [1, "never"]
+      "@typescript-eslint/comma-dangle": 1
       "@typescript-eslint/comma-spacing": 2
       "@typescript-eslint/indent": [1, "tab"]
       "@typescript-eslint/keyword-spacing": 2

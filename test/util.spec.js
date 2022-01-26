@@ -218,18 +218,12 @@ describe('utility methods', () => {
 
 		it('should migrate a "plugins" arrays', () => {
 			const { eslintOptions } = util.migrateOptions({ plugins: ['foo', 'bar'] });
-			assert.deepEqual(
-				eslintOptions,
-				{ overrideConfig: { plugins: ['foo', 'bar'] } }
-			);
+			assert.deepEqual(eslintOptions, { overrideConfig: { plugins: ['foo', 'bar'] } });
 		});
 
 		it('should not migrate a "plugins" object', () => {
 			const { eslintOptions } = util.migrateOptions({ plugins: { foo: 'bar' } });
-			assert.deepEqual(
-				eslintOptions,
-				{ overrideConfig: { }, plugins: { foo: 'bar' } }
-			);
+			assert.deepEqual(eslintOptions, { overrideConfig: { }, plugins: { foo: 'bar' } });
 		});
 
 		it('should treat "warnFileIgnored" as a synonym for "warnIgnored"', () => {
@@ -363,17 +357,11 @@ describe('utility methods', () => {
 		});
 
 		it('should return -1 if the first path goes before the second one', () => {
-			assert.equal(
-				util.compareResultsByFilePath({ filePath: 'C:' }, { filePath: 'D:' }),
-				-1
-			);
+			assert.equal(util.compareResultsByFilePath({ filePath: 'C:' }, { filePath: 'D:' }), -1);
 		});
 
 		it('should return 0 if both paths are equal', () => {
-			assert.equal(
-				util.compareResultsByFilePath({ filePath: '' }, { filePath: '' }),
-				0
-			);
+			assert.equal(util.compareResultsByFilePath({ filePath: '' }, { filePath: '' }), 0);
 		});
 
 	});

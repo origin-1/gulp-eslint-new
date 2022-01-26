@@ -5,12 +5,12 @@
 const { createVinylFile, finished, noop } = require('./test-util');
 const { strict: assert }                  = require('assert');
 const { promises: { realpath } }          = require('fs');
-const eslint                              = require('gulp-eslint-new');
+const gulpESLintNew                       = require('gulp-eslint-new');
 
 describe('gulp-eslint-new result', () => {
 	it('should provide an ESLint result', done => {
 		let resultCount = 0;
-		const lintStream = eslint({
+		const lintStream = gulpESLintNew({
 			useEslintrc: false,
 			rules: {
 				'camelcase': 1,         // not fixable
@@ -49,8 +49,8 @@ describe('gulp-eslint-new result', () => {
 			}
 		];
 		lintStream
-			.pipe(eslint.result(noop)) // Test that files are passed through.
-			.pipe(eslint.result(result => {
+			.pipe(gulpESLintNew.result(noop)) // Test that files are passed through.
+			.pipe(gulpESLintNew.result(result => {
 				const testData = testDataList[resultCount];
 				assert(result);
 				assert(Array.isArray(result.messages));
@@ -77,7 +77,7 @@ describe('gulp-eslint-new result', () => {
 		file.eslint = { };
 		await assert.rejects(
 			finished(
-				eslint
+				gulpESLintNew
 					.result(() => {
 						throw Error('Expected Error');
 					})
@@ -92,7 +92,7 @@ describe('gulp-eslint-new result', () => {
 		file.eslint = { };
 		await assert.rejects(
 			finished(
-				eslint
+				gulpESLintNew
 					.result(() => {
 						throw null;
 					})
@@ -104,13 +104,13 @@ describe('gulp-eslint-new result', () => {
 
 	it('should throw an error if not provided a function argument', () => {
 		assert.throws(
-			eslint.result,
+			gulpESLintNew.result,
 			{ constructor: TypeError, message: 'Expected callable argument' }
 		);
 	});
 
 	it('should ignore files without an ESLint result', done => {
-		eslint
+		gulpESLintNew
 			.result(() => {
 				assert.fail('Expected no call');
 			})
@@ -124,7 +124,7 @@ describe('gulp-eslint-new result', () => {
 		const file = createVinylFile('invalid.js', '#invalid!syntax}');
 		file.eslint = { };
 		await finished(
-			eslint
+			gulpESLintNew
 				.result((actualResult, callback) => {
 					setImmediate(() => {
 						result = actualResult;
@@ -143,7 +143,7 @@ describe('gulp-eslint-new result', () => {
 		const file = createVinylFile('invalid.js', '#invalid!syntax}');
 		file.eslint = { cwd: process.cwd() };
 		await finished(
-			eslint
+			gulpESLintNew
 				.result(async result => {
 					cwd = await realpath(result.cwd);
 				})
@@ -160,7 +160,7 @@ describe('gulp-eslint-new results', () => {
 
 	it('should provide ESLint results', done => {
 		let actualResults;
-		const lintStream = eslint({
+		const lintStream = gulpESLintNew({
 			useEslintrc: false,
 			rules: {
 				'camelcase': 1,         // not fixable
@@ -171,7 +171,7 @@ describe('gulp-eslint-new results', () => {
 			warnIgnored: true
 		});
 		lintStream
-			.pipe(eslint.results(results => {
+			.pipe(gulpESLintNew.results(results => {
 				assert(Array.isArray(results));
 				assert.equal(results.length, 4);
 				assert.equal(results.errorCount, 5);
@@ -181,7 +181,7 @@ describe('gulp-eslint-new results', () => {
 				assert.equal(results.fatalErrorCount, 1);
 				actualResults = results;
 			}))
-			.pipe(eslint.results(results => {
+			.pipe(gulpESLintNew.results(results => {
 				assert.deepEqual(results, actualResults);
 			}))
 			.on('finish', () => {
@@ -200,7 +200,7 @@ describe('gulp-eslint-new results', () => {
 		file.eslint = { };
 		await assert.rejects(
 			finished(
-				eslint
+				gulpESLintNew
 					.results(() => {
 						throw Error('Expected Error');
 					})
@@ -215,7 +215,7 @@ describe('gulp-eslint-new results', () => {
 		file.eslint = { };
 		await assert.rejects(
 			finished(
-				eslint
+				gulpESLintNew
 					.results(() => {
 						throw null;
 					})
@@ -227,7 +227,7 @@ describe('gulp-eslint-new results', () => {
 
 	it('should throw an error if not provided a function argument', () => {
 		assert.throws(
-			eslint.results,
+			gulpESLintNew.results,
 			{ constructor: TypeError, message: 'Expected callable argument' }
 		);
 	});
@@ -235,7 +235,7 @@ describe('gulp-eslint-new results', () => {
 	it('should ignore files without an ESLint result', async () => {
 		let results;
 		await finished(
-			eslint
+			gulpESLintNew
 				.results(actualResults => {
 					results = actualResults;
 				})
@@ -251,7 +251,7 @@ describe('gulp-eslint-new results', () => {
 		const file = createVinylFile('invalid.js', '#invalid!syntax}');
 		file.eslint = { };
 		await finished(
-			eslint
+			gulpESLintNew
 				.results((actualResults, callback) => {
 					setImmediate(() => {
 						results = actualResults;
@@ -272,7 +272,7 @@ describe('gulp-eslint-new results', () => {
 		const file = createVinylFile('invalid.js', '#invalid!syntax}');
 		file.eslint = { };
 		await finished(
-			eslint
+			gulpESLintNew
 				.results(async () => {
 					cwd = await realpath(process.cwd());
 				})

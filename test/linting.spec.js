@@ -4,7 +4,7 @@
 
 const { createVinylFile, finished, noop } = require('./test-util');
 const { strict: assert }                  = require('assert');
-const eslint                              = require('gulp-eslint-new');
+const gulpESLintNew                       = require('gulp-eslint-new');
 const { join, resolve }                   = require('path');
 const { Readable }                        = require('stream');
 const File                                = require('vinyl');
@@ -23,7 +23,7 @@ describe('gulp-eslint-new plugin', () => {
 		require('@typescript-eslint/parser').clearCaches();
 		const file = createVinylFile('file.ts', 'function fn(): void { }');
 		await finished(
-			eslint({
+			gulpESLintNew({
 				parser: '@typescript-eslint/parser',
 				useEslintrc: false,
 				rules: { 'eol-last': 'error' }
@@ -50,7 +50,7 @@ describe('gulp-eslint-new plugin', () => {
 	it('should produce expected message via buffer', async () => {
 		const file = createVinylFile('use-strict.js', 'var x = 1;');
 		await finished(
-			eslint({ useEslintrc: false, rules: { strict: [2, 'global'] } })
+			gulpESLintNew({ useEslintrc: false, rules: { strict: [2, 'global'] } })
 				.on('data', noop)
 				.end(file)
 		);
@@ -71,7 +71,7 @@ describe('gulp-eslint-new plugin', () => {
 			isDirectory: true
 		});
 		await finished(
-			eslint({ useEslintrc: false, rules: { 'strict': 2 } }).on('data', noop).end(file)
+			gulpESLintNew({ useEslintrc: false, rules: { 'strict': 2 } }).on('data', noop).end(file)
 		);
 		assert(!file.eslint);
 	});
@@ -79,7 +79,7 @@ describe('gulp-eslint-new plugin', () => {
 	it('should emit an error when it takes a stream content', async () => {
 		await assert.rejects(
 			finished(
-				eslint({ useEslintrc: false, rules: { 'strict': 'error' } })
+				gulpESLintNew({ useEslintrc: false, rules: { 'strict': 'error' } })
 					.end(new File({ path: resolve('stream.js'), contents: Readable.from(['']) }))
 			),
 			{
@@ -94,7 +94,7 @@ describe('gulp-eslint-new plugin', () => {
 		let err;
 		await assert.rejects(
 			finished(
-				eslint({ plugins: [pluginName] })
+				gulpESLintNew({ plugins: [pluginName] })
 					.on('error', error => {
 						err = error;
 					})
@@ -119,7 +119,9 @@ describe('gulp-eslint-new plugin', () => {
 	it('"reportUnusedDisableDirectives" option should be considered', async () => {
 		const file = createVinylFile('file.js', '// eslint-disable-line');
 		await
-		finished(eslint({ reportUnusedDisableDirectives: 'warn' }).on('data', noop).end(file));
+		finished(
+			gulpESLintNew({ reportUnusedDisableDirectives: 'warn' }).on('data', noop).end(file)
+		);
 		assert.equal(file.eslint.filePath, file.path);
 		assert(Array.isArray(file.eslint.messages));
 		assert.equal(file.eslint.messages.length, 1);
@@ -136,7 +138,7 @@ describe('gulp-eslint-new plugin', () => {
 	it('"rulePaths" option should be considered', async () => {
 		const file = createVinylFile('file.js', '');
 		await finished(
-			eslint({
+			gulpESLintNew({
 				useEslintrc: false,
 				rulePaths: ['../custom-rules'],
 				overrideConfig: { rules: { 'ok': 'error' } }
@@ -153,7 +155,7 @@ describe('gulp-eslint-new plugin', () => {
 
 		async function test(options, filePath) {
 			const file = createVinylFile(filePath, 'console.log(\'Hi\');');
-			await finished(eslint(options).on('data', noop).end(file));
+			await finished(gulpESLintNew(options).on('data', noop).end(file));
 			assert.equal(file.eslint.filePath, file.path);
 			assert(Array.isArray(file.eslint.messages));
 			assert.equal(file.eslint.messages.length, 1);
@@ -192,7 +194,7 @@ describe('gulp-eslint-new plugin', () => {
 
 		it('when true, should consider a configuration file', async () => {
 			const file = createVinylFile('semi/file.js', '$()');
-			await finished(eslint({ useEslintrc: true }).on('data', noop).end(file));
+			await finished(gulpESLintNew({ useEslintrc: true }).on('data', noop).end(file));
 			assert.equal(file.eslint.filePath, file.path);
 			assert(Array.isArray(file.eslint.messages));
 			assert.equal(file.eslint.messages.length, 1);
@@ -211,7 +213,7 @@ describe('gulp-eslint-new plugin', () => {
 
 		it('when false, should ignore a configuration file', async () => {
 			const file = createVinylFile('semi/file.js', '$()');
-			await finished(eslint({ useEslintrc: false }).on('data', noop).end(file));
+			await finished(gulpESLintNew({ useEslintrc: false }).on('data', noop).end(file));
 			assert.equal(file.eslint.filePath, file.path);
 			assert(Array.isArray(file.eslint.messages));
 			assert.equal(file.eslint.messages.length, 0);
@@ -224,7 +226,7 @@ describe('gulp-eslint-new plugin', () => {
 		it('when true, should warn when a file is ignored by .eslintignore', async () => {
 			const file = createVinylFile('ignored.js', '(function () {ignore = abc;}});');
 			await finished(
-				eslint({ useEslintrc: false, warnIgnored: true }).on('data', noop).end(file)
+				gulpESLintNew({ useEslintrc: false, warnIgnored: true }).on('data', noop).end(file)
 			);
 			assert.equal(file.eslint.filePath, file.path);
 			assert(Array.isArray(file.eslint.messages));
@@ -253,7 +255,7 @@ describe('gulp-eslint-new plugin', () => {
 				'(function () {ignore = abc;}});'
 			);
 			await finished(
-				eslint({ useEslintrc: false, warnIgnored: true }).on('data', noop).end(file)
+				gulpESLintNew({ useEslintrc: false, warnIgnored: true }).on('data', noop).end(file)
 			);
 			assert.equal(file.eslint.filePath, file.path);
 			assert(Array.isArray(file.eslint.messages));
@@ -279,7 +281,7 @@ describe('gulp-eslint-new plugin', () => {
 		it('when not true, should silently ignore files', async () => {
 			const file = createVinylFile('ignored.js', '(function () {ignore = abc;}});');
 			await finished(
-				eslint({ useEslintrc: false, warnIgnored: false }).on('data', noop).end(file)
+				gulpESLintNew({ useEslintrc: false, warnIgnored: false }).on('data', noop).end(file)
 			);
 			assert(!file.eslint);
 		});
@@ -291,7 +293,9 @@ describe('gulp-eslint-new plugin', () => {
 		it('when true, should remove warnings', async () => {
 			const file = createVinylFile('invalid.js', 'function z() { x = 0; }');
 			await finished(
-				eslint({ quiet: true, useEslintrc: false, rules: { 'no-undef': 1, 'strict': 2 } })
+				gulpESLintNew(
+					{ quiet: true, useEslintrc: false, rules: { 'no-undef': 1, 'strict': 2 } }
+				)
 					.on('data', noop)
 					.end(file)
 			);
@@ -308,7 +312,7 @@ describe('gulp-eslint-new plugin', () => {
 		it('when a function, should filter messages', async () => {
 			const file = createVinylFile('invalid.js', 'function z() { x = 0; }');
 			await finished(
-				eslint(
+				gulpESLintNew(
 					{
 						quiet: ({ severity }) => severity === 1,
 						useEslintrc: false,
@@ -335,7 +339,7 @@ describe('gulp-eslint-new plugin', () => {
 		it('when true, should update buffered contents', async () => {
 			const file = createVinylFile('fixable.js', 'var x = 0; ');
 			await finished(
-				eslint({ fix: true, useEslintrc: false, rules: { 'no-trailing-spaces': 2 } })
+				gulpESLintNew({ fix: true, useEslintrc: false, rules: { 'no-trailing-spaces': 2 } })
 					.on('data', noop)
 					.end(file)
 			);
@@ -354,7 +358,7 @@ describe('gulp-eslint-new plugin', () => {
 		it('when a function, should update buffered contents', async () => {
 			const file = createVinylFile('fixable.js', 'var x = 0; \nvar y = 1; ');
 			await finished(
-				eslint(
+				gulpESLintNew(
 					{
 						fix: ({ line }) => line > 1,
 						useEslintrc: false,

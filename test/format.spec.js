@@ -5,7 +5,7 @@
 const { createVinylFile, noop } = require('./test-util');
 const { strict: assert }        = require('assert');
 const { ESLint }                = require('eslint');
-const eslint                    = require('gulp-eslint-new');
+const gulpESLintNew             = require('gulp-eslint-new');
 const { PassThrough }           = require('stream');
 const File                      = require('vinyl');
 
@@ -78,7 +78,7 @@ describe('gulp-eslint-new format function', () => {
 
 		it('should format all ESLint results at once', done => {
 			const files = getFiles();
-			const formatStream = eslint
+			const formatStream = gulpESLintNew
 				.format(formatResults, outputWriter)
 				.on('error', done)
 				.on('finish', () => {
@@ -87,10 +87,10 @@ describe('gulp-eslint-new format function', () => {
 					done();
 				});
 			const lintStream
-				= eslint({ useEslintrc: false, rules: { 'strict': 2 }, warnIgnored: true })
+				= gulpESLintNew({ useEslintrc: false, rules: { 'strict': 2 }, warnIgnored: true })
 					.on('error', done);
 			lintStream
-				.pipe(eslint.format(noop, noop)) // Test that files are passed through.
+				.pipe(gulpESLintNew.format(noop, noop)) // Test that files are passed through.
 				.pipe(formatStream);
 			files.forEach(file => lintStream.write(file));
 			lintStream.end();
@@ -98,7 +98,7 @@ describe('gulp-eslint-new format function', () => {
 
 		it('should not attempt to format when no linting results are found', done => {
 			const files = getFiles();
-			const formatStream = eslint
+			const formatStream = gulpESLintNew
 				.format(formatResults, outputWriter)
 				.on('error', done)
 				.on('finish', () => {
@@ -115,7 +115,7 @@ describe('gulp-eslint-new format function', () => {
 		it('should emit an error if a linted file has no ESLint instance', done => {
 			const file = createVinylFile('file.js', '');
 			file.eslint = { };
-			eslint
+			gulpESLintNew
 				.format()
 				.on('error', err => {
 					assert.equal(err.fileName, file.path);
@@ -127,7 +127,7 @@ describe('gulp-eslint-new format function', () => {
 		});
 
 		it('should emit an error if the linted files have different ESLint instances', done => {
-			const formatStream = eslint
+			const formatStream = gulpESLintNew
 				.format()
 				.on('error', err => {
 					assert.equal(
@@ -169,12 +169,12 @@ describe('gulp-eslint-new format function', () => {
 			writeCount = 0;
 			const files = getFiles();
 			const lintStream
-				= eslint({ useEslintrc: false, rules: { 'strict': 2 }, warnIgnored: true })
+				= gulpESLintNew({ useEslintrc: false, rules: { 'strict': 2 }, warnIgnored: true })
 					.on('error', done);
 			lintStream
-				.pipe(eslint.formatEach(noop, noop)) // Test that files are passed through.
+				.pipe(gulpESLintNew.formatEach(noop, noop)) // Test that files are passed through.
 				.pipe(
-					eslint.formatEach(formatResult, outputWriter)
+					gulpESLintNew.formatEach(formatResult, outputWriter)
 						.on('error', done)
 						.on('finish', function () {
 							// The stream should not have emitted an error.
@@ -192,11 +192,11 @@ describe('gulp-eslint-new format function', () => {
 		it('should catch and wrap format writer errors in a PluginError', done => {
 			const files = getFiles();
 			const lintStream
-				= eslint({ useEslintrc: false, rules: { 'strict': 2 } }).on('error', done);
+				= gulpESLintNew({ useEslintrc: false, rules: { 'strict': 2 } }).on('error', done);
 			const testMessage = 'Writer Test Error';
 			const testErrorName = 'TestError';
 			lintStream.pipe(
-				eslint.formatEach(formatResult, message => {
+				gulpESLintNew.formatEach(formatResult, message => {
 					assert.equal(message, '1 message');
 					const error = Error(testMessage);
 					error.name = testErrorName;
@@ -216,7 +216,7 @@ describe('gulp-eslint-new format function', () => {
 		it('should emit an error if a linted file has no ESLint instance', done => {
 			const file = createVinylFile('file.js', '');
 			file.eslint = { };
-			eslint
+			gulpESLintNew
 				.formatEach()
 				.on('error', err => {
 					assert.equal(err.fileName, file.path);
