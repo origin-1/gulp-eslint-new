@@ -1,5 +1,5 @@
 env:
-  es2017: true
+  es2020: true
   node: true
 
 extends:
@@ -9,9 +9,6 @@ extends:
 ignorePatterns:
   - /coverage
   - /example/demo
-
-parserOptions:
-  ecmaVersion: 9
 
 reportUnusedDisableDirectives: true
 

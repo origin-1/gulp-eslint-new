@@ -75,15 +75,15 @@ async function lintFile(eslintInfo, file, quiet, warnIgnored) {
 	file._eslintInfo = eslintInfo;
 }
 
-function gulpESLint(options) {
+module.exports = exports = options => {
 	const { eslintOptions, quiet, warnIgnored } = migrateOptions(options);
 	const cwd = eslintOptions.cwd || process.cwd();
 	const eslint = new ESLint(eslintOptions);
 	const eslintInfo = { cwd, eslint };
 	return createTransform(file => lintFile(eslintInfo, file, quiet, warnIgnored));
-}
+};
 
-gulpESLint.result = action => {
+exports.result = action => {
 	action = wrapAction(action);
 	return createTransform(
 		async file => {
@@ -95,7 +95,7 @@ gulpESLint.result = action => {
 	);
 };
 
-gulpESLint.results = action => {
+exports.results = action => {
 	action = wrapAction(action);
 	const results = [];
 	results.errorCount          = 0;
@@ -121,35 +121,31 @@ gulpESLint.results = action => {
 	);
 };
 
-gulpESLint.failOnError = () => {
-	return gulpESLint.result(result => {
-		const { messages } = result;
-		if (messages) {
-			const error = messages.find(isErrorMessage);
-			if (error) {
-				throw createPluginError({
-					name: 'ESLintError',
-					fileName: result.filePath,
-					message: error.message,
-					lineNumber: error.line
-				});
-			}
-		}
-	});
-};
-
-gulpESLint.failAfterError = () => {
-	return gulpESLint.results(({ errorCount }) => {
-		if (errorCount) {
+exports.failOnError = () => exports.result(result => {
+	const { messages } = result;
+	if (messages) {
+		const error = messages.find(isErrorMessage);
+		if (error) {
 			throw createPluginError({
 				name: 'ESLintError',
-				message: `Failed with ${errorCount} ${errorCount === 1 ? 'error' : 'errors'}`
+				fileName: result.filePath,
+				message: error.message,
+				lineNumber: error.line
 			});
 		}
-	});
-};
+	}
+});
 
-gulpESLint.formatEach = (formatter, writable) => {
+exports.failAfterError = () => exports.results(({ errorCount }) => {
+	if (errorCount) {
+		throw createPluginError({
+			name: 'ESLintError',
+			message: `Failed with ${errorCount} ${errorCount === 1 ? 'error' : 'errors'}`
+		});
+	}
+});
+
+exports.formatEach = (formatter, writable) => {
 	writable = resolveWritable(writable);
 	return createTransform(
 		async file => {
@@ -162,7 +158,7 @@ gulpESLint.formatEach = (formatter, writable) => {
 	);
 };
 
-gulpESLint.format = (formatter, writable) => {
+exports.format = (formatter, writable) => {
 	writable = resolveWritable(writable);
 	const results = [];
 	let commonInfo;
@@ -193,6 +189,4 @@ gulpESLint.format = (formatter, writable) => {
 	);
 };
 
-gulpESLint.fix = () => fix(dest);
-
-module.exports = gulpESLint;
+exports.fix = () => fix(dest);

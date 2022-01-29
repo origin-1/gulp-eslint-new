@@ -5,7 +5,7 @@
 const util          = require('./test-util');
 const gulpESLintNew = require('gulp-eslint-new');
 
-describe('fix', () => {
+describe('gulp-eslint-new fix', () => {
 
 	it('should ignore files with null content', done => {
 		const file = util.createVinylDirectory();

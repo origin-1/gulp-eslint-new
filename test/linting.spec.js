@@ -77,7 +77,7 @@ describe('gulp-eslint-new plugin', () => {
 		await assert.rejects(
 			finished(
 				gulpESLintNew({ useEslintrc: false, rules: { 'strict': 'error' } })
-					.end(new File({ path: resolve('stream.js'), contents: Readable.from(['']) }))
+					.end(new File({ path: resolve('stream.js'), contents: Readable.from([]) }))
 			),
 			{
 				message: 'gulp-eslint-new doesn\'t support Vinyl files with Stream contents.',
@@ -233,8 +233,8 @@ describe('gulp-eslint-new plugin', () => {
 					{
 						fatal: false,
 						message:
-						'File ignored because of a matching ignore pattern. Set '
-						+ '"ignore" option to false to override.',
+						'File ignored because of a matching ignore pattern. Set "ignore" option to '
+						+ 'false to override.',
 						severity: 1
 					}
 				]

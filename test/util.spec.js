@@ -404,6 +404,7 @@ describe('utility methods', () => {
 			{
 				filePath: 'foo',
 				messages: [{ column: 99, line: 42, message: 'bar' }],
+				suppressedMessages: [],
 				errorCount: 1,
 				warningCount: 0
 			}
