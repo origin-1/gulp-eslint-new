@@ -105,7 +105,7 @@ describe('gulp-eslint-new result', () => {
 	it('should throw an error if not provided a function argument', () => {
 		assert.throws(
 			gulpESLintNew.result,
-			{ constructor: TypeError, message: 'Expected callable argument' }
+			{ constructor: TypeError, message: 'Argument is not a function' }
 		);
 	});
 
@@ -228,7 +228,7 @@ describe('gulp-eslint-new results', () => {
 	it('should throw an error if not provided a function argument', () => {
 		assert.throws(
 			gulpESLintNew.results,
-			{ constructor: TypeError, message: 'Expected callable argument' }
+			{ constructor: TypeError, message: 'Argument is not a function' }
 		);
 	});
 

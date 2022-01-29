@@ -41,10 +41,6 @@ function isErrorMessage({ severity }) {
 	return severity > 1;
 }
 
-const isHiddenRegExp = /(?<![^/\\])\.(?!\.)/u;
-
-const isInNodeModulesRegExp = /(?<![^/\\])node_modules[/\\]/u;
-
 /**
  * Determine if a message is a warning.
  *
@@ -68,7 +64,7 @@ function isWarningMessage({ severity }) {
  *
  * @returns {Promise<ESLint.Formatter>} An ESLint formatter.
  */
-async function resolveFormatter({ cwd, eslint }, formatter) {
+function resolveFormatter({ cwd, eslint }, formatter) {
 	if (typeof formatter === 'function') {
 		return {
 			format: results => {
@@ -92,6 +88,10 @@ async function resolveFormatter({ cwd, eslint }, formatter) {
 }
 
 exports.compareResultsByFilePath = compareResultsByFilePath;
+
+const isHiddenRegExp = /(?<![^/\\])\.(?!\.)/u;
+
+const isInNodeModulesRegExp = /(?<![^/\\])node_modules[/\\]/u;
 
 /**
  * This is a remake of the CLI engine `createIgnoreResult` function with no reference to ESLint CLI

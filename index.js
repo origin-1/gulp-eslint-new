@@ -26,7 +26,7 @@ function getESLintInfo(file) {
 
 function wrapAction(action) {
 	if (typeof action !== 'function') {
-		throw TypeError('Expected callable argument');
+		throw TypeError('Argument is not a function');
 	}
 	if (action.length > 1) {
 		action = promisify(action);
