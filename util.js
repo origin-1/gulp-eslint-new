@@ -90,7 +90,6 @@ function resolveFormatter({ cwd, eslint }, formatter) {
 exports.compareResultsByFilePath = compareResultsByFilePath;
 
 const isHiddenRegExp = /(?<![^/\\])\.(?!\.)/u;
-
 const isInNodeModulesRegExp = /(?<![^/\\])node_modules[/\\]/u;
 
 /**
@@ -225,22 +224,14 @@ function countFatalErrorMessage(count, message) {
  * @returns {ESLint.LintResult} A filtered ESLint result.
  */
 exports.filterResult = (result, filter) => {
-	const messages = result.messages.filter(filter, result);
-	const newResult = {
-		filePath: result.filePath,
-		messages: messages,
-		errorCount: messages.reduce(countErrorMessage, 0),
-		warningCount: messages.reduce(countWarningMessage, 0),
-		fixableErrorCount: messages.reduce(countFixableErrorMessage, 0),
-		fixableWarningCount: messages.reduce(countFixableWarningMessage, 0),
-		fatalErrorCount: messages.reduce(countFatalErrorMessage, 0)
-	};
-	if ('output' in result) {
-		newResult.output = result.output;
-	}
-	if ('source' in result) {
-		newResult.source = result.source;
-	}
+	const { messages, ...newResult } = result;
+	const newMessages = messages.filter(filter, result);
+	newResult.messages = newMessages;
+	newResult.errorCount          = newMessages.reduce(countErrorMessage, 0);
+	newResult.warningCount        = newMessages.reduce(countWarningMessage, 0);
+	newResult.fixableErrorCount   = newMessages.reduce(countFixableErrorMessage, 0);
+	newResult.fixableWarningCount = newMessages.reduce(countFixableWarningMessage, 0);
+	newResult.fatalErrorCount     = newMessages.reduce(countFatalErrorMessage, 0);
 	return newResult;
 };
 

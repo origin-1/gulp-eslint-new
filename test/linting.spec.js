@@ -23,11 +23,13 @@ describe('gulp-eslint-new plugin', () => {
 		require('@typescript-eslint/parser').clearCaches();
 		const file = createVinylFile('file.ts', 'function fn(): void { }');
 		await finished(
-			gulpESLintNew({
-				parser: '@typescript-eslint/parser',
-				useEslintrc: false,
-				rules: { 'eol-last': 'error' }
-			})
+			gulpESLintNew(
+				{
+					parser: '@typescript-eslint/parser',
+					rules: { 'eol-last': 'error' },
+					useEslintrc: false
+				}
+			)
 				.on('data', noop)
 				.on('end', () => {
 					for (const key of Object.keys(require('tslib'))) {
@@ -47,10 +49,12 @@ describe('gulp-eslint-new plugin', () => {
 		assert.equal(message.severity, 2);
 	});
 
-	it('should produce expected message via buffer', async () => {
+	it('should produce an expected result', async () => {
 		const file = createVinylFile('use-strict.js', 'var x = 1;');
 		await finished(
-			gulpESLintNew({ useEslintrc: false, rules: { strict: [2, 'global'] } })
+			gulpESLintNew(
+				{ rules: { strict: [2, 'global'], 'valid-jsdoc': 1 }, useEslintrc: false }
+			)
 				.on('data', noop)
 				.end(file)
 		);
@@ -63,12 +67,17 @@ describe('gulp-eslint-new plugin', () => {
 		assert.equal(typeof message.column, 'number');
 		assert.equal(message.ruleId, 'strict');
 		assert.equal(message.severity, 2);
+		assert.deepEqual(file.eslint.suppressedMessages, []);
+		assert.deepEqual(
+			file.eslint.usedDeprecatedRules,
+			[{ replacedBy: [], ruleId: 'valid-jsdoc' }]
+		);
 	});
 
 	it('should ignore files with null content', async () => {
 		const file = createVinylDirectory();
 		await finished(
-			gulpESLintNew({ useEslintrc: false, rules: { 'strict': 2 } }).on('data', noop).end(file)
+			gulpESLintNew({ rules: { 'strict': 2 }, useEslintrc: false }).on('data', noop).end(file)
 		);
 		assert(!file.eslint);
 	});
@@ -76,7 +85,7 @@ describe('gulp-eslint-new plugin', () => {
 	it('should emit an error when it takes a stream content', async () => {
 		await assert.rejects(
 			finished(
-				gulpESLintNew({ useEslintrc: false, rules: { 'strict': 'error' } })
+				gulpESLintNew({ rules: { 'strict': 'error' }, useEslintrc: false })
 					.end(new File({ path: resolve('stream.js'), contents: Readable.from([]) }))
 			),
 			{
@@ -135,11 +144,13 @@ describe('gulp-eslint-new plugin', () => {
 	it('"rulePaths" option should be considered', async () => {
 		const file = createVinylFile('file.js', '');
 		await finished(
-			gulpESLintNew({
-				useEslintrc: false,
-				rulePaths: ['../custom-rules'],
-				overrideConfig: { rules: { 'ok': 'error' } }
-			})
+			gulpESLintNew(
+				{
+					overrideConfig: { rules: { 'ok': 'error' } },
+					rulePaths: ['../custom-rules'],
+					useEslintrc: false
+				}
+			)
 				.on('data', noop)
 				.end(file)
 		);
@@ -288,32 +299,13 @@ describe('gulp-eslint-new plugin', () => {
 	describe('"quiet" option', () => {
 
 		it('when true, should remove warnings', async () => {
-			const file = createVinylFile('invalid.js', 'function z() { x = 0; }');
-			await finished(
-				gulpESLintNew(
-					{ quiet: true, useEslintrc: false, rules: { 'no-undef': 1, 'strict': 2 } }
-				)
-					.on('data', noop)
-					.end(file)
-			);
-			assert.equal(file.eslint.filePath, file.path);
-			assert(Array.isArray(file.eslint.messages));
-			assert.equal(file.eslint.messages.length, 1);
-			assert.equal(file.eslint.errorCount, 1);
-			assert.equal(file.eslint.warningCount, 0);
-			assert.equal(file.eslint.fixableErrorCount, 0);
-			assert.equal(file.eslint.fixableWarningCount, 0);
-			assert.equal(file.eslint.fatalErrorCount, 0);
-		});
-
-		it('when a function, should filter messages', async () => {
-			const file = createVinylFile('invalid.js', 'function z() { x = 0; }');
+			const file = createVinylFile('invalid.js', 'a = 01;\nb = 02; // eslint-disable-line');
 			await finished(
 				gulpESLintNew(
 					{
-						quiet: ({ severity }) => severity === 1,
-						useEslintrc: false,
-						rules: { 'no-undef': 1, 'strict': 2 }
+						quiet: true,
+						rules: { 'no-octal': 2, 'no-undef': 1, 'valid-jsdoc': 1 },
+						useEslintrc: false
 					}
 				)
 					.on('data', noop)
@@ -322,11 +314,46 @@ describe('gulp-eslint-new plugin', () => {
 			assert.equal(file.eslint.filePath, file.path);
 			assert(Array.isArray(file.eslint.messages));
 			assert.equal(file.eslint.messages.length, 1);
+			assert(Array.isArray(file.eslint.suppressedMessages));
+			assert.equal(file.eslint.suppressedMessages.length, 2);
+			assert.equal(file.eslint.errorCount, 1);
+			assert.equal(file.eslint.warningCount, 0);
+			assert.equal(file.eslint.fixableErrorCount, 0);
+			assert.equal(file.eslint.fixableWarningCount, 0);
+			assert.equal(file.eslint.fatalErrorCount, 0);
+			assert.deepEqual(
+				file.eslint.usedDeprecatedRules,
+				[{ replacedBy: [], ruleId: 'valid-jsdoc' }]
+			);
+		});
+
+		it('when a function, should filter messages', async () => {
+			const file = createVinylFile('invalid.js', 'a = 01;\nb = 02; // eslint-disable-line');
+			await finished(
+				gulpESLintNew(
+					{
+						quiet: ({ severity }) => severity === 1,
+						rules: { 'no-octal': 2, 'no-undef': 1, 'valid-jsdoc': 1 },
+						useEslintrc: false
+					}
+				)
+					.on('data', noop)
+					.end(file)
+			);
+			assert.equal(file.eslint.filePath, file.path);
+			assert(Array.isArray(file.eslint.messages));
+			assert.equal(file.eslint.messages.length, 1);
+			assert(Array.isArray(file.eslint.suppressedMessages));
+			assert.equal(file.eslint.suppressedMessages.length, 2);
 			assert.equal(file.eslint.errorCount, 0);
 			assert.equal(file.eslint.warningCount, 1);
 			assert.equal(file.eslint.fixableErrorCount, 0);
 			assert.equal(file.eslint.fixableWarningCount, 0);
 			assert.equal(file.eslint.fatalErrorCount, 0);
+			assert.deepEqual(
+				file.eslint.usedDeprecatedRules,
+				[{ replacedBy: [], ruleId: 'valid-jsdoc' }]
+			);
 		});
 
 	});
@@ -336,7 +363,7 @@ describe('gulp-eslint-new plugin', () => {
 		it('when true, should update buffered contents', async () => {
 			const file = createVinylFile('fixable.js', 'var x = 0; ');
 			await finished(
-				gulpESLintNew({ fix: true, useEslintrc: false, rules: { 'no-trailing-spaces': 2 } })
+				gulpESLintNew({ fix: true, rules: { 'no-trailing-spaces': 2 }, useEslintrc: false })
 					.on('data', noop)
 					.end(file)
 			);
@@ -358,8 +385,8 @@ describe('gulp-eslint-new plugin', () => {
 				gulpESLintNew(
 					{
 						fix: ({ line }) => line > 1,
-						useEslintrc: false,
-						rules: { 'no-trailing-spaces': 2 }
+						rules: { 'no-trailing-spaces': 2 },
+						useEslintrc: false
 					}
 				)
 					.on('data', noop)

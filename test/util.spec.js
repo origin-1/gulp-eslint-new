@@ -208,7 +208,6 @@ describe('utility methods', () => {
 	describe('filterResult', () => {
 
 		const result = {
-			filePath: 'invalid.js',
 			messages: [{
 				ruleId: 'error',
 				message: 'This is an error.',
@@ -236,12 +235,11 @@ describe('utility methods', () => {
 			errorCount: 3,
 			warningCount: 2,
 			fatalErrorCount: 1,
-			output: 'function a () { x = 0; }'
+			foobar: 42
 		};
 
 		it('should remove error messages', () => {
 			const quietResult = util.filterResult(result, util.isWarningMessage);
-			assert.equal(quietResult.filePath, 'invalid.js');
 			assert(Array.isArray(quietResult.messages));
 			assert.equal(quietResult.messages.length, 2);
 			assert.equal(quietResult.errorCount, 0);
@@ -249,12 +247,11 @@ describe('utility methods', () => {
 			assert.equal(quietResult.fixableErrorCount, 0);
 			assert.equal(quietResult.fixableWarningCount, 1);
 			assert.equal(quietResult.fatalErrorCount, 0);
-			assert.equal(quietResult.output, 'function a () { x = 0; }');
+			assert.equal(quietResult.foobar, 42);
 		});
 
 		it('should remove warning messages', () => {
 			const quietResult = util.filterResult(result, util.isErrorMessage);
-			assert.equal(quietResult.filePath, 'invalid.js');
 			assert(Array.isArray(quietResult.messages));
 			assert.equal(quietResult.messages.length, 3);
 			assert.equal(quietResult.errorCount, 3);
@@ -262,7 +259,7 @@ describe('utility methods', () => {
 			assert.equal(quietResult.fixableErrorCount, 1);
 			assert.equal(quietResult.fixableWarningCount, 0);
 			assert.equal(quietResult.fatalErrorCount, 1);
-			assert.equal(quietResult.output, 'function a () { x = 0; }');
+			assert.equal(quietResult.foobar, 42);
 		});
 
 	});
