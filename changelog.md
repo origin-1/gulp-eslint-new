@@ -1,3 +1,14 @@
+<a name="1.2.0"></a>
+## [1.2.0](https://github.com/fasttime/gulp-eslint-new/releases/tag/1.2.0) (2022-01-29)
+
+* New function [`fix`](https://github.com/fasttime/gulp-eslint-new#gulpeslintnewfix).
+* All functions exported by gulp-eslint-new are now available as named exports when gulp-eslint-new
+is imported with the `import` keyword (statically or dynamically).
+* When the option `quiet` is used, ESLint results now include the properties `usedDeprecatedRules`
+and (for ESLint ≥ 8.8) `suppressedMessages`.
+* The functions `result` and `results` now throw a `TypeError` when called with an invalid argument.
+* Updated examples and documentation.
+
 <a name="1.1.2"></a>
 ## [1.1.2](https://github.com/fasttime/gulp-eslint-new/releases/tag/1.1.2) (2022-01-15)
 
