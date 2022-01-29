@@ -1,4 +1,3 @@
-.vscode/
+/.vscode/
 /coverage/
-*.sublime-*
-node_modules/
+/node_modules/
