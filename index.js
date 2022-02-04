@@ -9,7 +9,7 @@ const {
 	hasOwn,
 	isErrorMessage,
 	migrateOptions,
-	resolveWritable,
+	resolveWriter,
 	writeResults
 } = require('./util');
 const { ESLint }    = require('eslint');
@@ -145,21 +145,21 @@ exports.failAfterError = () => exports.results(({ errorCount }) => {
 	}
 });
 
-exports.formatEach = (formatter, writable) => {
-	writable = resolveWritable(writable);
+exports.formatEach = (formatter, writer) => {
+	writer = resolveWriter(writer);
 	return createTransform(
 		async file => {
 			const { eslint } = file;
 			if (eslint) {
 				const eslintInfo = getESLintInfo(file);
-				await writeResults([eslint], eslintInfo, formatter, writable);
+				await writeResults([eslint], eslintInfo, formatter, writer);
 			}
 		}
 	);
 };
 
-exports.format = (formatter, writable) => {
-	writable = resolveWritable(writable);
+exports.format = (formatter, writer) => {
+	writer = resolveWriter(writer);
 	const results = [];
 	let commonInfo;
 	return createTransform(
@@ -183,7 +183,7 @@ exports.format = (formatter, writable) => {
 		},
 		async () => {
 			if (results.length) {
-				await writeResults(results, commonInfo, formatter, writable);
+				await writeResults(results, commonInfo, formatter, writer);
 			}
 		}
 	);

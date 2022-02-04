@@ -208,11 +208,11 @@ gulp.src(['**/*.js', '!node_modules/**'])
     }));
 ```
 
-Type: `(result: Object, callback: Function) => void`
+Param Type: `(result: Object, callback: Function) => void`
 
 Call an asynchronous, Node-style callback-based function for each ESLint file result. The callback must be called for the stream to finish. If an error is passed to the callback, it will be wrapped in a gulp `PluginError` and emitted from the stream.
 
-Type: `(result: Object) => Promise<void>`
+Param Type: `(result: Object) => Promise<void>`
 
 Call an asynchronous, promise-based function for each ESLint file result. If the promise is rejected, the rejection reason will be wrapped in a gulp `PluginError` and emitted from the stream.
 
@@ -292,12 +292,13 @@ gulp.src(['**/*.js', '!node_modules/**'])
     .pipe(gulpESLintNew.failAfterError());
 ```
 
-### `gulpESLintNew.format(formatter, output)`
+### `gulpESLintNew.format(formatter, writer)`
 
 Format all linted files once.
 This should be used in the stream after piping through `gulpESLintNew`; otherwise, this will find no ESLint results to format.
 
-The `formatter` argument may be a `string`, `Function`, or `undefined`.
+`formatter` param type: `string | Function | undefined`
+
 As a `string`, a formatter module by that name or path will be resolved.
 The resolved formatter will be either one of the [built-in ESLint formatters](https://eslint.org/docs/user-guide/formatters/#eslint-formatters), or a formatter exported by a module with the specied path (located relative to the ESLint working directory), or a formatter exported by a package installed as a dependency (the prefix "eslint-formatter-" in the package name can be omitted).
 If `undefined`, the ESLint "stylish" formatter will be resolved.
@@ -315,7 +316,10 @@ gulpESLintNew.format('checkstyle')
 gulpESLintNew.format('pretty')
 ```
 
-The `output` argument may be a writable stream, `Function`, or `undefined`. As a writable stream, the formatter results will be written to the stream.
+`writer` param type: `NodeJS.WritableStream | Function | undefined`
+
+The `writer` argument may be a writable stream, `Function`, or `undefined`.
+As a writable stream, the formatter results will be written to the stream.
 If `undefined`, the formatter results will be written to [gulp's log](https://github.com/gulpjs/fancy-log#logmsg).
 A `Function` will be called with the formatter results as the only parameter.
 
@@ -327,7 +331,7 @@ gulpESLintNew.format()
 gulpESLintNew.format('junit', process.stdout)
 ```
 
-### `gulpESLintNew.formatEach(formatter, output)`
+### `gulpESLintNew.formatEach(formatter, writer)`
 
 Format each linted file individually.
 This should be used in the stream after piping through `gulpESLintNew`; otherwise, this will find no ESLint results to format.
@@ -338,7 +342,7 @@ The arguments for `formatEach` are the same as the arguments for `format`.
 
 Overwrite files with the fixed content provided by ESLint.
 This should be used in conjunction with the option `fix` in [`gulpESLintNew(options)`](#gulpeslintnewoptions).
-Files without a fixed content will be ignored.
+Files without a fix and files that were not processed by ESLint will be left untouched.
 
 ```javascript
 gulp.src(['**/*.js', '!node_modules/**'])

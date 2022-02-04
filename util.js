@@ -1,5 +1,15 @@
 'use strict';
 
+/**
+ * @typedef {import('eslint').ESLint} ESLint
+ * @typedef {import('eslint').ESLint.Formatter} ESLint.Formatter
+ * @typedef {import('eslint').ESLint.LintResult} ESLint.LintResult
+ * @typedef {import('.').GulpESLintWriter} GulpESLintWriter
+ * @typedef {ESLint.Formatter['format']} LegacyFormatter
+ * @typedef {import('eslint').Linter} Linter
+ * @typedef {import('eslint').Linter.LintMessage} Linter.LintMessage
+ */
+
 const fancyLog      = require('fancy-log');
 const { relative }  = require('path');
 const PluginError   = require('plugin-error');
@@ -59,7 +69,7 @@ function isWarningMessage({ severity }) {
  * @param {{ cwd: string, eslint: ESLint }} eslintInfo
  * Current directory and instance of ESLint used to load and configure the formatter.
  *
- * @param {string|Function} [formatter]
+ * @param {string|LegacyFormatter} [formatter]
  * A name or path of a formatter, or an ESLint 6 style formatter function to resolve as a formatter.
  *
  * @returns {Promise<ESLint.Formatter>} An ESLint formatter.
@@ -153,7 +163,7 @@ async function awaitHandler(handler, data, done) {
  * A function that is called with no parameters before closing the stream.
  * If the function returns a promise, the stream will be closed after the promise is resolved.
  *
- * @returns {Stream} A transform stream.
+ * @returns {Transform} A transform stream.
  */
 exports.createTransform = (handleFile, handleFinal) => {
 	const transform = (file, enc, done) => void awaitHandler(() => handleFile(file), file, done);
@@ -358,22 +368,22 @@ exports.migrateOptions = (options = { }) => {
 exports.resolveFormatter = resolveFormatter;
 
 /**
- * Resolve writable.
+ * Resolve a writer function used to write formatted ESLint messages..
  *
- * @param {Function|Stream} [writable=fancyLog]
+ * @param {GulpESLintWriter|NodeJS.WritableStream} [writer=fancyLog]
  * A stream or function to resolve as a format writer.
- * @returns {Function} A function that writes formatted messages.
+ * @returns {GulpESLintWriter} A function that writes formatted messages.
  */
-exports.resolveWritable = (writable = fancyLog) => {
-	const { write } = writable;
+exports.resolveWriter = (writer = fancyLog) => {
+	const { write } = writer;
 	if (typeof write === 'function') {
-		writable = write.bind(writable);
+		writer = write.bind(writer);
 	}
-	return writable;
+	return writer;
 };
 
 /**
- * Write formatter results to writable/output.
+ * Write formatted ESLint messages.
  *
  * @param {ESLint.LintResult[]} results
  * A list of ESLint results.
@@ -381,16 +391,16 @@ exports.resolveWritable = (writable = fancyLog) => {
  * @param {{ cwd: string, eslint: ESLint }} eslintInfo
  * Current directory and instance of ESLint used to load and configure the formatter.
  *
- * @param {string|Function} [formatter]
+ * @param {string|LegacyFormatter} [formatter]
  * A name or path of a formatter, or an ESLint 6 style formatter function to resolve as a formatter.
  *
- * @param {Function} [writable]
- * A function used to write formatted ESLint results.
+ * @param {GulpESLintWriter} [writer]
+ * A function used to write formatted ESLint messages.
  */
-exports.writeResults = async (results, eslintInfo, formatter, writable) => {
+exports.writeResults = async (results, eslintInfo, formatter, writer) => {
 	const formatterObj = await resolveFormatter(eslintInfo, formatter);
 	const message = await formatterObj.format(results);
-	if (writable && message != null && message !== '') {
-		writable(message);
+	if (writer && message != null && message !== '') {
+		await writer(message);
 	}
 };

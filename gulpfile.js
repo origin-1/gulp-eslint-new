@@ -15,13 +15,13 @@ task(
 task(
 	'lint',
 	() => {
-		const gulpESLint = require('.');
+		const gulpESLintNew = require('.');
 
 		const stream
 		= src(['*.{js,ts}', 'example/*.js', 'test/**/*.js'])
-			.pipe(gulpESLint())
-			.pipe(gulpESLint.format())
-			.pipe(gulpESLint.failAfterError());
+			.pipe(gulpESLintNew())
+			.pipe(gulpESLintNew.format())
+			.pipe(gulpESLintNew.failAfterError());
 		return stream;
 	}
 );

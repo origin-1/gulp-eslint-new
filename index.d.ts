@@ -3,7 +3,7 @@ import                            'node';
 import { TransformCallback } from 'stream';
 
 export type GulpESLintAction<Type>
-	= ((value: Type, callback: TransformCallback) => void) | ((value: Type) => Promise<void>);
+	= ((value: Type, callback: TransformCallback) => unknown) | ((value: Type) => Promise<unknown>);
 
 export type GulpESLintOptions =
 	Omit<
@@ -60,7 +60,9 @@ export type GulpESLintResults =
 		fixableWarningCount: number;
 	};
 
-declare const gulpESLint: {
+export type GulpESLintWriter = (str: string) => unknown | Promise<unknown>;
+
+declare const gulpESLintNew: {
 	/**
 	 * Append ESLint result to each file.
 	 *
@@ -113,14 +115,14 @@ declare const gulpESLint: {
 	 * @param formatter
 	 * The name or function for an ESLint result formatter.
 	 * Defaults to the [stylish](https://eslint.org/docs/user-guide/formatters/#stylish) formatter.
-	 * @param writable
+	 * @param writer
 	 * A funtion or stream to write the formatted ESLint results.
 	 * Defaults to gulp's [fancy-log](https://github.com/gulpjs/fancy-log#readme).
 	 * @returns gulp file stream.
 	 */
 	formatEach(
 		formatter?: string | ESLint.Formatter['format'],
-		writable?: ((str: string) => void) | NodeJS.WritableStream
+		writer?: GulpESLintWriter | NodeJS.WritableStream
 	): NodeJS.ReadWriteStream;
 
 	/**
@@ -129,14 +131,14 @@ declare const gulpESLint: {
 	 * @param formatter
 	 * The name or function for an ESLint result formatter.
 	 * Defaults to the [stylish](https://eslint.org/docs/user-guide/formatters/#stylish) formatter.
-	 * @param writable
+	 * @param writer
 	 * A funtion or stream to write the formatted ESLint results.
 	 * Defaults to gulp's [fancy-log](https://github.com/gulpjs/fancy-log#readme).
 	 * @returns gulp file stream.
 	 */
 	format(
 		formatter?: string | ESLint.Formatter['format'],
-		writable?: ((str: string) => void) | NodeJS.WritableStream
+		writer?: GulpESLintWriter | NodeJS.WritableStream
 	): NodeJS.ReadWriteStream;
 };
-export default gulpESLint;
+export default gulpESLintNew;

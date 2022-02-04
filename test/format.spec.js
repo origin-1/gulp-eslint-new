@@ -60,6 +60,33 @@ describe('gulp-eslint-new format', () => {
 
 	const formatResults = createFormatter(4);
 
+	function testWrapError(useError, done) {
+		const files = getFiles();
+		const lintStream
+			= gulpESLintNew({ useEslintrc: false, rules: { 'strict': 2 }, warnIgnored: true })
+				.on('error', done);
+		const testMessage = 'Writer Test Error';
+		const testErrorName = 'TestError';
+		lintStream.pipe(
+			gulpESLintNew
+				.format(formatResults, () => {
+					++writeCount;
+					const error = Error(testMessage);
+					error.name = testErrorName;
+					return useError(error);
+				})
+				.on('error', err => {
+					assert.equal(writeCount, 1);
+					assert.equal(err.message, testMessage);
+					assert.equal(err.name, testErrorName);
+					assert.equal(err.plugin, 'gulp-eslint-new');
+					done();
+				})
+		);
+		files.forEach(file => lintStream.write(file));
+		lintStream.end();
+	}
+
 	beforeEach(() => {
 		formatCount = 0;
 		writeCount = 0;
@@ -100,6 +127,18 @@ describe('gulp-eslint-new format', () => {
 		files.forEach(file => passthruStream.write(file));
 		passthruStream.end();
 	});
+
+	it('should wrap errors thrown by a synchronous format writer', done => testWrapError(
+		error => {
+			throw error;
+		},
+		done
+	));
+
+	it('should wrap errors thrown by an asynchronous format writer', done => testWrapError(
+		error => new Promise((_, reject) => setImmediate(() => reject(error))),
+		done
+	));
 
 	it('should emit an error if a linted file has no ESLint instance', done => {
 		const file = createVinylFile('file.js', '');
@@ -145,6 +184,32 @@ describe('gulp-eslint-new formatEach', () => {
 
 	const formatResult = createFormatter(1);
 
+	function testWrapError(useError, done) {
+		const files = getFiles();
+		const lintStream
+			= gulpESLintNew({ useEslintrc: false, rules: { 'strict': 2 } }).on('error', done);
+		const testMessage = 'Writer Test Error';
+		const testErrorName = 'TestError';
+		lintStream.pipe(
+			gulpESLintNew
+				.formatEach(formatResult, () => {
+					++writeCount;
+					const error = Error(testMessage);
+					error.name = testErrorName;
+					return useError(error);
+				})
+				.on('error', err => {
+					assert.equal(writeCount, 1);
+					assert.equal(err.message, testMessage);
+					assert.equal(err.name, testErrorName);
+					assert.equal(err.plugin, 'gulp-eslint-new');
+					done();
+				})
+		);
+		files.forEach(file => lintStream.write(file));
+		lintStream.end();
+	}
+
 	beforeEach(() => {
 		formatCount = 0;
 		writeCount = 0;
@@ -174,30 +239,17 @@ describe('gulp-eslint-new formatEach', () => {
 		lintStream.end();
 	});
 
-	it('should catch and wrap format writer errors in a PluginError', done => {
-		const files = getFiles();
-		const lintStream
-			= gulpESLintNew({ useEslintrc: false, rules: { 'strict': 2 } }).on('error', done);
-		const testMessage = 'Writer Test Error';
-		const testErrorName = 'TestError';
-		lintStream.pipe(
-			gulpESLintNew
-				.formatEach(formatResult, message => {
-					assert.equal(message, '1 message');
-					const error = Error(testMessage);
-					error.name = testErrorName;
-					throw error;
-				})
-				.on('error', err => {
-					assert.equal(err.message, testMessage);
-					assert.equal(err.name, testErrorName);
-					assert.equal(err.plugin, 'gulp-eslint-new');
-					done();
-				})
-		);
-		files.forEach(file => lintStream.write(file));
-		lintStream.end();
-	});
+	it('should wrap errors thrown by a synchronous format writer', done => testWrapError(
+		error => {
+			throw error;
+		},
+		done
+	));
+
+	it('should wrap errors thrown by an asynchronous format writer', done => testWrapError(
+		error => new Promise((_, reject) => setImmediate(() => reject(error))),
+		done
+	));
 
 	it('should emit an error if a linted file has no ESLint instance', done => {
 		const file = createVinylFile('file.js', '');

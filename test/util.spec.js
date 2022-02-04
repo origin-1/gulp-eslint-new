@@ -460,18 +460,18 @@ describe('utility methods', () => {
 
 	});
 
-	describe('resolveWritable', () => {
+	describe('resolveWriter', () => {
 
 		it('should default to fancyLog', () => {
-			const write = util.resolveWritable();
+			const write = util.resolveWriter();
 			assert.equal(write, require('fancy-log'));
 		});
 
-		it('should write to a (writable) stream', done => {
+		it('should write to a writable stream', done => {
 			let written = false;
 			const writable = new Writable({ objectMode: true });
 			const testValue = 'Formatted Output';
-			const write = util.resolveWritable(writable);
+			const writer = util.resolveWriter(writable);
 			writable._write = (chunk, encoding, cb) => {
 				assert(chunk);
 				assert.equal(chunk, testValue);
@@ -484,7 +484,7 @@ describe('utility methods', () => {
 					assert.equal(written, true);
 					done();
 				});
-			write(testValue);
+			writer(testValue);
 			writable.end();
 		});
 
@@ -502,7 +502,7 @@ describe('utility methods', () => {
 		};
 
 		it('should pass the value returned from the formatter to the writer', async () => {
-			let writableCallCount = 0;
+			let writeCount = 0;
 			const formattedText = 'something happened';
 			await util.writeResults(
 				testResults,
@@ -516,10 +516,10 @@ describe('utility methods', () => {
 				value => {
 					assert(value);
 					assert.equal(value, formattedText);
-					++writableCallCount;
+					++writeCount;
 				}
 			);
-			assert.equal(writableCallCount, 1);
+			assert.equal(writeCount, 1);
 		});
 
 		it('should not write an empty formatted text', async () => {
