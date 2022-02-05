@@ -113,7 +113,7 @@ declare const gulpESLintNew: {
 	 * Format the results of each file individually.
 	 *
 	 * @param formatter
-	 * The name or function for an ESLint result formatter.
+	 * A name or path of a formatter, a formatter object or a formatter function.
 	 * Defaults to the [stylish](https://eslint.org/docs/user-guide/formatters/#stylish) formatter.
 	 * @param writer
 	 * A funtion or stream to write the formatted ESLint results.
@@ -121,7 +121,7 @@ declare const gulpESLintNew: {
 	 * @returns gulp file stream.
 	 */
 	formatEach(
-		formatter?: string | ESLint.Formatter['format'],
+		formatter?: string | ESLint.Formatter | ESLint.Formatter['format'],
 		writer?: GulpESLintWriter | NodeJS.WritableStream
 	): NodeJS.ReadWriteStream;
 
@@ -129,7 +129,7 @@ declare const gulpESLintNew: {
 	 * Wait until all files have been linted and format all results at once.
 	 *
 	 * @param formatter
-	 * The name or function for an ESLint result formatter.
+	 * A name or path of a formatter, a formatter object or a formatter function.
 	 * Defaults to the [stylish](https://eslint.org/docs/user-guide/formatters/#stylish) formatter.
 	 * @param writer
 	 * A funtion or stream to write the formatted ESLint results.
@@ -137,7 +137,7 @@ declare const gulpESLintNew: {
 	 * @returns gulp file stream.
 	 */
 	format(
-		formatter?: string | ESLint.Formatter['format'],
+		formatter?: string | ESLint.Formatter | ESLint.Formatter['format'],
 		writer?: GulpESLintWriter | NodeJS.WritableStream
 	): NodeJS.ReadWriteStream;
 };

@@ -437,15 +437,23 @@ describe('utility methods', () => {
 			assert(args[1].rulesMeta);
 		});
 
-		it('should wrap an ESLint 6 style formatter function into a formatter', async () => {
+		it('should resolve a specified formatter object', async () => {
+			const eslint = new ESLint();
+			const eslintInfo = { cwd: process.cwd(), eslint };
+			const formatter = await eslint.loadFormatter();
+			const resolved = await util.resolveFormatter(eslintInfo, formatter);
+			assert.equal(resolved, formatter);
+		});
+
+		it('should wrap a formatter function in an object', async () => {
 			const eslintInfo = { cwd: 'TEST CWD', eslint: new ESLint() };
-			const legacyFormatter = (actualResults, data) => {
+			const format = (actualResults, data) => {
 				assert.equal(actualResults, testResults);
 				assert(data.rulesMeta);
 				assert.equal(data.cwd, 'TEST CWD');
 				return 'foo';
 			};
-			const formatter = await util.resolveFormatter(eslintInfo, legacyFormatter);
+			const formatter = await util.resolveFormatter(eslintInfo, format);
 			const text = await formatter.format(testResults);
 			assert.equal(text, 'foo');
 		});

@@ -1,12 +1,12 @@
 'use strict';
 
 /**
- * @typedef {import('eslint').ESLint} ESLint
- * @typedef {import('eslint').ESLint.Formatter} ESLint.Formatter
- * @typedef {import('eslint').ESLint.LintResult} ESLint.LintResult
- * @typedef {import('.').GulpESLintWriter} GulpESLintWriter
- * @typedef {ESLint.Formatter['format']} LegacyFormatter
- * @typedef {import('eslint').Linter} Linter
+ * @typedef {import('eslint').ESLint}             ESLint
+ * @typedef {import('eslint').ESLint.Formatter}   ESLint.Formatter
+ * @typedef {import('eslint').ESLint.LintResult}  ESLint.LintResult
+ * @typedef {ESLint.Formatter['format']}          FormatterFunction
+ * @typedef {import('.').GulpESLintWriter}        GulpESLintWriter
+ * @typedef {import('eslint').Linter}             Linter
  * @typedef {import('eslint').Linter.LintMessage} Linter.LintMessage
  */
 
@@ -51,6 +51,8 @@ function isErrorMessage({ severity }) {
 	return severity > 1;
 }
 
+const isObject = value => Object(value) === value;
+
 /**
  * Determine if a message is a warning.
  *
@@ -62,19 +64,22 @@ function isWarningMessage({ severity }) {
 }
 
 /**
- * Resolve formatter from string.
- * If a function is specified, it will be treated as an ESLint 6 style formatter function and
- * wrapped into an object appropriately.
+ * Resolve a formatter from a string.
+ * If a function is specified, it will be treated as a formatter function and wrapped in an object
+ * appropriately.
  *
  * @param {{ cwd: string, eslint: ESLint }} eslintInfo
  * Current directory and instance of ESLint used to load and configure the formatter.
  *
- * @param {string|LegacyFormatter} [formatter]
- * A name or path of a formatter, or an ESLint 6 style formatter function to resolve as a formatter.
+ * @param {string|ESLint.Formatter|FormatterFunction} [formatter]
+ * A name or path of a formatter, a formatter object or a formatter function.
  *
  * @returns {Promise<ESLint.Formatter>} An ESLint formatter.
  */
 function resolveFormatter({ cwd, eslint }, formatter) {
+	if (isObject(formatter) && typeof formatter.format === 'function') {
+		return formatter;
+	}
 	if (typeof formatter === 'function') {
 		return {
 			format: results => {
@@ -152,7 +157,7 @@ async function awaitHandler(handler, data, done) {
 /**
  * Create a transform stream in object mode from synchronous or asynchronous handler functions.
  * All files are passed through the stream.
- * Errors thrown by the handlers will be wrapped inside a `PluginError` and emitted from the stream.
+ * Errors thrown by the handlers will be wrapped in a `PluginError` and emitted from the stream.
  *
  * @param {Function} handleFile
  * A function that is called for each file, with the file object as the only parameter.
@@ -368,16 +373,18 @@ exports.migrateOptions = (options = { }) => {
 exports.resolveFormatter = resolveFormatter;
 
 /**
- * Resolve a writer function used to write formatted ESLint messages..
+ * Resolve a writer function used to write formatted ESLint messages.
  *
  * @param {GulpESLintWriter|NodeJS.WritableStream} [writer=fancyLog]
  * A stream or function to resolve as a format writer.
  * @returns {GulpESLintWriter} A function that writes formatted messages.
  */
 exports.resolveWriter = (writer = fancyLog) => {
-	const { write } = writer;
-	if (typeof write === 'function') {
-		writer = write.bind(writer);
+	if (isObject(writer)) {
+		const { write } = writer;
+		if (typeof write === 'function') {
+			writer = write.bind(writer);
+		}
 	}
 	return writer;
 };
@@ -391,8 +398,8 @@ exports.resolveWriter = (writer = fancyLog) => {
  * @param {{ cwd: string, eslint: ESLint }} eslintInfo
  * Current directory and instance of ESLint used to load and configure the formatter.
  *
- * @param {string|LegacyFormatter} [formatter]
- * A name or path of a formatter, or an ESLint 6 style formatter function to resolve as a formatter.
+ * @param {string|ESLint.Formatter|FormatterFunction} [formatter]
+ * A name or path of a formatter, a formatter object or a formatter function.
  *
  * @param {GulpESLintWriter} [writer]
  * A function used to write formatted ESLint messages.

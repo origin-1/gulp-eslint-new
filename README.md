@@ -297,12 +297,13 @@ gulp.src(['**/*.js', '!node_modules/**'])
 Format all linted files once.
 This should be used in the stream after piping through `gulpESLintNew`; otherwise, this will find no ESLint results to format.
 
-`formatter` param type: `string | Function | undefined`
+`formatter` param type: `string | Object | Function | undefined`
 
-As a `string`, a formatter module by that name or path will be resolved.
-The resolved formatter will be either one of the [built-in ESLint formatters](https://eslint.org/docs/user-guide/formatters/#eslint-formatters), or a formatter exported by a module with the specied path (located relative to the ESLint working directory), or a formatter exported by a package installed as a dependency (the prefix "eslint-formatter-" in the package name can be omitted).
-If `undefined`, the ESLint "stylish" formatter will be resolved.
-A `Function` will be called with an `Array` of file linting results to format.
+The `formatter` argument determines the [ESLint formatter](https://eslint.org/docs/user-guide/formatters/) used to format linting results.
+If a `string` is provided, a formatter module by that name or path will be resolved.
+The resolved formatter will be either one of the built-in ESLint formatters, or a formatter exported by a module with the specified path (located relative to the ESLint working directory), or a formatter exported by a package installed as a dependency (the prefix "eslint-formatter-" in the package name can be omitted).
+Instead of providing a string, it is also possible to specify a formatter object as resolved by the ESLint method [`loadFormatter`](https://eslint.org/docs/developer-guide/nodejs-api#-eslintloadformatternameorpath), or a formatter function directly.
+If `undefined` is specified, the ESLint "stylish" formatter will be used.
 
 ```javascript
 // Use the default "stylish" ESLint formatter.
@@ -319,9 +320,9 @@ gulpESLintNew.format('pretty')
 `writer` param type: `NodeJS.WritableStream | Function | undefined`
 
 The `writer` argument may be a writable stream, `Function`, or `undefined`.
-As a writable stream, the formatter results will be written to the stream.
-If `undefined`, the formatter results will be written to [gulp's log](https://github.com/gulpjs/fancy-log#logmsg).
-A `Function` will be called with the formatter results as the only parameter.
+As a writable stream, the formatter output will be written to the stream.
+If `undefined`, the formatter output will be written to [gulp's log](https://github.com/gulpjs/fancy-log#logmsg).
+A `Function` will be called with the formatter output as the only parameter.
 
 ```javascript
 // write to gulp's log (default)
