@@ -1,3 +1,12 @@
+<a name="1.3.0"></a>
+## [1.3.0](https://github.com/fasttime/gulp-eslint-new/releases/tag/1.3.0) (2022-02-05)
+
+* Added support for new argument types to the functions `format` and `formatEach`:
+  * `formatter` can now be a formatter object as resolved by the ESLint method [`loadFormatter`](https://eslint.org/docs/developer-guide/nodejs-api#-eslintloadformatternameorpath).
+  * `writer` can now be an async function.
+* Improved TypeScript type declarations.
+* Clarified the documentation.
+
 <a name="1.2.0"></a>
 ## [1.2.0](https://github.com/fasttime/gulp-eslint-new/releases/tag/1.2.0) (2022-01-29)
 

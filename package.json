@@ -1,6 +1,6 @@
 {
 	"name": "gulp-eslint-new",
-	"version": "1.2.0",
+	"version": "1.3.0",
 	"description": "A gulp plugin to lint code with ESLint 8",
 	"keywords": [
 		"gulpplugin",
