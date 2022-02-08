@@ -46,6 +46,8 @@ Or use the plugin API to do things like:
 gulp.src(['**/*.js', '!node_modules/**'])
     .pipe(gulpESLintNew({
         overrideConfig: {
+            plugins: ['json'],
+            extends: ['plugin:json/recommended'],
             rules: {
                 'my-custom-rule': 1,
                 'strict': 2
@@ -75,7 +77,7 @@ For additional examples, look through the [example directory](https://github.com
 
 Param type: `Object`
 
-Supported options include all [linting options][linting options] and [autofix options](https://eslint.org/docs/developer-guide/nodejs-api#autofix) of the `ESLint` constructor.
+Supported options include all [linting options](https://eslint.org/docs/developer-guide/nodejs-api#linting) and [autofix options](https://eslint.org/docs/developer-guide/nodejs-api#autofix) of the `ESLint` constructor.
 Please, refer to the ESLint documentation for information about the usage of those options.
 Check also the notes about the [Autofix Function](#autofix-function).
 Additionally, gulp-eslint-new supports the options listed below.
@@ -100,7 +102,7 @@ When `false`, ESLint will not respect `.eslintignore` files or ignore patterns i
 
 ##### `options.ignorePath`
 
-Type: `string | null`
+Type: `string`
 
 The path to a file ESLint uses instead of `.eslintignore` in the current working directory.
 
@@ -124,62 +126,28 @@ For example, since ESLint automatically ignores file paths inside a `node_module
 
 #### Legacy Options
 
-The following options are provided for backward compatibility with [gulp-eslint][gulp-eslint].
-Their usage is discouraged because preferable alternatives exist, that are more in line with the present ESLint conventions.
+The following legacy options are provided for backward compatibility with [gulp-eslint][gulp-eslint].
+When `gulpESLintNew` is passed any of these options, it will map them automatically as shown in the table to match the new ESLint conventions.
 
-##### `options.configFile`
-
-Type: `string`
-
-_A legacy synonym for `options.overrideConfigFile` (see [linting options][linting options])._
-
-##### `options.envs`
-
-Type: `string[]`
-
-Specify a list of environments to be applied.
-
-_Prefer using [`options.overrideConfig.env`](https://eslint.org/docs/user-guide/configuring/language-options#specifying-environments) instead. Note the different option name and format._
-
-##### `options.globals`
-
-Type: `string[]`
-
-Specify a list of global variables to declare.
-Variables declared with this option are considered readonly.
-
-_Prefer using [`options.overrideConfig.globals`](https://eslint.org/docs/user-guide/configuring/language-options#specifying-globals) instead. Note the different format._
-
-##### `options.parser`
-
-Type: `string`
-
-_Prefer using [`options.overrideConfig.parser`](https://eslint.org/docs/user-guide/configuring/plugins#specifying-parser) instead._
-
-##### `options.parserOptions`
-
-Type: `Object`
-
-_Prefer using [`options.overrideConfig.parserOptions`](https://eslint.org/docs/user-guide/configuring/language-options#specifying-parser-options) instead._
-
-##### `options.rules`
-
-Type: `Object`
-
-_Prefer using [`options.overrideConfig.rules`](https://eslint.org/docs/user-guide/configuring/rules) instead._
-
-##### `options.warnFileIgnored`
-
-Type: `boolean`
-
-_A legacy synonym for [`options.warnIgnored`](#optionswarnignored)._
+| Legacy option     | Migrated to                     | Notes |
+|-------------------|---------------------------------|-|
+| `configFile`      | `overrideConfigFile`            | New option name. |
+| `envs`            | `overrideConfig.env`            | New option name and format. `overrideConfig.env` should be an object as explained in the [documentation](https://eslint.org/docs/user-guide/configuring/language-options#specifying-environments). |
+| `extends`         | `overrideConfig.extends`        | |
+| `globals`         | `overrideConfig.globals`        | The new option format requires `overrideConfig.globals` to be an object as explained in the [documentation](https://eslint.org/docs/user-guide/configuring/language-options#specifying-globals). |
+| `ignorePattern`   | `overrideConfig.ignorePatterns` | New option name. |
+| `parser`          | `overrideConfig.parser`         | |
+| `parserOptions`   | `overrideConfig.parserOptions`  | |
+| `plugins`         | `overrideConfig.plugins`        | `plugins` as an array of strings is migrated to `overrideConfig.plugins`. In contrast, `plugins` as an object that maps strings to plugin implementations has different semantics and is not migrated. |
+| `rules`           | `overrideConfig.rules`          | |
+| `warnFileIgnored` | `warnIgnored`                   | New option name. |
 
 #### Autofix Function
 
 When the `fix` option is specified, fixes are applied to the gulp stream.
 The fixed content can be saved to file using [`gulpESLintNew.fix()`](#gulpeslintnewfix) (See [example/fix.js](https://github.com/fasttime/gulp-eslint-new/blob/main/example/fix.js)).
 Rules that are fixable can be found in ESLint's [rules list](https://eslint.org/docs/rules/).
-When fixes are applied, a "fixed" property is set to `true` on the fixed file's ESLint result.
+When fixes are applied, a `fixed` property is set to `true` on the fixed file's ESLint result.
 
 ### `gulpESLintNew(overrideConfigFile)`
 
@@ -362,6 +330,5 @@ This is available to streams that follow the initial gulp-eslint-new stream.
 The functions [`gulpESLintNew.result`](#gulpeslintnewresultaction) and [`gulpESLintNew.results`](#gulpeslintnewresultsaction) are made available to support extensions and custom handling of ESLint results.
 
 [gulp-eslint]: https://github.com/adametry/gulp-eslint
-[linting options]: https://eslint.org/docs/developer-guide/nodejs-api#linting
 [npm badge]: https://badge.fury.io/js/gulp-eslint-new.svg
 [npm URL]: https://www.npmjs.com/package/gulp-eslint-new

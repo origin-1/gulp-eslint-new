@@ -357,6 +357,7 @@ exports.migrateOptions = (options = { }) => {
 		}
 	}
 	migrateOption('envs', 'env', envs => toBooleanMap(envs, true, 'envs'));
+	migrateOption('extends');
 	migrateOption('globals', undefined, globals => toBooleanMap(globals, false, 'globals'));
 	migrateOption('ignorePattern', 'ignorePatterns');
 	migrateOption('parser');

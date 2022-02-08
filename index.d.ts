@@ -14,33 +14,50 @@ export type GulpESLintOptions =
 	| 'errorOnUnmatchedPattern'
 	| 'extensions'
 	| 'globInputPaths'
+	| 'plugins'
 	>
 	& {
 		/** @deprecated Use `overrideConfigFile` instead. */
-		configFile?: string | undefined;
+		configFile?: ESLint.Options['overrideConfigFile'];
 
 		/**
 		 * @deprecated
-		 * Use `overrideConfig.env` instead. Note the different option name and format.
+		 * Use `overrideConfig.env` or `baseConfig.env` instead.
+		 * Note the different option name and format.
 		 */
 		envs?: string[] | undefined;
 
-		/** @deprecated Use `overrideConfig.globals` instead. Note the different format. */
+		/** @deprecated Use `overrideConfig.extends` or `baseConfig.extends` instead. */
+		extends?: Linter.Config['extends'];
+
+		/**
+		 * @deprecated
+		 * Use `overrideConfig.globals` or `baseConfig.globals` instead. Note the different format.
+		 */
 		globals?: string[] | undefined;
 
-		/** @deprecated Use `overrideConfig.parser` instead. */
-		parser?: string | undefined;
+		/**
+		 * @deprecated
+		 * Use `overrideConfig.ignorePatterns` or `baseConfig.ignorePatterns` instead.
+		 * Note the different option name.
+		 */
+		ignorePattern?: Linter.Config['ignorePatterns'];
 
-		/** @deprecated Use `overrideConfig.parserOptions` instead. */
+		/** @deprecated Use `overrideConfig.parser` or `baseConfig.parser` instead. */
+		parser?: Linter.Config['parser'];
+
+		/** @deprecated Use `overrideConfig.parserOptions` or `baseConfig.parserOptions` instead. */
 		parserOptions?: Linter.ParserOptions | undefined;
+
+		plugins?: ESLint.Options['plugins'] | Linter.Config['plugins'];
 
 		quiet?:
 		| boolean
 		| ((message: Linter.LintMessage, index: number, list: Linter.LintMessage[]) => unknown)
 		| undefined;
 
-		/** @deprecated Use `overrideConfig.rules` instead. */
-		rules?: Partial<Linter.RulesRecord> | undefined;
+		/** @deprecated Use `overrideConfig.rules` or `baseConfig.rules` instead. */
+		rules?: Linter.Config['rules'];
 
 		/** @deprecated Use `warnIgnored` instead. */
 		warnFileIgnored?: boolean | undefined;

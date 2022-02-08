@@ -9,7 +9,7 @@ const { ESLint }                                                = require('eslin
 const { resolve }                                               = require('path');
 const { Writable }                                              = require('stream');
 
-describe('utility methods', () => {
+describe('utility functions', () => {
 
 	describe('compareResultsByFilePath', () => {
 
@@ -320,6 +320,12 @@ describe('utility methods', () => {
 			);
 		});
 
+		it('should migrate "extends"', () => {
+			const extendsValue = ['foo', 'bar', 'baz'];
+			const { eslintOptions } = util.migrateOptions({ extends: extendsValue });
+			assert.deepEqual(eslintOptions, { overrideConfig: { extends: extendsValue } });
+		});
+
 		it('should migrate a "globals" array to an object', () => {
 			const { eslintOptions }
 			= util.migrateOptions({ globals: ['foo:true', 'bar:false', 'baz'] });
@@ -327,6 +333,12 @@ describe('utility methods', () => {
 				eslintOptions,
 				{ overrideConfig: { globals: { foo: true, bar: false, baz: false } } }
 			);
+		});
+
+		it('should migrate "ignorePattern" to "ignorePatterns"', () => {
+			const ignorePatterns = ['foo', 'bar', 'baz'];
+			const { eslintOptions } = util.migrateOptions({ ignorePattern: ignorePatterns });
+			assert.deepEqual(eslintOptions, { overrideConfig: { ignorePatterns } });
 		});
 
 		it('should migrate a "plugins" arrays', () => {
