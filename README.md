@@ -337,7 +337,7 @@ gulpESLintNew.format('junit', process.stdout)
 Format each linted file individually.
 This should be used in the stream after piping through `gulpESLintNew`; otherwise, this will find no ESLint results to format.
 
-The arguments for `formatEach` are the same as the arguments for `format`.
+The arguments for `gulpESLintNew.formatEach` are the same as the arguments for [`gulpESLintNew.format`](#gulpeslintnewformatformatter-writer).
 
 ### `gulpESLintNew.fix()`
 
@@ -359,7 +359,7 @@ ESLint may be configured explicity by using any of the supported [configuration 
 
 ESLint results are attached as an `eslint` property to the Vinyl files that pass through a gulp stream pipeline.
 This is available to streams that follow the initial gulp-eslint-new stream.
-The [`gulpESLintNew.result`](#gulpeslintnewresultaction) and [`gulpESLintNew.results`](#gulpeslintnewresultsaction) methods are made available to support extensions and custom handling of ESLint results.
+The functions [`gulpESLintNew.result`](#gulpeslintnewresultaction) and [`gulpESLintNew.results`](#gulpeslintnewresultsaction) are made available to support extensions and custom handling of ESLint results.
 
 [gulp-eslint]: https://github.com/adametry/gulp-eslint
 [linting options]: https://eslint.org/docs/developer-guide/nodejs-api#linting

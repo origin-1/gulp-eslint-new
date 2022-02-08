@@ -11,10 +11,8 @@
 ## [1.2.0](https://github.com/fasttime/gulp-eslint-new/releases/tag/1.2.0) (2022-01-29)
 
 * New function [`fix`](https://github.com/fasttime/gulp-eslint-new#gulpeslintnewfix).
-* All functions exported by gulp-eslint-new are now available as named exports when gulp-eslint-new
-is imported with the `import` keyword (statically or dynamically).
-* When the option `quiet` is used, ESLint results now include the properties `usedDeprecatedRules`
-and (for ESLint ≥ 8.8) `suppressedMessages`.
+* All functions exported by gulp-eslint-new are now available as named exports when gulp-eslint-new is imported with the `import` keyword (statically or dynamically).
+* When the option `quiet` is used, ESLint results now include the properties `usedDeprecatedRules` and (for ESLint ≥ 8.8) `suppressedMessages`.
 * The functions `result` and `results` now throw a `TypeError` when called with an invalid argument.
 * Updated examples and documentation.
 
@@ -99,8 +97,7 @@ and (for ESLint ≥ 8.8) `suppressedMessages`.
 <a name="0.2.0"></a>
 ## [0.2.0](https://github.com/fasttime/gulp-eslint7/releases/tag/0.2.0) (2020-06-27)
 
-* Accepting all appliable [`ESLint` constructor][ESLint constructor] and
-  [`CLIEngine` constructor](https://eslint.org/docs/developer-guide/nodejs-api#cliengine) options.
+* Accepting all appliable [`ESLint` constructor](https://eslint.org/docs/developer-guide/nodejs-api#-new-eslintoptions) and [`CLIEngine` constructor](https://eslint.org/docs/developer-guide/nodejs-api#cliengine) options.
 * Updated readme file.
 
 <a name="0.1.0"></a>
@@ -114,5 +111,3 @@ Initial release derived from [gulp-eslint](https://github.com/adametry/gulp-esli
 
 For the changelog of gulp-eslint until forking, see
 [here](https://github.com/adametry/gulp-eslint/blob/v6.0.0/CHANGELOG.md).
-
-[ESLint constructor]: https://eslint.org/docs/developer-guide/nodejs-api#-new-eslintoptions
