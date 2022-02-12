@@ -1,13 +1,12 @@
 'use strict';
 
 /**
- * @typedef {import('eslint').ESLint}             ESLint
- * @typedef {import('eslint').ESLint.Formatter}   ESLint.Formatter
- * @typedef {import('eslint').ESLint.LintResult}  ESLint.LintResult
- * @typedef {ESLint.Formatter['format']}          FormatterFunction
- * @typedef {import('.').GulpESLintWriter}        GulpESLintWriter
- * @typedef {import('eslint').Linter}             Linter
- * @typedef {import('eslint').Linter.LintMessage} Linter.LintMessage
+ * @typedef {import('eslint').ESLint}                 ESLint
+ * @typedef {import('eslint').ESLint.Formatter}       ESLint.Formatter
+ * @typedef {import('eslint').ESLint.LintResult}      ESLint.LintResult
+ * @typedef {import('.').GulpESLintWriter}            GulpESLintWriter
+ * @typedef {import('eslint').Linter}                 Linter
+ * @typedef {import('eslint').Linter.LintMessage}     Linter.LintMessage
  */
 
 const fancyLog      = require('fancy-log');
@@ -71,7 +70,7 @@ function isWarningMessage({ severity }) {
  * @param {{ cwd: string, eslint: ESLint }} eslintInfo
  * Current directory and instance of ESLint used to load and configure the formatter.
  *
- * @param {string|ESLint.Formatter|FormatterFunction} [formatter]
+ * @param {string|ESLint.Formatter|Function} [formatter]
  * A name or path of a formatter, a formatter object or a formatter function.
  *
  * @returns {Promise<ESLint.Formatter>} An ESLint formatter.
@@ -396,17 +395,13 @@ exports.resolveWriter = (writer = fancyLog) => {
  * @param {ESLint.LintResult[]} results
  * A list of ESLint results.
  *
- * @param {{ cwd: string, eslint: ESLint }} eslintInfo
- * Current directory and instance of ESLint used to load and configure the formatter.
- *
- * @param {string|ESLint.Formatter|FormatterFunction} [formatter]
- * A name or path of a formatter, a formatter object or a formatter function.
+ * @param {ESLint.Formatter} formatterObj
+ * A formatter object.
  *
  * @param {GulpESLintWriter} [writer]
  * A function used to write formatted ESLint messages.
  */
-exports.writeResults = async (results, eslintInfo, formatter, writer) => {
-	const formatterObj = await resolveFormatter(eslintInfo, formatter);
+exports.writeResults = async (results, formatterObj, writer) => {
 	const message = await formatterObj.format(results);
 	if (writer && message != null && message !== '') {
 		await writer(message);

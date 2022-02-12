@@ -2,6 +2,9 @@ import { ESLint, Linter }    from 'eslint';
 import                            'node';
 import { TransformCallback } from 'stream';
 
+type FormatterFunction =
+	(results: ESLint.LintResult[], data?: ESLint.LintResultData) => string | Promise<string>;
+
 export type GulpESLintAction<Type>
 	= ((value: Type, callback: TransformCallback) => unknown) | ((value: Type) => Promise<unknown>);
 
@@ -138,7 +141,7 @@ declare const gulpESLintNew: {
 	 * @returns gulp file stream.
 	 */
 	formatEach(
-		formatter?: string | ESLint.Formatter | ESLint.Formatter['format'],
+		formatter?: string | ESLint.Formatter | FormatterFunction,
 		writer?: GulpESLintWriter | NodeJS.WritableStream
 	): NodeJS.ReadWriteStream;
 
@@ -154,7 +157,7 @@ declare const gulpESLintNew: {
 	 * @returns gulp file stream.
 	 */
 	format(
-		formatter?: string | ESLint.Formatter | ESLint.Formatter['format'],
+		formatter?: string | ESLint.Formatter | FormatterFunction,
 		writer?: GulpESLintWriter | NodeJS.WritableStream
 	): NodeJS.ReadWriteStream;
 };

@@ -513,26 +513,21 @@ describe('utility functions', () => {
 	describe('writeResults', () => {
 
 		const testResults = [];
-		const testRulesMeta = { };
-		const testInstance = {
-			getRulesMetaForResults(results) {
-				assert.strictEqual(results, testResults);
-				return testRulesMeta;
-			}
-		};
 
 		it('should pass the value returned from the formatter to the writer', async () => {
 			let writeCount = 0;
 			const formattedText = 'something happened';
-			await util.writeResults(
-				testResults,
-				{ cwd: process.cwd(), eslint: testInstance },
-				(results, { rulesMeta }) => {
+			const formatterObj = {
+				format(results) {
+					assert.equal(this, formatterObj);
 					assert(results);
 					assert.equal(results, testResults);
-					assert.equal(rulesMeta, testRulesMeta);
 					return formattedText;
-				},
+				}
+			};
+			await util.writeResults(
+				testResults,
+				formatterObj,
 				value => {
 					assert(value);
 					assert.equal(value, formattedText);
@@ -543,30 +538,27 @@ describe('utility functions', () => {
 		});
 
 		it('should not write an empty formatted text', async () => {
-			await util.writeResults(
-				testResults,
-				{ cwd: process.cwd(), eslint: testInstance },
-				(results, { rulesMeta }) => {
+			const formatterObj = {
+				format(results) {
+					assert.equal(this, formatterObj);
 					assert(results);
 					assert.equal(results, testResults);
-					assert.equal(rulesMeta, testRulesMeta);
 					return '';
-				},
-				() => assert.fail('Unexpected call')
-			);
+				}
+			};
+			await
+			util.writeResults(testResults, formatterObj, () => assert.fail('Unexpected call'));
 		});
 
-		it('should not write an undefined', async () => {
-			await util.writeResults(
-				testResults,
-				{ cwd: process.cwd(), eslint: testInstance },
-				(results, { rulesMeta }) => {
+		it('should not write an undefined value', async () => {
+			const formatterObj = {
+				format(results) {
 					assert(results);
 					assert.equal(results, testResults);
-					assert.equal(rulesMeta, testRulesMeta);
-				},
-				() => assert.fail('Unexpected call')
-			);
+				}
+			};
+			await
+			util.writeResults(testResults, formatterObj, () => assert.fail('Unexpected call'));
 		});
 
 	});
