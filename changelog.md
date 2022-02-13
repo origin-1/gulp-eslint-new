@@ -1,3 +1,12 @@
+<a name="1.4.0"></a>
+## [1.4.0](https://github.com/fasttime/gulp-eslint-new/releases/tag/1.4.0) (2022-02-13)
+
+* Added support for legacy option `extends`.
+* Simplified and completed documentation of legacy options.
+* `formatEach` now uses one formatter per instance of ESLint.
+* Improved TypeScript type declarations.
+* Normalized markdown of readme file and changelog.
+
 <a name="1.3.0"></a>
 ## [1.3.0](https://github.com/fasttime/gulp-eslint-new/releases/tag/1.3.0) (2022-02-05)
 
