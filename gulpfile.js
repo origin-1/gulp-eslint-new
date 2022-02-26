@@ -1,6 +1,7 @@
 'use strict';
 
 const { parallel, series, src, task } = require('gulp');
+const { join }                        = require('path');
 
 task(
 	'clean',
@@ -49,4 +50,20 @@ task(
 	}
 );
 
-task('default', series(parallel('clean', 'lint'), 'test'));
+task(
+	'ts-test',
+	async () => {
+		const { default: ts } = await import('typescript');
+		const pkgPath = __dirname;
+		const fileName = join(pkgPath, 'test/ts-defs-test.ts');
+		const program = ts.createProgram([fileName], { strict: true });
+		const diagnostics = ts.getPreEmitDiagnostics(program);
+		if (diagnostics.length) {
+			const reporter = ts.createDiagnosticReporter(ts.sys, true);
+			diagnostics.forEach(reporter);
+			throw Error('TypeScript compilation failed');
+		}
+	}
+);
+
+task('default', series(parallel('clean', 'lint', 'ts-test'), 'test'));
