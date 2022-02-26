@@ -5,8 +5,9 @@ import { TransformCallback } from 'stream';
 type FormatterFunction =
 	(results: ESLint.LintResult[], data?: ESLint.LintResultData) => string | Promise<string>;
 
-export type GulpESLintAction<Type>
-	= ((value: Type, callback: TransformCallback) => unknown) | ((value: Type) => Promise<unknown>);
+type LintResultStreamFunction<Type>
+	= ((action: (value: Type, callback: TransformCallback) => void) => NodeJS.ReadWriteStream)
+	& ((action: (value: Type) => unknown | Promise<unknown>) => NodeJS.ReadWriteStream);
 
 export type GulpESLintOptions =
 	Omit<
@@ -105,7 +106,7 @@ declare const gulpESLintNew: {
 	 * @param action - A function to handle each ESLint result.
 	 * @returns gulp file stream.
 	 */
-	result(action: GulpESLintAction<GulpESLintResult>): NodeJS.ReadWriteStream;
+	result: LintResultStreamFunction<GulpESLintResult>;
 
 	/**
 	 * Handle all ESLint results at the end of the stream.
@@ -113,7 +114,7 @@ declare const gulpESLintNew: {
 	 * @param action - A function to handle all ESLint results.
 	 * @returns gulp file stream.
 	 */
-	results(action: GulpESLintAction<GulpESLintResults>): NodeJS.ReadWriteStream;
+	results: LintResultStreamFunction<GulpESLintResults>;
 
 	/**
 	 * Fail when an ESLint error is found in an ESLint result.

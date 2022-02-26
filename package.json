@@ -35,7 +35,8 @@
 		"build": "npm install && gulp",
 		"coverage": "c8 --reporter=html --reporter=text-summary npm test",
 		"lint": "eslint .",
-		"test": "mocha --check-leaks test/*.spec.js"
+		"test": "mocha --check-leaks test/*.spec.js",
+		"ts-test": "tsc --noEmit --strict test/ts-defs-test.ts"
 	},
 	"dependencies": {
 		"@types/eslint": "^8.4.1",
