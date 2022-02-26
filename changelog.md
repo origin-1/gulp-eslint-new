@@ -1,3 +1,8 @@
+<a name="1.4.1"></a>
+## [1.4.1](https://github.com/fasttime/gulp-eslint-new/releases/tag/1.4.1) (2022-02-26)
+
+* Fixed type inference for the arguments of callbacks provided to the functions `result` and `results`.
+
 <a name="1.4.0"></a>
 ## [1.4.0](https://github.com/fasttime/gulp-eslint-new/releases/tag/1.4.0) (2022-02-13)
 
