@@ -70,6 +70,8 @@ overrides:
 
     extends: plugin:@typescript-eslint/recommended
 
+    plugins: ["eslint-plugin-tsdoc"]
+
     rules:
       "@typescript-eslint/brace-style": [2, "1tbs"]
       "@typescript-eslint/comma-dangle": 1
@@ -84,3 +86,4 @@ overrides:
       "@typescript-eslint/semi": 2
       "@typescript-eslint/space-before-function-paren": [1, { "named": "never" }]
       "@typescript-eslint/space-infix-ops": 1
+      tsdoc/syntax: 1

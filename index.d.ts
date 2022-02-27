@@ -87,7 +87,7 @@ declare const gulpESLintNew: {
 	/**
 	 * Append ESLint result to each file.
 	 *
-	 * @param options Options for gulp-eslint-new.
+	 * @param options - Options for gulp-eslint-new.
 	 * @returns gulp file stream.
 	 */
 	(options?: GulpESLintOptions): NodeJS.ReadWriteStream;
@@ -95,7 +95,7 @@ declare const gulpESLintNew: {
 	/**
 	 * Append ESLint result to each file.
 	 *
-	 * @param overrideConfigFile The path to a configuration file.
+	 * @param overrideConfigFile - The path to a configuration file.
 	 * @returns gulp file stream.
 	 */
 	(overrideConfigFile?: string): NodeJS.ReadWriteStream;
@@ -133,10 +133,10 @@ declare const gulpESLintNew: {
 	/**
 	 * Format the results of each file individually.
 	 *
-	 * @param formatter
+	 * @param formatter -
 	 * A name or path of a formatter, a formatter object or a formatter function.
 	 * Defaults to the [stylish](https://eslint.org/docs/user-guide/formatters/#stylish) formatter.
-	 * @param writer
+	 * @param writer -
 	 * A funtion or stream to write the formatted ESLint results.
 	 * Defaults to gulp's [fancy-log](https://github.com/gulpjs/fancy-log#readme).
 	 * @returns gulp file stream.
@@ -149,10 +149,10 @@ declare const gulpESLintNew: {
 	/**
 	 * Wait until all files have been linted and format all results at once.
 	 *
-	 * @param formatter
+	 * @param formatter -
 	 * A name or path of a formatter, a formatter object or a formatter function.
 	 * Defaults to the [stylish](https://eslint.org/docs/user-guide/formatters/#stylish) formatter.
-	 * @param writer
+	 * @param writer -
 	 * A funtion or stream to write the formatted ESLint results.
 	 * Defaults to gulp's [fancy-log](https://github.com/gulpjs/fancy-log#readme).
 	 * @returns gulp file stream.

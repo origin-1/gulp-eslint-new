@@ -285,9 +285,9 @@ function throwInvalidOptionError(message) {
 /**
  * Convert a string array to a boolean map.
  *
- * @param {string[]|null} keys The keys to assign true.
- * @param {boolean} defaultValue The default value for each property.
- * @param {string} displayName The property name which is used in error message.
+ * @param {string[]|null} keys - The keys to assign true.
+ * @param {boolean} defaultValue - The default value for each property.
+ * @param {string} displayName - The property name which is used in error message.
  * @returns {Record<string,boolean>} The boolean map.
  */
 function toBooleanMap(keys, defaultValue, displayName) {
