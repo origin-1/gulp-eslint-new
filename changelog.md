@@ -1,3 +1,9 @@
+<a name="1.4.2"></a>
+## [1.4.2](https://github.com/fasttime/gulp-eslint-new/releases/tag/1.4.2) (2022-02-27)
+
+* Added type definition for function `fix`.
+* Updated TSDoc.
+
 <a name="1.4.1"></a>
 ## [1.4.1](https://github.com/fasttime/gulp-eslint-new/releases/tag/1.4.1) (2022-02-26)
 
