@@ -161,5 +161,12 @@ declare const gulpESLintNew: {
 		formatter?: string | ESLint.Formatter | FormatterFunction,
 		writer?: GulpESLintWriter | NodeJS.WritableStream
 	): NodeJS.ReadWriteStream;
+
+	/**
+	 * Overwrite source files with the fixed content provided by ESLint if present.
+	 *
+	 * @returns gulp file stream.
+	 */
+	fix(): NodeJS.ReadWriteStream;
 };
 export default gulpESLintNew;
