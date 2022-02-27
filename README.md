@@ -27,8 +27,7 @@ const { src } = require('gulp');
 const gulpESLintNew = require('gulp-eslint-new');
 
 // Define the default gulp task.
-exports.default =
-    () => src(['scripts/*.js'])
+exports.default = () => src(['scripts/*.js'])
     // gulpESLintNew() attaches the lint output to the "eslint" property of the
     // file object so it can be used by other modules.
     .pipe(gulpESLintNew())

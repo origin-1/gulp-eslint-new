@@ -16,23 +16,23 @@ const { Transform } = require('stream');
 const ternaryStream = require('ternary-stream');
 
 function compareResultsByFilePath({ filePath: filePath1 }, { filePath: filePath2 }) {
-	if (filePath1 > filePath2) {
-		return 1;
-	}
-	if (filePath1 < filePath2) {
-		return -1;
-	}
-	return 0;
+    if (filePath1 > filePath2) {
+        return 1;
+    }
+    if (filePath1 < filePath2) {
+        return -1;
+    }
+    return 0;
 }
 
 function createPluginError(error) {
-	if (error instanceof PluginError) {
-		return error;
-	}
-	if (error == null) {
-		error = 'Unknown Error';
-	}
-	return new PluginError('gulp-eslint-new', error);
+    if (error instanceof PluginError) {
+        return error;
+    }
+    if (error == null) {
+        error = 'Unknown Error';
+    }
+    return new PluginError('gulp-eslint-new', error);
 }
 
 const { defineProperty } = Object;
@@ -47,7 +47,7 @@ const hasOwn = Function.prototype.call.bind(Object.prototype.hasOwnProperty);
  * @returns {boolean} Whether the message is an error message.
  */
 function isErrorMessage({ severity }) {
-	return severity > 1;
+    return severity > 1;
 }
 
 const isObject = value => Object(value) === value;
@@ -59,7 +59,7 @@ const isObject = value => Object(value) === value;
  * @returns {boolean} Whether the message is a warning message.
  */
 function isWarningMessage({ severity }) {
-	return severity === 1;
+    return severity === 1;
 }
 
 /**
@@ -76,29 +76,29 @@ function isWarningMessage({ severity }) {
  * @returns {Promise<ESLint.Formatter>} An ESLint formatter.
  */
 function resolveFormatter({ cwd, eslint }, formatter) {
-	if (isObject(formatter) && typeof formatter.format === 'function') {
-		return formatter;
-	}
-	if (typeof formatter === 'function') {
-		return {
-			format: results => {
-				results.sort(compareResultsByFilePath);
-				return formatter(
-					results,
-					{
-						cwd,
-						get rulesMeta() {
-							const rulesMeta = eslint.getRulesMetaForResults(results);
-							defineProperty(this, 'rulesMeta', { value: rulesMeta });
-							return rulesMeta;
-						}
-					}
-				);
-			}
-		};
-	}
-	// Use ESLint to look up formatter references.
-	return eslint.loadFormatter(formatter);
+    if (isObject(formatter) && typeof formatter.format === 'function') {
+        return formatter;
+    }
+    if (typeof formatter === 'function') {
+        return {
+            format: results => {
+                results.sort(compareResultsByFilePath);
+                return formatter(
+                    results,
+                    {
+                        cwd,
+                        get rulesMeta() {
+                            const rulesMeta = eslint.getRulesMetaForResults(results);
+                            defineProperty(this, 'rulesMeta', { value: rulesMeta });
+                            return rulesMeta;
+                        }
+                    }
+                );
+            }
+        };
+    }
+    // Use ESLint to look up formatter references.
+    return eslint.loadFormatter(formatter);
 }
 
 exports.compareResultsByFilePath = compareResultsByFilePath;
@@ -115,42 +115,42 @@ const isInNodeModulesRegExp = /(?<![^/\\])node_modules[/\\]/u;
  * @returns {ESLint.LintResult} Result with warning by ignore settings.
  */
 exports.createIgnoreResult = (filePath, baseDir) => {
-	let message;
-	const relativePath = relative(baseDir, filePath);
-	if (isHiddenRegExp.test(relativePath)) {
-		message
-			= 'File ignored by default. Use a negated ignore pattern (like '
-			+ '"!<relative/path/to/filename>") to override.';
-	} else if (isInNodeModulesRegExp.test(relativePath)) {
-		message
-			= 'File ignored by default. Use a negated ignore pattern like "!node_modules/*" to '
-			+ 'override.';
-	} else {
-		message
-			= 'File ignored because of a matching ignore pattern. Set "ignore" option to false '
-			+ 'to override.';
-	}
-	return {
-		filePath,
-		messages: [{ fatal: false, severity: 1, message }],
-		errorCount: 0,
-		warningCount: 1,
-		fixableErrorCount: 0,
-		fixableWarningCount: 0,
-		fatalErrorCount: 0
-	};
+    let message;
+    const relativePath = relative(baseDir, filePath);
+    if (isHiddenRegExp.test(relativePath)) {
+        message
+            = 'File ignored by default. Use a negated ignore pattern (like '
+            + '"!<relative/path/to/filename>") to override.';
+    } else if (isInNodeModulesRegExp.test(relativePath)) {
+        message
+            = 'File ignored by default. Use a negated ignore pattern like "!node_modules/*" to '
+            + 'override.';
+    } else {
+        message
+            = 'File ignored because of a matching ignore pattern. Set "ignore" option to false '
+            + 'to override.';
+    }
+    return {
+        filePath,
+        messages: [{ fatal: false, severity: 1, message }],
+        errorCount: 0,
+        warningCount: 1,
+        fixableErrorCount: 0,
+        fixableWarningCount: 0,
+        fatalErrorCount: 0
+    };
 };
 
 exports.createPluginError = createPluginError;
 
 async function awaitHandler(handler, data, done) {
-	try {
-		await handler();
-	} catch (err) {
-		done(createPluginError(err));
-		return;
-	}
-	done(null, data);
+    try {
+        await handler();
+    } catch (err) {
+        done(createPluginError(err));
+        return;
+    }
+    done(null, data);
 }
 
 /**
@@ -170,9 +170,9 @@ async function awaitHandler(handler, data, done) {
  * @returns {Transform} A transform stream.
  */
 exports.createTransform = (handleFile, handleFinal) => {
-	const transform = (file, enc, done) => void awaitHandler(() => handleFile(file), file, done);
-	const final = handleFinal ? done => void awaitHandler(handleFinal, null, done) : undefined;
-	return new Transform({ objectMode: true, transform, final });
+    const transform = (file, enc, done) => void awaitHandler(() => handleFile(file), file, done);
+    const final = handleFinal ? done => void awaitHandler(handleFinal, null, done) : undefined;
+    return new Transform({ objectMode: true, transform, final });
 };
 
 /**
@@ -183,7 +183,7 @@ exports.createTransform = (handleFile, handleFinal) => {
  * @returns {number} The number of errors, message included.
  */
 function countErrorMessage(count, message) {
-	return count + Number(isErrorMessage(message));
+    return count + Number(isErrorMessage(message));
 }
 
 /**
@@ -194,7 +194,7 @@ function countErrorMessage(count, message) {
  * @returns {number} The number of warnings, message included.
  */
 function countWarningMessage(count, message) {
-	return count + Number(isWarningMessage(message));
+    return count + Number(isWarningMessage(message));
 }
 
 /**
@@ -205,7 +205,7 @@ function countWarningMessage(count, message) {
  * @returns {number} The number of fixable errors, message included.
  */
 function countFixableErrorMessage(count, message) {
-	return count + Number(isErrorMessage(message) && message.fix !== undefined);
+    return count + Number(isErrorMessage(message) && message.fix !== undefined);
 }
 
 /**
@@ -216,7 +216,7 @@ function countFixableErrorMessage(count, message) {
  * @returns {Number} The number of fixable warnings, message included.
  */
 function countFixableWarningMessage(count, message) {
-	return count + Number(isWarningMessage(message) && message.fix !== undefined);
+    return count + Number(isWarningMessage(message) && message.fix !== undefined);
 }
 
 /**
@@ -227,7 +227,7 @@ function countFixableWarningMessage(count, message) {
  * @returns {Number} The number of fatal errors, message included.
  */
 function countFatalErrorMessage(count, message) {
-	return count + Number(isErrorMessage(message) && !!message.fatal);
+    return count + Number(isErrorMessage(message) && !!message.fatal);
 }
 
 /**
@@ -238,15 +238,15 @@ function countFatalErrorMessage(count, message) {
  * @returns {ESLint.LintResult} A filtered ESLint result.
  */
 exports.filterResult = (result, filter) => {
-	const { messages, ...newResult } = result;
-	const newMessages = messages.filter(filter, result);
-	newResult.messages = newMessages;
-	newResult.errorCount          = newMessages.reduce(countErrorMessage, 0);
-	newResult.warningCount        = newMessages.reduce(countWarningMessage, 0);
-	newResult.fixableErrorCount   = newMessages.reduce(countFixableErrorMessage, 0);
-	newResult.fixableWarningCount = newMessages.reduce(countFixableWarningMessage, 0);
-	newResult.fatalErrorCount     = newMessages.reduce(countFatalErrorMessage, 0);
-	return newResult;
+    const { messages, ...newResult } = result;
+    const newMessages = messages.filter(filter, result);
+    newResult.messages = newMessages;
+    newResult.errorCount          = newMessages.reduce(countErrorMessage, 0);
+    newResult.warningCount        = newMessages.reduce(countWarningMessage, 0);
+    newResult.fixableErrorCount   = newMessages.reduce(countFixableErrorMessage, 0);
+    newResult.fixableWarningCount = newMessages.reduce(countFixableWarningMessage, 0);
+    newResult.fatalErrorCount     = newMessages.reduce(countFatalErrorMessage, 0);
+    return newResult;
 };
 
 const isFixed = ({ eslint }) => eslint && eslint.fixed;
@@ -260,13 +260,13 @@ exports.isErrorMessage = isErrorMessage;
 exports.isWarningMessage = isWarningMessage;
 
 const forbiddenOptions = [
-	'cache',
-	'cacheFile',
-	'cacheLocation',
-	'cacheStrategy',
-	'errorOnUnmatchedPattern',
-	'extensions',
-	'globInputPaths'
+    'cache',
+    'cacheFile',
+    'cacheLocation',
+    'cacheStrategy',
+    'errorOnUnmatchedPattern',
+    'extensions',
+    'globInputPaths'
 ];
 
 /**
@@ -276,10 +276,10 @@ const forbiddenOptions = [
  * @throws An error with code "ESLINT_INVALID_OPTIONS" and the specified message.
  */
 function throwInvalidOptionError(message) {
-	const error = Error(message);
-	Error.captureStackTrace(error, throwInvalidOptionError);
-	error.code = 'ESLINT_INVALID_OPTIONS';
-	throw error;
+    const error = Error(message);
+    Error.captureStackTrace(error, throwInvalidOptionError);
+    error.code = 'ESLINT_INVALID_OPTIONS';
+    throw error;
 }
 
 /**
@@ -291,21 +291,21 @@ function throwInvalidOptionError(message) {
  * @returns {Record<string,boolean>} The boolean map.
  */
 function toBooleanMap(keys, defaultValue, displayName) {
-	if (keys && !Array.isArray(keys)) {
-		throwInvalidOptionError(`Option ${displayName} must be an array`);
-	}
-	if (keys && keys.length > 0) {
-		return keys.reduce(
-			(map, def) => {
-				const [key, value] = def.split(':');
-				if (key !== '__proto__') {
-					map[key] = value === undefined ? defaultValue : value === 'true';
-				}
-				return map;
-			},
-			{ }
-		);
-	}
+    if (keys && !Array.isArray(keys)) {
+        throwInvalidOptionError(`Option ${displayName} must be an array`);
+    }
+    if (keys && keys.length > 0) {
+        return keys.reduce(
+            (map, def) => {
+                const [key, value] = def.split(':');
+                if (key !== '__proto__') {
+                    map[key] = value === undefined ? defaultValue : value === 'true';
+                }
+                return map;
+            },
+            { }
+        );
+    }
 }
 
 /**
@@ -315,59 +315,59 @@ function toBooleanMap(keys, defaultValue, displayName) {
  * @returns {Object} Migrated options.
  */
 exports.migrateOptions = (options = { }) => {
-	if (typeof options === 'string') {
-		// Basic config path overload: `eslint('path/to/config.json')`.
-		const returnValue = { eslintOptions: { overrideConfigFile: options } };
-		return returnValue;
-	}
-	const {
-		overrideConfig: originalOverrideConfig,
-		quiet,
-		warnFileIgnored,
-		warnIgnored: originalWarnIgnored,
-		...eslintOptions
-	}
-	= options;
-	{
-		const invalidOptions = forbiddenOptions.filter(option => hasOwn(options, option));
-		if (invalidOptions.length) {
-			throwInvalidOptionError(`Invalid options: ${invalidOptions.join(', ')}`);
-		}
-	}
-	if (originalOverrideConfig != null && typeof originalOverrideConfig !== 'object') {
-		throwInvalidOptionError('Option overrideConfig must be an object or null');
-	}
-	const overrideConfig = eslintOptions.overrideConfig
-	= originalOverrideConfig != null ? { ...originalOverrideConfig } : { };
+    if (typeof options === 'string') {
+        // Basic config path overload: `eslint('path/to/config.json')`.
+        const returnValue = { eslintOptions: { overrideConfigFile: options } };
+        return returnValue;
+    }
+    const {
+        overrideConfig: originalOverrideConfig,
+        quiet,
+        warnFileIgnored,
+        warnIgnored: originalWarnIgnored,
+        ...eslintOptions
+    }
+    = options;
+    {
+        const invalidOptions = forbiddenOptions.filter(option => hasOwn(options, option));
+        if (invalidOptions.length) {
+            throwInvalidOptionError(`Invalid options: ${invalidOptions.join(', ')}`);
+        }
+    }
+    if (originalOverrideConfig != null && typeof originalOverrideConfig !== 'object') {
+        throwInvalidOptionError('Option overrideConfig must be an object or null');
+    }
+    const overrideConfig = eslintOptions.overrideConfig
+    = originalOverrideConfig != null ? { ...originalOverrideConfig } : { };
 
-	function migrateOption(oldName, newName = oldName, convert = value => value) {
-		const value = eslintOptions[oldName];
-		delete eslintOptions[oldName];
-		if (value !== undefined) {
-			overrideConfig[newName] = convert(value);
-		}
-	}
+    function migrateOption(oldName, newName = oldName, convert = value => value) {
+        const value = eslintOptions[oldName];
+        delete eslintOptions[oldName];
+        if (value !== undefined) {
+            overrideConfig[newName] = convert(value);
+        }
+    }
 
-	{
-		const { configFile } = eslintOptions;
-		delete eslintOptions.configFile;
-		if (configFile !== undefined) {
-			eslintOptions.overrideConfigFile = configFile;
-		}
-	}
-	migrateOption('envs', 'env', envs => toBooleanMap(envs, true, 'envs'));
-	migrateOption('extends');
-	migrateOption('globals', undefined, globals => toBooleanMap(globals, false, 'globals'));
-	migrateOption('ignorePattern', 'ignorePatterns');
-	migrateOption('parser');
-	migrateOption('parserOptions');
-	if (Array.isArray(eslintOptions.plugins)) {
-		migrateOption('plugins');
-	}
-	migrateOption('rules');
-	const warnIgnored = warnFileIgnored !== undefined ? warnFileIgnored : originalWarnIgnored;
-	const returnValue = { eslintOptions, quiet, warnIgnored };
-	return returnValue;
+    {
+        const { configFile } = eslintOptions;
+        delete eslintOptions.configFile;
+        if (configFile !== undefined) {
+            eslintOptions.overrideConfigFile = configFile;
+        }
+    }
+    migrateOption('envs', 'env', envs => toBooleanMap(envs, true, 'envs'));
+    migrateOption('extends');
+    migrateOption('globals', undefined, globals => toBooleanMap(globals, false, 'globals'));
+    migrateOption('ignorePattern', 'ignorePatterns');
+    migrateOption('parser');
+    migrateOption('parserOptions');
+    if (Array.isArray(eslintOptions.plugins)) {
+        migrateOption('plugins');
+    }
+    migrateOption('rules');
+    const warnIgnored = warnFileIgnored !== undefined ? warnFileIgnored : originalWarnIgnored;
+    const returnValue = { eslintOptions, quiet, warnIgnored };
+    return returnValue;
 };
 
 exports.resolveFormatter = resolveFormatter;
@@ -380,13 +380,13 @@ exports.resolveFormatter = resolveFormatter;
  * @returns {GulpESLintWriter} A function that writes formatted messages.
  */
 exports.resolveWriter = (writer = fancyLog) => {
-	if (isObject(writer)) {
-		const { write } = writer;
-		if (typeof write === 'function') {
-			writer = write.bind(writer);
-		}
-	}
-	return writer;
+    if (isObject(writer)) {
+        const { write } = writer;
+        if (typeof write === 'function') {
+            writer = write.bind(writer);
+        }
+    }
+    return writer;
 };
 
 /**
@@ -402,8 +402,8 @@ exports.resolveWriter = (writer = fancyLog) => {
  * A function used to write formatted ESLint messages.
  */
 exports.writeResults = async (results, formatterObj, writer) => {
-	const message = await formatterObj.format(results);
-	if (writer && message != null && message !== '') {
-		await writer(message);
-	}
+    const message = await formatterObj.format(results);
+    if (writer && message != null && message !== '') {
+        await writer(message);
+    }
 };

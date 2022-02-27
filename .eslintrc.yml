@@ -54,7 +54,7 @@ overrides:
       brace-style: [2, "1tbs"]
       comma-dangle: 1
       comma-spacing: 2
-      indent: [1, "tab"]
+      indent: 1
       keyword-spacing: 2
       no-shadow: 1
       no-use-before-define: 2
@@ -76,7 +76,7 @@ overrides:
       "@typescript-eslint/brace-style": [2, "1tbs"]
       "@typescript-eslint/comma-dangle": 1
       "@typescript-eslint/comma-spacing": 2
-      "@typescript-eslint/indent": [1, "tab"]
+      "@typescript-eslint/indent": 1
       "@typescript-eslint/keyword-spacing": 2
       "@typescript-eslint/member-delimiter-style": 2
       "@typescript-eslint/no-shadow": 1

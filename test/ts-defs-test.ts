@@ -27,13 +27,13 @@ gulpESLintNew.formatEach('test');
 gulpESLintNew.formatEach({ format: () => 'test' });
 gulpESLintNew.formatEach(() => 'test');
 (writer: NodeJS.WritableStream | GulpESLintWriter | undefined) =>
-	gulpESLintNew.formatEach(undefined, writer);
+    gulpESLintNew.formatEach(undefined, writer);
 
 isStream(gulpESLintNew.format());
 gulpESLintNew.format('test');
 gulpESLintNew.format({ format: () => 'test' });
 gulpESLintNew.format(() => 'test');
 (writer: NodeJS.WritableStream | GulpESLintWriter | undefined) =>
-	gulpESLintNew.format(undefined, writer);
+    gulpESLintNew.format(undefined, writer);
 
 isStream(gulpESLintNew.fix());

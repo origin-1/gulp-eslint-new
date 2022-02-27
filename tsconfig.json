@@ -1,7 +1,7 @@
 {
-	"compilerOptions": {
-		"lib": [],
-		"moduleResolution": "node",
-		"strict": true
-	}
+  "compilerOptions": {
+    "lib": [],
+    "moduleResolution": "node",
+    "strict": true
+  }
 }
