@@ -14,7 +14,7 @@ const gulpESLintNew   = require('gulp-eslint-new');
  */
 function basic() {
     return src('demo/**/*.js')
-        // default: use local linting config.
+        // Default: use local linting config.
         .pipe(gulpESLintNew())
         // Format ESLint results and print them to the console.
         .pipe(gulpESLintNew.format());

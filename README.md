@@ -137,7 +137,7 @@ When `gulpESLintNew` is passed any of these options, it will map them automatica
 | `ignorePattern`   | `overrideConfig.ignorePatterns` | New option name. |
 | `parser`          | `overrideConfig.parser`         | |
 | `parserOptions`   | `overrideConfig.parserOptions`  | |
-| `plugins`         | `overrideConfig.plugins`        | `plugins` as an array of strings is migrated to `overrideConfig.plugins`. In contrast, `plugins` as an object that maps strings to plugin implementations has different semantics and is not migrated. |
+| `plugins`         | `overrideConfig.plugins`        | `plugins` as an array of strings is migrated to `overrideConfig.plugins`. By contrast, `plugins` as an object that maps strings to plugin implementations has different semantics and is not migrated. |
 | `rules`           | `overrideConfig.rules`          | |
 | `warnFileIgnored` | `warnIgnored`                   | New option name. |
 
