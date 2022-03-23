@@ -67,7 +67,8 @@ describe('gulp-eslint-new plugin', () => {
         assert.equal(typeof message.column, 'number');
         assert.equal(message.ruleId, 'strict');
         assert.equal(message.severity, 2);
-        assert.deepEqual(file.eslint.suppressedMessages, []);
+        assert(Array.isArray(file.eslint.suppressedMessages));
+        assert.equal(file.eslint.suppressedMessages.length, 0);
         assert.deepEqual(
             file.eslint.usedDeprecatedRules,
             [{ replacedBy: [], ruleId: 'valid-jsdoc' }]
