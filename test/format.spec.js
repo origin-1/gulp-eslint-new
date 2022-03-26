@@ -4,7 +4,6 @@
 
 const { createVinylDirectory, createVinylFile, noop } = require('./test-util');
 const { strict: assert }                              = require('assert');
-const { ESLint }                                      = require('eslint');
 const gulpESLintNew                                   = require('gulp-eslint-new');
 const PluginError                                     = require('plugin-error');
 const { PassThrough }                                 = require('stream');
@@ -72,7 +71,7 @@ describe('gulp-eslint-new format', () => {
     async function testWrapError(useError) {
         const files = getFiles();
         const lintStream
-            = gulpESLintNew({ useEslintrc: false, rules: { 'strict': 2 }, warnIgnored: true });
+        = gulpESLintNew({ useEslintrc: false, rules: { 'strict': 2 }, warnIgnored: true });
         const testMessage = 'Writer Test Error';
         const testErrorName = 'TestError';
         const formatStream = gulpESLintNew
@@ -103,7 +102,7 @@ describe('gulp-eslint-new format', () => {
     it('should format all ESLint results at once', async () => {
         const files = getFiles();
         const lintStream
-            = gulpESLintNew({ useEslintrc: false, rules: { 'strict': 2 }, warnIgnored: true });
+        = gulpESLintNew({ useEslintrc: false, rules: { 'strict': 2 }, warnIgnored: true });
         const formatStream = gulpESLintNew.format(formatResults, outputWriter);
         let errorEmitted;
         formatStream.on(
@@ -160,7 +159,7 @@ describe('gulp-eslint-new format', () => {
         const createTestFile = path => {
             const file = createVinylFile(path, '');
             file.eslint = { };
-            file._eslintInfo = { cwd: process.cwd(), eslint: new ESLint() };
+            file._eslintInfo = { cwd: process.cwd(), eslint: { } };
             return file;
         };
         const files = [createTestFile('file1.js'), createTestFile('file2.js')];
@@ -214,7 +213,7 @@ describe('gulp-eslint-new formatEach', () => {
     it('should format individual ESLint results', async () => {
         const files = getFiles();
         const lintStream
-            = gulpESLintNew({ useEslintrc: false, rules: { 'strict': 2 }, warnIgnored: true });
+        = gulpESLintNew({ useEslintrc: false, rules: { 'strict': 2 }, warnIgnored: true });
         const formatStream = gulpESLintNew.formatEach(formatResult, outputWriter);
         let errorEmitted;
         formatStream.on(

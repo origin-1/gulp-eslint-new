@@ -15,6 +15,8 @@ const PluginError   = require('plugin-error');
 const { Transform } = require('stream');
 const ternaryStream = require('ternary-stream');
 
+const ESLintKey = Symbol('ESLint');
+
 function compareResultsByFilePath({ filePath: filePath1 }, { filePath: filePath2 }) {
     if (filePath1 > filePath2) {
         return 1;
@@ -101,6 +103,8 @@ function resolveFormatter({ cwd, eslint }, formatter) {
     return eslint.loadFormatter(formatter);
 }
 
+exports.ESLintKey = ESLintKey;
+
 exports.compareResultsByFilePath = compareResultsByFilePath;
 
 const isHiddenRegExp = /(?<![^/\\])\.(?!\.)/u;
@@ -119,16 +123,16 @@ exports.createIgnoreResult = (filePath, baseDir) => {
     const relativePath = relative(baseDir, filePath);
     if (isHiddenRegExp.test(relativePath)) {
         message
-            = 'File ignored by default. Use a negated ignore pattern (like '
-            + '"!<relative/path/to/filename>") to override.';
+        = 'File ignored by default. Use a negated ignore pattern (like '
+        + '"!<relative/path/to/filename>") to override.';
     } else if (isInNodeModulesRegExp.test(relativePath)) {
         message
-            = 'File ignored by default. Use a negated ignore pattern like "!node_modules/*" to '
-            + 'override.';
+        = 'File ignored by default. Use a negated ignore pattern like "!node_modules/*" to '
+        + 'override.';
     } else {
         message
-            = 'File ignored because of a matching ignore pattern. Set "ignore" option to false '
-            + 'to override.';
+        = 'File ignored because of a matching ignore pattern. Set "ignore" option to false to '
+        + 'override.';
     }
     return {
         filePath,
@@ -321,10 +325,11 @@ exports.migrateOptions = (options = { }) => {
         return returnValue;
     }
     const {
-        overrideConfig: originalOverrideConfig,
+        [ESLintKey]: rawESLint,
+        overrideConfig: rawOverrideConfig,
         quiet,
         warnFileIgnored,
-        warnIgnored: originalWarnIgnored,
+        warnIgnored: rawWarnIgnored,
         ...eslintOptions
     }
     = options;
@@ -334,11 +339,11 @@ exports.migrateOptions = (options = { }) => {
             throwInvalidOptionError(`Invalid options: ${invalidOptions.join(', ')}`);
         }
     }
-    if (originalOverrideConfig != null && typeof originalOverrideConfig !== 'object') {
+    if (rawOverrideConfig != null && typeof rawOverrideConfig !== 'object') {
         throwInvalidOptionError('Option overrideConfig must be an object or null');
     }
     const overrideConfig = eslintOptions.overrideConfig
-    = originalOverrideConfig != null ? { ...originalOverrideConfig } : { };
+    = rawOverrideConfig != null ? { ...rawOverrideConfig } : { };
 
     function migrateOption(oldName, newName = oldName, convert = value => value) {
         const value = eslintOptions[oldName];
@@ -365,8 +370,9 @@ exports.migrateOptions = (options = { }) => {
         migrateOption('plugins');
     }
     migrateOption('rules');
-    const warnIgnored = warnFileIgnored !== undefined ? warnFileIgnored : originalWarnIgnored;
-    const returnValue = { eslintOptions, quiet, warnIgnored };
+    const ESLint = rawESLint || require('eslint').ESLint;
+    const warnIgnored = warnFileIgnored !== undefined ? warnFileIgnored : rawWarnIgnored;
+    const returnValue = { ESLint, eslintOptions, quiet, warnIgnored };
     return returnValue;
 };
 

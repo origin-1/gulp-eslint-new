@@ -12,8 +12,7 @@ const {
     resolveFormatter,
     resolveWriter,
     writeResults
-} = require('./util');
-const { ESLint }    = require('eslint');
+} = require('#util');
 const { promisify } = require('util');
 const { dest }      = require('vinyl-fs');
 
@@ -115,7 +114,7 @@ async function lintFile(eslintInfo, file, quiet, warnIgnored) {
 }
 
 module.exports = exports = options => {
-    const { eslintOptions, quiet, warnIgnored } = migrateOptions(options);
+    const { ESLint, eslintOptions, quiet, warnIgnored } = migrateOptions(options);
     const cwd = eslintOptions.cwd || process.cwd();
     const eslint = new ESLint(eslintOptions);
     const eslintInfo = { cwd, eslint };

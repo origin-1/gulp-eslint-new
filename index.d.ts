@@ -3,85 +3,85 @@ import                            'node';
 import { TransformCallback } from 'stream';
 
 type FormatterFunction
-    = (results: ESLint.LintResult[], data?: ESLint.LintResultData) => string | Promise<string>;
+= (results: ESLint.LintResult[], data?: ESLint.LintResultData) => string | Promise<string>;
 
 type LintResultStreamFunction<Type>
-    = ((action: (value: Type, callback: TransformCallback) => void) => NodeJS.ReadWriteStream)
-    & ((action: (value: Type) => unknown | Promise<unknown>) => NodeJS.ReadWriteStream);
+= ((action: (value: Type, callback: TransformCallback) => void) => NodeJS.ReadWriteStream)
+& ((action: (value: Type) => unknown | Promise<unknown>) => NodeJS.ReadWriteStream);
 
 export type GulpESLintOptions
-    =
-    Omit<
-    ESLint.Options,
-    | 'cache'
-    | 'cacheLocation'
-    | 'cacheStrategy'
-    | 'errorOnUnmatchedPattern'
-    | 'extensions'
-    | 'globInputPaths'
-    | 'plugins'
-    >
-    & {
-        /** @deprecated Use `overrideConfigFile` instead. */
-        configFile?: ESLint.Options['overrideConfigFile'];
+=
+Omit<
+ESLint.Options,
+| 'cache'
+| 'cacheLocation'
+| 'cacheStrategy'
+| 'errorOnUnmatchedPattern'
+| 'extensions'
+| 'globInputPaths'
+| 'plugins'
+>
+& {
+    /** @deprecated Use `overrideConfigFile` instead. */
+    configFile?: ESLint.Options['overrideConfigFile'];
 
-        /**
-         * @deprecated
-         * Use `overrideConfig.env` or `baseConfig.env` instead.
-         * Note the different option name and format.
-         */
-        envs?: string[] | undefined;
+    /**
+     * @deprecated
+     * Use `overrideConfig.env` or `baseConfig.env` instead.
+     * Note the different option name and format.
+     */
+    envs?: string[] | undefined;
 
-        /** @deprecated Use `overrideConfig.extends` or `baseConfig.extends` instead. */
-        extends?: Linter.Config['extends'];
+    /** @deprecated Use `overrideConfig.extends` or `baseConfig.extends` instead. */
+    extends?: Linter.Config['extends'];
 
-        /**
-         * @deprecated
-         * Use `overrideConfig.globals` or `baseConfig.globals` instead. Note the different format.
-         */
-        globals?: string[] | undefined;
+    /**
+     * @deprecated
+     * Use `overrideConfig.globals` or `baseConfig.globals` instead. Note the different format.
+     */
+    globals?: string[] | undefined;
 
-        /**
-         * @deprecated
-         * Use `overrideConfig.ignorePatterns` or `baseConfig.ignorePatterns` instead.
-         * Note the different option name.
-         */
-        ignorePattern?: Linter.Config['ignorePatterns'];
+    /**
+     * @deprecated
+     * Use `overrideConfig.ignorePatterns` or `baseConfig.ignorePatterns` instead.
+     * Note the different option name.
+     */
+    ignorePattern?: Linter.Config['ignorePatterns'];
 
-        /** @deprecated Use `overrideConfig.parser` or `baseConfig.parser` instead. */
-        parser?: Linter.Config['parser'];
+    /** @deprecated Use `overrideConfig.parser` or `baseConfig.parser` instead. */
+    parser?: Linter.Config['parser'];
 
-        /** @deprecated Use `overrideConfig.parserOptions` or `baseConfig.parserOptions` instead. */
-        parserOptions?: Linter.ParserOptions | undefined;
+    /** @deprecated Use `overrideConfig.parserOptions` or `baseConfig.parserOptions` instead. */
+    parserOptions?: Linter.ParserOptions | undefined;
 
-        plugins?: ESLint.Options['plugins'] | Linter.Config['plugins'];
+    plugins?: ESLint.Options['plugins'] | Linter.Config['plugins'];
 
-        quiet?:
-        | boolean
-        | ((message: Linter.LintMessage, index: number, list: Linter.LintMessage[]) => unknown)
-        | undefined;
+    quiet?:
+    | boolean
+    | ((message: Linter.LintMessage, index: number, list: Linter.LintMessage[]) => unknown)
+    | undefined;
 
-        /** @deprecated Use `overrideConfig.rules` or `baseConfig.rules` instead. */
-        rules?: Linter.Config['rules'];
+    /** @deprecated Use `overrideConfig.rules` or `baseConfig.rules` instead. */
+    rules?: Linter.Config['rules'];
 
-        /** @deprecated Use `warnIgnored` instead. */
-        warnFileIgnored?: boolean | undefined;
+    /** @deprecated Use `warnIgnored` instead. */
+    warnFileIgnored?: boolean | undefined;
 
-        warnIgnored?: boolean | undefined;
-    };
+    warnIgnored?: boolean | undefined;
+};
 
 export type GulpESLintResult = ESLint.LintResult;
 
 export type GulpESLintResults
-    =
-    GulpESLintResult[] &
-    {
-        errorCount:          number;
-        fatalErrorCount:     number;
-        warningCount:        number;
-        fixableErrorCount:   number;
-        fixableWarningCount: number;
-    };
+=
+GulpESLintResult[] &
+{
+    errorCount:          number;
+    fatalErrorCount:     number;
+    warningCount:        number;
+    fixableErrorCount:   number;
+    fixableWarningCount: number;
+};
 
 export type GulpESLintWriter = (str: string) => unknown | Promise<unknown>;
 

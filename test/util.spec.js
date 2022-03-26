@@ -2,11 +2,11 @@
 
 'use strict';
 
-const util                                                      = require('../util');
+const util                                                      = require('#util');
 const { createVinylDirectory, createVinylFile, finished, noop } = require('./test-util');
 const { strict: assert }                                        = require('assert');
-const { ESLint }                                                = require('eslint');
 const { resolve }                                               = require('path');
+const { satisfies }                                             = require('semver');
 const { Writable }                                              = require('stream');
 
 describe('utility functions', () => {
@@ -356,6 +356,17 @@ describe('utility functions', () => {
             assert.equal(warnIgnored, true);
         });
 
+        it('should return a default value for ESLint', () => {
+            const { ESLint } = util.migrateOptions();
+            assert.equal(typeof ESLint, 'function');
+        });
+
+        it('should return a custom value for ESLint', () => {
+            const expected = { };
+            const { ESLint: actual } = util.migrateOptions({ [util.ESLintKey]: expected });
+            assert.equal(actual, expected);
+        });
+
         it('should fail if a forbidden option is specified', () => {
             const options = {
                 cache:                   true,
@@ -409,73 +420,89 @@ describe('utility functions', () => {
 
     describe('resolveFormatter', () => {
 
-        const testResults = [
-            {
-                filePath: 'foo',
-                messages: [{ column: 99, line: 42, message: 'bar' }],
-                suppressedMessages: [],
-                errorCount: 1,
-                warningCount: 0
-            }
-        ];
+        function testResolveFormatter(ESLint) {
 
-        it('should default to the "stylish" formatter', async () => {
-            const eslintInfo = { eslint: new ESLint() };
-            const formatter = await util.resolveFormatter(eslintInfo);
-            const text = await formatter.format(testResults);
-            assert.equal(
-                text.replace(/\x1b\[\d+m/g, ''), // eslint-disable-line no-control-regex
-                '\nfoo\n  42:99  warning  bar\n\n✖ 1 problem (1 error, 0 warnings)\n'
-            );
+            const testResults = [
+                {
+                    filePath: 'foo',
+                    messages: [{ column: 99, line: 42, message: 'bar' }],
+                    suppressedMessages: [],
+                    errorCount: 1,
+                    warningCount: 0
+                }
+            ];
+
+            it('should default to the "stylish" formatter', async () => {
+                const eslintInfo = { eslint: new ESLint() };
+                const formatter = await util.resolveFormatter(eslintInfo);
+                const text = await formatter.format(testResults);
+                assert.equal(
+                    text.replace(/\x1b\[\d+m/g, ''), // eslint-disable-line no-control-regex
+                    '\nfoo\n  42:99  warning  bar\n\n✖ 1 problem (1 error, 0 warnings)\n'
+                );
+            });
+
+            it('should resolve a predefined formatter', async () => {
+                const eslintInfo = { eslint: new ESLint() };
+                const formatter = await util.resolveFormatter(eslintInfo, 'compact');
+                const text = await formatter.format(testResults);
+                assert.equal(
+                    text.replace(/\x1b\[\d+m/g, ''), // eslint-disable-line no-control-regex
+                    'foo: line 42, col 99, Warning - bar\n\n1 problem'
+                );
+            });
+
+            it('should resolve a custom formatter', async () => {
+                const eslintInfo = { eslint: new ESLint({ cwd: __dirname }) };
+                const formatter = await util.resolveFormatter(eslintInfo, './custom-formatter');
+                await formatter.format(testResults);
+                const { args } = require('./custom-formatter');
+                assert.equal(args[0], testResults);
+                if (satisfies(ESLint.version, '>=8.4')) {
+                    assert.equal(args[1].cwd, __dirname);
+                }
+                assert(args[1].rulesMeta);
+            });
+
+            it('should resolve a specified formatter object', async () => {
+                const eslint = new ESLint();
+                const eslintInfo = { cwd: process.cwd(), eslint };
+                const formatter = await eslint.loadFormatter();
+                const resolved = await util.resolveFormatter(eslintInfo, formatter);
+                assert.equal(resolved, formatter);
+            });
+
+            it('should wrap a formatter function in an object', async () => {
+                const eslintInfo = { cwd: 'TEST CWD', eslint: new ESLint() };
+                const format = (actualResults, data) => {
+                    assert.equal(actualResults, testResults);
+                    assert(data.rulesMeta);
+                    assert.equal(data.cwd, 'TEST CWD');
+                    return 'foo';
+                };
+                const formatter = await util.resolveFormatter(eslintInfo, format);
+                const text = await formatter.format(testResults);
+                assert.equal(text, 'foo');
+            });
+
+            it('should throw an error if a formatter cannot be resolved', async () => {
+                const eslintInfo = { eslint: new ESLint() };
+                await assert.rejects(
+                    () => util.resolveFormatter(eslintInfo, 'missing-formatter'),
+                    /\bThere was a problem loading formatter\b/
+                );
+            });
+
+        }
+
+        describe('with ESLint 8.0', () => {
+            const { ESLint } = require('eslint-8.0');
+            testResolveFormatter(ESLint);
         });
 
-        it('should resolve a predefined formatter', async () => {
-            const eslintInfo = { eslint: new ESLint() };
-            const formatter = await util.resolveFormatter(eslintInfo, 'compact');
-            const text = await formatter.format(testResults);
-            assert.equal(
-                text.replace(/\x1b\[\d+m/g, ''), // eslint-disable-line no-control-regex
-                'foo: line 42, col 99, Warning - bar\n\n1 problem'
-            );
-        });
-
-        it('should resolve a custom formatter', async () => {
-            const eslintInfo = { eslint: new ESLint({ cwd: __dirname }) };
-            const formatter = await util.resolveFormatter(eslintInfo, './custom-formatter');
-            await formatter.format(testResults);
-            const { args } = require('./custom-formatter');
-            assert.equal(args[0], testResults);
-            assert.equal(args[1].cwd, __dirname);
-            assert(args[1].rulesMeta);
-        });
-
-        it('should resolve a specified formatter object', async () => {
-            const eslint = new ESLint();
-            const eslintInfo = { cwd: process.cwd(), eslint };
-            const formatter = await eslint.loadFormatter();
-            const resolved = await util.resolveFormatter(eslintInfo, formatter);
-            assert.equal(resolved, formatter);
-        });
-
-        it('should wrap a formatter function in an object', async () => {
-            const eslintInfo = { cwd: 'TEST CWD', eslint: new ESLint() };
-            const format = (actualResults, data) => {
-                assert.equal(actualResults, testResults);
-                assert(data.rulesMeta);
-                assert.equal(data.cwd, 'TEST CWD');
-                return 'foo';
-            };
-            const formatter = await util.resolveFormatter(eslintInfo, format);
-            const text = await formatter.format(testResults);
-            assert.equal(text, 'foo');
-        });
-
-        it('should throw an error if a formatter cannot be resolved', async () => {
-            const eslintInfo = { eslint: new ESLint() };
-            await assert.rejects(
-                () => util.resolveFormatter(eslintInfo, 'missing-formatter'),
-                /\bThere was a problem loading formatter\b/
-            );
+        describe('with ESLint 8.x', () => {
+            const { ESLint } = require('eslint-8.x');
+            testResolveFormatter(ESLint);
         });
 
     });
