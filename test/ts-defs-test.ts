@@ -1,5 +1,38 @@
 import gulpESLintNew, { GulpESLintWriter } from '..';
 
+gulpESLintNew({
+    configFile:         undefined,
+    envs:               undefined,
+    extends:            undefined,
+    globals:            undefined,
+    ignorePattern:      undefined,
+    parser:             undefined,
+    parserOptions:      undefined,
+    plugins:            undefined,
+    quiet:              undefined,
+    rules:              undefined,
+    warnFileIgnored:    undefined,
+    warnIgnored:        undefined
+});
+
+// @ts-expect-error Invalid option.
+gulpESLintNew({ cache: undefined });
+
+// @ts-expect-error Invalid option.
+gulpESLintNew({ cacheLocation: undefined });
+
+// @ts-expect-error Invalid option.
+gulpESLintNew({ cacheStrategy: undefined });
+
+// @ts-expect-error Invalid option.
+gulpESLintNew({ errorOnUnmatchedPattern: undefined });
+
+// @ts-expect-error Invalid option.
+gulpESLintNew({ extensions: undefined });
+
+// @ts-expect-error Invalid option.
+gulpESLintNew({ globInputPaths: undefined });
+
 const isStream = (stream: NodeJS.ReadWriteStream) => void stream;
 
 isStream(gulpESLintNew.result(() => undefined));

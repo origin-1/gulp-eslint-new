@@ -321,9 +321,8 @@ describe('utility functions', () => {
         });
 
         it('should migrate "extends"', () => {
-            const extendsValue = ['foo', 'bar', 'baz'];
-            const { eslintOptions } = util.migrateOptions({ extends: extendsValue });
-            assert.deepEqual(eslintOptions, { overrideConfig: { extends: extendsValue } });
+            const { eslintOptions } = util.migrateOptions({ extends: 'foo' });
+            assert.deepEqual(eslintOptions, { overrideConfig: { extends: 'foo' } });
         });
 
         it('should migrate a "globals" array to an object', () => {
@@ -341,6 +340,16 @@ describe('utility functions', () => {
             assert.deepEqual(eslintOptions, { overrideConfig: { ignorePatterns } });
         });
 
+        it('should migrate "parser"', () => {
+            const { eslintOptions } = util.migrateOptions({ parser: 'foo' });
+            assert.deepEqual(eslintOptions, { overrideConfig: { parser: 'foo' } });
+        });
+
+        it('should migrate "parserOptions"', () => {
+            const { eslintOptions } = util.migrateOptions({ parserOptions: 'foo' });
+            assert.deepEqual(eslintOptions, { overrideConfig: { parserOptions: 'foo' } });
+        });
+
         it('should migrate a "plugins" arrays', () => {
             const { eslintOptions } = util.migrateOptions({ plugins: ['foo', 'bar'] });
             assert.deepEqual(eslintOptions, { overrideConfig: { plugins: ['foo', 'bar'] } });
@@ -351,9 +360,28 @@ describe('utility functions', () => {
             assert.deepEqual(eslintOptions, { overrideConfig: { }, plugins: { foo: 'bar' } });
         });
 
+        it('should migrate "rules"', () => {
+            const { eslintOptions } = util.migrateOptions({ rules: 'foo' });
+            assert.deepEqual(eslintOptions, { overrideConfig: { rules: 'foo' } });
+        });
+
         it('should treat "warnFileIgnored" as a synonym for "warnIgnored"', () => {
             const { warnIgnored } = util.migrateOptions({ warnFileIgnored: true });
             assert.equal(warnIgnored, true);
+        });
+
+        it('should suppress undefined legacy options', () => {
+            const { eslintOptions } = util.migrateOptions({
+                configFile:     undefined,
+                envs:           undefined,
+                extends:        undefined,
+                globals:        undefined,
+                ignorePattern:  undefined,
+                parser:         undefined,
+                parserOptions:  undefined,
+                rules:          undefined
+            });
+            assert.deepEqual(eslintOptions, { overrideConfig: { } });
         });
 
         it('should return a default value for ESLint', () => {
