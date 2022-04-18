@@ -52,13 +52,23 @@ task(
 task(
     'ts-test',
     async () => {
-        const { join }  = require('path');
-        const { createDiagnosticReporter, createProgram, getPreEmitDiagnostics, sys }
+        const { dirname, join } = require('path');
+        const {
+            createDiagnosticReporter,
+            createProgram,
+            getPreEmitDiagnostics,
+            parseJsonConfigFileContent,
+            readConfigFile,
+            sys
+        }
         = require('typescript');
 
         const pkgPath = __dirname;
-        const fileName = join(pkgPath, 'test/ts-defs-test.ts');
-        const program = createProgram([fileName], { strict: true });
+        const tsConfigPath = join(pkgPath, 'test/tsconfig.json');
+        const tsConfig = readConfigFile(tsConfigPath, sys.readFile);
+        const basePath = dirname(tsConfigPath);
+        const { fileNames, options } = parseJsonConfigFileContent(tsConfig.config, sys, basePath);
+        const program = createProgram(fileNames, options);
         const diagnostics = getPreEmitDiagnostics(program);
         if (diagnostics.length) {
             const reporter = createDiagnosticReporter(sys, true);

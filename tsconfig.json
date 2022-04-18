@@ -1,8 +1,8 @@
 {
   "compilerOptions": {
     "exactOptionalPropertyTypes": true,
-    "lib": [],
     "moduleResolution": "node",
+    "noEmit": true,
     "strict": true
   }
 }
