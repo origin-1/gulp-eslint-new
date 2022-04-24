@@ -45,18 +45,18 @@ Or use the plugin API to do things like:
 gulp.src(['**/*.js', '!node_modules/**'])
     .pipe(gulpESLintNew({
         overrideConfig: {
-            plugins: ['json'],
-            extends: ['plugin:json/recommended'],
-            rules: {
-                'my-custom-rule': 1,
-                'strict': 2
-            },
-            globals: {
-                jQuery: 'readonly',
-                $: 'readonly'
-            },
             env: {
-                'browser': true
+                browser: true,
+                commonjs: true,
+                jquery: true
+            },
+            extends: ['eslint:recommended', 'plugin:jquery/slim'],
+            globals: {
+                chrome: 'readonly'
+            },
+            plugins: ['jquery'],
+            rules: {
+                'strict': 'error'
             }
         },
         warnIgnored: true
