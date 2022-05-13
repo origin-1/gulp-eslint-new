@@ -192,7 +192,7 @@ describe('utility functions', () => {
                 .createTransform(
                     noop,
                     () => new Promise((_, reject) => {
-                        setImmediate(reject('foo'));
+                        setImmediate(() => reject('foo'));
                     })
                 )
                 .on('error', err => {
