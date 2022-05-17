@@ -1,4 +1,5 @@
-import gulpESLintNew, { GulpESLintWriter } from '..';
+import gulpESLintNew, { GulpESLintWriter }  from '..';
+import { ESLint }                           from 'eslint';
 
 gulpESLintNew({
     configFile:         undefined,
@@ -55,9 +56,13 @@ isStream(gulpESLintNew.failOnError());
 
 isStream(gulpESLintNew.failAfterError());
 
+const loadedFormatter
+= { format: async (results: readonly ESLint.LintResult[]) => JSON.stringify(results) };
+
 isStream(gulpESLintNew.formatEach());
 gulpESLintNew.formatEach('test');
 gulpESLintNew.formatEach({ format: () => 'test' });
+gulpESLintNew.formatEach(loadedFormatter);
 gulpESLintNew.formatEach(() => 'test');
 (writer: NodeJS.WritableStream | GulpESLintWriter | undefined) =>
     gulpESLintNew.formatEach(undefined, writer);
@@ -67,6 +72,7 @@ gulpESLintNew.formatEach({ });
 isStream(gulpESLintNew.format());
 gulpESLintNew.format('test');
 gulpESLintNew.format({ format: () => 'test' });
+gulpESLintNew.format(loadedFormatter);
 gulpESLintNew.format(() => 'test');
 (writer: NodeJS.WritableStream | GulpESLintWriter | undefined) =>
     gulpESLintNew.format(undefined, writer);

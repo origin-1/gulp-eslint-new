@@ -9,6 +9,10 @@ type LintResultStreamFunction<Type>
 = ((action: (value: Type, callback: TransformCallback) => void) => NodeJS.ReadWriteStream)
 & ((action: (value: Type) => unknown | Promise<unknown>) => NodeJS.ReadWriteStream);
 
+interface LoadedFormatter {
+    format(results: ESLint.LintResult[]): string | Promise<string>;
+}
+
 export type GulpESLintOptions
 =
 Omit<
@@ -144,7 +148,7 @@ declare const gulpESLintNew: {
      * @returns gulp file stream.
      */
     formatEach(
-        formatter?: string | ESLint.Formatter | FormatterFunction,
+        formatter?: string | LoadedFormatter | FormatterFunction,
         writer?: GulpESLintWriter | NodeJS.WritableStream
     ): NodeJS.ReadWriteStream;
 
@@ -160,7 +164,7 @@ declare const gulpESLintNew: {
      * @returns gulp file stream.
      */
     format(
-        formatter?: string | ESLint.Formatter | FormatterFunction,
+        formatter?: string | LoadedFormatter | FormatterFunction,
         writer?: GulpESLintWriter | NodeJS.WritableStream
     ): NodeJS.ReadWriteStream;
 

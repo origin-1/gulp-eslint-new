@@ -2,11 +2,21 @@
 
 /**
  * @typedef {import('eslint').ESLint}                 ESLint
- * @typedef {import('eslint').ESLint.Formatter}       ESLint.Formatter
  * @typedef {import('eslint').ESLint.LintResult}      ESLint.LintResult
+ * @typedef {import('eslint').ESLint.LintResultData}  ESLint.LintResultData
  * @typedef {import('.').GulpESLintWriter}            GulpESLintWriter
  * @typedef {import('eslint').Linter}                 Linter
  * @typedef {import('eslint').Linter.LintMessage}     Linter.LintMessage
+ * @typedef
+ * {{ format(results: ESLint.LintResult[]): string | Promise<string>; }}
+ * LoadedFormatter
+ */
+
+/**
+ * @callback FormatterFunction
+ * @param {ESLint.LintResult[]} results
+ * @param {ESLint.LintResultData} [data]
+ * @returns {string | Promise<string>}
  */
 
 const fancyLog      = require('fancy-log');
@@ -72,10 +82,10 @@ function isWarningMessage({ severity }) {
  * @param {{ cwd: string, eslint: ESLint }} eslintInfo
  * Current directory and instance of ESLint used to load and configure the formatter.
  *
- * @param {string|ESLint.Formatter|Function} [formatter]
+ * @param {string|LoadedFormatter|FormatterFunction} [formatter]
  * A name or path of a formatter, a formatter object or a formatter function.
  *
- * @returns {Promise<ESLint.Formatter>} An ESLint formatter.
+ * @returns {Promise<LoadedFormatter>} An ESLint formatter.
  */
 function resolveFormatter({ cwd, eslint }, formatter) {
     if (isObject(formatter) && typeof formatter.format === 'function') {
@@ -401,7 +411,7 @@ exports.resolveWriter = (writer = fancyLog) => {
  * @param {ESLint.LintResult[]} results
  * A list of ESLint results.
  *
- * @param {ESLint.Formatter} formatterObj
+ * @param {LoadedFormatter} formatterObj
  * A formatter object.
  *
  * @param {GulpESLintWriter} [writer]
