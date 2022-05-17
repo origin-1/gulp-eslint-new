@@ -61,6 +61,8 @@ gulpESLintNew.formatEach({ format: () => 'test' });
 gulpESLintNew.formatEach(() => 'test');
 (writer: NodeJS.WritableStream | GulpESLintWriter | undefined) =>
     gulpESLintNew.formatEach(undefined, writer);
+// @ts-expect-error Invalid argument type.
+gulpESLintNew.formatEach({ });
 
 isStream(gulpESLintNew.format());
 gulpESLintNew.format('test');
@@ -68,5 +70,7 @@ gulpESLintNew.format({ format: () => 'test' });
 gulpESLintNew.format(() => 'test');
 (writer: NodeJS.WritableStream | GulpESLintWriter | undefined) =>
     gulpESLintNew.format(undefined, writer);
+// @ts-expect-error Invalid argument type.
+gulpESLintNew.format({ });
 
 isStream(gulpESLintNew.fix());

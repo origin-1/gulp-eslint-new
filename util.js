@@ -34,7 +34,7 @@ function createPluginError(error) {
     if (error == null) {
         error = 'Unknown Error';
     }
-    return new PluginError('gulp-eslint-new', error);
+    return new PluginError('gulp-eslint-new', error, { showStack: true });
 }
 
 const { defineProperty } = Object;

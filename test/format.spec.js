@@ -88,7 +88,8 @@ describe('gulp-eslint-new format', () => {
                 constructor: PluginError,
                 message: testMessage,
                 name: testErrorName,
-                plugin: 'gulp-eslint-new'
+                plugin: 'gulp-eslint-new',
+                showStack: true
             }
         );
         assert.equal(writeCount, 1);
@@ -141,6 +142,23 @@ describe('gulp-eslint-new format', () => {
         error => new Promise((_, reject) => setImmediate(() => reject(error)))
     ));
 
+    it('should emit an error if an invalid formatter is passed', async () => {
+        const files = getFiles();
+        const lintStream
+        = gulpESLintNew({ useEslintrc: false, rules: { 'strict': 2 }, warnIgnored: true });
+        const formatStream = gulpESLintNew.format(42);
+        lintStream.pipe(formatStream);
+        await assert.rejects(
+            runStream(formatStream, files, lintStream),
+            {
+                constructor: PluginError,
+                name: 'Error',
+                plugin: 'gulp-eslint-new',
+                showStack: true
+            }
+        );
+    });
+
     it('should emit an error if a linted file has no ESLint instance', async () => {
         const file = createVinylFile('file.js', '');
         file.eslint = { };
@@ -150,7 +168,8 @@ describe('gulp-eslint-new format', () => {
                 constructor: PluginError,
                 fileName: file.path,
                 message: 'ESLint information not available',
-                plugin: 'gulp-eslint-new'
+                plugin: 'gulp-eslint-new',
+                showStack: false
             }
         );
     });
@@ -169,7 +188,8 @@ describe('gulp-eslint-new format', () => {
                 constructor: PluginError,
                 message:
                 'The files in the stream were not processed by the same instance of ESLint',
-                plugin: 'gulp-eslint-new'
+                plugin: 'gulp-eslint-new',
+                showStack: false
             }
         );
     });
@@ -199,7 +219,8 @@ describe('gulp-eslint-new formatEach', () => {
                 constructor: PluginError,
                 message: testMessage,
                 name: testErrorName,
-                plugin: 'gulp-eslint-new'
+                plugin: 'gulp-eslint-new',
+                showStack: true
             }
         );
         assert.equal(writeCount, 1);
@@ -278,6 +299,23 @@ describe('gulp-eslint-new formatEach', () => {
         error => new Promise((_, reject) => setImmediate(() => reject(error)))
     ));
 
+    it('should emit an error if an invalid formatter is passed', async () => {
+        const files = getFiles();
+        const lintStream
+        = gulpESLintNew({ useEslintrc: false, rules: { 'strict': 2 }, warnIgnored: true });
+        const formatStream = gulpESLintNew.formatEach(42);
+        lintStream.pipe(formatStream);
+        await assert.rejects(
+            runStream(formatStream, files, lintStream),
+            {
+                constructor: PluginError,
+                name: 'Error',
+                plugin: 'gulp-eslint-new',
+                showStack: true
+            }
+        );
+    });
+
     it('should emit an error if a linted file has no ESLint instance', async () => {
         const file = createVinylFile('file.js', '');
         file.eslint = { };
@@ -287,7 +325,8 @@ describe('gulp-eslint-new formatEach', () => {
                 constructor: PluginError,
                 fileName: file.path,
                 message: 'ESLint information not available',
-                plugin: 'gulp-eslint-new'
+                plugin: 'gulp-eslint-new',
+                showStack: false
             }
         );
     });
