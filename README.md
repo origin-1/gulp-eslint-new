@@ -30,7 +30,7 @@ const gulpESLintNew = require('gulp-eslint-new');
 exports.default = () => src(['scripts/*.js'])   // Read files.
     .pipe(gulpESLintNew({ fix: true }))         // Lint files, create fixes.
     .pipe(gulpESLintNew.fix())                  // Fix files if necessary.
-    .pipe(gulpESLintNew.format())               // Outputs lint results to the console.
+    .pipe(gulpESLintNew.format())               // Output lint results to the console.
     .pipe(gulpESLintNew.failAfterError());      // Exit with an error if problems are found.
 ```
 
