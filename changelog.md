@@ -1,3 +1,10 @@
+<a name="1.4.3"></a>
+## [1.4.3](https://github.com/fasttime/gulp-eslint-new/releases/tag/1.4.3) (2022-05-18)
+
+* When a dependency throws an error during an asynchronous stream operation, the emitted `PluginError` now includes the stack trace when printed.
+* Improved TypeScript type declarations.
+* Clarified code examples in the readme file.
+
 <a name="1.4.2"></a>
 ## [1.4.2](https://github.com/fasttime/gulp-eslint-new/releases/tag/1.4.2) (2022-02-27)
 
