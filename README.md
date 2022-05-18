@@ -27,16 +27,11 @@ const { src } = require('gulp');
 const gulpESLintNew = require('gulp-eslint-new');
 
 // Define the default gulp task.
-exports.default = () => src(['scripts/*.js'])
-    // gulpESLintNew() attaches the lint output to the "eslint" property of the
-    // file object so it can be used by other modules.
-    .pipe(gulpESLintNew())
-    // gulpESLintNew.format() outputs the lint results to the console.
-    // Alternatively use gulpESLintNew.formatEach() (see docs).
-    .pipe(gulpESLintNew.format())
-    // To have the process exit with an error code (1) on lint error, return the
-    // stream and pipe to failAfterError last.
-    .pipe(gulpESLintNew.failAfterError());
+exports.default = () => src(['scripts/*.js'])   // Read files.
+    .pipe(gulpESLintNew({ fix: true }))         // Lint files, create fixes.
+    .pipe(gulpESLintNew.fix())                  // Fix files if necessary.
+    .pipe(gulpESLintNew.format())               // Outputs lint results to the console.
+    .pipe(gulpESLintNew.failAfterError());      // Exit with an error if problems are found.
 ```
 
 Or use the plugin API to do things like:
