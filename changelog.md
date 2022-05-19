@@ -1,3 +1,9 @@
+<a name="1.4.4"></a>
+## [1.4.4](https://github.com/fasttime/gulp-eslint-new/releases/tag/1.4.4) (2022-05-19)
+
+* Fixed a regression in version 1.4.3 that caused a `TypeError` when `gulpESLintNew` was called with a string argument.
+* Minimal change in the readme file.
+
 <a name="1.4.3"></a>
 ## [1.4.3](https://github.com/fasttime/gulp-eslint-new/releases/tag/1.4.3) (2022-05-18)
 
