@@ -323,19 +323,24 @@ function toBooleanMap(keys, defaultValue, displayName) {
 }
 
 /**
- * Create config helper to merge various config sources.
+ * Organize, migrate and partially validate the options passed to gulp-eslint-new.
  *
- * @param {Object} [options] - Options to migrate.
- * @returns {Object} Migrated options.
+ * @param {Record<string | symbol, unknown>} [options] - Options to migrate.
+ * @returns {MigratedOptions} Migrated options.
+ *
+ * @typedef {Object} MigratedOptions
+ * @property {Function} [ESLint]
+ * @property {Record<string, unknown>} eslintOptions
+ * @property {boolean | undefined} [quiet]
+ * @property {boolean | undefined} [warnIgnored]
  */
 exports.migrateOptions = (options = { }) => {
     if (typeof options === 'string') {
-        // Basic config path overload: `eslint('path/to/config.json')`.
         const returnValue = { eslintOptions: { overrideConfigFile: options } };
         return returnValue;
     }
     const {
-        [ESLintKey]: rawESLint,
+        [ESLintKey]: ESLint,
         overrideConfig: rawOverrideConfig,
         quiet,
         warnFileIgnored,
@@ -380,7 +385,6 @@ exports.migrateOptions = (options = { }) => {
         migrateOption('plugins');
     }
     migrateOption('rules');
-    const ESLint = rawESLint || require('eslint').ESLint;
     const warnIgnored = warnFileIgnored !== undefined ? warnFileIgnored : rawWarnIgnored;
     const returnValue = { ESLint, eslintOptions, quiet, warnIgnored };
     return returnValue;

@@ -29,8 +29,7 @@ function wrapAction(action) {
 const createResultStream = action => {
     action = wrapAction(action);
     return createTransform(
-        async file => {
-            const { eslint } = file;
+        async ({ eslint }) => {
             if (eslint) {
                 await action(eslint);
             }
@@ -114,8 +113,9 @@ async function lintFile(eslintInfo, file, quiet, warnIgnored) {
 }
 
 module.exports = exports = options => {
-    const { ESLint, eslintOptions, quiet, warnIgnored } = migrateOptions(options);
-    const cwd = eslintOptions.cwd || process.cwd();
+    const { ESLint = require('eslint').ESLint, eslintOptions, quiet, warnIgnored }
+    = migrateOptions(options);
+    const { cwd = process.cwd() } = eslintOptions;
     const eslint = new ESLint(eslintOptions);
     const eslintInfo = { cwd, eslint };
     return createTransform(file => lintFile(eslintInfo, file, quiet, warnIgnored));

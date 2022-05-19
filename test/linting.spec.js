@@ -469,4 +469,28 @@ describe('gulp-eslint-new plugin', () => {
         testLinting(ESLint);
     });
 
+    it('should accept a string argument', async () => {
+        const file = createVinylFile('file.js', '$()');
+        await finished(
+            gulpESLintNew('semi/.eslintrc')
+                .on('data', noop)
+                .end(file)
+        );
+        assert.equal(file.eslint.filePath, file.path);
+        assert(Array.isArray(file.eslint.messages));
+        assert.equal(file.eslint.messages.length, 1);
+        const [message] = file.eslint.messages;
+        assert.equal(typeof message.message, 'string');
+        assert.equal(typeof message.line, 'number');
+        assert.equal(typeof message.column, 'number');
+        assert.equal(message.ruleId, 'semi');
+        assert.equal(message.severity, 2);
+        assert.equal(file.eslint.errorCount, 1);
+        assert.equal(file.eslint.warningCount, 0);
+        assert.equal(file.eslint.fixableErrorCount, 1);
+        assert.equal(file.eslint.fixableWarningCount, 0);
+        assert.equal(file.eslint.fatalErrorCount, 0);
+        assert.equal(file._eslintInfo.eslint.constructor.name, 'ESLint');
+    });
+
 });

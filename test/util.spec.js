@@ -384,11 +384,6 @@ describe('utility functions', () => {
             assert.deepEqual(eslintOptions, { overrideConfig: { } });
         });
 
-        it('should return a default value for ESLint', () => {
-            const { ESLint } = util.migrateOptions();
-            assert.equal(typeof ESLint, 'function');
-        });
-
         it('should return a custom value for ESLint', () => {
             const expected = { };
             const { ESLint: actual } = util.migrateOptions({ [util.ESLintKey]: expected });
