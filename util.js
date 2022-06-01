@@ -58,9 +58,31 @@ const hasOwn = Function.prototype.call.bind(Object.prototype.hasOwnProperty);
  * @param {Linter.LintMessage} { severity } - An ESLint message.
  * @returns {boolean} Whether the message is an error message.
  */
-function isErrorMessage({ severity }) {
-    return severity > 1;
-}
+const isErrorMessage = ({ severity }) => severity > 1;
+
+/**
+ * Determine if a message is a fatal error.
+ *
+ * @param {Linter.LintMessage} { fatal, severity } - An ESLint message.
+ * @returns {boolean} Whether the message is a fatal error message.
+ */
+const isFatalErrorMessage = ({ fatal, severity }) => !!fatal && severity > 1;
+
+/**
+ * Determine if a message is a fixable error.
+ *
+ * @param {Linter.LintMessage} { fix, severity } - An ESLint message.
+ * @returns {boolean} Whether the message is a fixable error message.
+ */
+const isFixableErrorMessage = ({ fix, severity }) => fix !== undefined && severity > 1;
+
+/**
+ * Determine if a message is a fixable warning.
+ *
+ * @param {Linter.LintMessage} { fix, severity } - An ESLint message.
+ * @returns {boolean} Whether the message is a fixable warning message.
+ */
+const isFixableWarningMessage = ({ fix, severity }) => fix !== undefined && severity === 1;
 
 const isObject = value => Object(value) === value;
 
@@ -70,9 +92,7 @@ const isObject = value => Object(value) === value;
  * @param {Linter.LintMessage} { severity } - An ESLint message.
  * @returns {boolean} Whether the message is a warning message.
  */
-function isWarningMessage({ severity }) {
-    return severity === 1;
-}
+const isWarningMessage = ({ severity }) => severity === 1;
 
 /**
  * Resolve a formatter from a string.
@@ -190,58 +210,24 @@ exports.createTransform = (handleFile, handleFinal) => {
 };
 
 /**
- * Increment count if message is an error.
+ * Count the number of messages for which a predicate function returns `true`.
  *
- * @param {number} count - Number of errors.
- * @param {Linter.LintMessage} message - An ESLint message.
- * @returns {number} The number of errors, message included.
- */
-function countErrorMessage(count, message) {
-    return count + Number(isErrorMessage(message));
-}
-
-/**
- * Increment count if message is a warning.
+ * @param {Linter.LintMessage[]} messages - ESLint messages to count.
+ * @param {CountMessagePredicate} predicate - Function to call for each message.
+ * @returns {number} The number of messages for which the predicate function returns `true`.
  *
- * @param {number} count - Number of warnings.
- * @param {Linter.LintMessage} message - An ESLint message.
- * @returns {number} The number of warnings, message included.
+ * @callback CountMessagePredicate
+ * @param {ESLint.LintMessage} message
+ * @returns {boolean}
  */
-function countWarningMessage(count, message) {
-    return count + Number(isWarningMessage(message));
-}
-
-/**
- * Increment count if message is a fixable error.
- *
- * @param {number} count - Number of fixable errors.
- * @param {Linter.LintMessage} message - An ESLint message.
- * @returns {number} The number of fixable errors, message included.
- */
-function countFixableErrorMessage(count, message) {
-    return count + Number(isErrorMessage(message) && message.fix !== undefined);
-}
-
-/**
- * Increment count if message is a fixable warning.
- *
- * @param {Number} count - Number of fixable warnings.
- * @param {Linter.LintMessage} message - An ESLint message.
- * @returns {Number} The number of fixable warnings, message included.
- */
-function countFixableWarningMessage(count, message) {
-    return count + Number(isWarningMessage(message) && message.fix !== undefined);
-}
-
-/**
- * Increment count if message is a fatal error.
- *
- * @param {Number} count - Number of fatal errors.
- * @param {Linter.LintMessage} message - An ESLint message.
- * @returns {Number} The number of fatal errors, message included.
- */
-function countFatalErrorMessage(count, message) {
-    return count + Number(isErrorMessage(message) && !!message.fatal);
+function countMessages(messages, predicate) {
+    let count = 0;
+    for (const message of messages) {
+        if (predicate(message)) {
+            ++count;
+        }
+    }
+    return count;
 }
 
 /**
@@ -255,11 +241,11 @@ exports.filterResult = (result, filter) => {
     const { messages, ...newResult } = result;
     const newMessages = messages.filter(filter, result);
     newResult.messages = newMessages;
-    newResult.errorCount          = newMessages.reduce(countErrorMessage, 0);
-    newResult.warningCount        = newMessages.reduce(countWarningMessage, 0);
-    newResult.fixableErrorCount   = newMessages.reduce(countFixableErrorMessage, 0);
-    newResult.fixableWarningCount = newMessages.reduce(countFixableWarningMessage, 0);
-    newResult.fatalErrorCount     = newMessages.reduce(countFatalErrorMessage, 0);
+    newResult.errorCount          = countMessages(newMessages, isErrorMessage);
+    newResult.warningCount        = countMessages(newMessages, isWarningMessage);
+    newResult.fixableErrorCount   = countMessages(newMessages, isFixableErrorMessage);
+    newResult.fixableWarningCount = countMessages(newMessages, isFixableWarningMessage);
+    newResult.fatalErrorCount     = countMessages(newMessages, isFatalErrorMessage);
     return newResult;
 };
 
@@ -328,7 +314,7 @@ function toBooleanMap(keys, defaultValue, displayName) {
  * @param {Record<string | symbol, unknown>} [options] - Options to migrate.
  * @returns {MigratedOptions} Migrated options.
  *
- * @typedef {Object} MigratedOptions
+ * @typedef MigratedOptions
  * @property {Function} [ESLint]
  * @property {Record<string, unknown>} eslintOptions
  * @property {boolean | undefined} [quiet]
