@@ -72,7 +72,7 @@ overrides:
 
     extends: plugin:@typescript-eslint/recommended
 
-    plugins: ["eslint-plugin-tsdoc"]
+    plugins: ["tsdoc"]
 
     rules:
       "@typescript-eslint/brace-style": [2, "1tbs"]

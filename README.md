@@ -10,6 +10,14 @@
 npm i -D gulp-eslint-new
 ```
 
+gulp-eslint-new will install the latest version of ESLint 8, unless another one is found.
+To use a particular version of ESLint 8, make sure to have it installed.
+For example, to use ESLint 8.8.0:
+
+```console
+npm i -D gulp-eslint-new eslint@8.8.0
+```
+
 ## Migrating
 
 If you are migrating from [gulp-eslint][gulp-eslint], you probably won't need to change any settings in your gulp task.
