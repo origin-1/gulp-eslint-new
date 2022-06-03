@@ -45,7 +45,7 @@ rules:
   space-unary-ops: 2
   spaced-comment: [2, "always", { exceptions: ["-"] }]
   strict: [2, "global"]
-  valid-jsdoc: [1, { requireReturn: false, prefer: { return: "returns" }}]
+  valid-jsdoc: [2, { requireReturn: false, prefer: { return: "returns" }}]
 
 overrides:
 

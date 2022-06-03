@@ -102,7 +102,7 @@ const isWarningMessage = ({ severity }) => severity === 1;
  * @param {{ cwd: string, eslint: ESLint }} eslintInfo
  * Current directory and instance of ESLint used to load and configure the formatter.
  *
- * @param {string|LoadedFormatter|FormatterFunction} [formatter]
+ * @param {string | LoadedFormatter | FormatterFunction} [formatter]
  * A name or path of a formatter, a formatter object or a formatter function.
  *
  * @returns {Promise<LoadedFormatter>} An ESLint formatter.
@@ -217,8 +217,8 @@ exports.createTransform = (handleFile, handleFinal) => {
  * @returns {number} The number of messages for which the predicate function returns `true`.
  *
  * @callback CountMessagePredicate
- * @param {ESLint.LintMessage} message
- * @returns {boolean}
+ * @param {ESLint.LintMessage} message - ESLint message.
+ * @returns {boolean} `true` or `false`, depending on the input.
  */
 function countMessages(messages, predicate) {
     let count = 0;
@@ -285,10 +285,10 @@ function throwInvalidOptionError(message) {
 /**
  * Convert a string array to a boolean map.
  *
- * @param {string[]|null} keys - The keys to assign true.
+ * @param {string[] | null} keys - The keys to assign true.
  * @param {boolean} defaultValue - The default value for each property.
  * @param {string} displayName - The property name which is used in error message.
- * @returns {Record<string,boolean>} The boolean map.
+ * @returns {Record<string, boolean>} The boolean map.
  */
 function toBooleanMap(keys, defaultValue, displayName) {
     if (keys && !Array.isArray(keys)) {
@@ -314,7 +314,7 @@ function toBooleanMap(keys, defaultValue, displayName) {
  * @param {Record<string | symbol, unknown>} [options] - Options to migrate.
  * @returns {MigratedOptions} Migrated options.
  *
- * @typedef MigratedOptions
+ * @typedef {Object} MigratedOptions
  * @property {Function} [ESLint]
  * @property {Record<string, unknown>} eslintOptions
  * @property {boolean | undefined} [quiet]
@@ -381,7 +381,7 @@ exports.resolveFormatter = resolveFormatter;
 /**
  * Resolve a writer function used to write formatted ESLint messages.
  *
- * @param {GulpESLintWriter|NodeJS.WritableStream} [writer=fancyLog]
+ * @param {GulpESLintWriter | NodeJS.WritableStream} [writer=fancyLog]
  * A stream or function to resolve as a format writer.
  * @returns {GulpESLintWriter} A function that writes formatted messages.
  */

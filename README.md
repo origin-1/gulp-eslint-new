@@ -77,11 +77,11 @@ For additional examples, look through the [example directory](https://github.com
 
 ### `gulpESLintNew(options)`
 
-Param type: `Object`
+Param type: `Record<string, unknown>`
 
 Supported options include all [linting options](https://eslint.org/docs/developer-guide/nodejs-api#linting) and [autofix options](https://eslint.org/docs/developer-guide/nodejs-api#autofix) of the `ESLint` constructor.
 Please, refer to the ESLint documentation for information about the usage of those options.
-Check also the notes about the [Autofix Function](#autofix-function).
+Check also the notes about the [autofix function](#autofix).
 Additionally, gulp-eslint-new supports the options listed below.
 
 #### Additional Options
@@ -143,13 +143,6 @@ When `gulpESLintNew` is passed any of these options, it will map them automatica
 | `plugins`         | `overrideConfig.plugins`        | `plugins` as an array of strings is migrated to `overrideConfig.plugins`. By contrast, `plugins` as an object that maps strings to plugin implementations has different semantics and is not migrated. |
 | `rules`           | `overrideConfig.rules`          | |
 | `warnFileIgnored` | `warnIgnored`                   | New option name. |
-
-#### Autofix Function
-
-When the `fix` option is specified, fixes are applied to the gulp stream.
-The fixed content can be saved to file using [`gulpESLintNew.fix()`](#gulpeslintnewfix) (See [example/fix.js](https://github.com/fasttime/gulp-eslint-new/blob/main/example/fix.js)).
-Rules that are fixable can be found in ESLint's [rules list](https://eslint.org/docs/rules/).
-When fixes are applied, a `fixed` property is set to `true` on the fixed file's ESLint result.
 
 ### `gulpESLintNew(overrideConfigFile)`
 
@@ -314,16 +307,30 @@ The arguments for `gulpESLintNew.formatEach` are the same as the arguments for [
 Overwrite files with the fixed content provided by ESLint.
 This should be used in conjunction with the option `fix` in [`gulpESLintNew(options)`](#gulpeslintnewoptions).
 Files without a fix and files that were not processed by ESLint will be left untouched.
-
-```javascript
-gulp.src(['**/*.js', '!node_modules/**'])
-    .pipe(gulpESLintNew({ fix: true }))
-    .pipe(gulpESLintNew.fix());
-```
+See the [Autofix](#autofix) section for more information and examples.
 
 ## Configuration
 
 ESLint may be configured explicity by using any of the supported [configuration options](https://eslint.org/docs/user-guide/configuring/). Unless the `useEslintrc` option is set to `false`, ESLint will attempt to resolve a file by the name of `.eslintrc` within the same directory as the file to be linted. If not found there, parent directories will be searched until `.eslintrc` is found or the directory root is reached.
+
+## Autofix
+
+ESLint can fix some lint problems automatically: this function is called *autofix*.
+
+To enable autofix with gulp-eslint-new, set the option `fix` to `true` in [`gulpESLintNew(options)`](#gulpeslintnewoptions), then pipe the stream to [`gulpESLintNew.fix()`](#gulpeslintnewfix), e.g.
+
+```javascript
+gulp.src(['**/*.{js,ts}', '!node_modules/**'])
+    .pipe(gulpESLintNew({ fix: true }))
+    .pipe(gulpESLintNew.fix());
+```
+
+See also the [autofix examples](https://github.com/fasttime/gulp-eslint-new/blob/main/example/fix.js).
+
+The `fix` option applies fixes to the gulp stream.
+`gulpESLintNew.fix()` saves the fixed content to file.
+Rules that are fixable can be found in ESLint's [rules list](https://eslint.org/docs/rules/).
+When fixes are applied, a `fixed` property is set to `true` on the fixed file's ESLint result.
 
 ## Custom Extensions
 
