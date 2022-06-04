@@ -451,17 +451,25 @@ describe('utility functions', () => {
                     messages: [{ column: 99, line: 42, message: 'bar' }],
                     suppressedMessages: [],
                     errorCount: 1,
-                    warningCount: 0
+                    warningCount: 0,
+                    fixableErrorCount: 1,
+                    fixableWarningCount: 0,
+                    fatalErrorCount: 0
                 }
             ];
 
-            it('should default to the "stylish" formatter', async () => {
+            it('should default to the modified "stylish" formatter', async () => {
                 const eslintInfo = { eslint: new ESLint() };
                 const formatter = await util.resolveFormatter(eslintInfo);
                 const text = await formatter.format(testResults);
+                const cleanText = text.replace(/\x1b\[\d+m/g, '');
+                const { version } = require('gulp-eslint-new/package.json');
                 assert.equal(
-                    text.replace(/\x1b\[\d+m/g, ''), // eslint-disable-line no-control-regex
-                    '\nfoo\n  42:99  warning  bar\n\n✖ 1 problem (1 error, 0 warnings)\n'
+                    cleanText,
+                    '\nfoo\n  42:99  warning  bar\n\n'
+                    + '✖ 1 problem (1 error, 0 warnings)\n'
+                    + '  1 error and 0 warnings potentially fixable - '
+                    + `see https://www.npmjs.com/package/gulp-eslint-new/v/${version}#autofix\n`
                 );
             });
 
@@ -470,7 +478,7 @@ describe('utility functions', () => {
                 const formatter = await util.resolveFormatter(eslintInfo, 'compact');
                 const text = await formatter.format(testResults);
                 assert.equal(
-                    text.replace(/\x1b\[\d+m/g, ''), // eslint-disable-line no-control-regex
+                    text.replace(/\x1b\[\d+m/g, ''),
                     'foo: line 42, col 99, Warning - bar\n\n1 problem'
                 );
             });

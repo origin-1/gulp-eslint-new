@@ -27,6 +27,7 @@ rules:
   max-len: [1, 100, 4]
   new-cap: [2, { capIsNewExceptions: ['TypeError'] }]
   no-constant-binary-expression: 2
+  no-control-regex: 0
   no-floating-decimal: 2
   no-multi-str: 1
   no-multiple-empty-lines: 2

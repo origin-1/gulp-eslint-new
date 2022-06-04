@@ -264,7 +264,7 @@ describe('gulp-eslint-new formatEach', () => {
         let loadFormatterCallCount = 0;
         const loadFormatter = () => {
             ++loadFormatterCallCount;
-            return { format: noop };
+            return { format: () => '' };
         };
         const eslint1 = { loadFormatter };
         const eslint2 = { loadFormatter };

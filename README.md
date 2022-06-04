@@ -266,10 +266,10 @@ The `formatter` argument determines the [ESLint formatter](https://eslint.org/do
 If a `string` is provided, a formatter module by that name or path will be resolved.
 The resolved formatter will be either one of the built-in ESLint formatters, or a formatter exported by a module with the specified path (located relative to the ESLint working directory), or a formatter exported by a package installed as a dependency (the prefix "eslint-formatter-" in the package name can be omitted).
 Instead of providing a string, it is also possible to specify a formatter object as resolved by the ESLint method [`loadFormatter`](https://eslint.org/docs/developer-guide/nodejs-api#-eslintloadformatternameorpath), or a formatter function directly.
-If `undefined` is specified, the ESLint "stylish" formatter will be used.
+If this argument is `undefined`, a modified version of the ESLint "stylish" formatter will be used.
 
 ```javascript
-// Use the default "stylish" ESLint formatter.
+// Use the default gulp-eslint-new formatter.
 gulpESLintNew.format()
 
 // Use the "checkstyle" ESLint formatter.

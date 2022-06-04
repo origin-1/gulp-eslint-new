@@ -20,6 +20,7 @@
  */
 
 const fancyLog      = require('fancy-log');
+const { version }   = require('gulp-eslint-new/package.json');
 const { relative }  = require('path');
 const PluginError   = require('plugin-error');
 const { Transform } = require('stream');
@@ -93,45 +94,6 @@ const isObject = value => Object(value) === value;
  * @returns {boolean} Whether the message is a warning message.
  */
 const isWarningMessage = ({ severity }) => severity === 1;
-
-/**
- * Resolve a formatter from a string.
- * If a function is specified, it will be treated as a formatter function and wrapped in an object
- * appropriately.
- *
- * @param {{ cwd: string, eslint: ESLint }} eslintInfo
- * Current directory and instance of ESLint used to load and configure the formatter.
- *
- * @param {string | LoadedFormatter | FormatterFunction} [formatter]
- * A name or path of a formatter, a formatter object or a formatter function.
- *
- * @returns {Promise<LoadedFormatter>} An ESLint formatter.
- */
-function resolveFormatter({ cwd, eslint }, formatter) {
-    if (isObject(formatter) && typeof formatter.format === 'function') {
-        return formatter;
-    }
-    if (typeof formatter === 'function') {
-        return {
-            format: results => {
-                results.sort(compareResultsByFilePath);
-                return formatter(
-                    results,
-                    {
-                        cwd,
-                        get rulesMeta() {
-                            const rulesMeta = eslint.getRulesMetaForResults(results);
-                            defineProperty(this, 'rulesMeta', { value: rulesMeta });
-                            return rulesMeta;
-                        }
-                    }
-                );
-            }
-        };
-    }
-    // Use ESLint to look up formatter references.
-    return eslint.loadFormatter(formatter);
-}
 
 exports.ESLintKey = ESLintKey;
 
@@ -376,7 +338,58 @@ exports.migrateOptions = (options = { }) => {
     return returnValue;
 };
 
-exports.resolveFormatter = resolveFormatter;
+const DEFAULT_FORMATTER_REPLACEMENT
+= ` - see https://www.npmjs.com/package/gulp-eslint-new/v/${version}#autofix`;
+
+/**
+ * Resolve a formatter from a string.
+ * If a function is specified, it will be treated as a formatter function and wrapped in an object
+ * appropriately.
+ *
+ * @param {{ cwd: string, eslint: ESLint }} eslintInfo
+ * Current directory and instance of ESLint used to load and configure the formatter.
+ *
+ * @param {string | LoadedFormatter | FormatterFunction} [formatter]
+ * A name or path of a formatter, a formatter object or a formatter function.
+ *
+ * @returns {Promise<LoadedFormatter>} An ESLint formatter.
+ */
+exports.resolveFormatter = async ({ cwd, eslint }, formatter) => {
+    if (formatter === undefined) {
+        const { format } = await eslint.loadFormatter();
+        return {
+            format: results =>
+                format(results)
+                    .replace(
+                        / with the `--fix` option\.(?=(\u001b\[\d+m|\n)+$)/,
+                        DEFAULT_FORMATTER_REPLACEMENT
+                    )
+        };
+    }
+    if (isObject(formatter) && typeof formatter.format === 'function') {
+        return formatter;
+    }
+    if (typeof formatter === 'function') {
+        return {
+            format: results => {
+                results.sort(compareResultsByFilePath);
+                return formatter(
+                    results,
+                    {
+                        cwd,
+                        get rulesMeta() {
+                            const rulesMeta = eslint.getRulesMetaForResults(results);
+                            defineProperty(this, 'rulesMeta', { value: rulesMeta });
+                            return rulesMeta;
+                        }
+                    }
+                );
+            }
+        };
+    }
+    // Use ESLint to look up formatter references.
+    return eslint.loadFormatter(formatter);
+};
 
 /**
  * Resolve a writer function used to write formatted ESLint messages.
