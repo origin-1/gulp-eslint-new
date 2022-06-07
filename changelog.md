@@ -1,3 +1,12 @@
+<a name="1.5.0"></a>
+## [1.5.0](https://github.com/origin-1/gulp-eslint-new/releases/tag/1.5.0) (2022-06-07)
+
+* Using the modified stylish formatter by default.
+  If any fixable problems are found, the modified stylish formatter will output a link with instructions about the autofix function, instead of proposing the CLI option `--fix`.
+* Formalized support for any version of ESLint 8.
+* Transferred project to [Origin₁](https://github.com/origin-1).
+* Improved readme file.
+
 <a name="1.4.4"></a>
 ## [1.4.4](https://github.com/origin-1/gulp-eslint-new/releases/tag/1.4.4) (2022-05-19)
 
