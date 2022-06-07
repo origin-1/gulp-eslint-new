@@ -18,7 +18,7 @@
     "lint",
     "plugin"
   ],
-  "homepage": "https://github.com/fasttime/gulp-eslint-new#readme",
+  "homepage": "https://github.com/origin-1/gulp-eslint-new#readme",
   "license": "MIT",
   "author": "Adametry",
   "files": [
@@ -30,7 +30,7 @@
     "example": "example",
     "test": "test"
   },
-  "repository": "github:fasttime/gulp-eslint-new",
+  "repository": "github:origin-1/gulp-eslint-new",
   "scripts": {
     "build": "npm install && gulp",
     "coverage": "gulp test",

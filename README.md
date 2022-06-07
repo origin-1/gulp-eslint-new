@@ -67,7 +67,7 @@ gulp.src(['**/*.js', '!node_modules/**'])
     .pipe(gulpESLintNew.formatEach('compact', process.stderr));
 ```
 
-For additional examples, look through the [example directory](https://github.com/fasttime/gulp-eslint-new/tree/main/example).
+For additional examples, look through the [example directory](https://github.com/origin-1/gulp-eslint-new/tree/main/example).
 
 ## API
 
@@ -325,7 +325,7 @@ gulp.src(['**/*.{js,ts}', '!node_modules/**'])
     .pipe(gulpESLintNew.fix());
 ```
 
-See also the [autofix examples](https://github.com/fasttime/gulp-eslint-new/blob/main/example/fix.js).
+See also the [autofix examples](https://github.com/origin-1/gulp-eslint-new/blob/main/example/fix.js).
 
 The `fix` option applies fixes to the gulp stream.
 `gulpESLintNew.fix()` saves the fixed content to file.

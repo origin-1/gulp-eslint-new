@@ -1,29 +1,29 @@
 <a name="1.4.4"></a>
-## [1.4.4](https://github.com/fasttime/gulp-eslint-new/releases/tag/1.4.4) (2022-05-19)
+## [1.4.4](https://github.com/origin-1/gulp-eslint-new/releases/tag/1.4.4) (2022-05-19)
 
 * Fixed a regression in version 1.4.3 that caused a `TypeError` when `gulpESLintNew` was called with a string argument.
 * Minimal change in the readme file.
 
 <a name="1.4.3"></a>
-## [1.4.3](https://github.com/fasttime/gulp-eslint-new/releases/tag/1.4.3) (2022-05-18)
+## [1.4.3](https://github.com/origin-1/gulp-eslint-new/releases/tag/1.4.3) (2022-05-18)
 
 * When a dependency throws an error during an asynchronous stream operation, the emitted `PluginError` now includes the stack trace when printed.
 * Improved TypeScript type declarations.
 * Clarified code examples in the readme file.
 
 <a name="1.4.2"></a>
-## [1.4.2](https://github.com/fasttime/gulp-eslint-new/releases/tag/1.4.2) (2022-02-27)
+## [1.4.2](https://github.com/origin-1/gulp-eslint-new/releases/tag/1.4.2) (2022-02-27)
 
 * Added type definition for function `fix`.
 * Updated TSDoc.
 
 <a name="1.4.1"></a>
-## [1.4.1](https://github.com/fasttime/gulp-eslint-new/releases/tag/1.4.1) (2022-02-26)
+## [1.4.1](https://github.com/origin-1/gulp-eslint-new/releases/tag/1.4.1) (2022-02-26)
 
 * Fixed type inference for the arguments of callbacks provided to the functions `result` and `results`.
 
 <a name="1.4.0"></a>
-## [1.4.0](https://github.com/fasttime/gulp-eslint-new/releases/tag/1.4.0) (2022-02-13)
+## [1.4.0](https://github.com/origin-1/gulp-eslint-new/releases/tag/1.4.0) (2022-02-13)
 
 * Added support for legacy option `extends`.
 * Simplified and completed documentation of legacy options.
@@ -32,7 +32,7 @@
 * Normalized markdown of readme file and changelog.
 
 <a name="1.3.0"></a>
-## [1.3.0](https://github.com/fasttime/gulp-eslint-new/releases/tag/1.3.0) (2022-02-05)
+## [1.3.0](https://github.com/origin-1/gulp-eslint-new/releases/tag/1.3.0) (2022-02-05)
 
 * Added support for new argument types to the functions `format` and `formatEach`:
   * `formatter` can now be a formatter object as resolved by the ESLint method [`loadFormatter`](https://eslint.org/docs/developer-guide/nodejs-api#-eslintloadformatternameorpath).
@@ -41,29 +41,29 @@
 * Clarified the documentation.
 
 <a name="1.2.0"></a>
-## [1.2.0](https://github.com/fasttime/gulp-eslint-new/releases/tag/1.2.0) (2022-01-29)
+## [1.2.0](https://github.com/origin-1/gulp-eslint-new/releases/tag/1.2.0) (2022-01-29)
 
-* New function [`fix`](https://github.com/fasttime/gulp-eslint-new#gulpeslintnewfix).
+* New function [`fix`](https://github.com/origin-1/gulp-eslint-new#gulpeslintnewfix).
 * All functions exported by gulp-eslint-new are now available as named exports when gulp-eslint-new is imported with the `import` keyword (statically or dynamically).
 * When the option `quiet` is used, ESLint results now include the properties `usedDeprecatedRules` and (for ESLint ≥ 8.8) `suppressedMessages`.
 * The functions `result` and `results` now throw a `TypeError` when called with an invalid argument.
 * Updated examples and documentation.
 
 <a name="1.1.2"></a>
-## [1.1.2](https://github.com/fasttime/gulp-eslint-new/releases/tag/1.1.2) (2022-01-15)
+## [1.1.2](https://github.com/origin-1/gulp-eslint-new/releases/tag/1.1.2) (2022-01-15)
 
 * Formatting streams with ignored files no longer throws an exception when the option `warnIgnored` is used.
 * Added migration instructions to the readme file.
 * Updated examples.
 
 <a name="1.1.1"></a>
-## [1.1.1](https://github.com/fasttime/gulp-eslint-new/releases/tag/1.1.1) (2022-01-08)
+## [1.1.1](https://github.com/origin-1/gulp-eslint-new/releases/tag/1.1.1) (2022-01-08)
 
 * Changed installation instructions so that gulp-eslint-new gets added to the devDependencies.
 * Fixed a typo in an error message.
 
 <a name="1.1.0"></a>
-## [1.1.0](https://github.com/fasttime/gulp-eslint-new/releases/tag/1.1.0) (2021-12-06)
+## [1.1.0](https://github.com/origin-1/gulp-eslint-new/releases/tag/1.1.0) (2021-12-06)
 
 * Added support for new formatter features in ESLint 8.4:
   * [Async formatters](https://github.com/eslint/eslint/pull/15243)
@@ -72,7 +72,7 @@
 * Updated a link in the readme file.
 
 <a name="1.0.0"></a>
-## [1.0.0](https://github.com/fasttime/gulp-eslint-new/releases/tag/1.0.0) (2021-11-14)
+## [1.0.0](https://github.com/origin-1/gulp-eslint-new/releases/tag/1.0.0) (2021-11-14)
 
 * Using the new ESLint formatter API.
 * Added TypeScript type declarations.
@@ -82,59 +82,59 @@
 * Fix: `format` and `results` streams now stay open until the end of asynchronous operations in all supported versions of Node.js.
 
 <a name="0.6.0"></a>
-## [0.6.0](https://github.com/fasttime/gulp-eslint-new/releases/tag/0.6.0) (2021-11-06)
+## [0.6.0](https://github.com/origin-1/gulp-eslint-new/releases/tag/0.6.0) (2021-11-06)
 
 * Using ESLint 8.2.
 * Results lists have now the same "Count" properties of a single result: `fixableErrorCount`, `fixableWarningCount` and `fatalErrorCount`, in addition to the previously featured `errorCount` and `warningCount`.
 
 <a name="0.5.1"></a>
-## [0.5.1](https://github.com/fasttime/gulp-eslint-new/releases/tag/0.5.1) (2021-11-04)
+## [0.5.1](https://github.com/origin-1/gulp-eslint-new/releases/tag/0.5.1) (2021-11-04)
 
 * Unuseful ESLint options are now rejected: `errorOnUnmatchedPattern`, `extensions`, `globInputPaths` and cache-related ones.
 * Errors and warnings generated by gulp-eslint-new are now more similar to those generated by ESLint 8.
 * Updated examples and documentation.
 
 <a name="0.5.0"></a>
-## [0.5.0](https://github.com/fasttime/gulp-eslint-new/releases/tag/0.5.0) (2021-10-27)
+## [0.5.0](https://github.com/origin-1/gulp-eslint-new/releases/tag/0.5.0) (2021-10-27)
 
 * Using ESLint 8.1.
 * Updated documentation.
 
 <a name="0.4.0"></a>
-## [0.4.0](https://github.com/fasttime/gulp-eslint-new/releases/tag/0.4.0) (2021-10-10)
+## [0.4.0](https://github.com/origin-1/gulp-eslint-new/releases/tag/0.4.0) (2021-10-10)
 
 * Using ESLint 8.
 * Changed plugin name to **gulp-eslint-new**.
 
 <a name="0.3.2"></a>
-## [0.3.2](https://github.com/fasttime/gulp-eslint7/releases/tag/0.3.2) (2021-09-11)
+## [0.3.2](https://github.com/origin-1/gulp-eslint7/releases/tag/0.3.2) (2021-09-11)
 
 * Updated dependencies in prospect of ESLint 8.
 
 <a name="0.3.1"></a>
-## [0.3.1](https://github.com/fasttime/gulp-eslint7/releases/tag/0.3.1) (2021-05-03)
+## [0.3.1](https://github.com/origin-1/gulp-eslint7/releases/tag/0.3.1) (2021-05-03)
 
 * Updated readme file.
 
 <a name="0.3.0"></a>
-## [0.3.0](https://github.com/fasttime/gulp-eslint7/releases/tag/0.3.0) (2020-07-03)
+## [0.3.0](https://github.com/origin-1/gulp-eslint7/releases/tag/0.3.0) (2020-07-03)
 
 * Fixed `plugins` option handling to accept both an array (old API) or a map-like object (new API).
 
 <a name="0.2.1"></a>
-## [0.2.1](https://github.com/fasttime/gulp-eslint7/releases/tag/0.2.1) (2020-06-30)
+## [0.2.1](https://github.com/origin-1/gulp-eslint7/releases/tag/0.2.1) (2020-06-30)
 
 * Minor optimizations.
 * Showing npm badge in the readme file.
 
 <a name="0.2.0"></a>
-## [0.2.0](https://github.com/fasttime/gulp-eslint7/releases/tag/0.2.0) (2020-06-27)
+## [0.2.0](https://github.com/origin-1/gulp-eslint7/releases/tag/0.2.0) (2020-06-27)
 
 * Accepting all appliable [`ESLint` constructor](https://eslint.org/docs/developer-guide/nodejs-api#-new-eslintoptions) and [`CLIEngine` constructor](https://eslint.org/docs/developer-guide/nodejs-api#cliengine) options.
 * Updated readme file.
 
 <a name="0.1.0"></a>
-## [0.1.0](https://github.com/fasttime/gulp-eslint7/releases/tag/0.1.0) (2020-06-22)
+## [0.1.0](https://github.com/origin-1/gulp-eslint7/releases/tag/0.1.0) (2020-06-22)
 
 Initial release derived from [gulp-eslint](https://github.com/adametry/gulp-eslint).
 * Using ESLint 7.
