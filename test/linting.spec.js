@@ -273,6 +273,10 @@ describe('gulp-eslint-new plugin', () => {
                         }
                     ]
                 );
+                if (satisfies(ESLint.version, '>=8.8')) {
+                    assert(Array.isArray(file.eslint.suppressedMessages));
+                    assert.equal(file.eslint.suppressedMessages.length, 0);
+                }
                 assert.equal(file.eslint.errorCount, 0);
                 assert.equal(file.eslint.warningCount, 1);
                 assert.equal(file.eslint.fixableErrorCount, 0);
@@ -304,6 +308,10 @@ describe('gulp-eslint-new plugin', () => {
                         }
                     ]
                 );
+                if (satisfies(ESLint.version, '>=8.8')) {
+                    assert(Array.isArray(file.eslint.suppressedMessages));
+                    assert.equal(file.eslint.suppressedMessages.length, 0);
+                }
                 assert.equal(file.eslint.errorCount, 0);
                 assert.equal(file.eslint.warningCount, 1);
                 assert.equal(file.eslint.fixableErrorCount, 0);

@@ -23,6 +23,7 @@ const fancyLog      = require('fancy-log');
 const { version }   = require('gulp-eslint-new/package.json');
 const { relative }  = require('path');
 const PluginError   = require('plugin-error');
+const { ltr }       = require('semver');
 const { Transform } = require('stream');
 const ternaryStream = require('ternary-stream');
 
@@ -108,9 +109,10 @@ const isInNodeModulesRegExp = /(?<![^/\\])node_modules[/\\]/u;
  *
  * @param {string} filePath - Absolute path of checked code file.
  * @param {string} baseDir - Absolute path of base directory.
+ * @param {string} eslintVersion - ESLint version string.
  * @returns {ESLint.LintResult} Result with warning by ignore settings.
  */
-exports.createIgnoreResult = (filePath, baseDir) => {
+exports.createIgnoreResult = (filePath, baseDir, eslintVersion) => {
     let message;
     const relativePath = relative(baseDir, filePath);
     if (isHiddenRegExp.test(relativePath)) {
@@ -126,7 +128,7 @@ exports.createIgnoreResult = (filePath, baseDir) => {
         = 'File ignored because of a matching ignore pattern. Set "ignore" option to false to '
         + 'override.';
     }
-    return {
+    const result = {
         filePath,
         messages: [{ fatal: false, severity: 1, message }],
         errorCount: 0,
@@ -135,6 +137,10 @@ exports.createIgnoreResult = (filePath, baseDir) => {
         fixableWarningCount: 0,
         fatalErrorCount: 0
     };
+    if (!ltr(eslintVersion, '8.8.0')) {
+        result.suppressedMessages = [];
+    }
+    return result;
 };
 
 exports.createPluginError = createPluginError;

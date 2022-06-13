@@ -91,7 +91,7 @@ async function lintFile(eslintInfo, file, quiet, warnIgnored) {
             return;
         }
         // Warn that gulp.src is needlessly reading files that ESLint ignores.
-        result = createIgnoreResult(filePath, eslintInfo.cwd);
+        result = createIgnoreResult(filePath, eslintInfo.cwd, eslint.constructor.version);
     } else {
         [result] = await eslint.lintText(file.contents.toString(), { filePath });
         // Note: Fixes are applied as part of `lintText`.
