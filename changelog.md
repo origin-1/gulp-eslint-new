@@ -1,3 +1,8 @@
+<a name="1.5.1"></a>
+## [1.5.1](https://github.com/origin-1/gulp-eslint-new/releases/tag/1.5.1) (2022-06-14)
+
+* If using for ESLint ≥ 8.8, ESLint results produced by ignored files now include the property `suppressedMessages`.
+
 <a name="1.5.0"></a>
 ## [1.5.0](https://github.com/origin-1/gulp-eslint-new/releases/tag/1.5.0) (2022-06-07)
 
