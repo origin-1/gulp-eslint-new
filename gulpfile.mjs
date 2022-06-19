@@ -1,14 +1,16 @@
-'use strict';
+import { rm }               from 'fs/promises';
+import gulp                 from 'gulp';
+import { dirname, join }    from 'path';
+import syncReadable         from 'sync-readable';
+import { fileURLToPath }    from 'url';
 
-const { parallel, series, src, task } = require('gulp');
+const { parallel, series, src, task } = gulp;
 
 task
 (
     'clean',
     async () =>
     {
-        const { promises: { rm } } = require('fs');
-
         const options = { force: true, recursive: true };
         await rm('coverage', options);
     },
@@ -17,17 +19,20 @@ task
 task
 (
     'lint',
-    () =>
-    {
-        const gulpESLintNew = require('gulp-eslint-new');
+    syncReadable
+    (
+        async () =>
+        {
+            const { default: gulpESLintNew } = await import('gulp-eslint-new');
 
-        const stream =
-        src(['*.js', 'example/*.js', 'lib/*.{js,ts}', 'test/**/*.{js,ts}'])
-        .pipe(gulpESLintNew({ configType: 'flat', warnIgnored: true }))
-        .pipe(gulpESLintNew.format('compact'))
-        .pipe(gulpESLintNew.failAfterError());
-        return stream;
-    },
+            const stream =
+            src(['*.{js,mjs}', 'example/*.js', 'lib/*.{js,ts}', 'test/**/*.{js,ts}'])
+            .pipe(gulpESLintNew({ configType: 'flat', warnIgnored: true }))
+            .pipe(gulpESLintNew.format('compact'))
+            .pipe(gulpESLintNew.failAfterError());
+            return stream;
+        },
+    ),
 );
 
 task
@@ -36,7 +41,8 @@ task
     async () =>
     {
         const { default: c8js } = await import('c8js');
-        const mochaPath = require.resolve('mocha/bin/mocha');
+        const mochaPath = fileURLToPath(import.meta.resolve('mocha/bin/mocha'));
+
         await c8js
         (
             mochaPath,
@@ -60,21 +66,23 @@ task
 
 function tsTest(tsVersion, tsPkgName)
 {
-    async function task() // eslint-disable-line require-await
+    async function task()
     {
-        const { dirname, join } = require('path');
         const
         {
-            createDiagnosticReporter,
-            createProgram,
-            getPreEmitDiagnostics,
-            parseJsonConfigFileContent,
-            readConfigFile,
-            sys,
+            default:
+            {
+                createDiagnosticReporter,
+                createProgram,
+                getPreEmitDiagnostics,
+                parseJsonConfigFileContent,
+                readConfigFile,
+                sys,
+            },
         } =
-        require(tsPkgName);
+        await import(tsPkgName);
 
-        const pkgPath = __dirname;
+        const pkgPath = dirname(fileURLToPath(import.meta.url));
         const tsConfigPath = join(pkgPath, 'test/tsconfig.json');
         const tsConfig = readConfigFile(tsConfigPath, sys.readFile);
         const basePath = dirname(tsConfigPath);
