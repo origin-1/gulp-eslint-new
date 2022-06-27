@@ -25,12 +25,12 @@ rules:
   guard-for-in: 1
   key-spacing: [2, { beforeColon: false, afterColon: true, mode: "minimum" }]
   max-len: [1, 100, 4]
-  new-cap: [2, { capIsNewExceptions: ['TypeError'] }]
+  new-cap: [2, { capIsNewExceptions: ["TypeError"] }]
   no-constant-binary-expression: 2
   no-control-regex: 0
   no-floating-decimal: 2
   no-multi-str: 1
-  no-multiple-empty-lines: 2
+  no-multiple-empty-lines: [2, { max: 1, maxBOF: 0, maxEOF: 0 }]
   no-nested-ternary: 2
   no-new: 2
   no-trailing-spaces: 1
@@ -66,7 +66,7 @@ overrides:
       prefer-spread: 2
       quotes: [1, "single", "avoid-escape"]
       semi: 2
-      space-before-function-paren: [1, { "named": "never" }]
+      space-before-function-paren: [1, { named: "never" }]
       space-infix-ops: 1
 
   - files: ["*.ts"]
@@ -88,6 +88,6 @@ overrides:
       "@typescript-eslint/object-curly-spacing": [2, "always"]
       "@typescript-eslint/quotes": [1, "single", "avoid-escape"]
       "@typescript-eslint/semi": 2
-      "@typescript-eslint/space-before-function-paren": [1, { "named": "never" }]
+      "@typescript-eslint/space-before-function-paren": [1, { named: "never" }]
       "@typescript-eslint/space-infix-ops": 1
       tsdoc/syntax: 1
