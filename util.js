@@ -39,6 +39,8 @@ function compareResultsByFilePath({ filePath: filePath1 }, { filePath: filePath2
     return 0;
 }
 
+const PLUGIN_ERROR_OPTIONS = { showStack: true };
+
 function createPluginError(error) {
     if (error instanceof PluginError) {
         return error;
@@ -46,7 +48,7 @@ function createPluginError(error) {
     if (error == null) {
         error = 'Unknown Error';
     }
-    return new PluginError('gulp-eslint-new', error, { showStack: true });
+    return PluginError('gulp-eslint-new', error, PLUGIN_ERROR_OPTIONS);
 }
 
 const { defineProperty } = Object;
@@ -227,7 +229,7 @@ exports.isErrorMessage = isErrorMessage;
 
 exports.isWarningMessage = isWarningMessage;
 
-const forbiddenOptions = [
+const FORBIDDEN_OPTIONS = [
     'cache',
     'cacheFile',
     'cacheLocation',
@@ -303,7 +305,7 @@ exports.migrateOptions = (options = { }) => {
     }
     = options;
     {
-        const invalidOptions = forbiddenOptions.filter(option => hasOwn(options, option));
+        const invalidOptions = FORBIDDEN_OPTIONS.filter(option => hasOwn(options, option));
         if (invalidOptions.length) {
             throwInvalidOptionError(`Invalid options: ${invalidOptions.join(', ')}`);
         }

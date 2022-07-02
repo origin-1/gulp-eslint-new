@@ -25,7 +25,7 @@ rules:
   guard-for-in: 1
   key-spacing: [2, { beforeColon: false, afterColon: true, mode: "minimum" }]
   max-len: [1, 100, 4]
-  new-cap: [2, { capIsNewExceptions: ["TypeError"] }]
+  new-cap: [2, { capIsNewExceptionPattern: "Error$" }]
   no-constant-binary-expression: 2
   no-control-regex: 0
   no-floating-decimal: 2
