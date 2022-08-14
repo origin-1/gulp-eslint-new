@@ -19,7 +19,7 @@ function eslintFormatter() {
     return src('demo/**/*.js')
         .pipe(gulpESLintNew()) // Lint all files.
         // Name a built-in formatter or path load.
-        // https://eslint.org/docs/user-guide/command-line-interface#-f%2C---format
+        // https://eslint.org/docs/user-guide/command-line-interface#-f---format
         .pipe(gulpESLintNew.formatEach('unix'));
 }
 
