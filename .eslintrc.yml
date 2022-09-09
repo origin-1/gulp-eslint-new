@@ -36,7 +36,7 @@ rules:
   no-trailing-spaces: 1
   no-var: 2
   one-var: [1, "never"]
-  operator-linebreak: [2, "before", { overrides: { "?": "after", ":": "after" } }]
+  operator-linebreak: [2, "after"]
   prefer-arrow-callback: 1
   prefer-const: 2
   semi-spacing: 2
@@ -54,7 +54,7 @@ overrides:
 
     rules:
       brace-style: [2, "1tbs"]
-      comma-dangle: 1
+      comma-dangle: [1, "always-multiline"]
       comma-spacing: 2
       indent: 1
       keyword-spacing: 2
@@ -77,7 +77,7 @@ overrides:
 
     rules:
       "@typescript-eslint/brace-style": [2, "1tbs"]
-      "@typescript-eslint/comma-dangle": 1
+      "@typescript-eslint/comma-dangle": [1, "always-multiline"]
       "@typescript-eslint/comma-spacing": 2
       "@typescript-eslint/indent": 1
       "@typescript-eslint/keyword-spacing": 2

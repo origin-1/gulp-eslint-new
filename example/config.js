@@ -53,16 +53,16 @@ function inlineConfig() {
                     'no-caller': 1,
                     'semi': 1,
                     'quotes': 0,
-                    'no-unreachable': 2
+                    'no-unreachable': 2,
                 },
                 globals: {
-                    $: 'readonly'
+                    $: 'readonly',
                 },
                 env: {
-                    'node': true
-                }
+                    'node': true,
+                },
             },
-            warnIgnored: true
+            warnIgnored: true,
         }))
         .pipe(gulpESLintNew.format());
 }
@@ -76,7 +76,7 @@ function loadConfig() {
     return src('demo/**/*.js')
         .pipe(gulpESLintNew({
             // Load a specific ESLint config.
-            overrideConfigFile: 'config.json'
+            overrideConfigFile: 'config.json',
         }))
         .pipe(gulpESLintNew.format());
 }
@@ -96,7 +96,8 @@ function loadConfigShorthand() {
 /**
  * The default task will run all above tasks.
  */
-module.exports = {
+module.exports =
+{
     'default': series(
         basic,
         inlineConfig,
@@ -104,10 +105,10 @@ module.exports = {
         loadConfigShorthand,
         async () => {
             console.log('All tasks completed successfully.');
-        }
+        },
     ),
     'basic': basic,
     'inline-config': inlineConfig,
     'load-config': loadConfig,
-    'load-config-shorthand': loadConfigShorthand
+    'load-config-shorthand': loadConfigShorthand,
 };

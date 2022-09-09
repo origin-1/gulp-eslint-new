@@ -19,7 +19,7 @@ function lintResult() {
                 throw {
                     name: 'TooManyProblems',
                     fileName: result.filePath,
-                    message: 'Too many problems!'
+                    message: 'Too many problems!',
                 };
             }
         }));
@@ -35,11 +35,12 @@ function lintResultAsync() {
                 let error = null;
                 if (result.messages.length > MAX_PROBLEMS) {
                     // Define the error. Any non-null/undefined value will work.
-                    error = {
+                    error =
+                    {
                         name: 'TooManyProblems',
                         fileName: result.filePath,
                         message: 'Too many problems!',
-                        showStack: false
+                        showStack: false,
                     };
                 }
                 done(error);
@@ -75,10 +76,11 @@ function lintResultsAsync() {
         }));
 }
 
-module.exports = {
+module.exports =
+{
     'default': lintResults,
     'lint-result': lintResult,
     'lint-result-async': lintResultAsync,
     'lint-results': lintResults,
-    'lint-results-async': lintResultsAsync
+    'lint-results-async': lintResultsAsync,
 };

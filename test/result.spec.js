@@ -14,8 +14,8 @@ describe('gulp-eslint-new result', () => {
 
         function testResult(ESLint, done) {
             let resultCount = 0;
-            const lintStream
-            = gulpESLintNew(
+            const lintStream =
+            gulpESLintNew(
                 {
                     [ESLINT_KEY]: ESLint,
                     baseConfig: {
@@ -23,11 +23,11 @@ describe('gulp-eslint-new result', () => {
                             'camelcase': 1,         // not fixable
                             'no-extra-parens': 1,   // fixable
                             'no-undef': 2,          // not fixable
-                            'quotes': [2, 'single'] // fixable
-                        }
+                            'quotes': [2, 'single'], // fixable
+                        },
                     },
-                    useEslintrc: false
-                }
+                    useEslintrc: false,
+                },
             );
             const testDataList = [
                 {
@@ -37,7 +37,7 @@ describe('gulp-eslint-new result', () => {
                     warningCount:        3,
                     fixableErrorCount:   2,
                     fixableWarningCount: 1,
-                    fatalErrorCount:     0
+                    fatalErrorCount:     0,
                 },
                 {
                     path:                'invalid-2.js',
@@ -46,7 +46,7 @@ describe('gulp-eslint-new result', () => {
                     warningCount:        4,
                     fixableErrorCount:   1,
                     fixableWarningCount: 2,
-                    fatalErrorCount:     0
+                    fatalErrorCount:     0,
                 },
                 {
                     path:                'invalid-3.js',
@@ -55,8 +55,8 @@ describe('gulp-eslint-new result', () => {
                     warningCount:        0,
                     fixableErrorCount:   0,
                     fixableWarningCount: 0,
-                    fatalErrorCount:     1
-                }
+                    fatalErrorCount:     1,
+                },
             ];
             lintStream
                 .pipe(gulpESLintNew.result(noop)) // Test that files are passed through.
@@ -66,7 +66,7 @@ describe('gulp-eslint-new result', () => {
                     assert(Array.isArray(result.messages));
                     assert.equal(
                         result.messages.length,
-                        testData.errorCount + testData.warningCount
+                        testData.errorCount + testData.warningCount,
                     );
                     assert.equal(result.errorCount, testData.errorCount);
                     assert.equal(result.warningCount, testData.warningCount);
@@ -106,9 +106,9 @@ describe('gulp-eslint-new result', () => {
                     .result(() => {
                         throw Error('Expected Error');
                     })
-                    .end(file)
+                    .end(file),
             ),
-            { message: 'Expected Error', name: 'Error', plugin: 'gulp-eslint-new' }
+            { message: 'Expected Error', name: 'Error', plugin: 'gulp-eslint-new' },
         );
     });
 
@@ -121,16 +121,16 @@ describe('gulp-eslint-new result', () => {
                     .result(() => {
                         throw null;
                     })
-                    .end(file)
+                    .end(file),
             ),
-            { message: 'Unknown Error', name: 'Error', plugin: 'gulp-eslint-new' }
+            { message: 'Unknown Error', name: 'Error', plugin: 'gulp-eslint-new' },
         );
     });
 
     it('should throw an error if not provided a function argument', () => {
         assert.throws(
             gulpESLintNew.result,
-            { constructor: TypeError, message: 'Argument is not a function' }
+            { constructor: TypeError, message: 'Argument is not a function' },
         );
     });
 
@@ -158,7 +158,7 @@ describe('gulp-eslint-new result', () => {
                 })
                 .resume()
                 .on('end', () => assert(result))
-                .end(file)
+                .end(file),
         );
         assert.equal(result, file.eslint);
     });
@@ -174,7 +174,7 @@ describe('gulp-eslint-new result', () => {
                 })
                 .resume()
                 .on('end', () => assert(cwd))
-                .end(file)
+                .end(file),
         );
         assert.equal(cwd, file.cwd);
     });
@@ -187,8 +187,8 @@ describe('gulp-eslint-new results', () => {
 
         function testResults(ESLint, done) {
             let actualResults;
-            const lintStream
-            = gulpESLintNew(
+            const lintStream =
+            gulpESLintNew(
                 {
                     [ESLINT_KEY]: ESLint,
                     baseConfig: {
@@ -196,12 +196,12 @@ describe('gulp-eslint-new results', () => {
                             'camelcase': 1,         // not fixable
                             'no-extra-parens': 1,   // fixable
                             'no-undef': 2,          // not fixable
-                            'quotes': [2, 'single'] // fixable
-                        }
+                            'quotes': [2, 'single'], // fixable
+                        },
                     },
                     useEslintrc: false,
-                    warnIgnored: true
-                }
+                    warnIgnored: true,
+                },
             );
             lintStream
                 .pipe(gulpESLintNew.results(results => {
@@ -249,9 +249,9 @@ describe('gulp-eslint-new results', () => {
                     .results(() => {
                         throw Error('Expected Error');
                     })
-                    .end(file)
+                    .end(file),
             ),
-            { message: 'Expected Error', name: 'Error', plugin: 'gulp-eslint-new' }
+            { message: 'Expected Error', name: 'Error', plugin: 'gulp-eslint-new' },
         );
     });
 
@@ -264,16 +264,16 @@ describe('gulp-eslint-new results', () => {
                     .results(() => {
                         throw null;
                     })
-                    .end(file)
+                    .end(file),
             ),
-            { message: 'Unknown Error', name: 'Error', plugin: 'gulp-eslint-new' }
+            { message: 'Unknown Error', name: 'Error', plugin: 'gulp-eslint-new' },
         );
     });
 
     it('should throw an error if not provided a function argument', () => {
         assert.throws(
             gulpESLintNew.results,
-            { constructor: TypeError, message: 'Argument is not a function' }
+            { constructor: TypeError, message: 'Argument is not a function' },
         );
     });
 
@@ -285,7 +285,7 @@ describe('gulp-eslint-new results', () => {
                     results = actualResults;
                 })
                 .resume()
-                .end(createVinylFile('invalid.js', '#invalid!syntax}'))
+                .end(createVinylFile('invalid.js', '#invalid!syntax}')),
         );
         assert(isEmptyArray(results));
     });
@@ -304,7 +304,7 @@ describe('gulp-eslint-new results', () => {
                 })
                 .resume()
                 .on('end', () => assert(results))
-                .end(file)
+                .end(file),
         );
         assert(Array.isArray(results));
         assert.equal(results.length, 1);
@@ -322,7 +322,7 @@ describe('gulp-eslint-new results', () => {
                 })
                 .resume()
                 .on('end', () => assert(cwd))
-                .end(file)
+                .end(file),
         );
         assert.equal(cwd, process.cwd());
     });

@@ -9,7 +9,7 @@ task(
 
         const options = { force: true, recursive: true };
         await rm('coverage', options);
-    }
+    },
 );
 
 task(
@@ -17,13 +17,13 @@ task(
     () => {
         const gulpESLintNew = require('gulp-eslint-new');
 
-        const stream
-        = src(['*.{js,ts}', 'example/*.js', 'test/**/*.{js,ts}'])
+        const stream =
+        src(['*.{js,ts}', 'example/*.js', 'test/**/*.{js,ts}'])
             .pipe(gulpESLintNew())
             .pipe(gulpESLintNew.format())
             .pipe(gulpESLintNew.failAfterError());
         return stream;
-    }
+    },
 );
 
 task(
@@ -39,16 +39,15 @@ task(
                 reporter: ['html', 'text-summary'],
                 src: 'lib',
                 useC8Config: false,
-                watermarks:
-                {
+                watermarks: {
                     branches:   [90, 100],
                     functions:  [90, 100],
                     lines:      [90, 100],
-                    statements: [90, 100]
-                }
-            }
+                    statements: [90, 100],
+                },
+            },
         );
-    }
+    },
 );
 
 task(
@@ -61,9 +60,9 @@ task(
             getPreEmitDiagnostics,
             parseJsonConfigFileContent,
             readConfigFile,
-            sys
-        }
-        = require('typescript');
+            sys,
+        } =
+        require('typescript');
 
         const pkgPath = __dirname;
         const tsConfigPath = join(pkgPath, 'test/tsconfig.json');
@@ -77,7 +76,7 @@ task(
             diagnostics.forEach(reporter);
             throw Error('TypeScript compilation failed');
         }
-    }
+    },
 );
 
 task('default', series(parallel('clean', 'lint', 'ts-test'), 'test'));

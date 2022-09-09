@@ -17,9 +17,9 @@ describe('utility functions', () => {
             assert.equal(
                 util.compareResultsByFilePath(
                     { filePath: '/a/b/file.js' },
-                    { filePath: '/a/b/FILE.js' }
+                    { filePath: '/a/b/FILE.js' },
                 ),
-                1
+                1,
             );
         });
 
@@ -49,7 +49,7 @@ describe('utility functions', () => {
                 assert(Array.isArray(result.messages));
                 assert.deepEqual(
                     result.messages,
-                    [{ fatal: false, severity: 1, message: expectedMessage }]
+                    [{ fatal: false, severity: 1, message: expectedMessage }],
                 );
             }
 
@@ -57,8 +57,8 @@ describe('utility functions', () => {
                 test(
                     resolve('.hidden.js'),
                     process.cwd(),
-                    'File ignored by default. Use a negated ignore pattern (like '
-                    + '"!<relative/path/to/filename>") to override.'
+                    'File ignored by default. Use a negated ignore pattern (like ' +
+                    '"!<relative/path/to/filename>") to override.',
                 );
             });
 
@@ -66,8 +66,8 @@ describe('utility functions', () => {
                 test(
                     resolve('.hidden/file.js'),
                     process.cwd(),
-                    'File ignored by default. Use a negated ignore pattern (like '
-                    + '"!<relative/path/to/filename>") to override.'
+                    'File ignored by default. Use a negated ignore pattern (like ' +
+                    '"!<relative/path/to/filename>") to override.',
                 );
             });
 
@@ -75,8 +75,8 @@ describe('utility functions', () => {
                 test(
                     resolve('../file.js'),
                     process.cwd(),
-                    'File ignored because of a matching ignore pattern. Set "ignore" option to '
-                    + 'false to override.'
+                    'File ignored because of a matching ignore pattern. Set "ignore" option to ' +
+                    'false to override.',
                 );
             });
 
@@ -84,8 +84,8 @@ describe('utility functions', () => {
                 test(
                     resolve('node_modules/test/index.js'),
                     process.cwd(),
-                    'File ignored by default. Use a negated ignore pattern like "!node_modules/*" '
-                    + 'to override.'
+                    'File ignored by default. Use a negated ignore pattern like ' +
+                    '"!node_modules/*" to override.',
                 );
             });
 
@@ -93,8 +93,8 @@ describe('utility functions', () => {
                 test(
                     resolve('node_modules/file.js'),
                     resolve('node_modules'),
-                    'File ignored because of a matching ignore pattern. Set "ignore" option to '
-                    + 'false to override.'
+                    'File ignored because of a matching ignore pattern. Set "ignore" option to ' +
+                    'false to override.',
                 );
             });
 
@@ -102,8 +102,8 @@ describe('utility functions', () => {
                 test(
                     resolve('node_modules_bak/file.js'),
                     process.cwd(),
-                    'File ignored because of a matching ignore pattern. Set "ignore" option to '
-                    + 'false to override.'
+                    'File ignored because of a matching ignore pattern. Set "ignore" option to ' +
+                    'false to override.',
                 );
             });
 
@@ -111,8 +111,8 @@ describe('utility functions', () => {
                 test(
                     resolve('ignored.js'),
                     process.cwd(),
-                    'File ignored because of a matching ignore pattern. Set "ignore" option to '
-                    + 'false to override.'
+                    'File ignored because of a matching ignore pattern. Set "ignore" option to ' +
+                    'false to override.',
                 );
             });
 
@@ -141,7 +141,7 @@ describe('utility functions', () => {
                     .createTransform(
                         file => {
                             actualFile = file;
-                        }
+                        },
                     )
                     .on('data', file => {
                         assert.equal(file, expectedFile);
@@ -151,7 +151,7 @@ describe('utility functions', () => {
                         assert(actualFile);
                         finishCalled = true;
                     })
-                    .end(expectedFile)
+                    .end(expectedFile),
             );
             assert(finishCalled);
         });
@@ -162,7 +162,7 @@ describe('utility functions', () => {
             let finishCalled = false;
             const files = [
                 createVinylFile('invalid.js', 'x = 1;'),
-                createVinylFile('undeclared.js', 'x = 0;')
+                createVinylFile('undeclared.js', 'x = 0;'),
             ];
             const testStream = util
                 .createTransform(
@@ -173,7 +173,7 @@ describe('utility functions', () => {
                         assert.equal(count, files.length);
                         assert.equal(testStream._writableState.ending, true);
                         finalCount = count;
-                    }
+                    },
                 )
                 .resume()
                 .on('finish', () => {
@@ -191,7 +191,7 @@ describe('utility functions', () => {
                 .createTransform(
                     () => new Promise((_, reject) => {
                         setImmediate(() => reject('foo'));
-                    })
+                    }),
                 )
                 .on('error', err => {
                     assert(err.message, 'foo');
@@ -207,7 +207,7 @@ describe('utility functions', () => {
                     noop,
                     () => new Promise((_, reject) => {
                         setImmediate(() => reject('foo'));
-                    })
+                    }),
                 )
                 .on('error', err => {
                     assert(err.message, 'foo');
@@ -221,35 +221,36 @@ describe('utility functions', () => {
 
     describe('filterResult', () => {
 
-        const result = {
+        const result =
+        {
             messages: [{
                 ruleId: 'error',
                 message: 'This is an error.',
-                severity: 2
+                severity: 2,
             }, {
                 ruleId: 'warning',
                 message: 'This is a warning.',
-                severity: 1
+                severity: 1,
             }, {
                 ruleId: 'fixable error',
                 message: 'This is a fixable error.',
                 severity: 2,
-                fix: { }
+                fix: { },
             }, {
                 ruleId: 'fixable warning',
                 message: 'This is a fixable warning.',
                 severity: 1,
-                fix: { }
+                fix: { },
             }, {
                 ruleId: 'fatal error',
                 message: 'This is a fatal error.',
                 fatal: true,
-                severity: 2
+                severity: 2,
             }],
             errorCount: 3,
             warningCount: 2,
             fatalErrorCount: 1,
-            foobar: 42
+            foobar: 42,
         };
 
         it('should remove error messages', () => {
@@ -283,12 +284,17 @@ describe('utility functions', () => {
         it('should fix only a fixed file', done => {
             let actualDestArg;
             const actualFiles = [];
-            const testStream = util.fix(destArg => {
-                actualDestArg = destArg;
-                return util.createTransform(file => {
-                    actualFiles.push(file);
-                });
-            });
+            const testStream =
+            util.fix(
+                destArg => {
+                    actualDestArg = destArg;
+                    return util.createTransform(
+                        file => {
+                            actualFiles.push(file);
+                        },
+                    );
+                },
+            );
             const base = 'foobar';
             assert.equal(actualDestArg({ base }), base);
             const unfixedFile = createVinylFile('unfixed', 'unfixed');
@@ -323,8 +329,8 @@ describe('utility functions', () => {
                     warningCount: 0,
                     fixableErrorCount: 1,
                     fixableWarningCount: 0,
-                    fatalErrorCount: 0
-                }
+                    fatalErrorCount: 0,
+                },
             ];
 
             it('should default to the modified "stylish" formatter', async () => {
@@ -335,10 +341,10 @@ describe('utility functions', () => {
                 const { version } = require('gulp-eslint-new/package.json');
                 assert.equal(
                     cleanText,
-                    '\nfoo\n  42:99  warning  bar\n\n'
-                    + '✖ 1 problem (1 error, 0 warnings)\n'
-                    + '  1 error and 0 warnings potentially fixable - '
-                    + `see https://www.npmjs.com/package/gulp-eslint-new/v/${version}#autofix\n`
+                    '\nfoo\n  42:99  warning  bar\n\n' +
+                    '✖ 1 problem (1 error, 0 warnings)\n' +
+                    '  1 error and 0 warnings potentially fixable - ' +
+                    `see https://www.npmjs.com/package/gulp-eslint-new/v/${version}#autofix\n`,
                 );
             });
 
@@ -348,7 +354,7 @@ describe('utility functions', () => {
                 const text = await formatter.format(testResults);
                 assert.equal(
                     text.replace(/\x1b\[\d+m/g, ''),
-                    'foo: line 42, col 99, Warning - bar\n\n1 problem'
+                    'foo: line 42, col 99, Warning - bar\n\n1 problem',
                 );
             });
 
@@ -374,7 +380,8 @@ describe('utility functions', () => {
 
             it('should wrap a formatter function in an object', async () => {
                 const eslintInfo = { cwd: 'TEST CWD', eslint: new ESLint() };
-                const format = (actualResults, data) => {
+                const format =
+                (actualResults, data) => {
                     assert.equal(actualResults, testResults);
                     assert(data.rulesMeta);
                     assert.equal(data.cwd, 'TEST CWD');
@@ -389,7 +396,7 @@ describe('utility functions', () => {
                 const eslintInfo = { eslint: new ESLint() };
                 await assert.rejects(
                     () => util.resolveFormatter(eslintInfo, 'missing-formatter'),
-                    /\bThere was a problem loading formatter\b/
+                    /\bThere was a problem loading formatter\b/,
                 );
             });
 
@@ -419,7 +426,8 @@ describe('utility functions', () => {
             const writable = new Writable({ objectMode: true });
             const testValue = 'Formatted Output';
             const writer = util.resolveWriter(writable);
-            writable._write = (chunk, encoding, cb) => {
+            writable._write =
+            (chunk, encoding, cb) => {
                 assert(chunk);
                 assert.equal(chunk, testValue);
                 written = true;
@@ -444,13 +452,14 @@ describe('utility functions', () => {
         it('should pass the value returned from the formatter to the writer', async () => {
             let writeCount = 0;
             const formattedText = 'something happened';
-            const formatterObj = {
+            const formatterObj =
+            {
                 format(results) {
                     assert.equal(this, formatterObj);
                     assert(results);
                     assert.equal(results, testResults);
                     return formattedText;
-                }
+                },
             };
             await util.writeResults(
                 testResults,
@@ -459,30 +468,32 @@ describe('utility functions', () => {
                     assert(value);
                     assert.equal(value, formattedText);
                     ++writeCount;
-                }
+                },
             );
             assert.equal(writeCount, 1);
         });
 
         it('should not write an empty formatted text', async () => {
-            const formatterObj = {
+            const formatterObj =
+            {
                 format(results) {
                     assert.equal(this, formatterObj);
                     assert(results);
                     assert.equal(results, testResults);
                     return '';
-                }
+                },
             };
             await
             util.writeResults(testResults, formatterObj, () => assert.fail('Unexpected call'));
         });
 
         it('should not write an undefined value', async () => {
-            const formatterObj = {
+            const formatterObj =
+            {
                 format(results) {
                     assert(results);
                     assert.equal(results, testResults);
-                }
+                },
             };
             await
             util.writeResults(testResults, formatterObj, () => assert.fail('Unexpected call'));

@@ -37,10 +37,11 @@ function formatToFile() {
         .pipe(gulpESLintNew.format('html', createWriteStream('lint-report.html')));
 }
 
-module.exports = {
+module.exports =
+{
     'default': series(defaultFormatter, eslintFormatter, customFormatter, formatToFile),
     'default-formatter': defaultFormatter,
     'eslint-formatter': eslintFormatter,
     'custom-formatter': customFormatter,
-    'format-to-file': formatToFile
+    'format-to-file': formatToFile,
 };

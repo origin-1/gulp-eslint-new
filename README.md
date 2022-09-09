@@ -35,35 +35,38 @@ const { src } = require('gulp');
 const gulpESLintNew = require('gulp-eslint-new');
 
 // Define the default gulp task.
-exports.default = () => src(['scripts/*.js'])   // Read files.
-    .pipe(gulpESLintNew({ fix: true }))         // Lint files, create fixes.
-    .pipe(gulpESLintNew.fix())                  // Fix files if necessary.
-    .pipe(gulpESLintNew.format())               // Output lint results to the console.
-    .pipe(gulpESLintNew.failAfterError());      // Exit with an error if problems are found.
+exports.default =
+() => src(['scripts/*.js'])                 // Read files.
+    .pipe(gulpESLintNew({ fix: true }))     // Lint files, create fixes.
+    .pipe(gulpESLintNew.fix())              // Fix files if necessary.
+    .pipe(gulpESLintNew.format())           // Output lint results to the console.
+    .pipe(gulpESLintNew.failAfterError());  // Exit with an error if problems are found.
 ```
 
 Or use the plugin API to do things like:
 
 ```javascript
 gulp.src(['**/*.js', '!node_modules/**'])
-    .pipe(gulpESLintNew({
-        overrideConfig: {
-            env: {
-                browser: true,
-                commonjs: true,
-                jquery: true
+    .pipe(gulpESLintNew(
+        {
+            overrideConfig: {
+                env: {
+                    browser: true,
+                    commonjs: true,
+                    jquery: true,
+                },
+                extends: ['eslint:recommended', 'plugin:jquery/slim'],
+                globals: {
+                    chrome: 'readonly',
+                },
+                plugins: ['jquery'],
+                rules: {
+                    'strict': 'error',
+                },
             },
-            extends: ['eslint:recommended', 'plugin:jquery/slim'],
-            globals: {
-                chrome: 'readonly'
-            },
-            plugins: ['jquery'],
-            rules: {
-                'strict': 'error'
-            }
+            warnIgnored: true,
         },
-        warnIgnored: true
-    }))
+    ))
     .pipe(gulpESLintNew.formatEach('compact', process.stderr));
 ```
 
@@ -163,16 +166,18 @@ Call a function for each ESLint file result. No returned value is expected. If a
 ```javascript
 gulp.src(['**/*.js', '!node_modules/**'])
     .pipe(gulpESLintNew())
-    .pipe(gulpESLintNew.result(result => {
-        // Called for each ESLint result.
-        console.log(`ESLint result: ${result.filePath}`);
-        console.log(`# Messages: ${result.messages.length}`);
-        console.log(`# Warnings: ${result.warningCount} (${
-            result.fixableWarningCount} fixable)`);
-        console.log(`# Errors: ${result.errorCount} (${
-            result.fixableErrorCount} fixable, ${
-            result.fatalErrorCount} fatal)`);
-    }));
+    .pipe(gulpESLintNew.result(
+        result => {
+            // Called for each ESLint result.
+            console.log(`ESLint result: ${result.filePath}`);
+            console.log(`# Messages: ${result.messages.length}`);
+            console.log(`# Warnings: ${result.warningCount} (${
+                result.fixableWarningCount} fixable)`);
+            console.log(`# Errors: ${result.errorCount} (${
+                result.fixableErrorCount} fixable, ${
+                result.fatalErrorCount} fatal)`);
+        },
+    ));
 ```
 
 Param Type: `(result: Object, callback: Function) => void`
@@ -217,15 +222,17 @@ The results list has additional properties that indicate the number of messages 
 ```javascript
 gulp.src(['**/*.js', '!node_modules/**'])
     .pipe(gulpESLintNew())
-    .pipe(gulpESLintNew.results(results => {
-        // Called once for all ESLint results.
-        console.log(`Total Results: ${results.length}`);
-        console.log(`Total Warnings: ${results.warningCount} (${
-            results.fixableWarningCount} fixable)`);
-        console.log(`Total Errors: ${results.errorCount} (${
-            results.fixableErrorCount} fixable, ${
-            results.fatalErrorCount} fatal)`);
-    }));
+    .pipe(gulpESLintNew.results(
+        results => {
+            // Called once for all ESLint results.
+            console.log(`Total Results: ${results.length}`);
+            console.log(`Total Warnings: ${results.warningCount} (${
+                results.fixableWarningCount} fixable)`);
+            console.log(`Total Errors: ${results.errorCount} (${
+                results.fixableErrorCount} fixable, ${
+                results.fatalErrorCount} fatal)`);
+        },
+    ));
 ```
 
 Param type: `(results: Object[], callback: Function) => void`

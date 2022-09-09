@@ -15,7 +15,7 @@ it('import from gulp-eslint-new', async () => {
         'format',
         'formatEach',
         'result',
-        'results'
+        'results',
     ];
     assert.deepEqual(actual, expected);
 });

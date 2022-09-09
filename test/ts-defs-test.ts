@@ -14,8 +14,8 @@ gulpESLintNew(
         quiet:              undefined,
         rules:              undefined,
         warnFileIgnored:    undefined,
-        warnIgnored:        undefined
-    }
+        warnIgnored:        undefined,
+    },
 );
 
 // @ts-expect-error Invalid option.
@@ -58,8 +58,8 @@ isStream(gulpESLintNew.failOnError());
 
 isStream(gulpESLintNew.failAfterError());
 
-const loadedFormatter
-= { format: async (results: readonly ESLint.LintResult[]) => JSON.stringify(results) };
+const loadedFormatter =
+{ format: async (results: readonly ESLint.LintResult[]) => JSON.stringify(results) };
 
 isStream(gulpESLintNew.formatEach());
 gulpESLintNew.formatEach('test');

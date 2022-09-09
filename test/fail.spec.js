@@ -10,8 +10,8 @@ describe('gulp-eslint-new failOnError', () => {
 
     it('should fail a file immediately if an error is found', done => {
         const file = createVinylFile('invalid.js', 'x = 1;');
-        const lintStream
-        = gulpESLintNew({ baseConfig: { rules: { 'no-undef': 2 } }, useEslintrc: false });
+        const lintStream =
+        gulpESLintNew({ baseConfig: { rules: { 'no-undef': 2 } }, useEslintrc: false });
         lintStream
             .pipe(gulpESLintNew.failOnError())
             .on('error', err => {
@@ -45,8 +45,8 @@ describe('gulp-eslint-new failOnError', () => {
 describe('gulp-eslint-new failAfterError', () => {
 
     it('should emit an error if ESLint finds an error in a file', done => {
-        const lintStream
-        = gulpESLintNew({ baseConfig: { rules: { 'no-undef': 2 } }, useEslintrc: false });
+        const lintStream =
+        gulpESLintNew({ baseConfig: { rules: { 'no-undef': 2 } }, useEslintrc: false });
         lintStream
             .pipe(gulpESLintNew.failAfterError())
             .on('error', err => {
@@ -59,8 +59,8 @@ describe('gulp-eslint-new failAfterError', () => {
     });
 
     it('should emit an error if ESLint finds multiple errors in a file', done => {
-        const lintStream
-        = gulpESLintNew({ baseConfig: { rules: { 'no-undef': 2 } }, useEslintrc: false });
+        const lintStream =
+        gulpESLintNew({ baseConfig: { rules: { 'no-undef': 2 } }, useEslintrc: false });
         lintStream
             .pipe(gulpESLintNew.failAfterError())
             .on('error', err => {

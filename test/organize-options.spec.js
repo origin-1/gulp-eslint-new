@@ -18,24 +18,24 @@ describe('organizeOptions', () => {
         const { eslintOptions, migratedOptions } = organizeOptions({ configFile: 'Config/Path' });
         assert.deepEqual(
             eslintOptions,
-            { overrideConfig: { }, overrideConfigFile: 'Config/Path' }
+            { overrideConfig: { }, overrideConfigFile: 'Config/Path' },
         );
         assert.deepEqual(
             migratedOptions,
-            [{ oldName: 'configFile', newName: 'overrideConfigFile', formatChanged: false }]
+            [{ oldName: 'configFile', newName: 'overrideConfigFile', formatChanged: false }],
         );
     });
 
     it('should migrate an "envs" array to an "env" object', () => {
-        const { eslintOptions, migratedOptions }
-        = organizeOptions({ envs: ['foo:true', 'bar:false', 'baz'] });
+        const { eslintOptions, migratedOptions } =
+        organizeOptions({ envs: ['foo:true', 'bar:false', 'baz'] });
         assert.deepEqual(
             eslintOptions,
-            { overrideConfig: { env: { foo: true, bar: false, baz: true } } }
+            { overrideConfig: { env: { foo: true, bar: false, baz: true } } },
         );
         assert.deepEqual(
             migratedOptions,
-            [{ oldName: 'envs', newName: 'overrideConfig.env', formatChanged: true }]
+            [{ oldName: 'envs', newName: 'overrideConfig.env', formatChanged: true }],
         );
     });
 
@@ -44,29 +44,29 @@ describe('organizeOptions', () => {
         assert.deepEqual(eslintOptions, { overrideConfig: { extends: 'foo' } });
         assert.deepEqual(
             migratedOptions,
-            [{ oldName: 'extends', newName: 'overrideConfig.extends', formatChanged: false }]
+            [{ oldName: 'extends', newName: 'overrideConfig.extends', formatChanged: false }],
         );
     });
 
     it('should migrate a "globals" array to an object', () => {
-        const { eslintOptions, migratedOptions }
-        = organizeOptions({ globals: ['foo:true', 'bar:false', 'baz'] });
+        const { eslintOptions, migratedOptions } =
+        organizeOptions({ globals: ['foo:true', 'bar:false', 'baz'] });
         assert.deepEqual(
             eslintOptions,
-            { overrideConfig: { globals: { foo: true, bar: false, baz: false } } }
+            { overrideConfig: { globals: { foo: true, bar: false, baz: false } } },
         );
         assert.deepEqual(
             migratedOptions,
-            [{ oldName: 'globals', newName: 'overrideConfig.globals', formatChanged: true }]
+            [{ oldName: 'globals', newName: 'overrideConfig.globals', formatChanged: true }],
         );
     });
 
     it('should migrate "ignorePattern" to "ignorePatterns"', () => {
-        const { eslintOptions, migratedOptions }
-        = organizeOptions({ ignorePattern: ['foo', 'bar', 'baz'] });
+        const { eslintOptions, migratedOptions } =
+        organizeOptions({ ignorePattern: ['foo', 'bar', 'baz'] });
         assert.deepEqual(
             eslintOptions,
-            { overrideConfig: { ignorePatterns: ['foo', 'bar', 'baz'] } }
+            { overrideConfig: { ignorePatterns: ['foo', 'bar', 'baz'] } },
         );
         assert.deepEqual(
             migratedOptions,
@@ -74,9 +74,9 @@ describe('organizeOptions', () => {
                 {
                     oldName: 'ignorePattern',
                     newName: 'overrideConfig.ignorePatterns',
-                    formatChanged: false
-                }
-            ]
+                    formatChanged: false,
+                },
+            ],
         );
     });
 
@@ -85,7 +85,7 @@ describe('organizeOptions', () => {
         assert.deepEqual(eslintOptions, { overrideConfig: { parser: 'foo' } });
         assert.deepEqual(
             migratedOptions,
-            [{ oldName: 'parser', newName: 'overrideConfig.parser', formatChanged: false }]
+            [{ oldName: 'parser', newName: 'overrideConfig.parser', formatChanged: false }],
         );
     });
 
@@ -98,9 +98,9 @@ describe('organizeOptions', () => {
                 {
                     oldName: 'parserOptions',
                     newName: 'overrideConfig.parserOptions',
-                    formatChanged: false
-                }
-            ]
+                    formatChanged: false,
+                },
+            ],
         );
     });
 
@@ -109,7 +109,7 @@ describe('organizeOptions', () => {
         assert.deepEqual(eslintOptions, { overrideConfig: { plugins: ['foo', 'bar'] } });
         assert.deepEqual(
             migratedOptions,
-            [{ oldName: 'plugins', newName: 'overrideConfig.plugins', formatChanged: false }]
+            [{ oldName: 'plugins', newName: 'overrideConfig.plugins', formatChanged: false }],
         );
     });
 
@@ -124,7 +124,7 @@ describe('organizeOptions', () => {
         assert.deepEqual(eslintOptions, { overrideConfig: { rules: 'foo' } });
         assert.deepEqual(
             migratedOptions,
-            [{ oldName: 'rules', newName: 'overrideConfig.rules', formatChanged: false }]
+            [{ oldName: 'rules', newName: 'overrideConfig.rules', formatChanged: false }],
         );
     });
 
@@ -133,13 +133,13 @@ describe('organizeOptions', () => {
         assert.equal(warnIgnored, true);
         assert.deepEqual(
             migratedOptions,
-            [{ oldName: 'warnFileIgnored', newName: 'warnIgnored', formatChanged: false }]
+            [{ oldName: 'warnFileIgnored', newName: 'warnIgnored', formatChanged: false }],
         );
     });
 
     it('should migrate undefined legacy options', () => {
-        const { eslintOptions, migratedOptions }
-        = organizeOptions(
+        const { eslintOptions, migratedOptions } =
+        organizeOptions(
             {
                 configFile:     undefined,
                 envs:           undefined,
@@ -148,8 +148,8 @@ describe('organizeOptions', () => {
                 ignorePattern:  undefined,
                 parser:         undefined,
                 parserOptions:  undefined,
-                rules:          undefined
-            }
+                rules:          undefined,
+            },
         );
         assert.deepEqual(
             eslintOptions,
@@ -161,10 +161,10 @@ describe('organizeOptions', () => {
                     ignorePatterns: undefined,
                     parser:         undefined,
                     parserOptions:  undefined,
-                    rules:          undefined
+                    rules:          undefined,
                 },
-                overrideConfigFile: undefined
-            }
+                overrideConfigFile: undefined,
+            },
         );
         assert.deepEqual(
             migratedOptions.map(({ oldName }) => oldName),
@@ -176,8 +176,8 @@ describe('organizeOptions', () => {
                 'ignorePattern',
                 'parser',
                 'parserOptions',
-                'rules'
-            ]
+                'rules',
+            ],
         );
     });
 
@@ -188,20 +188,21 @@ describe('organizeOptions', () => {
     });
 
     it('should fail if a forbidden option is specified', () => {
-        const options = {
+        const options =
+        {
             cache:                   true,
             cacheFile:               '\0',
             cacheLocation:           '\0',
             cacheStrategy:           'metadata',
             errorOnUnmatchedPattern: true,
             extensions:              [],
-            globInputPaths:          false
+            globInputPaths:          false,
         };
         assert.throws(
             () => organizeOptions(options),
             ({ code, message }) =>
-                code === 'ESLINT_INVALID_OPTIONS'
-                && message.includes(Object.keys(options).join(', '))
+                code === 'ESLINT_INVALID_OPTIONS' &&
+                message.includes(Object.keys(options).join(', ')),
         );
     });
 
@@ -209,7 +210,7 @@ describe('organizeOptions', () => {
         assert.throws(
             () => organizeOptions({ overrideConfig: 'foo' }),
             ({ code, message }) =>
-                code === 'ESLINT_INVALID_OPTIONS' && /\boverrideConfig\b/.test(message)
+                code === 'ESLINT_INVALID_OPTIONS' && /\boverrideConfig\b/.test(message),
         );
     });
 
@@ -217,7 +218,7 @@ describe('organizeOptions', () => {
         assert.throws(
             () => organizeOptions({ envs: 'foo' }),
             ({ code, message }) =>
-                code === 'ESLINT_INVALID_OPTIONS' && /\benvs\b/.test(message)
+                code === 'ESLINT_INVALID_OPTIONS' && /\benvs\b/.test(message),
         );
     });
 
@@ -225,7 +226,7 @@ describe('organizeOptions', () => {
         assert.throws(
             () => organizeOptions({ globals: { } }),
             ({ code, message }) =>
-                code === 'ESLINT_INVALID_OPTIONS' && /\bglobals\b/.test(message)
+                code === 'ESLINT_INVALID_OPTIONS' && /\bglobals\b/.test(message),
 
         );
     });

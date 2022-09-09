@@ -118,30 +118,32 @@ const isInNodeModulesRegExp = /(?<![^/\\])node_modules[/\\]/u;
  * @param {string} eslintVersion - ESLint version string.
  * @returns {ESLint.LintResult} Result with warning by ignore settings.
  */
-exports.createIgnoreResult = (filePath, baseDir, eslintVersion) => {
+exports.createIgnoreResult =
+(filePath, baseDir, eslintVersion) => {
     let message;
     const relativePath = relative(baseDir, filePath);
     if (isHiddenRegExp.test(relativePath)) {
-        message
-        = 'File ignored by default. Use a negated ignore pattern (like '
-        + '"!<relative/path/to/filename>") to override.';
+        message =
+        'File ignored by default. Use a negated ignore pattern (like ' +
+        '"!<relative/path/to/filename>") to override.';
     } else if (isInNodeModulesRegExp.test(relativePath)) {
-        message
-        = 'File ignored by default. Use a negated ignore pattern like "!node_modules/*" to '
-        + 'override.';
+        message =
+        'File ignored by default. Use a negated ignore pattern like "!node_modules/*" to ' +
+        'override.';
     } else {
-        message
-        = 'File ignored because of a matching ignore pattern. Set "ignore" option to false to '
-        + 'override.';
+        message =
+        'File ignored because of a matching ignore pattern. Set "ignore" option to false to ' +
+        'override.';
     }
-    const result = {
+    const result =
+    {
         filePath,
         messages: [{ fatal: false, severity: 1, message }],
         errorCount: 0,
         warningCount: 1,
         fixableErrorCount: 0,
         fixableWarningCount: 0,
-        fatalErrorCount: 0
+        fatalErrorCount: 0,
     };
     if (!ltr(eslintVersion, '8.8.0')) {
         result.suppressedMessages = [];
@@ -177,7 +179,8 @@ async function awaitHandler(handler, data, done) {
  *
  * @returns {Transform} A transform stream.
  */
-exports.createTransform = (handleFile, handleFinal) => {
+exports.createTransform =
+(handleFile, handleFinal) => {
     const transform = (file, enc, done) => void awaitHandler(() => handleFile(file), file, done);
     const final = handleFinal ? done => void awaitHandler(handleFinal, null, done) : undefined;
     return new Transform({ objectMode: true, transform, final });
@@ -211,7 +214,8 @@ function countMessages(messages, predicate) {
  * @param {Function} filter - A function that evaluates what messages to keep.
  * @returns {ESLint.LintResult} A filtered ESLint result.
  */
-exports.filterResult = (result, filter) => {
+exports.filterResult =
+(result, filter) => {
     const { messages, ...newResult } = result;
     const newMessages = messages.filter(filter, result);
     newResult.messages = newMessages;
@@ -233,8 +237,8 @@ exports.isErrorMessage = isErrorMessage;
 
 exports.isWarningMessage = isWarningMessage;
 
-const makeNPMLink
-= anchor => `https://www.npmjs.com/package/gulp-eslint-new/v/${version}#${anchor}`;
+const makeNPMLink =
+anchor => `https://www.npmjs.com/package/gulp-eslint-new/v/${version}#${anchor}`;
 
 exports.makeNPMLink = makeNPMLink;
 
@@ -245,7 +249,7 @@ const FORBIDDEN_OPTIONS = [
     'cacheStrategy',
     'errorOnUnmatchedPattern',
     'extensions',
-    'globInputPaths'
+    'globInputPaths',
 ];
 
 /**
@@ -282,7 +286,7 @@ function toBooleanMap(keys, defaultValue, displayName) {
                 }
                 return map;
             },
-            { }
+            { },
         );
     }
 }
@@ -301,11 +305,12 @@ function toBooleanMap(keys, defaultValue, displayName) {
  * @property {boolean | undefined} [quiet]
  * @property {boolean | undefined} [warnIgnored]
  */
-exports.organizeOptions = (options = { }) => {
+exports.organizeOptions =
+(options = { }) => {
     const migratedOptions = [];
     if (typeof options === 'string') {
-        const organizedOptions
-        = { eslintOptions: { overrideConfigFile: options }, migratedOptions };
+        const organizedOptions =
+        { eslintOptions: { overrideConfigFile: options }, migratedOptions };
         return organizedOptions;
     }
     {
@@ -321,29 +326,29 @@ exports.organizeOptions = (options = { }) => {
         quiet,
         warnIgnored,
         ...eslintOptions
-    }
-    = options;
+    } =
+    options;
     if (rawOverrideConfig != null && typeof rawOverrideConfig !== 'object') {
         throwInvalidOptionError('Option overrideConfig must be an object or null');
     }
-    const overrideConfig = eslintOptions.overrideConfig
-    = rawOverrideConfig != null ? { ...rawOverrideConfig } : { };
-    const organizedOptions
-    = { ESLint, eslintOptions, logWarning, migratedOptions, quiet, warnIgnored };
+    const overrideConfig = eslintOptions.overrideConfig =
+    rawOverrideConfig != null ? { ...rawOverrideConfig } : { };
+    const organizedOptions =
+    { ESLint, eslintOptions, logWarning, migratedOptions, quiet, warnIgnored };
 
     function migrateOption(
         oldName,
         newName = oldName,
         newOptions = overrideConfig,
         needsMigration = hasOwn(eslintOptions, oldName),
-        convert
+        convert,
     ) {
         if (needsMigration) {
             const value = eslintOptions[oldName];
             delete eslintOptions[oldName];
             {
-                const newDisplayName
-                = newOptions === overrideConfig ? `overrideConfig.${newName}` : newName;
+                const newDisplayName =
+                newOptions === overrideConfig ? `overrideConfig.${newName}` : newName;
                 const formatChanged = convert != null;
                 const migratedOption = { oldName, newName: newDisplayName, formatChanged };
                 migratedOptions.push(migratedOption);
@@ -360,7 +365,7 @@ exports.organizeOptions = (options = { }) => {
         undefined,
         undefined,
         undefined,
-        globals => toBooleanMap(globals, false, 'globals')
+        globals => toBooleanMap(globals, false, 'globals'),
     );
     migrateOption('ignorePattern', 'ignorePatterns');
     migrateOption('parser');
@@ -384,7 +389,8 @@ exports.organizeOptions = (options = { }) => {
  *
  * @returns {Promise<LoadedFormatter>} An ESLint formatter.
  */
-exports.resolveFormatter = async ({ cwd, eslint }, formatter) => {
+exports.resolveFormatter =
+async ({ cwd, eslint }, formatter) => {
     if (formatter === undefined) {
         const { format } = await eslint.loadFormatter();
         return {
@@ -392,8 +398,8 @@ exports.resolveFormatter = async ({ cwd, eslint }, formatter) => {
                 format(results)
                     .replace(
                         / with the `--fix` option\.(?=(\u001b\[\d+m|\n)+$)/,
-                        ` - see ${makeNPMLink('autofix')}`
-                    )
+                        ` - see ${makeNPMLink('autofix')}`,
+                    ),
         };
     }
     if (isObject(formatter) && typeof formatter.format === 'function') {
@@ -411,10 +417,10 @@ exports.resolveFormatter = async ({ cwd, eslint }, formatter) => {
                             const rulesMeta = eslint.getRulesMetaForResults(results);
                             defineProperty(this, 'rulesMeta', { value: rulesMeta });
                             return rulesMeta;
-                        }
-                    }
+                        },
+                    },
                 );
-            }
+            },
         };
     }
     // Use ESLint to look up formatter references.
@@ -428,7 +434,8 @@ exports.resolveFormatter = async ({ cwd, eslint }, formatter) => {
  * A stream or function to resolve as a format writer.
  * @returns {GulpESLintWriter} A function that writes formatted messages.
  */
-exports.resolveWriter = (writer = fancyLog) => {
+exports.resolveWriter =
+(writer = fancyLog) => {
     if (isObject(writer)) {
         const { write } = writer;
         if (typeof write === 'function') {
@@ -438,8 +445,8 @@ exports.resolveWriter = (writer = fancyLog) => {
     return writer;
 };
 
-exports.warn
-= (message, logWarning = fancyLog.warn) => logWarning(`\x1b[1m\x1b[33m${message}\x1b[0m`);
+exports.warn =
+(message, logWarning = fancyLog.warn) => logWarning(`\x1b[1m\x1b[33m${message}\x1b[0m`);
 
 /**
  * Write formatted ESLint messages.
@@ -453,7 +460,8 @@ exports.warn
  * @param {GulpESLintWriter} [writer]
  * A function used to write formatted ESLint messages.
  */
-exports.writeResults = async (results, formatterObj, writer) => {
+exports.writeResults =
+async (results, formatterObj, writer) => {
     const message = await formatterObj.format(results);
     if (writer && message != null && message !== '') {
         await writer(message);

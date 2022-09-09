@@ -2,12 +2,12 @@ import { ESLint, Linter }    from 'eslint';
 import                            'node';
 import { TransformCallback } from 'stream';
 
-type FormatterFunction
-= (results: ESLint.LintResult[], data?: ESLint.LintResultData) => string | Promise<string>;
+type FormatterFunction =
+(results: ESLint.LintResult[], data?: ESLint.LintResultData) => string | Promise<string>;
 
-type LintResultStreamFunction<Type>
-= ((action: (value: Type, callback: TransformCallback) => void) => NodeJS.ReadWriteStream)
-& ((action: (value: Type) => unknown | Promise<unknown>) => NodeJS.ReadWriteStream);
+type LintResultStreamFunction<Type> =
+((action: (value: Type, callback: TransformCallback) => void) => NodeJS.ReadWriteStream) &
+((action: (value: Type) => unknown | Promise<unknown>) => NodeJS.ReadWriteStream);
 
 interface LoadedFormatter {
     format(results: ESLint.LintResult[]): string | Promise<string>;
@@ -24,8 +24,8 @@ ESLint.Options,
 | 'extensions'
 | 'globInputPaths'
 | 'plugins'
->
-& {
+> &
+{
     /** @deprecated Use `overrideConfigFile` instead. */
     configFile?: ESLint.Options['overrideConfigFile'];
 

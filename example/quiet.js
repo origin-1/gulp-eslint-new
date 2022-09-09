@@ -17,8 +17,9 @@ function lintWarnings() {
         .pipe(gulpESLintNew.format());
 }
 
-module.exports = {
+module.exports =
+{
     'default': series(quietLint, lintWarnings),
     'quiet-lint': quietLint,
-    'lint-warnings': lintWarnings
+    'lint-warnings': lintWarnings,
 };

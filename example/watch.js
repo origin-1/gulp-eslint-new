@@ -13,11 +13,14 @@ function lintWatch() {
     // Format results with each file, since this stream won't end.
     lintAndPrint.pipe(gulpESLintNew.formatEach());
     return watch('demo/**/*.js')
-        .on('all', (eventType, path) => {
-            if (eventType === 'add' || eventType === 'change') {
-                src(path).pipe(lintAndPrint, { end: false });
-            }
-        });
+        .on(
+            'all',
+            (eventType, path) => {
+                if (eventType === 'add' || eventType === 'change') {
+                    src(path).pipe(lintAndPrint, { end: false });
+                }
+            },
+        );
 }
 
 const CACHE_NAME = 'eslint';
@@ -37,18 +40,21 @@ function cachedLintWatch() {
             // Only uncached and changed files past this point.
             .pipe(gulpESLintNew())
             .pipe(gulpESLintNew.format())
-            .pipe(gulpESLintNew.result(result => {
-                if (result.messages.length > 0) {
-                    // If a file has errors/warnings, uncache it.
-                    uncache(result.filePath);
-                }
-            }))
+            .pipe(gulpESLintNew.result(
+                result => {
+                    if (result.messages.length > 0) {
+                        // If a file has errors/warnings, uncache it.
+                        uncache(result.filePath);
+                    }
+                },
+            )),
     )
         .on('unlink', path => uncache(resolve(path))); // Remove deleted files from cache.
 }
 
-module.exports = {
+module.exports =
+{
     'default': cachedLintWatch,
     'lint-watch': lintWatch,
-    'cached-lint-watch': cachedLintWatch
+    'cached-lint-watch': cachedLintWatch,
 };

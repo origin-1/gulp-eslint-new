@@ -26,20 +26,20 @@ function getFiles() {
         createVinylDirectory(),
         createVinylFile(
             'use-strict.js',
-            '(function () {\n\n\tvoid 0;\n\n}());\n\n'
+            '(function () {\n\n\tvoid 0;\n\n}());\n\n',
         ),
         createVinylFile(
             'undeclared.js',
-            '(function () {\n\t"use strict";\n\n\tx = 0;\n\n}());\n'
+            '(function () {\n\t"use strict";\n\n\tx = 0;\n\n}());\n',
         ),
         createVinylFile(
             'passing.js',
-            '(function () {\n\n\t"use strict";\n\n}());\n'
+            '(function () {\n\n\t"use strict";\n\n}());\n',
         ),
         createVinylFile(
             '.ignored.js',
-            ''
-        )
+            '',
+        ),
     ];
 }
 
@@ -70,9 +70,9 @@ describe('gulp-eslint-new format', () => {
 
     async function testWrapError(useError) {
         const files = getFiles();
-        const lintStream
-        = gulpESLintNew(
-            { baseConfig: { rules: { 'strict': 2 } }, useEslintrc: false, warnIgnored: true }
+        const lintStream =
+        gulpESLintNew(
+            { baseConfig: { rules: { 'strict': 2 } }, useEslintrc: false, warnIgnored: true },
         );
         const testMessage = 'Writer Test Error';
         const testErrorName = 'TestError';
@@ -91,8 +91,8 @@ describe('gulp-eslint-new format', () => {
                 message: testMessage,
                 name: testErrorName,
                 plugin: 'gulp-eslint-new',
-                showStack: true
-            }
+                showStack: true,
+            },
         );
         assert.equal(writeCount, 1);
     }
@@ -104,9 +104,9 @@ describe('gulp-eslint-new format', () => {
 
     it('should format all ESLint results at once', async () => {
         const files = getFiles();
-        const lintStream
-        = gulpESLintNew(
-            { baseConfig: { rules: { 'strict': 2 } }, useEslintrc: false, warnIgnored: true }
+        const lintStream =
+        gulpESLintNew(
+            { baseConfig: { rules: { 'strict': 2 } }, useEslintrc: false, warnIgnored: true },
         );
         const formatStream = gulpESLintNew.format(formatResults, outputWriter);
         let errorEmitted;
@@ -115,7 +115,7 @@ describe('gulp-eslint-new format', () => {
             function () {
                 // The stream should not have emitted an error.
                 ({ errorEmitted } = this._writableState);
-            }
+            },
         );
         lintStream
             .pipe(gulpESLintNew.format(noop, noop)) // Test that files are passed through.
@@ -139,18 +139,18 @@ describe('gulp-eslint-new format', () => {
     it('should wrap errors thrown by a synchronous format writer', () => testWrapError(
         error => {
             throw error;
-        }
+        },
     ));
 
     it('should wrap errors thrown by an asynchronous format writer', () => testWrapError(
-        error => new Promise((_, reject) => setImmediate(() => reject(error)))
+        error => new Promise((_, reject) => setImmediate(() => reject(error))),
     ));
 
     it('should emit an error if an invalid formatter is passed', async () => {
         const files = getFiles();
-        const lintStream
-        = gulpESLintNew(
-            { baseConfig: { rules: { 'strict': 2 } }, useEslintrc: false, warnIgnored: true }
+        const lintStream =
+        gulpESLintNew(
+            { baseConfig: { rules: { 'strict': 2 } }, useEslintrc: false, warnIgnored: true },
         );
         const formatStream = gulpESLintNew.format(42);
         lintStream.pipe(formatStream);
@@ -160,8 +160,8 @@ describe('gulp-eslint-new format', () => {
                 constructor: PluginError,
                 name: 'Error',
                 plugin: 'gulp-eslint-new',
-                showStack: true
-            }
+                showStack: true,
+            },
         );
     });
 
@@ -175,13 +175,14 @@ describe('gulp-eslint-new format', () => {
                 fileName: file.path,
                 message: 'ESLint information not available',
                 plugin: 'gulp-eslint-new',
-                showStack: false
-            }
+                showStack: false,
+            },
         );
     });
 
     it('should emit an error if the linted files have different ESLint instances', async () => {
-        const createTestFile = path => {
+        const createTestFile =
+        path => {
             const file = createVinylFile(path, '');
             file.eslint = { };
             file._eslintInfo = { cwd: process.cwd(), eslint: { } };
@@ -195,8 +196,8 @@ describe('gulp-eslint-new format', () => {
                 message:
                 'The files in the stream were not processed by the same instance of ESLint',
                 plugin: 'gulp-eslint-new',
-                showStack: false
-            }
+                showStack: false,
+            },
         );
     });
 
@@ -208,9 +209,9 @@ describe('gulp-eslint-new formatEach', () => {
 
     async function testWrapError(useError) {
         const files = getFiles();
-        const lintStream
-        = gulpESLintNew(
-            { baseConfig: { rules: { 'strict': 2 } }, useEslintrc: false, warnIgnored: true }
+        const lintStream =
+        gulpESLintNew(
+            { baseConfig: { rules: { 'strict': 2 } }, useEslintrc: false, warnIgnored: true },
         );
         const testMessage = 'Writer Test Error';
         const testErrorName = 'TestError';
@@ -229,8 +230,8 @@ describe('gulp-eslint-new formatEach', () => {
                 message: testMessage,
                 name: testErrorName,
                 plugin: 'gulp-eslint-new',
-                showStack: true
-            }
+                showStack: true,
+            },
         );
         assert.equal(writeCount, 1);
     }
@@ -242,9 +243,9 @@ describe('gulp-eslint-new formatEach', () => {
 
     it('should format individual ESLint results', async () => {
         const files = getFiles();
-        const lintStream
-        = gulpESLintNew(
-            { baseConfig: { rules: { 'strict': 2 } }, useEslintrc: false, warnIgnored: true }
+        const lintStream =
+        gulpESLintNew(
+            { baseConfig: { rules: { 'strict': 2 } }, useEslintrc: false, warnIgnored: true },
         );
         const formatStream = gulpESLintNew.formatEach(formatResult, outputWriter);
         let errorEmitted;
@@ -253,7 +254,7 @@ describe('gulp-eslint-new formatEach', () => {
             function () {
                 // The stream should not have emitted an error.
                 ({ errorEmitted } = this._writableState);
-            }
+            },
         );
         lintStream
             .pipe(gulpESLintNew.formatEach(noop, noop)) // Test that files are passed through.
@@ -266,14 +267,16 @@ describe('gulp-eslint-new formatEach', () => {
     });
 
     it('should memoize formatters per ESLint instance', async () => {
-        const createTestFile = eslintInstance => {
+        const createTestFile =
+        eslintInstance => {
             const file = createVinylFile('', '');
             file.eslint = { };
             file._eslintInfo = { eslint: eslintInstance };
             return file;
         };
         let loadFormatterCallCount = 0;
-        const loadFormatter = () => {
+        const loadFormatter =
+        () => {
             ++loadFormatterCallCount;
             return { format: () => '' };
         };
@@ -284,7 +287,7 @@ describe('gulp-eslint-new formatEach', () => {
             createTestFile(eslint1),
             createTestFile(eslint2),
             createTestFile(eslint1),
-            createTestFile(eslint2)
+            createTestFile(eslint2),
         ];
         await runStream(gulpESLintNew.formatEach(), files);
         assert.equal(loadFormatterCallCount, 2);
@@ -303,18 +306,18 @@ describe('gulp-eslint-new formatEach', () => {
     it('should wrap errors thrown by a synchronous format writer', () => testWrapError(
         error => {
             throw error;
-        }
+        },
     ));
 
     it('should wrap errors thrown by an asynchronous format writer', () => testWrapError(
-        error => new Promise((_, reject) => setImmediate(() => reject(error)))
+        error => new Promise((_, reject) => setImmediate(() => reject(error))),
     ));
 
     it('should emit an error if an invalid formatter is passed', async () => {
         const files = getFiles();
-        const lintStream
-        = gulpESLintNew(
-            { baseConfig: { rules: { 'strict': 2 } }, useEslintrc: false, warnIgnored: true }
+        const lintStream =
+        gulpESLintNew(
+            { baseConfig: { rules: { 'strict': 2 } }, useEslintrc: false, warnIgnored: true },
         );
         const formatStream = gulpESLintNew.formatEach(42);
         lintStream.pipe(formatStream);
@@ -324,8 +327,8 @@ describe('gulp-eslint-new formatEach', () => {
                 constructor: PluginError,
                 name: 'Error',
                 plugin: 'gulp-eslint-new',
-                showStack: true
-            }
+                showStack: true,
+            },
         );
     });
 
@@ -339,8 +342,8 @@ describe('gulp-eslint-new formatEach', () => {
                 fileName: file.path,
                 message: 'ESLint information not available',
                 plugin: 'gulp-eslint-new',
-                showStack: false
-            }
+                showStack: false,
+            },
         );
     });
 

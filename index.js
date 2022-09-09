@@ -13,7 +13,7 @@ const {
     resolveFormatter,
     resolveWriter,
     warn,
-    writeResults
+    writeResults,
 } = require('#util');
 const { promisify } = require('util');
 const { dest }      = require('vinyl-fs');
@@ -28,18 +28,20 @@ function wrapAction(action) {
     return action;
 }
 
-const createResultStream = action => {
+const createResultStream =
+action => {
     action = wrapAction(action);
     return createTransform(
         async ({ eslint }) => {
             if (eslint) {
                 await action(eslint);
             }
-        }
+        },
     );
 };
 
-const createResultsStream = action => {
+const createResultsStream =
+action => {
     action = wrapAction(action);
     const results = [];
     results.errorCount          = 0;
@@ -61,7 +63,7 @@ const createResultsStream = action => {
         },
         async () => {
             await action(results);
-        }
+        },
     );
 };
 
@@ -122,23 +124,24 @@ async function lintFile(eslintInfo, file, quiet, warnIgnored) {
     file._eslintInfo = eslintInfo;
 }
 
-module.exports = exports = options => {
+module.exports = exports =
+options => {
     const {
         ESLint = require('eslint').ESLint,
         eslintOptions,
         logWarning,
         migratedOptions,
         quiet,
-        warnIgnored
-    }
-    = organizeOptions(options);
+        warnIgnored,
+    } =
+    organizeOptions(options);
     const { cwd = process.cwd() } = eslintOptions;
     const eslint = new ESLint(eslintOptions);
     if (migratedOptions.length) {
-        const migratedOptionWarningText
-        = migratedOptions.map(formatMigratedOptionWarningLine).join('\n');
-        const message
-        =  `The following top-level options passed to gulpESLintNew() have been migrated:\n${
+        const migratedOptionWarningText =
+        migratedOptions.map(formatMigratedOptionWarningLine).join('\n');
+        const message =
+        `The following top-level options passed to gulpESLintNew() have been migrated:\n${
             migratedOptionWarningText}\nSee ${
             makeNPMLink('legacy-options')} for more information.`;
         warn(message, logWarning);
@@ -161,8 +164,8 @@ function failOnErrorAction(result) {
                     name: 'ESLintError',
                     fileName: result.filePath,
                     message: error.message,
-                    lineNumber: error.line
-                }
+                    lineNumber: error.line,
+                },
             );
         }
     }
@@ -175,15 +178,16 @@ function failAfterErrorAction({ errorCount }) {
         throw createPluginError(
             {
                 name: 'ESLintError',
-                message: `Failed with ${errorCount} ${errorCount === 1 ? 'error' : 'errors'}`
-            }
+                message: `Failed with ${errorCount} ${errorCount === 1 ? 'error' : 'errors'}`,
+            },
         );
     }
 }
 
 exports.failAfterError = () => createResultsStream(failAfterErrorAction);
 
-exports.formatEach = (formatter, writer) => {
+exports.formatEach =
+(formatter, writer) => {
     writer = resolveWriter(writer);
     const eslintToFormatterMap = new Map();
     return createTransform(
@@ -199,16 +203,18 @@ exports.formatEach = (formatter, writer) => {
                 }
                 await writeResults([result], formatterObj, writer);
             }
-        }
+        },
     );
 };
 
-const ERROR_MULTIPLE_ESLINT_INSTANCES = {
+const ERROR_MULTIPLE_ESLINT_INSTANCES =
+{
     name: 'ESLintError',
-    message: 'The files in the stream were not processed by the same instance of ESLint'
+    message: 'The files in the stream were not processed by the same instance of ESLint',
 };
 
-exports.format = (formatter, writer) => {
+exports.format =
+(formatter, writer) => {
     writer = resolveWriter(writer);
     const results = [];
     let commonInfo;
@@ -232,7 +238,7 @@ exports.format = (formatter, writer) => {
                 const formatterObj = await resolveFormatter(commonInfo, formatter);
                 await writeResults(results, formatterObj, writer);
             }
-        }
+        },
     );
 };
 

@@ -23,8 +23,9 @@ function flagNFix() {
         .pipe(gulpESLintNew.fix());
 }
 
-module.exports = {
+module.exports =
+{
     'default': lintNFix,
     'lint-n-fix': lintNFix,
-    'flag-n-fix': flagNFix
+    'flag-n-fix': flagNFix,
 };

@@ -14,13 +14,17 @@ function failImmediately() {
         // failOnError will emit an error (fail) immediately upon the first file that has an error.
         .pipe(gulpESLintNew.failOnError())
         // Need to do something before the process exits? Try this:
-        .on('error', function (error) {
-            fancyLog(`Stream Exiting With Error: ${error.message}`);
-            // This is only required in Node.js 12 for gulp to detect that the task has terminated.
-            this.destroy();
-            // Expect an incongruous premature close error after this point, courtesy of gulp and
-            // end-of-stream.
-        });
+        .on(
+            'error',
+            function (error) {
+                fancyLog(`Stream Exiting With Error: ${error.message}`);
+                // This is only required in Node.js 12 for gulp to detect that the task has
+                // terminated.
+                this.destroy();
+                // Expect an incongruous premature close error after this point, courtesy of gulp
+                // and end-of-stream.
+            },
+        );
 }
 
 function failAtEnd() {
@@ -33,8 +37,9 @@ function failAtEnd() {
         .pipe(gulpESLintNew.failAfterError());
 }
 
-module.exports = {
+module.exports =
+{
     'default': failImmediately,
     'fail-immediately': failImmediately,
-    'fail-at-end': failAtEnd
+    'fail-at-end': failAtEnd,
 };

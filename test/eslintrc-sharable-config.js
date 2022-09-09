@@ -1,10 +1,11 @@
 'use strict';
 
-module.exports = {
+module.exports =
+{
     root: true,
     extends: 'eslint:recommended',
     rules: {
         'eol-last': 'error',
-        'no-undef': 'off'
-    }
+        'no-undef': 'off',
+    },
 };
