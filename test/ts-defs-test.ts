@@ -1,20 +1,22 @@
 import gulpESLintNew, { GulpESLintWriter }  from '..';
 import { ESLint }                           from 'eslint';
 
-gulpESLintNew({
-    configFile:         undefined,
-    envs:               undefined,
-    extends:            undefined,
-    globals:            undefined,
-    ignorePattern:      undefined,
-    parser:             undefined,
-    parserOptions:      undefined,
-    plugins:            undefined,
-    quiet:              undefined,
-    rules:              undefined,
-    warnFileIgnored:    undefined,
-    warnIgnored:        undefined
-});
+gulpESLintNew(
+    {
+        configFile:         undefined,
+        envs:               undefined,
+        extends:            undefined,
+        globals:            undefined,
+        ignorePattern:      undefined,
+        parser:             undefined,
+        parserOptions:      undefined,
+        plugins:            undefined,
+        quiet:              undefined,
+        rules:              undefined,
+        warnFileIgnored:    undefined,
+        warnIgnored:        undefined
+    }
+);
 
 // @ts-expect-error Invalid option.
 gulpESLintNew({ cache: undefined });

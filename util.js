@@ -27,7 +27,13 @@ const { ltr }       = require('semver');
 const { Transform } = require('stream');
 const ternaryStream = require('ternary-stream');
 
-const ESLintKey = Symbol('ESLint');
+const ESLINT_KEY = Symbol('ESLint');
+
+exports.ESLINT_KEY = ESLINT_KEY;
+
+const LOG_WARNING_KEY = Symbol('logWarning');
+
+exports.LOG_WARNING_KEY = LOG_WARNING_KEY;
 
 function compareResultsByFilePath({ filePath: filePath1 }, { filePath: filePath2 }) {
     if (filePath1 > filePath2) {
@@ -97,8 +103,6 @@ const isObject = value => Object(value) === value;
  * @returns {boolean} Whether the message is a warning message.
  */
 const isWarningMessage = ({ severity }) => severity === 1;
-
-exports.ESLintKey = ESLintKey;
 
 exports.compareResultsByFilePath = compareResultsByFilePath;
 
@@ -229,6 +233,11 @@ exports.isErrorMessage = isErrorMessage;
 
 exports.isWarningMessage = isWarningMessage;
 
+const makeNPMLink
+= anchor => `https://www.npmjs.com/package/gulp-eslint-new/v/${version}#${anchor}`;
+
+exports.makeNPMLink = makeNPMLink;
+
 const FORBIDDEN_OPTIONS = [
     'cache',
     'cacheFile',
@@ -281,73 +290,86 @@ function toBooleanMap(keys, defaultValue, displayName) {
 /**
  * Organize, migrate and partially validate the options passed to gulp-eslint-new.
  *
- * @param {Record<string | symbol, unknown>} [options] - Options to migrate.
- * @returns {MigratedOptions} Migrated options.
+ * @param {Record<string | symbol, unknown>} [options] - Options to organize.
+ * @returns {OrganizedOptions} Organized options.
  *
- * @typedef {Object} MigratedOptions
+ * @typedef {Object} OrganizedOptions
  * @property {Function} [ESLint]
  * @property {Record<string, unknown>} eslintOptions
+ * @property {Function} [logWarning]
+ * @property {Object[]} migratedOptions
  * @property {boolean | undefined} [quiet]
  * @property {boolean | undefined} [warnIgnored]
  */
-exports.migrateOptions = (options = { }) => {
+exports.organizeOptions = (options = { }) => {
+    const migratedOptions = [];
     if (typeof options === 'string') {
-        const returnValue = { eslintOptions: { overrideConfigFile: options } };
-        return returnValue;
+        const organizedOptions
+        = { eslintOptions: { overrideConfigFile: options }, migratedOptions };
+        return organizedOptions;
     }
-    const {
-        [ESLintKey]: ESLint,
-        overrideConfig: rawOverrideConfig,
-        quiet,
-        warnFileIgnored,
-        warnIgnored: rawWarnIgnored,
-        ...eslintOptions
-    }
-    = options;
     {
         const invalidOptions = FORBIDDEN_OPTIONS.filter(option => hasOwn(options, option));
         if (invalidOptions.length) {
             throwInvalidOptionError(`Invalid options: ${invalidOptions.join(', ')}`);
         }
     }
+    const {
+        [ESLINT_KEY]:       ESLint,
+        [LOG_WARNING_KEY]:  logWarning,
+        overrideConfig:     rawOverrideConfig,
+        quiet,
+        warnIgnored,
+        ...eslintOptions
+    }
+    = options;
     if (rawOverrideConfig != null && typeof rawOverrideConfig !== 'object') {
         throwInvalidOptionError('Option overrideConfig must be an object or null');
     }
     const overrideConfig = eslintOptions.overrideConfig
     = rawOverrideConfig != null ? { ...rawOverrideConfig } : { };
+    const organizedOptions
+    = { ESLint, eslintOptions, logWarning, migratedOptions, quiet, warnIgnored };
 
-    function migrateOption(oldName, newName = oldName, convert = value => value) {
-        const value = eslintOptions[oldName];
-        delete eslintOptions[oldName];
-        if (value !== undefined) {
-            overrideConfig[newName] = convert(value);
+    function migrateOption(
+        oldName,
+        newName = oldName,
+        newOptions = overrideConfig,
+        needsMigration = hasOwn(eslintOptions, oldName),
+        convert
+    ) {
+        if (needsMigration) {
+            const value = eslintOptions[oldName];
+            delete eslintOptions[oldName];
+            {
+                const newDisplayName
+                = newOptions === overrideConfig ? `overrideConfig.${newName}` : newName;
+                const formatChanged = convert != null;
+                const migratedOption = { oldName, newName: newDisplayName, formatChanged };
+                migratedOptions.push(migratedOption);
+            }
+            newOptions[newName] = convert != null ? convert(value) : value;
         }
     }
 
-    {
-        const { configFile } = eslintOptions;
-        delete eslintOptions.configFile;
-        if (configFile !== undefined) {
-            eslintOptions.overrideConfigFile = configFile;
-        }
-    }
-    migrateOption('envs', 'env', envs => toBooleanMap(envs, true, 'envs'));
+    migrateOption('configFile', 'overrideConfigFile', eslintOptions);
+    migrateOption('envs', 'env', undefined, undefined, envs => toBooleanMap(envs, true, 'envs'));
     migrateOption('extends');
-    migrateOption('globals', undefined, globals => toBooleanMap(globals, false, 'globals'));
+    migrateOption(
+        'globals',
+        undefined,
+        undefined,
+        undefined,
+        globals => toBooleanMap(globals, false, 'globals')
+    );
     migrateOption('ignorePattern', 'ignorePatterns');
     migrateOption('parser');
     migrateOption('parserOptions');
-    if (Array.isArray(eslintOptions.plugins)) {
-        migrateOption('plugins');
-    }
+    migrateOption('plugins', undefined, undefined, Array.isArray(eslintOptions.plugins));
     migrateOption('rules');
-    const warnIgnored = warnFileIgnored !== undefined ? warnFileIgnored : rawWarnIgnored;
-    const returnValue = { ESLint, eslintOptions, quiet, warnIgnored };
-    return returnValue;
+    migrateOption('warnFileIgnored', 'warnIgnored', organizedOptions);
+    return organizedOptions;
 };
-
-const DEFAULT_FORMATTER_REPLACEMENT
-= ` - see https://www.npmjs.com/package/gulp-eslint-new/v/${version}#autofix`;
 
 /**
  * Resolve a formatter from a string.
@@ -370,7 +392,7 @@ exports.resolveFormatter = async ({ cwd, eslint }, formatter) => {
                 format(results)
                     .replace(
                         / with the `--fix` option\.(?=(\u001b\[\d+m|\n)+$)/,
-                        DEFAULT_FORMATTER_REPLACEMENT
+                        ` - see ${makeNPMLink('autofix')}`
                     )
         };
     }
@@ -415,6 +437,9 @@ exports.resolveWriter = (writer = fancyLog) => {
     }
     return writer;
 };
+
+exports.warn
+= (message, logWarning = fancyLog.warn) => logWarning(`\x1b[1m\x1b[33m${message}\x1b[0m`);
 
 /**
  * Write formatted ESLint messages.

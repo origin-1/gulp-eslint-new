@@ -10,7 +10,8 @@ describe('gulp-eslint-new failOnError', () => {
 
     it('should fail a file immediately if an error is found', done => {
         const file = createVinylFile('invalid.js', 'x = 1;');
-        const lintStream = gulpESLintNew({ useEslintrc: false, rules: { 'no-undef': 2 } });
+        const lintStream
+        = gulpESLintNew({ baseConfig: { rules: { 'no-undef': 2 } }, useEslintrc: false });
         lintStream
             .pipe(gulpESLintNew.failOnError())
             .on('error', err => {
@@ -23,7 +24,7 @@ describe('gulp-eslint-new failOnError', () => {
     });
 
     it('should pass a file if only warnings are found', done => {
-        gulpESLintNew({ useEslintrc: false, rules: { 'no-undef': 1, 'strict': 0 } })
+        gulpESLintNew({ baseConfig: { rules: { 'no-undef': 1, 'strict': 0 } }, useEslintrc: false })
             .pipe(gulpESLintNew.failOnError())
             .on('error', done)
             .on('finish', done)
@@ -44,7 +45,8 @@ describe('gulp-eslint-new failOnError', () => {
 describe('gulp-eslint-new failAfterError', () => {
 
     it('should emit an error if ESLint finds an error in a file', done => {
-        const lintStream = gulpESLintNew({ useEslintrc: false, rules: { 'no-undef': 2 } });
+        const lintStream
+        = gulpESLintNew({ baseConfig: { rules: { 'no-undef': 2 } }, useEslintrc: false });
         lintStream
             .pipe(gulpESLintNew.failAfterError())
             .on('error', err => {
@@ -57,7 +59,8 @@ describe('gulp-eslint-new failAfterError', () => {
     });
 
     it('should emit an error if ESLint finds multiple errors in a file', done => {
-        const lintStream = gulpESLintNew({ useEslintrc: false, rules: { 'no-undef': 2 } });
+        const lintStream
+        = gulpESLintNew({ baseConfig: { rules: { 'no-undef': 2 } }, useEslintrc: false });
         lintStream
             .pipe(gulpESLintNew.failAfterError())
             .on('error', err => {
@@ -70,7 +73,7 @@ describe('gulp-eslint-new failAfterError', () => {
     });
 
     it('should pass when the file stream ends if only warnings are found', done => {
-        gulpESLintNew({ useEslintrc: false, rules: { 'no-undef': 1, strict: 0 } })
+        gulpESLintNew({ baseConfig: { rules: { 'no-undef': 1, strict: 0 } }, useEslintrc: false })
             .pipe(gulpESLintNew.failAfterError())
             .on('error', done)
             .on('finish', done)

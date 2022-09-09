@@ -8,9 +8,11 @@ const {
     fix,
     hasOwn,
     isErrorMessage,
-    migrateOptions,
+    makeNPMLink,
+    organizeOptions,
     resolveFormatter,
     resolveWriter,
+    warn,
     writeResults
 } = require('#util');
 const { promisify } = require('util');
@@ -63,6 +65,14 @@ const createResultsStream = action => {
     );
 };
 
+function formatMigratedOptionWarningLine({ oldName, newName, formatChanged }) {
+    let line = ` • ${oldName} → ${newName}`;
+    if (formatChanged) {
+        line += ' (format changed)';
+    }
+    return line;
+}
+
 function getESLintInfo(file) {
     const eslintInfo = file._eslintInfo;
     if (eslintInfo != null) {
@@ -113,10 +123,26 @@ async function lintFile(eslintInfo, file, quiet, warnIgnored) {
 }
 
 module.exports = exports = options => {
-    const { ESLint = require('eslint').ESLint, eslintOptions, quiet, warnIgnored }
-    = migrateOptions(options);
+    const {
+        ESLint = require('eslint').ESLint,
+        eslintOptions,
+        logWarning,
+        migratedOptions,
+        quiet,
+        warnIgnored
+    }
+    = organizeOptions(options);
     const { cwd = process.cwd() } = eslintOptions;
     const eslint = new ESLint(eslintOptions);
+    if (migratedOptions.length) {
+        const migratedOptionWarningText
+        = migratedOptions.map(formatMigratedOptionWarningLine).join('\n');
+        const message
+        =  `The following top-level options passed to gulpESLintNew() have been migrated:\n${
+            migratedOptionWarningText}\nSee ${
+            makeNPMLink('legacy-options')} for more information.`;
+        warn(message, logWarning);
+    }
     const eslintInfo = { cwd, eslint };
     return createTransform(file => lintFile(eslintInfo, file, quiet, warnIgnored));
 };
@@ -130,12 +156,14 @@ function failOnErrorAction(result) {
     if (messages) {
         const error = messages.find(isErrorMessage);
         if (error) {
-            throw createPluginError({
-                name: 'ESLintError',
-                fileName: result.filePath,
-                message: error.message,
-                lineNumber: error.line
-            });
+            throw createPluginError(
+                {
+                    name: 'ESLintError',
+                    fileName: result.filePath,
+                    message: error.message,
+                    lineNumber: error.line
+                }
+            );
         }
     }
 }
@@ -144,10 +172,12 @@ exports.failOnError = () => createResultStream(failOnErrorAction);
 
 function failAfterErrorAction({ errorCount }) {
     if (errorCount) {
-        throw createPluginError({
-            name: 'ESLintError',
-            message: `Failed with ${errorCount} ${errorCount === 1 ? 'error' : 'errors'}`
-        });
+        throw createPluginError(
+            {
+                name: 'ESLintError',
+                message: `Failed with ${errorCount} ${errorCount === 1 ? 'error' : 'errors'}`
+            }
+        );
     }
 }
 

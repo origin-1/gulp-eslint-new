@@ -129,7 +129,8 @@ For example, since ESLint automatically ignores file paths inside a `node_module
 #### Legacy Options
 
 The following legacy options are provided for backward compatibility with [gulp-eslint][gulp-eslint].
-When `gulpESLintNew` is passed any of these options, it will map them automatically as shown in the table to match the new ESLint conventions.
+Some of them used to be available as top-level options previously, but in current versions of ESLint, they must be specified as child properties of a `baseConfig` or `overrideConfig` object.
+When `gulpESLintNew` is passed any legacy options, it will map them automatically as shown in the table to match the new conventions.
 
 | Legacy option     | Migrated to                     | Notes |
 |-------------------|---------------------------------|-|
@@ -143,6 +144,9 @@ When `gulpESLintNew` is passed any of these options, it will map them automatica
 | `plugins`         | `overrideConfig.plugins`        | `plugins` as an array of strings is migrated to `overrideConfig.plugins`. By contrast, `plugins` as an object that maps strings to plugin implementations has different semantics and is not migrated. |
 | `rules`           | `overrideConfig.rules`          | |
 | `warnFileIgnored` | `warnIgnored`                   | New option name. |
+
+If any legacy options are used, `gulpESLintNew` will print a warning.
+To remove the warning, replace the legacy options used in your gulp task with the new options.
 
 ### `gulpESLintNew(overrideConfigFile)`
 

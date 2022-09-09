@@ -2,11 +2,11 @@
 
 'use strict';
 
-const { ESLintKey }                         = require('#util');
-const { createVinylFile, finished, noop }   = require('./test-util');
-const { strict: assert }                    = require('assert');
-const { promises: { realpath } }            = require('fs');
-const gulpESLintNew                         = require('gulp-eslint-new');
+const { ESLINT_KEY }                                    = require('#util');
+const { createVinylFile, finished, isEmptyArray, noop } = require('./test-util');
+const { strict: assert }                                = require('assert');
+const { promises: { realpath } }                        = require('fs');
+const gulpESLintNew                                     = require('gulp-eslint-new');
 
 describe('gulp-eslint-new result', () => {
 
@@ -14,16 +14,21 @@ describe('gulp-eslint-new result', () => {
 
         function testResult(ESLint, done) {
             let resultCount = 0;
-            const lintStream = gulpESLintNew({
-                [ESLintKey]: ESLint,
-                useEslintrc: false,
-                rules: {
-                    'camelcase': 1,         // not fixable
-                    'no-extra-parens': 1,   // fixable
-                    'no-undef': 2,          // not fixable
-                    'quotes': [2, 'single'] // fixable
+            const lintStream
+            = gulpESLintNew(
+                {
+                    [ESLINT_KEY]: ESLint,
+                    baseConfig: {
+                        rules: {
+                            'camelcase': 1,         // not fixable
+                            'no-extra-parens': 1,   // fixable
+                            'no-undef': 2,          // not fixable
+                            'quotes': [2, 'single'] // fixable
+                        }
+                    },
+                    useEslintrc: false
                 }
-            });
+            );
             const testDataList = [
                 {
                     path:                'invalid-1.js',
@@ -151,7 +156,7 @@ describe('gulp-eslint-new result', () => {
                         callback();
                     });
                 })
-                .on('data', noop)
+                .resume()
                 .on('end', () => assert(result))
                 .end(file)
         );
@@ -167,7 +172,7 @@ describe('gulp-eslint-new result', () => {
                 .result(async result => {
                     cwd = await realpath(result.cwd);
                 })
-                .on('data', noop)
+                .resume()
                 .on('end', () => assert(cwd))
                 .end(file)
         );
@@ -182,17 +187,22 @@ describe('gulp-eslint-new results', () => {
 
         function testResults(ESLint, done) {
             let actualResults;
-            const lintStream = gulpESLintNew({
-                [ESLintKey]: ESLint,
-                useEslintrc: false,
-                rules: {
-                    'camelcase': 1,         // not fixable
-                    'no-extra-parens': 1,   // fixable
-                    'no-undef': 2,          // not fixable
-                    'quotes': [2, 'single'] // fixable
-                },
-                warnIgnored: true
-            });
+            const lintStream
+            = gulpESLintNew(
+                {
+                    [ESLINT_KEY]: ESLint,
+                    baseConfig: {
+                        rules: {
+                            'camelcase': 1,         // not fixable
+                            'no-extra-parens': 1,   // fixable
+                            'no-undef': 2,          // not fixable
+                            'quotes': [2, 'single'] // fixable
+                        }
+                    },
+                    useEslintrc: false,
+                    warnIgnored: true
+                }
+            );
             lintStream
                 .pipe(gulpESLintNew.results(results => {
                     assert(Array.isArray(results));
@@ -274,11 +284,10 @@ describe('gulp-eslint-new results', () => {
                 .results(actualResults => {
                     results = actualResults;
                 })
-                .on('data', noop)
+                .resume()
                 .end(createVinylFile('invalid.js', '#invalid!syntax}'))
         );
-        assert(Array.isArray(results));
-        assert.equal(results.length, 0);
+        assert(isEmptyArray(results));
     });
 
     it('should support a Node-style callback-based handler', async () => {
@@ -293,7 +302,7 @@ describe('gulp-eslint-new results', () => {
                         callback();
                     });
                 })
-                .on('data', noop)
+                .resume()
                 .on('end', () => assert(results))
                 .end(file)
         );
@@ -311,7 +320,7 @@ describe('gulp-eslint-new results', () => {
                 .results(async () => {
                     cwd = await realpath(process.cwd());
                 })
-                .on('data', noop)
+                .resume()
                 .on('end', () => assert(cwd))
                 .end(file)
         );

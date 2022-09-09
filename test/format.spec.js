@@ -71,7 +71,9 @@ describe('gulp-eslint-new format', () => {
     async function testWrapError(useError) {
         const files = getFiles();
         const lintStream
-        = gulpESLintNew({ useEslintrc: false, rules: { 'strict': 2 }, warnIgnored: true });
+        = gulpESLintNew(
+            { baseConfig: { rules: { 'strict': 2 } }, useEslintrc: false, warnIgnored: true }
+        );
         const testMessage = 'Writer Test Error';
         const testErrorName = 'TestError';
         const formatStream = gulpESLintNew
@@ -103,7 +105,9 @@ describe('gulp-eslint-new format', () => {
     it('should format all ESLint results at once', async () => {
         const files = getFiles();
         const lintStream
-        = gulpESLintNew({ useEslintrc: false, rules: { 'strict': 2 }, warnIgnored: true });
+        = gulpESLintNew(
+            { baseConfig: { rules: { 'strict': 2 } }, useEslintrc: false, warnIgnored: true }
+        );
         const formatStream = gulpESLintNew.format(formatResults, outputWriter);
         let errorEmitted;
         formatStream.on(
@@ -145,7 +149,9 @@ describe('gulp-eslint-new format', () => {
     it('should emit an error if an invalid formatter is passed', async () => {
         const files = getFiles();
         const lintStream
-        = gulpESLintNew({ useEslintrc: false, rules: { 'strict': 2 }, warnIgnored: true });
+        = gulpESLintNew(
+            { baseConfig: { rules: { 'strict': 2 } }, useEslintrc: false, warnIgnored: true }
+        );
         const formatStream = gulpESLintNew.format(42);
         lintStream.pipe(formatStream);
         await assert.rejects(
@@ -202,7 +208,10 @@ describe('gulp-eslint-new formatEach', () => {
 
     async function testWrapError(useError) {
         const files = getFiles();
-        const lintStream = gulpESLintNew({ useEslintrc: false, rules: { 'strict': 2 } });
+        const lintStream
+        = gulpESLintNew(
+            { baseConfig: { rules: { 'strict': 2 } }, useEslintrc: false, warnIgnored: true }
+        );
         const testMessage = 'Writer Test Error';
         const testErrorName = 'TestError';
         const formatStream = gulpESLintNew
@@ -234,7 +243,9 @@ describe('gulp-eslint-new formatEach', () => {
     it('should format individual ESLint results', async () => {
         const files = getFiles();
         const lintStream
-        = gulpESLintNew({ useEslintrc: false, rules: { 'strict': 2 }, warnIgnored: true });
+        = gulpESLintNew(
+            { baseConfig: { rules: { 'strict': 2 } }, useEslintrc: false, warnIgnored: true }
+        );
         const formatStream = gulpESLintNew.formatEach(formatResult, outputWriter);
         let errorEmitted;
         formatStream.on(
@@ -302,7 +313,9 @@ describe('gulp-eslint-new formatEach', () => {
     it('should emit an error if an invalid formatter is passed', async () => {
         const files = getFiles();
         const lintStream
-        = gulpESLintNew({ useEslintrc: false, rules: { 'strict': 2 }, warnIgnored: true });
+        = gulpESLintNew(
+            { baseConfig: { rules: { 'strict': 2 } }, useEslintrc: false, warnIgnored: true }
+        );
         const formatStream = gulpESLintNew.formatEach(42);
         lintStream.pipe(formatStream);
         await assert.rejects(
