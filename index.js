@@ -32,9 +32,9 @@ const createResultStream =
 action => {
     action = wrapAction(action);
     return createTransform(
-        async ({ eslint }) => {
-            if (eslint) {
-                await action(eslint);
+        async ({ eslint: result }) => {
+            if (result) {
+                await action(result);
             }
         },
     );
@@ -50,15 +50,15 @@ action => {
     results.fixableWarningCount = 0;
     results.fatalErrorCount     = 0;
     return createTransform(
-        ({ eslint }) => {
-            if (eslint) {
-                results.push(eslint);
+        ({ eslint: result }) => {
+            if (result) {
+                results.push(result);
                 // Collect total error/warning count.
-                results.errorCount          += eslint.errorCount;
-                results.warningCount        += eslint.warningCount;
-                results.fixableErrorCount   += eslint.fixableErrorCount;
-                results.fixableWarningCount += eslint.fixableWarningCount;
-                results.fatalErrorCount     += eslint.fatalErrorCount;
+                results.errorCount          += result.errorCount;
+                results.warningCount        += result.warningCount;
+                results.fixableErrorCount   += result.fixableErrorCount;
+                results.fixableWarningCount += result.fixableWarningCount;
+                results.fatalErrorCount     += result.fatalErrorCount;
             }
         },
         async () => {
@@ -113,7 +113,6 @@ async function lintFile(eslintInfo, file, quiet, warnIgnored) {
             const filter = typeof quiet === 'function' ? quiet : isErrorMessage;
             result = filterResult(result, filter);
         }
-        file.eslint = result;
         // Update the fixed output; otherwise, fixable messages are simply ignored.
         if (hasOwn(result, 'output')) {
             file.contents = Buffer.from(result.output);
@@ -226,8 +225,8 @@ exports.format =
     let commonInfo;
     return createTransform(
         file => {
-            const { eslint } = file;
-            if (eslint) {
+            const result = file.eslint;
+            if (result) {
                 const eslintInfo = getESLintInfo(file);
                 if (commonInfo == null) {
                     commonInfo = eslintInfo;
@@ -236,7 +235,7 @@ exports.format =
                         throw createPluginError(ERROR_MULTIPLE_ESLINT_INSTANCES);
                     }
                 }
-                results.push(eslint);
+                results.push(result);
             }
         },
         async () => {

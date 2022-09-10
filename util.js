@@ -227,7 +227,7 @@ exports.filterResult =
     return newResult;
 };
 
-const isFixed = ({ eslint }) => eslint && eslint.fixed;
+const isFixed = ({ eslint: result }) => result && result.fixed;
 const getBase = ({ base }) => base;
 exports.fix = dest => ternaryStream(isFixed, dest(getBase));
 
