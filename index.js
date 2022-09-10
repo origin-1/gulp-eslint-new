@@ -135,17 +135,23 @@ options => {
         warnIgnored,
     } =
     organizeOptions(options);
-    const { cwd = process.cwd() } = eslintOptions;
-    const eslint = new ESLint(eslintOptions);
-    if (migratedOptions.length) {
-        const migratedOptionWarningText =
-        migratedOptions.map(formatMigratedOptionWarningLine).join('\n');
-        const message =
-        `The following top-level options passed to gulpESLintNew() have been migrated:\n${
-            migratedOptionWarningText}\nSee ${
-            makeNPMLink('legacy-options')} for more information.`;
-        warn(message, logWarning);
+    {
+        const migratedOptionCount = migratedOptions.length;
+        if (migratedOptionCount) {
+            const migratedOptionWarningText =
+            migratedOptions.map(formatMigratedOptionWarningLine).join('\n');
+            const messageIntro =
+            migratedOptionCount > 1 ?
+                'The following top-level options passed to gulpESLintNew() have been migrated' :
+                'The following top-level option passed to gulpESLintNew() has been migrated';
+            const message =
+            `${messageIntro}:\n${migratedOptionWarningText}\nSee ${makeNPMLink('legacy-options')
+            } for more information.`;
+            warn(message, logWarning);
+        }
     }
+    const eslint = new ESLint(eslintOptions);
+    const { cwd = process.cwd() } = eslintOptions;
     const eslintInfo = { cwd, eslint };
     return createTransform(file => lintFile(eslintInfo, file, quiet, warnIgnored));
 };
