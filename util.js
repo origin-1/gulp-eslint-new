@@ -442,7 +442,8 @@ exports.resolveWriter =
 };
 
 exports.warn =
-(message, gulpWarn = require('fancy-log').warn) => gulpWarn(`\x1b[1m\x1b[33m${message}\x1b[0m`);
+(message, gulpWarn = require('fancy-log').warn) =>
+    gulpWarn(`\x1b[1;37m\x1b[40mgulp-eslint-new\x1b[0m \x1b[30m\x1b[43mWARN\x1b[0m\n${message}`);
 
 /**
  * Write formatted ESLint messages.

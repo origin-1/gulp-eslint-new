@@ -2,6 +2,7 @@
 
 const {
     GULP_DEST_KEY,
+    GULP_WARN_KEY,
     createIgnoreResult,
     createPluginError,
     createTransform,
@@ -149,8 +150,8 @@ options => {
         }
     }
     const eslint = new ESLint(eslintOptions);
-    const { cwd = process.cwd() } = eslintOptions;
-    const eslintInfo = { cwd, eslint };
+    const { cwd = process.cwd(), fix } = eslintOptions;
+    const eslintInfo = { cwd, eslint, fix };
     return createTransform(file => lintFile(eslintInfo, file, quiet, warnIgnored));
 };
 
@@ -246,11 +247,30 @@ exports.format =
     );
 };
 
-const isFixed = ({ eslint: result }) => result && result.fixed;
 const getBase = ({ base }) => base;
 exports.fix =
-({ [GULP_DEST_KEY]: gulpDest = require('vinyl-fs').dest } = { }) => {
+({ [GULP_DEST_KEY]: gulpDest = require('vinyl-fs').dest, [GULP_WARN_KEY]: gulpWarn } = { }) => {
     const ternaryStream = require('ternary-stream');
+    let warned = false;
+    const isFixed =
+    file => {
+        const result = file.eslint;
+        if (result) {
+            const eslintInfo = getESLintInfo(file);
+            if (eslintInfo.fix == null && !warned) {
+                warned = true;
+                const message =
+                'gulpESLintNew.fix() received a file that was linted without the option ' +
+                '"fix".\n' +
+                'This is usually caused by a misconfiguration in a gulp task.\n' +
+                `See ${makeNPMLink('autofix')} for information on how to fix files correctly.\n` +
+                'If you don\'t want to fix any files, set "fix: false" in the options passed to ' +
+                'gulpESLintNew() to remove this warning.';
+                warn(message, gulpWarn);
+            }
+            return result.fixed;
+        }
+    };
     const stream = ternaryStream(isFixed, gulpDest(getBase));
     return stream;
 };
