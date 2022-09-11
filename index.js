@@ -15,7 +15,6 @@ const {
     warn,
     writeResults,
 } = require('#util');
-const ternaryStream = require('ternary-stream');
 const { promisify } = require('util');
 
 function wrapAction(action) {
@@ -250,5 +249,8 @@ exports.format =
 const isFixed = ({ eslint: result }) => result && result.fixed;
 const getBase = ({ base }) => base;
 exports.fix =
-({ [GULP_DEST_KEY]: gulpDest = require('vinyl-fs').dest } = { }) =>
-    ternaryStream(isFixed, gulpDest(getBase));
+({ [GULP_DEST_KEY]: gulpDest = require('vinyl-fs').dest } = { }) => {
+    const ternaryStream = require('ternary-stream');
+    const stream = ternaryStream(isFixed, gulpDest(getBase));
+    return stream;
+};

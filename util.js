@@ -18,11 +18,7 @@
  * @param {ESLint.LintResultData} [data]
  * @returns {string | Promise<string>}
  */
-
-const { version }   = require('gulp-eslint-new/package.json');
 const { relative }  = require('path');
-const PluginError   = require('plugin-error');
-const { ltr }       = require('semver');
 const { Transform } = require('stream');
 
 const ESLINT_KEY    = Symbol('require("eslint").ESLint');
@@ -42,6 +38,7 @@ function compareResultsByFilePath({ filePath: filePath1 }, { filePath: filePath2
 const PLUGIN_ERROR_OPTIONS = { showStack: true };
 
 function createPluginError(error) {
+    const PluginError = require('plugin-error');
     if (error instanceof PluginError) {
         return error;
     }
@@ -118,6 +115,7 @@ const isInNodeModulesRegExp = /(?<![^/\\])node_modules[/\\]/u;
  */
 exports.createIgnoreResult =
 (filePath, baseDir, eslintVersion) => {
+    const { ltr } = require('semver');
     let message;
     const relativePath = relative(baseDir, filePath);
     if (isHiddenRegExp.test(relativePath)) {
@@ -232,7 +230,11 @@ exports.isErrorMessage = isErrorMessage;
 exports.isWarningMessage = isWarningMessage;
 
 const makeNPMLink =
-anchor => `https://www.npmjs.com/package/gulp-eslint-new/v/${version}#${anchor}`;
+anchor => {
+    const { version } = require('gulp-eslint-new/package.json');
+    const npmLink = `https://www.npmjs.com/package/gulp-eslint-new/v/${version}#${anchor}`;
+    return npmLink;
+};
 
 exports.makeNPMLink = makeNPMLink;
 
