@@ -2,17 +2,17 @@
 
 'use strict';
 
-const { ESLINT_KEY, LOG_WARNING_KEY }   = require('#util');
+const { ESLINT_KEY, GULP_WARN_KEY } = require('#util');
 
 const { createVinylDirectory, createVinylFile, finished, isEmptyArray } =
 require('./test-util');
 
-const { strict: assert }                = require('assert');
-const gulpESLintNew                     = require('gulp-eslint-new');
-const { join, resolve }                 = require('path');
-const { satisfies }                     = require('semver');
-const { Readable }                      = require('stream');
-const File                              = require('vinyl');
+const { strict: assert }            = require('assert');
+const gulpESLintNew                 = require('gulp-eslint-new');
+const { join, resolve }             = require('path');
+const { satisfies }                 = require('semver');
+const { Readable }                  = require('stream');
+const File                          = require('vinyl');
 
 describe('gulp-eslint-new plugin', () => {
 
@@ -20,14 +20,14 @@ describe('gulp-eslint-new plugin', () => {
 
         it('should throw an error after warning about migrated options', async () => {
             let actualMessage;
-            const logWarning =
+            const gulpWarn =
             message => {
                 actualMessage = message;
             };
             assert.throws(
                 () =>
                     gulpESLintNew(
-                        { [ESLINT_KEY]: ESLint, [LOG_WARNING_KEY]: logWarning, configFile: 42 },
+                        { [ESLINT_KEY]: ESLint, [GULP_WARN_KEY]: gulpWarn, configFile: 42 },
                     ),
                 ({ constructor: { name } }) => name === 'ESLintInvalidOptionsError',
             );
@@ -527,10 +527,10 @@ describe('gulp-eslint-new plugin', () => {
     });
 
     it('should not raise a warning when no options are migrated', async () => {
-        const logWarning = () => assert.fail('Unexpected warning');
+        const gulpWarn = () => assert.fail('Unexpected warning');
         gulpESLintNew(
             {
-                [LOG_WARNING_KEY]: logWarning,
+                [GULP_WARN_KEY]: gulpWarn,
                 overrideConfig: {
                     env: { },
                     extends: [],
@@ -551,13 +551,13 @@ describe('gulp-eslint-new plugin', () => {
 
     it('should raise a warning when options are migrated', async () => {
         let actualMessage;
-        const logWarning =
+        const gulpWarn =
         message => {
             actualMessage = message;
         };
         gulpESLintNew(
             {
-                [LOG_WARNING_KEY]: logWarning,
+                [GULP_WARN_KEY]: gulpWarn,
                 configFile: null,
                 envs: [],
                 extends: [],

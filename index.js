@@ -1,11 +1,11 @@
 'use strict';
 
 const {
+    GULP_DEST_KEY,
     createIgnoreResult,
     createPluginError,
     createTransform,
     filterResult,
-    fix,
     hasOwn,
     isErrorMessage,
     makeNPMLink,
@@ -15,8 +15,8 @@ const {
     warn,
     writeResults,
 } = require('#util');
+const ternaryStream = require('ternary-stream');
 const { promisify } = require('util');
-const { dest }      = require('vinyl-fs');
 
 function wrapAction(action) {
     if (typeof action !== 'function') {
@@ -128,7 +128,7 @@ options => {
     const {
         ESLint = require('eslint').ESLint,
         eslintOptions,
-        logWarning,
+        gulpWarn,
         migratedOptions,
         quiet,
         warnIgnored,
@@ -146,7 +146,7 @@ options => {
             const message =
             `${messageIntro}:\n${migratedOptionWarningText}\nSee ${makeNPMLink('legacy-options')
             } for more information.`;
-            warn(message, logWarning);
+            warn(message, gulpWarn);
         }
     }
     const eslint = new ESLint(eslintOptions);
@@ -247,4 +247,8 @@ exports.format =
     );
 };
 
-exports.fix = () => fix(dest);
+const isFixed = ({ eslint: result }) => result && result.fixed;
+const getBase = ({ base }) => base;
+exports.fix =
+({ [GULP_DEST_KEY]: gulpDest = require('vinyl-fs').dest } = { }) =>
+    ternaryStream(isFixed, gulpDest(getBase));

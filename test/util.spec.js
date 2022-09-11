@@ -2,12 +2,12 @@
 
 'use strict';
 
-const util                                                      = require('#util');
-const { createVinylDirectory, createVinylFile, finished, noop } = require('./test-util');
-const { strict: assert }                                        = require('assert');
-const { resolve }                                               = require('path');
-const { satisfies }                                             = require('semver');
-const { Writable }                                              = require('stream');
+const util                                  = require('#util');
+const { createVinylFile, finished, noop }   = require('./test-util');
+const { strict: assert }                    = require('assert');
+const { resolve }                           = require('path');
+const { satisfies }                         = require('semver');
+const { Writable }                          = require('stream');
 
 describe('utility functions', () => {
 
@@ -275,43 +275,6 @@ describe('utility functions', () => {
             assert.equal(quietResult.fixableWarningCount, 0);
             assert.equal(quietResult.fatalErrorCount, 1);
             assert.equal(quietResult.foobar, 42);
-        });
-
-    });
-
-    describe('fix', () => {
-
-        it('should fix only a fixed file', done => {
-            let actualDestArg;
-            const actualFiles = [];
-            const testStream =
-            util.fix(
-                destArg => {
-                    actualDestArg = destArg;
-                    return util.createTransform(
-                        file => {
-                            actualFiles.push(file);
-                        },
-                    );
-                },
-            );
-            const base = 'foobar';
-            assert.equal(actualDestArg({ base }), base);
-            const unfixedFile = createVinylFile('unfixed', 'unfixed');
-            unfixedFile.eslint = { };
-            const fixedFile = createVinylFile('fixed', 'fixed');
-            fixedFile.eslint = { fixed: true };
-            const ignoredFile = createVinylFile('ignored', 'ignored');
-            const directory = createVinylDirectory();
-            testStream.on('finish', () => {
-                assert.deepEqual(actualFiles, [fixedFile]);
-                done();
-            });
-            testStream.write(unfixedFile);
-            testStream.write(fixedFile);
-            testStream.write(ignoredFile);
-            testStream.write(directory);
-            testStream.end();
         });
 
     });

@@ -19,21 +19,15 @@
  * @returns {string | Promise<string>}
  */
 
-const fancyLog      = require('fancy-log');
 const { version }   = require('gulp-eslint-new/package.json');
 const { relative }  = require('path');
 const PluginError   = require('plugin-error');
 const { ltr }       = require('semver');
 const { Transform } = require('stream');
-const ternaryStream = require('ternary-stream');
 
-const ESLINT_KEY = Symbol('ESLint');
-
-exports.ESLINT_KEY = ESLINT_KEY;
-
-const LOG_WARNING_KEY = Symbol('logWarning');
-
-exports.LOG_WARNING_KEY = LOG_WARNING_KEY;
+const ESLINT_KEY    = Symbol('require("eslint").ESLint');
+const GULP_DEST_KEY = Symbol('require("vinyl-fs").dest');
+const GULP_WARN_KEY = Symbol('require("fancy-log").warn');
 
 function compareResultsByFilePath({ filePath: filePath1 }, { filePath: filePath2 }) {
     if (filePath1 > filePath2) {
@@ -103,6 +97,10 @@ const isObject = value => Object(value) === value;
  * @returns {boolean} Whether the message is a warning message.
  */
 const isWarningMessage = ({ severity }) => severity === 1;
+
+exports.ESLINT_KEY      = ESLINT_KEY;
+exports.GULP_DEST_KEY   = GULP_DEST_KEY;
+exports.GULP_WARN_KEY   = GULP_WARN_KEY;
 
 exports.compareResultsByFilePath = compareResultsByFilePath;
 
@@ -227,10 +225,6 @@ exports.filterResult =
     return newResult;
 };
 
-const isFixed = ({ eslint: result }) => result && result.fixed;
-const getBase = ({ base }) => base;
-exports.fix = dest => ternaryStream(isFixed, dest(getBase));
-
 exports.hasOwn = hasOwn;
 
 exports.isErrorMessage = isErrorMessage;
@@ -300,7 +294,7 @@ function toBooleanMap(keys, defaultValue, displayName) {
  * @typedef {Object} OrganizedOptions
  * @property {Function} [ESLint]
  * @property {Record<string, unknown>} eslintOptions
- * @property {Function} [logWarning]
+ * @property {Function} [gulpWarn]
  * @property {Object[]} migratedOptions
  * @property {boolean | undefined} [quiet]
  * @property {boolean | undefined} [warnIgnored]
@@ -321,7 +315,7 @@ exports.organizeOptions =
     }
     const {
         [ESLINT_KEY]:       ESLint,
-        [LOG_WARNING_KEY]:  logWarning,
+        [GULP_WARN_KEY]:    gulpWarn,
         overrideConfig:     rawOverrideConfig,
         quiet,
         warnIgnored,
@@ -334,7 +328,7 @@ exports.organizeOptions =
     const overrideConfig = eslintOptions.overrideConfig =
     rawOverrideConfig != null ? { ...rawOverrideConfig } : { };
     const organizedOptions =
-    { ESLint, eslintOptions, logWarning, migratedOptions, quiet, warnIgnored };
+    { ESLint, eslintOptions, gulpWarn, migratedOptions, quiet, warnIgnored };
 
     function migrateOption(
         oldName,
@@ -430,12 +424,12 @@ async ({ cwd, eslint }, formatter) => {
 /**
  * Resolve a writer function used to write formatted ESLint messages.
  *
- * @param {GulpESLintWriter | NodeJS.WritableStream} [writer=fancyLog]
+ * @param {GulpESLintWriter | NodeJS.WritableStream} [writer=require('fancy-log')]
  * A stream or function to resolve as a format writer.
  * @returns {GulpESLintWriter} A function that writes formatted messages.
  */
 exports.resolveWriter =
-(writer = fancyLog) => {
+(writer = require('fancy-log')) => {
     if (isObject(writer)) {
         const { write } = writer;
         if (typeof write === 'function') {
@@ -446,7 +440,7 @@ exports.resolveWriter =
 };
 
 exports.warn =
-(message, logWarning = fancyLog.warn) => logWarning(`\x1b[1m\x1b[33m${message}\x1b[0m`);
+(message, gulpWarn = require('fancy-log').warn) => gulpWarn(`\x1b[1m\x1b[33m${message}\x1b[0m`);
 
 /**
  * Write formatted ESLint messages.
