@@ -1,7 +1,16 @@
+<a name="1.6.0"></a>
+## [1.6.0](https://github.com/origin-1/gulp-eslint-new/releases/tag/1.6.0) (2022-09-12)
+
+* Improved performance by lazy loading all dependencies.
+* Allowing older versions of package [@types/node](https://www.npmjs.com/package/@types/node) (for Node.js < 18).
+* Printing a warning when legacy options are migrated.
+* Printing a warning when the function `fix` is used without the option `fix`.
+* Updated documentation.
+
 <a name="1.5.1"></a>
 ## [1.5.1](https://github.com/origin-1/gulp-eslint-new/releases/tag/1.5.1) (2022-06-14)
 
-* If using for ESLint ≥ 8.8, ESLint results produced by ignored files now include the property `suppressedMessages`.
+* If ESLint ≥ 8.8 is used, ESLint results produced by ignored files now include the property `suppressedMessages`.
 
 <a name="1.5.0"></a>
 ## [1.5.0](https://github.com/origin-1/gulp-eslint-new/releases/tag/1.5.0) (2022-06-07)
