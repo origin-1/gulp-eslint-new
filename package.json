@@ -22,12 +22,11 @@
   "license": "MIT",
   "author": "Adametry",
   "files": [
-    "index.d.ts",
-    "index.js",
-    "util.js"
+    "lib"
   ],
   "directories": {
     "example": "example",
+    "lib": "lib",
     "test": "test"
   },
   "repository": "github:origin-1/gulp-eslint-new",
@@ -49,27 +48,27 @@
     "vinyl-fs": "^3.0.3"
   },
   "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "^5.36.2",
-    "@typescript-eslint/parser": "^5.36.2",
-    "c8js": "^0.2.1",
+    "@typescript-eslint/eslint-plugin": "^5.38.1",
+    "@typescript-eslint/parser": "^5.38.1",
+    "c8js": "^0.3.0",
     "eslint-8.0": "npm:eslint@8.0",
     "eslint-8.x": "npm:eslint@8.x",
     "eslint-plugin-eslint-comments": "^3.2.0",
-    "eslint-plugin-tsdoc": "^0.2.16",
+    "eslint-plugin-tsdoc": "^0.2.17",
     "gulp": "^4.0.2",
     "mocha": "^9.2.2",
-    "typescript": "^4.8.3",
+    "typescript": "^4.8.4",
     "vinyl": "^2.2.1"
   },
   "engines": {
     "node": "12 >=12.20 || 14 >=14.13 || >=16"
   },
   "exports": {
-    ".": "./index.js",
+    ".": "./lib/gulp-eslint-new.js",
     "./package.json": "./package.json"
   },
   "imports": {
-    "#util": "./util.js"
+    "#util": "./lib/util.js"
   },
-  "types": "index.d.ts"
+  "types": "lib/gulp-eslint-new.d.ts"
 }

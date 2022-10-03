@@ -1,4 +1,4 @@
-import gulpESLintNew, { GulpESLintWriter }  from '..';
+import gulpESLintNew, { GulpESLintWriter }  from '../lib/gulp-eslint-new';
 import { ESLint }                           from 'eslint';
 
 gulpESLintNew(
