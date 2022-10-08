@@ -43,13 +43,13 @@
     "eslint": "8",
     "fancy-log": "^2.0.0",
     "plugin-error": "^2.0.0",
-    "semver": "^7.3.7",
+    "semver": "^7.3.8",
     "ternary-stream": "^3.0.0",
     "vinyl-fs": "^3.0.3"
   },
   "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "^5.38.1",
-    "@typescript-eslint/parser": "^5.38.1",
+    "@typescript-eslint/eslint-plugin": "^5.39.0",
+    "@typescript-eslint/parser": "^5.39.0",
     "c8js": "^0.3.0",
     "eslint-8.0": "npm:eslint@8.0",
     "eslint-8.x": "npm:eslint@8.x",
@@ -58,7 +58,7 @@
     "gulp": "^4.0.2",
     "mocha": "^9.2.2",
     "typescript": "^4.8.4",
-    "vinyl": "^2.2.1"
+    "vinyl": "^3.0.0"
   },
   "engines": {
     "node": "12 >=12.20 || 14 >=14.13 || >=16"
