@@ -1,29 +1,19 @@
-import { ESLint, Linter }    from 'eslint';
-import                            'node';
-import { TransformCallback } from 'stream';
-
-type FormatterFunction =
-(results: ESLint.LintResult[], data?: ESLint.LintResultData) => string | Promise<string>;
-
-type LintResultStreamFunction<Type> =
-((action: (value: Type, callback: TransformCallback) => void) => NodeJS.ReadWriteStream) &
-((action: (value: Type) => unknown | Promise<unknown>) => NodeJS.ReadWriteStream);
-
-interface LoadedFormatter {
-    format(results: ESLint.LintResult[], resultsMeta: ResultsMeta): string | Promise<string>;
+import {
+    ConfigData,
+    ESLintOptions,
+    FormatterFunction,
+    LintMessage,
+    LintResult,
+    LoadedFormatter,
 }
-
-interface ResultsMeta {
-    maxWarningsExceeded?: {
-        foundWarnings: number;
-        maxWarnings: number;
-    };
-}
+    from './eslint';
+import                          'node';
+import { TransformCallback }    from 'stream';
 
 export type GulpESLintOptions
 =
 Omit<
-ESLint.Options,
+ESLintOptions,
 | 'cache'
 | 'cacheLocation'
 | 'cacheStrategy'
@@ -34,7 +24,7 @@ ESLint.Options,
 > &
 {
     /** @deprecated Use `overrideConfigFile` instead. */
-    configFile?: ESLint.Options['overrideConfigFile'];
+    configFile?: ESLintOptions['overrideConfigFile'];
 
     /**
      * @deprecated
@@ -44,7 +34,7 @@ ESLint.Options,
     envs?: string[] | undefined;
 
     /** @deprecated Use `overrideConfig.extends` or `baseConfig.extends` instead. */
-    extends?: Linter.Config['extends'];
+    extends?: ConfigData['extends'];
 
     /**
      * @deprecated
@@ -57,23 +47,21 @@ ESLint.Options,
      * Use `overrideConfig.ignorePatterns` or `baseConfig.ignorePatterns` instead.
      * Note the different option name.
      */
-    ignorePattern?: Linter.Config['ignorePatterns'];
+    ignorePattern?: ConfigData['ignorePatterns'];
 
     /** @deprecated Use `overrideConfig.parser` or `baseConfig.parser` instead. */
-    parser?: Linter.Config['parser'];
+    parser?: ConfigData['parser'];
 
     /** @deprecated Use `overrideConfig.parserOptions` or `baseConfig.parserOptions` instead. */
-    parserOptions?: Linter.ParserOptions | undefined;
+    parserOptions?: ConfigData['parserOptions'];
 
-    plugins?: ESLint.Options['plugins'] | Linter.Config['plugins'];
+    plugins?: ESLintOptions['plugins'] | ConfigData['plugins'];
 
     quiet?:
-    | boolean
-    | ((message: Linter.LintMessage, index: number, list: Linter.LintMessage[]) => unknown)
-    | undefined;
+    boolean | ((message: LintMessage, index: number, list: LintMessage[]) => unknown) | undefined;
 
     /** @deprecated Use `overrideConfig.rules` or `baseConfig.rules` instead. */
-    rules?: Linter.Config['rules'];
+    rules?: ConfigData['rules'];
 
     /** @deprecated Use `warnIgnored` instead. */
     warnFileIgnored?: boolean | undefined;
@@ -81,7 +69,7 @@ ESLint.Options,
     warnIgnored?: boolean | undefined;
 };
 
-export type GulpESLintResult = ESLint.LintResult;
+export type GulpESLintResult = LintResult;
 
 export type GulpESLintResults
 =
@@ -95,6 +83,10 @@ GulpESLintResult[] &
 };
 
 export type GulpESLintWriter = (str: string) => unknown | Promise<unknown>;
+
+type LintResultStreamFunction<Type> =
+((action: (value: Type, callback: TransformCallback) => void) => NodeJS.ReadWriteStream) &
+((action: (value: Type) => unknown | Promise<unknown>) => NodeJS.ReadWriteStream);
 
 declare const gulpESLintNew: {
     /**

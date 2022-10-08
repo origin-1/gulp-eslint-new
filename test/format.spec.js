@@ -21,6 +21,19 @@ function createFormatter(expectedFileCount) {
     };
 }
 
+function createFormatterObject(expectedFileCount) {
+    return {
+        format(results, context) {
+            assert.deepEqual(context, { });
+            assert(Array.isArray(results));
+            assert.equal(results.length, expectedFileCount);
+            formatCount++;
+            const messageCount = results.reduce((sum, result) => sum + result.messages.length, 0);
+            return `${messageCount} ${messageCount === 1 ? 'message' : 'messages'}`;
+        },
+    };
+}
+
 function getFiles() {
     return [
         createVinylDirectory(),
@@ -66,9 +79,8 @@ function outputWriter(message) {
 
 describe('gulp-eslint-new format', () => {
 
-    const formatResults = createFormatter(4);
-
     async function testWrapError(useError) {
+        const formatResults = createFormatter(4);
         const files = getFiles();
         const lintStream =
         gulpESLintNew(
@@ -103,6 +115,7 @@ describe('gulp-eslint-new format', () => {
     });
 
     it('should format all ESLint results at once', async () => {
+        const formatResults = createFormatter(4);
         const files = getFiles();
         const lintStream =
         gulpESLintNew(
@@ -126,7 +139,23 @@ describe('gulp-eslint-new format', () => {
         assert.equal(writeCount, 1);
     });
 
+    it('should work with a formatter object', async () => {
+        const resultsFormatter = createFormatterObject(4);
+        const formatStream = gulpESLintNew.format(resultsFormatter, outputWriter);
+        const files = getFiles();
+        const lintStream =
+        gulpESLintNew(
+            { baseConfig: { rules: { 'strict': 2 } }, useEslintrc: false, warnIgnored: true },
+        );
+        lintStream
+            .pipe(formatStream);
+        await runStream(formatStream, files, lintStream);
+        assert.equal(formatCount, 1);
+        assert.equal(writeCount, 1);
+    });
+
     it('should not attempt to format when no linting results are found', async () => {
+        const formatResults = createFormatter(4);
         const files = getFiles();
         const formatStream = gulpESLintNew.format(formatResults, outputWriter);
         const passthruStream = new PassThrough({ objectMode: true });
@@ -205,9 +234,8 @@ describe('gulp-eslint-new format', () => {
 
 describe('gulp-eslint-new formatEach', () => {
 
-    const formatResult = createFormatter(1);
-
     async function testWrapError(useError) {
+        const formatResult = createFormatter(1);
         const files = getFiles();
         const lintStream =
         gulpESLintNew(
@@ -242,6 +270,7 @@ describe('gulp-eslint-new formatEach', () => {
     });
 
     it('should format individual ESLint results', async () => {
+        const formatResult = createFormatter(1);
         const files = getFiles();
         const lintStream =
         gulpESLintNew(
@@ -261,6 +290,22 @@ describe('gulp-eslint-new formatEach', () => {
             .pipe(formatStream);
         await runStream(formatStream, files, lintStream);
         assert.equal(errorEmitted, false);
+        const fileCount = files.length - 1; // Remove directory.
+        assert.equal(formatCount, fileCount);
+        assert.equal(writeCount, fileCount);
+    });
+
+    it('should work with a formatter object', async () => {
+        const resultFormatter = createFormatterObject(1);
+        const formatStream = gulpESLintNew.formatEach(resultFormatter, outputWriter);
+        const files = getFiles();
+        const lintStream =
+        gulpESLintNew(
+            { baseConfig: { rules: { 'strict': 2 } }, useEslintrc: false, warnIgnored: true },
+        );
+        lintStream
+            .pipe(formatStream);
+        await runStream(formatStream, files, lintStream);
         const fileCount = files.length - 1; // Remove directory.
         assert.equal(formatCount, fileCount);
         assert.equal(writeCount, fileCount);
@@ -294,6 +339,7 @@ describe('gulp-eslint-new formatEach', () => {
     });
 
     it('should not attempt to format when no linting results are found', async () => {
+        const formatResult = createFormatter(1);
         const files = getFiles();
         const formatStream = gulpESLintNew.formatEach(formatResult, outputWriter);
         const passthruStream = new PassThrough({ objectMode: true });
