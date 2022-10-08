@@ -10,7 +10,14 @@ type LintResultStreamFunction<Type> =
 ((action: (value: Type) => unknown | Promise<unknown>) => NodeJS.ReadWriteStream);
 
 interface LoadedFormatter {
-    format(results: ESLint.LintResult[]): string | Promise<string>;
+    format(results: ESLint.LintResult[], resultsMeta: ResultsMeta): string | Promise<string>;
+}
+
+interface ResultsMeta {
+    maxWarningsExceeded?: {
+        foundWarnings: number;
+        maxWarnings: number;
+    };
 }
 
 export type GulpESLintOptions
