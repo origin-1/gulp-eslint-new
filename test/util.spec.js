@@ -321,16 +321,40 @@ describe('utility functions', () => {
                 );
             });
 
-            it('should resolve a custom formatter', async () => {
+            it('should resolve a custom formatter by path', async () => {
                 const eslintInfo = { eslint: new ESLint({ cwd: __dirname }) };
-                const formatter = await util.resolveFormatter(eslintInfo, './custom-formatter');
-                await formatter.format(testResults);
-                const { args } = require('./custom-formatter');
-                assert.equal(args[0], testResults);
+                const formatter =
+                    await util.resolveFormatter(eslintInfo, './formatter/custom-formatter');
+                const json = await formatter.format(testResults);
+                const { results, context } = JSON.parse(json);
+                assert.deepEqual(results, testResults);
                 if (satisfies(ESLint.version, '>=8.4')) {
-                    assert.equal(args[1].cwd, __dirname);
+                    assert.deepEqual(context.cwd, __dirname);
                 }
-                assert(args[1].rulesMeta);
+            });
+
+            it('should resolve a custom formatter by package name', async () => {
+                const eslintInfo = { eslint: new ESLint({ cwd: __dirname }) };
+                const formatter =
+                    await util.resolveFormatter(eslintInfo, '~formatter');
+                const json = await formatter.format(testResults);
+                const { results, context } = JSON.parse(json);
+                assert.deepEqual(results, testResults);
+                if (satisfies(ESLint.version, '>=8.4')) {
+                    assert.deepEqual(context.cwd, __dirname);
+                }
+            });
+
+            it('should resolve an async custom formatter', async () => {
+                const eslintInfo = { eslint: new ESLint({ cwd: __dirname }) };
+                const formatter =
+                    await util.resolveFormatter(eslintInfo, './formatter/async-formatter');
+                const json = await formatter.format(testResults);
+                const [results, context] = JSON.parse(json);
+                assert.deepEqual(results, testResults);
+                if (satisfies(ESLint.version, '>=8.4')) {
+                    assert.deepEqual(context.cwd, __dirname);
+                }
             });
 
             it('should resolve a specified formatter object', async () => {
@@ -358,7 +382,7 @@ describe('utility functions', () => {
             it('should throw an error if a formatter cannot be resolved', async () => {
                 const eslintInfo = { eslint: new ESLint() };
                 await assert.rejects(
-                    () => util.resolveFormatter(eslintInfo, 'missing-formatter'),
+                    () => util.resolveFormatter(eslintInfo, '~missing-formatter'),
                     /\bThere was a problem loading formatter\b/,
                 );
             });
