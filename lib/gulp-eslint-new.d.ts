@@ -1,14 +1,18 @@
 import {
     ConfigData,
     ESLintOptions,
+    FormatterContext,
     FormatterFunction,
     LintMessage,
     LintResult,
     LoadedFormatter,
+    ResultsMeta,
 }
     from './eslint';
 import                          'node';
 import { TransformCallback }    from 'stream';
+
+export { FormatterContext, FormatterFunction };
 
 export type GulpESLintOptions
 =
@@ -87,6 +91,8 @@ export type GulpESLintWriter = (str: string) => unknown | Promise<unknown>;
 type LintResultStreamFunction<Type> =
 ((action: (value: Type, callback: TransformCallback) => void) => NodeJS.ReadWriteStream) &
 ((action: (value: Type) => unknown | Promise<unknown>) => NodeJS.ReadWriteStream);
+
+export { LoadedFormatter, ResultsMeta };
 
 declare const gulpESLintNew: {
     /**

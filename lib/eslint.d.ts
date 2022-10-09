@@ -4,9 +4,10 @@ type ConfigData = Linter.Config;
 
 type ESLintOptions = ESLint.Options;
 
+type FormatterContext = ESLint.LintResultData & ResultsMeta;
+
 type FormatterFunction =
-(results: ESLint.LintResult[], context?: ESLint.LintResultData & ResultsMeta) =>
-string | Promise<string>;
+(results: ESLint.LintResult[], context?: FormatterContext) => string | Promise<string>;
 
 type LintMessage = Linter.LintMessage;
 
