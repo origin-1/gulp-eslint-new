@@ -14,6 +14,26 @@ const { satisfies }                 = require('semver');
 const { Readable }                  = require('stream');
 const File                          = require('vinyl');
 
+async function testConfig(options) {
+    const filePath = 'file.js';
+    const file = createVinylFile(filePath, 'console.log(\'Hi\');;');
+    await finished(gulpESLintNew(options).resume().end(file));
+    assert.equal(file.eslint.filePath, file.path);
+    assert(Array.isArray(file.eslint.messages));
+    assert.equal(file.eslint.messages.length, 2);
+    const [message1, message2] = file.eslint.messages;
+    assert.equal(typeof message1.message, 'string');
+    assert.equal(message1.line, 1);
+    assert.equal(typeof message1.column, 'number');
+    assert.equal(message1.ruleId, 'no-extra-semi');
+    assert.equal(message1.severity, 2);
+    assert.equal(typeof message2.message, 'string');
+    assert.equal(message2.line, 1);
+    assert.equal(typeof message2.column, 'number');
+    assert.equal(message2.ruleId, 'eol-last');
+    assert.equal(message2.severity, 2);
+}
+
 describe('gulp-eslint-new plugin', () => {
 
     function testLinting(ESLint) {
@@ -195,30 +215,15 @@ describe('gulp-eslint-new plugin', () => {
             assert(isEmptyArray(file.eslint.messages));
         });
 
-        describe('should support a sharable config', () => {
-
-            async function testConfig(options, filePath) {
-                const file = createVinylFile(filePath, 'console.log(\'Hi\');');
-                await finished(gulpESLintNew(options).resume().end(file));
-                assert.equal(file.eslint.filePath, file.path);
-                assert(Array.isArray(file.eslint.messages));
-                assert.equal(file.eslint.messages.length, 1);
-                const [message] = file.eslint.messages;
-                assert.equal(typeof message.message, 'string');
-                assert.equal(typeof message.line, 'number');
-                assert.equal(typeof message.column, 'number');
-                assert.equal(message.ruleId, 'eol-last');
-                assert.equal(message.severity, 2);
-            }
+        describe('"overrideConfigFile" should work', () => {
 
             it('with an absolute path', async () => {
                 await testConfig(
                     {
                         [ESLINT_KEY]: ESLint,
-                        overrideConfigFile: join(__dirname, 'eslintrc-sharable-config.js'),
+                        overrideConfigFile: join(__dirname, 'config/eslintrc-config.js'),
                         useEslintrc: false,
                     },
-                    'no-newline.js',
                 );
             });
 
@@ -227,10 +232,44 @@ describe('gulp-eslint-new plugin', () => {
                     {
                         [ESLINT_KEY]: ESLint,
                         cwd: __dirname,
-                        overrideConfigFile: 'eslintrc-sharable-config.js',
+                        overrideConfigFile: 'config/eslintrc-config.js',
                         useEslintrc: false,
                     },
-                    'no-newline.js',
+                );
+            });
+
+        });
+
+        describe('"extends" should work', () => {
+
+            it('with an absolute path', async () => {
+                await testConfig(
+                    {
+                        [ESLINT_KEY]: ESLint,
+                        baseConfig: { extends: join(__dirname, 'config/eslintrc-config.js') },
+                        useEslintrc: false,
+                    },
+                );
+            });
+
+            it('with a relative path', async () => {
+                await testConfig(
+                    {
+                        [ESLINT_KEY]: ESLint,
+                        cwd: __dirname,
+                        baseConfig: { extends: './config/eslintrc-config.js' },
+                        useEslintrc: false,
+                    },
+                );
+            });
+
+            it('with a package', async () => {
+                await testConfig(
+                    {
+                        [ESLINT_KEY]: ESLint,
+                        baseConfig: { extends: '~shareable/eslintrc-config' },
+                        useEslintrc: false,
+                    },
                 );
             });
 
@@ -484,12 +523,16 @@ describe('gulp-eslint-new plugin', () => {
 
     }
 
+    let originalCwd;
+
     beforeEach(() => {
-        process.chdir('test/fixtures');
+        originalCwd = process.cwd();
+        process.chdir(join(__dirname, 'fixtures'));
     });
 
     afterEach(() => {
-        process.chdir('../..');
+        process.chdir(originalCwd);
+        originalCwd = undefined;
     });
 
     describe('with ESLint 8.0', () => {
