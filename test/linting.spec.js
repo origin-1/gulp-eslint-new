@@ -118,35 +118,6 @@ describe('gulp-eslint-new plugin', () => {
             );
         });
 
-        it('should ignore files with null content', async () => {
-            const file = createVinylDirectory();
-            await finished(
-                gulpESLintNew(
-                    {
-                        [ESLINT_KEY]: ESLint,
-                        baseConfig: { rules: { 'strict': 2 } },
-                        useEslintrc: false,
-                    },
-                )
-                    .resume()
-                    .end(file),
-            );
-            assert(!file.eslint);
-        });
-
-        it('should emit an error when it takes a stream content', async () => {
-            await assert.rejects(
-                finished(
-                    gulpESLintNew({ [ESLINT_KEY]: ESLint, useEslintrc: false })
-                        .end(new File({ path: resolve('stream.js'), contents: Readable.from([]) })),
-                ),
-                {
-                    message: 'gulp-eslint-new doesn\'t support Vinyl files with Stream contents.',
-                    plugin: 'gulp-eslint-new',
-                },
-            );
-        });
-
         it('should emit an error when it fails to load a plugin', async () => {
             const pluginName = 'this-is-unknown-plugin';
             let err;
@@ -313,159 +284,6 @@ describe('gulp-eslint-new plugin', () => {
 
         });
 
-        describe('"warnIgnored" option', () => {
-
-            it('when true, should warn when a file is ignored by .eslintignore', async () => {
-                const file = createVinylFile('ignored.js', '(function () {ignore = abc;}});');
-                await finished(
-                    gulpESLintNew({ [ESLINT_KEY]: ESLint, useEslintrc: false, warnIgnored: true })
-                        .resume()
-                        .end(file),
-                );
-                assert.equal(file.eslint.filePath, file.path);
-                assert(Array.isArray(file.eslint.messages));
-                assert.deepEqual(
-                    file.eslint.messages,
-                    [
-                        {
-                            fatal: false,
-                            message:
-                            'File ignored because of a matching ignore pattern. Set "ignore" ' +
-                            'option to false to override.',
-                            severity: 1,
-                        },
-                    ],
-                );
-                if (satisfies(ESLint.version, '>=8.8')) {
-                    assert(isEmptyArray(file.eslint.suppressedMessages));
-                }
-                assert.equal(file.eslint.errorCount, 0);
-                assert.equal(file.eslint.warningCount, 1);
-                assert.equal(file.eslint.fixableErrorCount, 0);
-                assert.equal(file.eslint.fixableWarningCount, 0);
-                assert.equal(file.eslint.fatalErrorCount, 0);
-            });
-
-            it('when true, should warn when a "node_modules" file is ignored', async () => {
-                const file = createVinylFile(
-                    'node_modules/test/index.js',
-                    '(function () {ignore = abc;}});',
-                );
-                await finished(
-                    gulpESLintNew({ [ESLINT_KEY]: ESLint, useEslintrc: false, warnIgnored: true })
-                        .resume()
-                        .end(file),
-                );
-                assert.equal(file.eslint.filePath, file.path);
-                assert(Array.isArray(file.eslint.messages));
-                assert.deepEqual(
-                    file.eslint.messages,
-                    [
-                        {
-                            fatal: false,
-                            message:
-                            'File ignored by default. Use a negated ignore pattern like ' +
-                            '"!node_modules/*" to override.',
-                            severity: 1,
-                        },
-                    ],
-                );
-                if (satisfies(ESLint.version, '>=8.8')) {
-                    assert(isEmptyArray(file.eslint.suppressedMessages));
-                }
-                assert.equal(file.eslint.errorCount, 0);
-                assert.equal(file.eslint.warningCount, 1);
-                assert.equal(file.eslint.fixableErrorCount, 0);
-                assert.equal(file.eslint.fixableWarningCount, 0);
-                assert.equal(file.eslint.fatalErrorCount, 0);
-            });
-
-            it('when not true, should silently ignore files', async () => {
-                const file = createVinylFile('ignored.js', '(function () {ignore = abc;}});');
-                await finished(
-                    gulpESLintNew({ [ESLINT_KEY]: ESLint, useEslintrc: false, warnIgnored: false })
-                        .resume()
-                        .end(file),
-                );
-                assert(!file.eslint);
-            });
-
-        });
-
-        describe('"quiet" option', () => {
-
-            it('when true, should remove warnings', async () => {
-                const file =
-                createVinylFile('invalid.js', 'a = 01;\nb = 02; // eslint-disable-line');
-                await finished(
-                    gulpESLintNew(
-                        {
-                            [ESLINT_KEY]: ESLint,
-                            baseConfig: {
-                                rules: { 'no-octal': 2, 'no-undef': 1, 'valid-jsdoc': 1 },
-                            },
-                            quiet: true,
-                            useEslintrc: false,
-                        },
-                    )
-                        .resume()
-                        .end(file),
-                );
-                assert.equal(file.eslint.filePath, file.path);
-                assert(Array.isArray(file.eslint.messages));
-                assert.equal(file.eslint.messages.length, 1);
-                if (satisfies(ESLint.version, '>=8.8')) {
-                    assert(Array.isArray(file.eslint.suppressedMessages));
-                    assert.equal(file.eslint.suppressedMessages.length, 2);
-                }
-                assert.equal(file.eslint.errorCount, 1);
-                assert.equal(file.eslint.warningCount, 0);
-                assert.equal(file.eslint.fixableErrorCount, 0);
-                assert.equal(file.eslint.fixableWarningCount, 0);
-                assert.equal(file.eslint.fatalErrorCount, 0);
-                assert.deepEqual(
-                    file.eslint.usedDeprecatedRules,
-                    [{ replacedBy: [], ruleId: 'valid-jsdoc' }],
-                );
-            });
-
-            it('when a function, should filter messages', async () => {
-                const file =
-                createVinylFile('invalid.js', 'a = 01;\nb = 02; // eslint-disable-line');
-                await finished(
-                    gulpESLintNew(
-                        {
-                            [ESLINT_KEY]: ESLint,
-                            baseConfig: {
-                                rules: { 'no-octal': 2, 'no-undef': 1, 'valid-jsdoc': 1 },
-                            },
-                            quiet: ({ severity }) => severity === 1,
-                            useEslintrc: false,
-                        },
-                    )
-                        .resume()
-                        .end(file),
-                );
-                assert.equal(file.eslint.filePath, file.path);
-                assert(Array.isArray(file.eslint.messages));
-                assert.equal(file.eslint.messages.length, 1);
-                if (satisfies(ESLint.version, '>=8.8')) {
-                    assert(Array.isArray(file.eslint.suppressedMessages));
-                    assert.equal(file.eslint.suppressedMessages.length, 2);
-                }
-                assert.equal(file.eslint.errorCount, 0);
-                assert.equal(file.eslint.warningCount, 1);
-                assert.equal(file.eslint.fixableErrorCount, 0);
-                assert.equal(file.eslint.fixableWarningCount, 0);
-                assert.equal(file.eslint.fatalErrorCount, 0);
-                assert.deepEqual(
-                    file.eslint.usedDeprecatedRules,
-                    [{ replacedBy: [], ruleId: 'valid-jsdoc' }],
-                );
-            });
-
-        });
-
         describe('"fix" option', () => {
 
             it('when true, should update buffered contents', async () => {
@@ -533,16 +351,6 @@ describe('gulp-eslint-new plugin', () => {
     afterEach(() => {
         process.chdir(originalCwd);
         originalCwd = undefined;
-    });
-
-    describe('with ESLint 8.0', () => {
-        const { ESLint } = require('eslint-8.0');
-        testLinting(ESLint);
-    });
-
-    describe('with ESLint 8.x', () => {
-        const { ESLint } = require('eslint-8.x');
-        testLinting(ESLint);
     });
 
     it('should accept a string argument', async () => {
@@ -627,6 +435,179 @@ describe('gulp-eslint-new plugin', () => {
         assert(actualMessage.includes('\n • plugins → overrideConfig.plugins\n'));
         assert(actualMessage.includes('\n • rules → overrideConfig.rules\n'));
         assert(actualMessage.includes('\n • warnFileIgnored → warnIgnored\n'));
+    });
+
+    it('should set option "cwd" if undefined', async () => {
+        let actualCwd;
+        const ESLint =
+        function ({ cwd }) {
+            actualCwd = cwd;
+        };
+        gulpESLintNew({ [ESLINT_KEY]: ESLint });
+        assert.equal(actualCwd, process.cwd());
+    });
+
+    it('should ignore files with null content', async () => {
+        const file = createVinylDirectory();
+        await finished(
+            gulpESLintNew({ baseConfig: { rules: { 'strict': 2 } }, useEslintrc: false })
+                .resume()
+                .end(file),
+        );
+        assert(!file.eslint);
+    });
+
+    it('should emit an error when it takes a stream content', async () => {
+        await assert.rejects(
+            finished(
+                gulpESLintNew({ useEslintrc: false })
+                    .end(new File({ path: resolve('stream.js'), contents: Readable.from([]) })),
+            ),
+            {
+                message: 'gulp-eslint-new doesn\'t support Vinyl files with Stream contents.',
+                plugin: 'gulp-eslint-new',
+            },
+        );
+    });
+
+    describe('"warnIgnored" option', () => {
+
+        it('when true, should warn when a file is ignored by .eslintignore', async () => {
+            const file = createVinylFile('ignored.js', '(function () {ignore = abc;}});');
+            await finished(
+                gulpESLintNew({ useEslintrc: false, warnIgnored: true }).resume().end(file),
+            );
+            assert.equal(file.eslint.filePath, file.path);
+            assert(Array.isArray(file.eslint.messages));
+            assert.deepEqual(
+                file.eslint.messages,
+                [
+                    {
+                        fatal: false,
+                        message:
+                        'File ignored because of a matching ignore pattern. Set "ignore" ' +
+                        'option to false to override.',
+                        severity: 1,
+                    },
+                ],
+            );
+            assert.equal(file.eslint.errorCount, 0);
+            assert.equal(file.eslint.warningCount, 1);
+            assert.equal(file.eslint.fixableErrorCount, 0);
+            assert.equal(file.eslint.fixableWarningCount, 0);
+            assert.equal(file.eslint.fatalErrorCount, 0);
+        });
+
+        it('when true, should warn when a "node_modules" file is ignored', async () => {
+            const file = createVinylFile(
+                'node_modules/test/index.js',
+                '(function () {ignore = abc;}});',
+            );
+            await finished(
+                gulpESLintNew({ useEslintrc: false, warnIgnored: true }).resume().end(file),
+            );
+            assert.equal(file.eslint.filePath, file.path);
+            assert(Array.isArray(file.eslint.messages));
+            assert.deepEqual(
+                file.eslint.messages,
+                [
+                    {
+                        fatal: false,
+                        message:
+                        'File ignored by default. Use a negated ignore pattern like ' +
+                        '"!node_modules/*" to override.',
+                        severity: 1,
+                    },
+                ],
+            );
+            assert.equal(file.eslint.errorCount, 0);
+            assert.equal(file.eslint.warningCount, 1);
+            assert.equal(file.eslint.fixableErrorCount, 0);
+            assert.equal(file.eslint.fixableWarningCount, 0);
+            assert.equal(file.eslint.fatalErrorCount, 0);
+        });
+
+        it('when not true, should silently ignore files', async () => {
+            const file = createVinylFile('ignored.js', '(function () {ignore = abc;}});');
+            await finished(
+                gulpESLintNew({ useEslintrc: false, warnIgnored: false }).resume().end(file),
+            );
+            assert(!file.eslint);
+        });
+
+    });
+
+    describe('"quiet" option', () => {
+
+        it('when true, should remove warnings', async () => {
+            const file =
+            createVinylFile('invalid.js', 'a = 01;\nb = 02; // eslint-disable-line');
+            await finished(
+                gulpESLintNew(
+                    {
+                        baseConfig: {
+                            rules: { 'no-octal': 2, 'no-undef': 1, 'valid-jsdoc': 1 },
+                        },
+                        quiet: true,
+                        useEslintrc: false,
+                    },
+                )
+                    .resume()
+                    .end(file),
+            );
+            assert.equal(file.eslint.filePath, file.path);
+            assert(Array.isArray(file.eslint.messages));
+            assert.equal(file.eslint.messages.length, 1);
+            assert.equal(file.eslint.errorCount, 1);
+            assert.equal(file.eslint.warningCount, 0);
+            assert.equal(file.eslint.fixableErrorCount, 0);
+            assert.equal(file.eslint.fixableWarningCount, 0);
+            assert.equal(file.eslint.fatalErrorCount, 0);
+            assert.deepEqual(
+                file.eslint.usedDeprecatedRules,
+                [{ replacedBy: [], ruleId: 'valid-jsdoc' }],
+            );
+        });
+
+        it('when a function, should filter messages', async () => {
+            const file = createVinylFile('invalid.js', 'a = 01;\nb = 02; // eslint-disable-line');
+            await finished(
+                gulpESLintNew(
+                    {
+                        baseConfig: {
+                            rules: { 'no-octal': 2, 'no-undef': 1, 'valid-jsdoc': 1 },
+                        },
+                        quiet: ({ severity }) => severity === 1,
+                        useEslintrc: false,
+                    },
+                )
+                    .resume()
+                    .end(file),
+            );
+            assert.equal(file.eslint.filePath, file.path);
+            assert(Array.isArray(file.eslint.messages));
+            assert.equal(file.eslint.messages.length, 1);
+            assert.equal(file.eslint.errorCount, 0);
+            assert.equal(file.eslint.warningCount, 1);
+            assert.equal(file.eslint.fixableErrorCount, 0);
+            assert.equal(file.eslint.fixableWarningCount, 0);
+            assert.equal(file.eslint.fatalErrorCount, 0);
+            assert.deepEqual(
+                file.eslint.usedDeprecatedRules,
+                [{ replacedBy: [], ruleId: 'valid-jsdoc' }],
+            );
+        });
+
+    });
+
+    describe('with ESLint 8.0', () => {
+        const { ESLint } = require('eslint-8.0');
+        testLinting(ESLint);
+    });
+
+    describe('with ESLint 8.x', () => {
+        const { ESLint } = require('eslint-8.x');
+        testLinting(ESLint);
     });
 
 });
