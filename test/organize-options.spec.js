@@ -181,10 +181,48 @@ describe('organizeOptions', () => {
         );
     });
 
-    it('should return a custom value for ESLint', () => {
-        const expected = { };
-        const { ESLint: actual } = organizeOptions({ [ESLINT_KEY]: expected });
-        assert.equal(actual, expected);
+    it('should not migrate legacy options with "configType" "flat"', () => {
+        const expectedOptions =
+        {
+            configFile:         1,
+            envs:               2,
+            extends:            3,
+            globals:            4,
+            ignorePattern:      5,
+            parser:             6,
+            parserOptions:      7,
+            plugins:            ['foo', 'bar'],
+            rules:              8,
+            warnFileIgnored:    true,
+        };
+        const { eslintOptions: actualOptions, migratedOptions, warnIgnored } =
+        organizeOptions({ configType: 'flat', ...expectedOptions });
+        assert.deepEqual(actualOptions, expectedOptions);
+        assert.equal(warnIgnored, undefined);
+        assert(isEmptyArray(migratedOptions));
+    });
+
+    describe('should return a custom value for ESLint', () => {
+
+        it('with "configType" "eslintrc"', () => {
+            const expected = { };
+            const { ESLint: actual } =
+            organizeOptions({ [ESLINT_KEY]: expected, configType: 'eslintrc' });
+            assert.equal(actual, expected);
+        });
+
+        it('with "configType" "flat"', () => {
+            assert.throws(
+                () => organizeOptions({ [ESLINT_KEY]: null, configType: 'flat' }),
+            );
+            {
+                const expected = { };
+                const { ESLint: actual } =
+                organizeOptions({ [ESLINT_KEY]: expected, configType: 'flat' });
+                assert.equal(actual, expected);
+            }
+        });
+
     });
 
     it('should fail if a forbidden option is specified', () => {
@@ -203,6 +241,14 @@ describe('organizeOptions', () => {
             ({ code, message }) =>
                 code === 'ESLINT_INVALID_OPTIONS' &&
                 message.includes(Object.keys(options).join(', ')),
+        );
+    });
+
+    it('should fail if "configType" is not a valid value', () => {
+        assert.throws(
+            () => organizeOptions({ configType: 'foo' }),
+            ({ code, message }) =>
+                code === 'ESLINT_INVALID_OPTIONS' && /\bconfigType\b/.test(message),
         );
     });
 
@@ -231,10 +277,26 @@ describe('organizeOptions', () => {
         );
     });
 
-    it('should not modify an existing overrideConfig', () => {
-        const options = { overrideConfig: { }, parser: 'foo' };
+    it('should not modify the properties of a specified "overrideConfig" object', () => {
+        const overrideConfig = { foo: 'bar' };
+        const options = { overrideConfig, parser: 'baz' };
         organizeOptions(options);
-        assert.deepEqual(options.overrideConfig, { });
+        assert.equal(options.overrideConfig, overrideConfig);
+        assert.deepEqual(overrideConfig, { foo: 'bar' });
+    });
+
+    it('should merge "overrideConfig" with eslintrc config', () => {
+        const overrideConfig = { root: true };
+        const { eslintOptions } =
+        organizeOptions({ configType: 'eslintrc', overrideConfig, parser: 'foo' });
+        assert.deepEqual(eslintOptions.overrideConfig, { parser: 'foo', root: true });
+    });
+
+    it('should preserve "overrideConfig" with flat config', () => {
+        const overrideConfig = { root: true };
+        const { eslintOptions } =
+        organizeOptions({ configType: 'flat', overrideConfig, parser: 'foo' });
+        assert.equal(eslintOptions.overrideConfig, overrideConfig);
     });
 
 });

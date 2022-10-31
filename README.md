@@ -89,6 +89,20 @@ Additionally, gulp-eslint-new supports the options listed below.
 
 #### Additional Options
 
+##### `options.configType`
+
+Type: `"eslintrc" | "flat"`
+
+Newer versions of ESLint introduce a [new type of configuration](https://eslint.org/docs/user-guide/configuring/configuration-files-new) based on file `eslint.config.js`.
+Starting with gulp-eslint-new 1.7 it is possible to use the new configuration by setting the option `configType` to `"flat"`.
+
+When using the new configuration, the options `ignorePath`, `resolvePluginsRelativeTo`, `rulePaths` and `useEslintrc` are no longer supported.
+[Legacy options](#legacy-options) are not supported either and will not be mapped to new options.
+Also, `ignorePatterns` is supported as a new top-level option, while other options like `baseConfig`, `overrideConfig` and `overrideConfigFile` accept different values.
+Refer to [the official documentation](https://eslint.org/docs/user-guide/configuring/configuration-files-new) for a description of all differences from the standard configuration.
+
+The new configuration system is still an experimental feature in ESLint 8.
+
 ##### `options.cwd`
 
 Type: `string`
@@ -96,7 +110,7 @@ Type: `string`
 The working directory. This must be an absolute path. Default is the current working directory.
 
 The working directory is where ESLint will look for a `.eslintignore` file by default.
-It is also the base directory for any relative paths specified in the options (e.g. `options.overrideConfigFile`, `options.resolvePluginsRelativeTo`, `options.rulePaths`, `options.overrideConfig.extends`, etc.).
+It is also the base directory for any relative paths specified in the options (e.g. `overrideConfigFile`, `resolvePluginsRelativeTo`, `rulePaths`, `overrideConfig.extends`, etc.).
 The location of the files to be linted is not related to the working directory.
 
 ##### `options.ignore`
@@ -319,10 +333,6 @@ Overwrite files with the fixed content provided by ESLint.
 This should be used in conjunction with the option `fix` in [`gulpESLintNew(options)`](#gulpeslintnewoptions).
 Files without a fix and files that were not processed by ESLint will be left untouched.
 See the [Autofix](#autofix) section for more information and examples.
-
-## Configuration
-
-ESLint may be configured explicity by using any of the supported [configuration options](https://eslint.org/docs/user-guide/configuring/). Unless the `useEslintrc` option is set to `false`, ESLint will attempt to resolve a file by the name of `.eslintrc` within the same directory as the file to be linted. If not found there, parent directories will be searched until `.eslintrc` is found or the directory root is reached.
 
 ## Autofix
 

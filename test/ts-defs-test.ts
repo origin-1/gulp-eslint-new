@@ -21,6 +21,55 @@ gulpESLintNew(
     },
 );
 
+gulpESLintNew(
+    {
+        configType:                     'eslintrc',
+        allowInlineConfig:              false,
+        baseConfig:                     { rules: { } },
+        cwd:                            'cwd',
+        fix:                            true,
+        fixTypes:                       ['problem'],
+        ignore:                         false,
+        overrideConfig:                 { env: { } },
+        overrideConfigFile:             'overrideConfigFile',
+        plugins:                        { foo: { } },
+        quiet:                          true,
+        reportUnusedDisableDirectives:  'off',
+        rulePaths:                      ['rulePaths'],
+        warnIgnored:                    true,
+    },
+);
+
+gulpESLintNew(
+    {
+        configType:                     'flat',
+        allowInlineConfig:              false,
+        baseConfig:                     { settings: { foo: 'bar' } },
+        cwd:                            'cwd',
+        fix:                            true,
+        fixTypes:                       ['problem'],
+        ignore:                         false,
+        ignorePatterns:                 'invalid.js',
+        overrideConfig:                 ['eslint:recommended', { processor: 'foo/bar' }],
+        overrideConfigFile:             true,
+        plugins:                        { foo: { processors: { bar: { } } } },
+        quiet:                          true,
+        reportUnusedDisableDirectives:  'off',
+        warnIgnored:                    true,
+    },
+);
+
+(configType: 'eslintrc' | 'flat', ignorePatterns?: string | string[], rulePaths?: string[]) =>
+    gulpESLintNew(
+        {
+            configType,
+            allowInlineConfig: false,
+            baseConfig: { rules: { } },
+            ignorePatterns,
+            rulePaths,
+        },
+    );
+
 // @ts-expect-error Invalid option.
 gulpESLintNew({ cache: undefined });
 
@@ -38,6 +87,15 @@ gulpESLintNew({ extensions: undefined });
 
 // @ts-expect-error Invalid option.
 gulpESLintNew({ globInputPaths: undefined });
+
+// @ts-expect-error Invalid option for eslintrc config.
+gulpESLintNew({ ignorePatterns: [] });
+
+// @ts-expect-error Invalid option for flat config.
+gulpESLintNew({ configType: 'flat', rules: undefined });
+
+// @ts-expect-error Invalid option type for eslintrc config.
+gulpESLintNew({ overrideConfigFile: true });
 
 const isStream = (stream: NodeJS.ReadWriteStream) => void stream;
 

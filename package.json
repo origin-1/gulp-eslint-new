@@ -52,6 +52,7 @@
     "@typescript-eslint/parser": "^5.39.0",
     "c8js": "^0.3.0",
     "eslint-8.0": "npm:eslint@8.0",
+    "eslint-8.21": "npm:eslint@8.21",
     "eslint-8.x": "npm:eslint@8.x",
     "eslint-formatter-~formatter": "file:test/formatter",
     "eslint-config-~shareable": "file:test/config",

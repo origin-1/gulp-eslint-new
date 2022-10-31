@@ -283,6 +283,8 @@ describe('utility functions', () => {
 
         function testResolveFormatter(ESLint) {
 
+            const useEslintrcConfig = ESLint.name === 'ESLint';
+
             const testResults = [
                 {
                     filePath: 'foo',
@@ -322,37 +324,76 @@ describe('utility functions', () => {
             });
 
             it('should resolve a custom formatter by path', async () => {
-                const eslintInfo = { eslint: new ESLint({ cwd: __dirname }) };
+                const options =
+                    useEslintrcConfig ? {
+                        cwd: __dirname,
+                        overrideConfig: { rules: { 'no-undef': 'warn' } },
+                        useEslintrc: false,
+                    } : {
+                        cwd: __dirname,
+                        overrideConfig: { rules: { 'no-undef': 'warn' } },
+                        overrideConfigFile: true,
+                    };
+                const eslint = new ESLint(options);
+                const filePath = 'file.js';
+                const expectedResults = await eslint.lintText('ok', { filePath });
+                const eslintInfo = { eslint };
                 const formatter =
-                    await util.resolveFormatter(eslintInfo, './formatter/custom-formatter');
-                const json = await formatter.format(testResults);
-                const { results, context } = JSON.parse(json);
-                assert.deepEqual(results, testResults);
-                if (satisfies(ESLint.version, '>=8.4')) {
+                    await util.resolveFormatter(eslintInfo, './formatter/custom-formatter.js');
+                const json = await formatter.format(expectedResults);
+                const { results: actualResults, context } = JSON.parse(json);
+                assert.deepEqual(actualResults, expectedResults);
+                if (satisfies(ESLint.version, useEslintrcConfig ? '>=8.4' : '>=8.23')) {
                     assert.deepEqual(context.cwd, __dirname);
                 }
             });
 
             it('should resolve a custom formatter by package name', async () => {
-                const eslintInfo = { eslint: new ESLint({ cwd: __dirname }) };
+                const options =
+                    useEslintrcConfig ? {
+                        cwd: __dirname,
+                        overrideConfig: { rules: { 'no-undef': 'warn' } },
+                        useEslintrc: false,
+                    } : {
+                        cwd: __dirname,
+                        overrideConfig: { rules: { 'no-undef': 'warn' } },
+                        overrideConfigFile: true,
+                    };
+                const eslint = new ESLint(options);
+                const filePath = 'file.js';
+                const expectedResults = await eslint.lintText('ok', { filePath });
+                const eslintInfo = { eslint };
                 const formatter =
                     await util.resolveFormatter(eslintInfo, '~formatter');
-                const json = await formatter.format(testResults);
-                const { results, context } = JSON.parse(json);
-                assert.deepEqual(results, testResults);
-                if (satisfies(ESLint.version, '>=8.4')) {
+                const json = await formatter.format(expectedResults);
+                const { results: actualResults, context } = JSON.parse(json);
+                assert.deepEqual(actualResults, expectedResults);
+                if (satisfies(ESLint.version, useEslintrcConfig ? '>=8.4' : '>=8.23')) {
                     assert.deepEqual(context.cwd, __dirname);
                 }
             });
 
             it('should resolve an async custom formatter', async () => {
-                const eslintInfo = { eslint: new ESLint({ cwd: __dirname }) };
+                const options =
+                    useEslintrcConfig ? {
+                        cwd: __dirname,
+                        overrideConfig: { rules: { 'no-undef': 'warn' } },
+                        useEslintrc: false,
+                    } : {
+                        cwd: __dirname,
+                        overrideConfig: { rules: { 'no-undef': 'warn' } },
+                        overrideConfigFile: true,
+                    };
+                const eslint = new ESLint(options);
+                const filePath = 'file.js';
+                const expectedResults = await eslint.lintText('ok', { filePath });
+                const eslintInfo = { eslint };
                 const formatter =
-                    await util.resolveFormatter(eslintInfo, './formatter/async-formatter');
-                const json = await formatter.format(testResults);
-                const [results, context] = JSON.parse(json);
-                assert.deepEqual(results, testResults);
-                if (satisfies(ESLint.version, '>=8.4')) {
+                    await util.resolveFormatter(eslintInfo, './formatter/async-formatter.js');
+                const json = await formatter.format(expectedResults);
+                const [actualResults, context] = JSON.parse(json);
+                assert.deepEqual(actualResults, expectedResults);
+                if (satisfies(ESLint.version, useEslintrcConfig ? '>=8.4' : '>=8.23')) {
                     assert.deepEqual(context.cwd, __dirname);
                 }
             });
@@ -366,16 +407,27 @@ describe('utility functions', () => {
             });
 
             it('should wrap a formatter function in an object', async () => {
-                const eslintInfo = { cwd: 'TEST CWD', eslint: new ESLint() };
+                const options =
+                    useEslintrcConfig ? {
+                        overrideConfig: { rules: { 'no-undef': 'warn' } },
+                        useEslintrc: false,
+                    } : {
+                        overrideConfig: { rules: { 'no-undef': 'warn' } },
+                        overrideConfigFile: true,
+                    };
+                const eslint = new ESLint(options);
+                const eslintInfo = { cwd: 'TEST CWD', eslint };
+                const expectedResults = await eslint.lintText('ok');
                 const format =
                 (actualResults, data) => {
-                    assert.equal(actualResults, testResults);
+                    assert.equal(actualResults, expectedResults);
                     assert(data.rulesMeta);
                     assert.equal(data.cwd, 'TEST CWD');
                     return 'foo';
                 };
+                await eslint.lintText('syntax error');
                 const formatter = await util.resolveFormatter(eslintInfo, format);
-                const text = await formatter.format(testResults);
+                const text = await formatter.format(expectedResults);
                 assert.equal(text, 'foo');
             });
 
@@ -397,6 +449,16 @@ describe('utility functions', () => {
         describe('with ESLint 8.x', () => {
             const { ESLint } = require('eslint-8.x');
             testResolveFormatter(ESLint);
+        });
+
+        describe('with FlatESLint 8.21', () => {
+            const { FlatESLint } = require('eslint-8.21/use-at-your-own-risk');
+            testResolveFormatter(FlatESLint);
+        });
+
+        describe('with FlatESLint 8.x', () => {
+            const { FlatESLint } = require('eslint-8.x/use-at-your-own-risk');
+            testResolveFormatter(FlatESLint);
         });
 
     });

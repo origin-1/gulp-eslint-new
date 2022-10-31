@@ -1,12 +1,14 @@
 import {
     ConfigData,
     ESLintOptions,
+    FlatConfig,
     FormatterContext,
     FormatterFunction,
     LintMessage,
     LintResult,
     LoadedFormatter,
     ResultsMeta,
+    Plugin,
 }
     from './eslint';
 import                          'node';
@@ -14,7 +16,26 @@ import { TransformCallback }    from 'stream';
 
 export { FormatterContext, FormatterFunction };
 
-export type GulpESLintOptions
+export type GulpESLintOptions =
+(GulpESLintrcOptions & { configType?: 'eslintrc' | undefined }) |
+(GulpFlatESLintOptions & { configType: 'flat' });
+
+export type GulpESLintResult = LintResult;
+
+export type GulpESLintResults
+=
+GulpESLintResult[] &
+{
+    errorCount:          number;
+    fatalErrorCount:     number;
+    warningCount:        number;
+    fixableErrorCount:   number;
+    fixableWarningCount: number;
+};
+
+export type GulpESLintWriter = (str: string) => unknown | Promise<unknown>;
+
+type GulpESLintrcOptions
 =
 Omit<
 ESLintOptions,
@@ -73,20 +94,33 @@ ESLintOptions,
     warnIgnored?: boolean | undefined;
 };
 
-export type GulpESLintResult = LintResult;
-
-export type GulpESLintResults
+type GulpFlatESLintOptions
 =
-GulpESLintResult[] &
+Pick<
+ESLintOptions,
+| 'allowInlineConfig'
+| 'cwd'
+| 'fix'
+| 'fixTypes'
+| 'ignore'
+| 'reportUnusedDisableDirectives'
+> &
 {
-    errorCount:          number;
-    fatalErrorCount:     number;
-    warningCount:        number;
-    fixableErrorCount:   number;
-    fixableWarningCount: number;
-};
+    baseConfig?: FlatConfig | undefined;
 
-export type GulpESLintWriter = (str: string) => unknown | Promise<unknown>;
+    ignorePatterns?: string | string[] | undefined;
+
+    overrideConfig?: FlatConfig | (string | FlatConfig)[] | undefined;
+
+    overrideConfigFile?: string | true | undefined;
+
+    plugins?: Record<string, Plugin> | undefined;
+
+    quiet?:
+    boolean | ((message: LintMessage, index: number, list: LintMessage[]) => unknown) | undefined;
+
+    warnIgnored?: boolean | undefined;
+};
 
 type LintResultStreamFunction<Type> =
 ((action: (value: Type, callback: TransformCallback) => void) => NodeJS.ReadWriteStream) &
