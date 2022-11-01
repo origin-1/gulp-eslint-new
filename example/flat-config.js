@@ -1,9 +1,11 @@
 'use strict';
 
-// npm install gulp gulp-eslint-new
+// npm install @eslint/eslintrc globals gulp gulp-eslint-new
 
+const globals         = require('globals');
 const { series, src } = require('gulp');
 const gulpESLintNew   = require('gulp-eslint-new');
+const { join }        = require('path');
 
 /**
  * Simple example of using ESLint and a formatter.
@@ -15,7 +17,10 @@ const gulpESLintNew   = require('gulp-eslint-new');
 function basic() {
     return src('demo/**/*.js')
         // Default: use local linting config.
-        .pipe(gulpESLintNew())
+        .pipe(gulpESLintNew({
+            configType: 'flat',
+            cwd: join(__dirname, 'demo'),  // Directory containing "eslint.config.js".
+        }))
         // Format ESLint results and print them to the console.
         .pipe(gulpESLintNew.format());
 }
@@ -28,6 +33,7 @@ function basic() {
 function inlineConfig() {
     return src('demo/**/*.js')
         .pipe(gulpESLintNew({
+            configType: 'flat',
             overrideConfig: {
                 rules: {
                     'no-alert': 0,
@@ -55,41 +61,48 @@ function inlineConfig() {
                     'quotes': 0,
                     'no-unreachable': 2,
                 },
-                globals: {
-                    $: 'readonly',
-                },
-                env: {
-                    'node': true,
+                languageOptions: {
+                    globals: {
+                        $: 'readonly',
+                        ...globals.node,
+                    },
                 },
             },
+            overrideConfigFile: 'demo/eslint.config.js',
             warnIgnored: true,
         }))
         .pipe(gulpESLintNew.format());
 }
 
 /**
- * Load configuration file.
+ * Load eslintrc configuration file.
  *
  * @returns {NodeJS.ReadWriteStream} gulp file stream.
  */
 function loadConfig() {
+    const { FlatCompat } = require('@eslint/eslintrc');
+    const compat = new FlatCompat({ baseDirectory: __dirname });
     return src('demo/**/*.js')
         .pipe(gulpESLintNew({
-            // Load a specific ESLint config.
-            overrideConfigFile: 'eslint-custom-config.json',
+            configType: 'flat',
+            cwd: join(__dirname, 'demo'), // Directory containing "eslint.config.js".
+            // Load a specific eslintrc config.
+            overrideConfig: compat.config(require(join(__dirname, 'eslint-custom-config.json'))),
         }))
         .pipe(gulpESLintNew.format());
 }
-
 /**
- * Shorthand way to load a configuration file.
+ * Load flat configuration file.
  *
  * @returns {NodeJS.ReadWriteStream} gulp file stream.
  */
-function loadConfigShorthand() {
+function loadFlatConfig() {
     return src('demo/**/*.js')
-        // Load a specific ESLint config
-        .pipe(gulpESLintNew('eslint-custom-config.json'))
+        .pipe(gulpESLintNew({
+            configType: 'flat',
+            // Load a specific flat config.
+            overrideConfigFile: 'eslint-custom-flat-config.js',
+        }))
         .pipe(gulpESLintNew.format());
 }
 
@@ -102,7 +115,7 @@ module.exports =
         basic,
         inlineConfig,
         loadConfig,
-        loadConfigShorthand,
+        loadFlatConfig,
         async () => {
             console.log('All tasks completed successfully.');
         },
@@ -110,5 +123,5 @@ module.exports =
     'basic': basic,
     'inline-config': inlineConfig,
     'load-config': loadConfig,
-    'load-config-shorthand': loadConfigShorthand,
+    'load-flat-config': loadFlatConfig,
 };

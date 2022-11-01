@@ -8,7 +8,8 @@
     "eqeqeq": 0,
     "no-eq-null": 0,
     "guard-for-in": 1,
-    "no-empty": 1
+    "no-empty": 1,
+    "strict": 2
   },
   "globals": {
     "$": false
