@@ -1,3 +1,13 @@
+<a name="1.7.0"></a>
+## [1.7.0](https://github.com/origin-1/gulp-eslint-new/releases/tag/1.7.0) (2022-11-01)
+
+* Added support for the flat configuration system.
+* The `format` method of a `LoadedFormatter` object is now passed a second argument, as in ESLint 8.25 or later.
+* If option `cwd` is not specified, then `cwd` will be set to the current directory in the `ESLint` constructor options.
+  This should avoid unexpected inconsistencies between ESLint and gulp-eslint-new in determining the current directory.
+* Updated TypeScript type declarations.
+* Updated examples and documentation.
+
 <a name="1.6.0"></a>
 ## [1.6.0](https://github.com/origin-1/gulp-eslint-new/releases/tag/1.6.0) (2022-09-12)
 
