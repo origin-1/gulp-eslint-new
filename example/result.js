@@ -17,9 +17,9 @@ function lintResult() {
                 // Report which file exceeded the limit.
                 // The error will be wrapped in a gulp PluginError.
                 throw {
-                    name: 'TooManyProblems',
-                    fileName: result.filePath,
-                    message: 'Too many problems!',
+                    name:       'TooManyProblems',
+                    fileName:   result.filePath,
+                    message:    'Too many problems!',
                 };
             }
         }));
@@ -37,10 +37,10 @@ function lintResultAsync() {
                     // Define the error. Any non-null/undefined value will work.
                     error =
                     {
-                        name: 'TooManyProblems',
-                        fileName: result.filePath,
-                        message: 'Too many problems!',
-                        showStack: false,
+                        name:       'TooManyProblems',
+                        fileName:   result.filePath,
+                        message:    'Too many problems!',
+                        showStack:  false,
                     };
                 }
                 done(error);
@@ -78,9 +78,9 @@ function lintResultsAsync() {
 
 module.exports =
 {
-    'default': lintResults,
-    'lint-result': lintResult,
-    'lint-result-async': lintResultAsync,
-    'lint-results': lintResults,
-    'lint-results-async': lintResultsAsync,
+    'default':              lintResults,
+    'lint-result':          lintResult,
+    'lint-result-async':    lintResultAsync,
+    'lint-results':         lintResults,
+    'lint-results-async':   lintResultsAsync,
 };

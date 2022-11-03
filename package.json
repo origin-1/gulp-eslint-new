@@ -48,7 +48,7 @@
     "vinyl-fs": "^3.0.3"
   },
   "devDependencies": {
-    "@origin-1/eslint-config": "^0.7.0",
+    "@origin-1/eslint-config": "^0.7.1",
     "@typescript-eslint/eslint-plugin": "^5.42.0",
     "@typescript-eslint/parser": "^5.42.0",
     "c8js": "^0.3.0",

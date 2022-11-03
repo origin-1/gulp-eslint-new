@@ -223,34 +223,35 @@ describe('utility functions', () => {
 
         const result =
         {
-            messages: [{
-                ruleId: 'error',
-                message: 'This is an error.',
-                severity: 2,
+            messages:
+            [{
+                ruleId:     'error',
+                message:    'This is an error.',
+                severity:   2,
             }, {
-                ruleId: 'warning',
-                message: 'This is a warning.',
-                severity: 1,
+                ruleId:     'warning',
+                message:    'This is a warning.',
+                severity:   1,
             }, {
-                ruleId: 'fixable error',
-                message: 'This is a fixable error.',
-                severity: 2,
-                fix: { },
+                ruleId:     'fixable error',
+                message:    'This is a fixable error.',
+                severity:   2,
+                fix:        { },
             }, {
-                ruleId: 'fixable warning',
-                message: 'This is a fixable warning.',
-                severity: 1,
-                fix: { },
+                ruleId:     'fixable warning',
+                message:    'This is a fixable warning.',
+                severity:   1,
+                fix:        { },
             }, {
-                ruleId: 'fatal error',
-                message: 'This is a fatal error.',
-                fatal: true,
-                severity: 2,
+                ruleId:     'fatal error',
+                message:    'This is a fatal error.',
+                fatal:      true,
+                severity:   2,
             }],
-            errorCount: 3,
-            warningCount: 2,
-            fatalErrorCount: 1,
-            foobar: 42,
+            errorCount:         3,
+            warningCount:       2,
+            fatalErrorCount:    1,
+            foobar:             42,
         };
 
         it('should remove error messages', () => {
@@ -287,14 +288,14 @@ describe('utility functions', () => {
 
             const testResults = [
                 {
-                    filePath: 'foo',
-                    messages: [{ column: 99, line: 42, message: 'bar' }],
-                    suppressedMessages: [],
-                    errorCount: 1,
-                    warningCount: 0,
-                    fixableErrorCount: 1,
-                    fixableWarningCount: 0,
-                    fatalErrorCount: 0,
+                    filePath:               'foo',
+                    messages:               [{ column: 99, line: 42, message: 'bar' }],
+                    suppressedMessages:     [],
+                    errorCount:             1,
+                    warningCount:           0,
+                    fixableErrorCount:      1,
+                    fixableWarningCount:    0,
+                    fatalErrorCount:        0,
                 },
             ];
 
@@ -326,12 +327,12 @@ describe('utility functions', () => {
             it('should resolve a custom formatter by path', async () => {
                 const options =
                     useEslintrcConfig ? {
-                        cwd: __dirname,
-                        overrideConfig: { rules: { 'no-undef': 'warn' } },
-                        useEslintrc: false,
+                        cwd:                __dirname,
+                        overrideConfig:     { rules: { 'no-undef': 'warn' } },
+                        useEslintrc:        false,
                     } : {
-                        cwd: __dirname,
-                        overrideConfig: { rules: { 'no-undef': 'warn' } },
+                        cwd:                __dirname,
+                        overrideConfig:     { rules: { 'no-undef': 'warn' } },
                         overrideConfigFile: true,
                     };
                 const eslint = new ESLint(options);
@@ -351,12 +352,12 @@ describe('utility functions', () => {
             it('should resolve a custom formatter by package name', async () => {
                 const options =
                     useEslintrcConfig ? {
-                        cwd: __dirname,
-                        overrideConfig: { rules: { 'no-undef': 'warn' } },
-                        useEslintrc: false,
+                        cwd:                __dirname,
+                        overrideConfig:     { rules: { 'no-undef': 'warn' } },
+                        useEslintrc:        false,
                     } : {
-                        cwd: __dirname,
-                        overrideConfig: { rules: { 'no-undef': 'warn' } },
+                        cwd:                __dirname,
+                        overrideConfig:     { rules: { 'no-undef': 'warn' } },
                         overrideConfigFile: true,
                     };
                 const eslint = new ESLint(options);
@@ -376,12 +377,12 @@ describe('utility functions', () => {
             it('should resolve an async custom formatter', async () => {
                 const options =
                     useEslintrcConfig ? {
-                        cwd: __dirname,
+                        cwd:            __dirname,
                         overrideConfig: { rules: { 'no-undef': 'warn' } },
-                        useEslintrc: false,
+                        useEslintrc:    false,
                     } : {
-                        cwd: __dirname,
-                        overrideConfig: { rules: { 'no-undef': 'warn' } },
+                        cwd:                __dirname,
+                        overrideConfig:     { rules: { 'no-undef': 'warn' } },
                         overrideConfigFile: true,
                     };
                 const eslint = new ESLint(options);
@@ -410,9 +411,9 @@ describe('utility functions', () => {
                 const options =
                     useEslintrcConfig ? {
                         overrideConfig: { rules: { 'no-undef': 'warn' } },
-                        useEslintrc: false,
+                        useEslintrc:    false,
                     } : {
-                        overrideConfig: { rules: { 'no-undef': 'warn' } },
+                        overrideConfig:     { rules: { 'no-undef': 'warn' } },
                         overrideConfigFile: true,
                     };
                 const eslint = new ESLint(options);

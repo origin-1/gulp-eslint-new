@@ -1,8 +1,8 @@
-import
-gulpESLintNew,
+import gulpESLintNew    from '../lib/gulp-eslint-new';
+import type
 { FormatterContext, FormatterFunction, GulpESLintWriter, LoadedFormatter, ResultsMeta }
     from '../lib/gulp-eslint-new';
-import { ESLint } from 'eslint';
+import type { ESLint }  from 'eslint';
 
 gulpESLintNew(
     {
@@ -59,16 +59,20 @@ gulpESLintNew(
     },
 );
 
-(configType: 'eslintrc' | 'flat', ignorePatterns?: string | string[], rulePaths?: string[]) =>
-    gulpESLintNew(
-        {
-            configType,
-            allowInlineConfig: false,
-            baseConfig: { rules: { } },
-            ignorePatterns,
-            rulePaths,
-        },
-    );
+void
+(
+    (configType: 'eslintrc' | 'flat', ignorePatterns?: string | string[], rulePaths?: string[]):
+    NodeJS.ReadWriteStream =>
+        gulpESLintNew(
+            {
+                configType,
+                allowInlineConfig:  false,
+                baseConfig:         { rules: { } },
+                ignorePatterns,
+                rulePaths,
+            },
+        )
+);
 
 // @ts-expect-error Invalid option.
 gulpESLintNew({ cache: undefined });
@@ -97,50 +101,60 @@ gulpESLintNew({ configType: 'flat', rules: undefined });
 // @ts-expect-error Invalid option type for eslintrc config.
 gulpESLintNew({ overrideConfigFile: true });
 
-const isStream = (stream: NodeJS.ReadWriteStream) => void stream;
+const isStream = (stream: NodeJS.ReadWriteStream): void => void stream;
 
-isStream(gulpESLintNew.result(() => undefined));
-gulpESLintNew.result(result => void result);
-gulpESLintNew.result((result, callback) => callback());
+isStream(gulpESLintNew.result((): undefined => undefined));
+gulpESLintNew.result((result): void => void result);
+gulpESLintNew.result((result, callback): void => callback());
 // @ts-expect-error No arguments.
 gulpESLintNew.result();
 // @ts-expect-error Too many arguments to callback.
-gulpESLintNew.result((result, callback, foo) => foo);
+gulpESLintNew.result((result, callback, foo: unknown): unknown => foo);
 
-isStream(gulpESLintNew.results(() => undefined));
-gulpESLintNew.results(results => void results);
-gulpESLintNew.results((results, callback) => callback());
+isStream(gulpESLintNew.results((): undefined => undefined));
+gulpESLintNew.results((results): void => void results);
+gulpESLintNew.results((results, callback): void => callback());
 // @ts-expect-error No arguments.
 gulpESLintNew.results();
 // @ts-expect-error Too many arguments to callback.
-gulpESLintNew.results((results, callback, foo) => foo);
+gulpESLintNew.results((results, callback, foo: unknown): unknown => foo);
 
 isStream(gulpESLintNew.failOnError());
 
 isStream(gulpESLintNew.failAfterError());
 
 const formatterFunction =
-    (results: ESLint.LintResult[], context?: FormatterContext) =>
+    (results: ESLint.LintResult[], context?: FormatterContext): string =>
         JSON.stringify({ results, context });
+declare const toStringAsync: (arg: unknown) => Promise<string>;
 const invalidLoadedFormatter = {
-    format: async (results: readonly ESLint.LintResult[], ignored: boolean) =>
-        JSON.stringify({ results, ignored }),
+    format: async (results: readonly ESLint.LintResult[], ignored: boolean):
+    Promise<string> => toStringAsync({ results, ignored }),
 };
 const loadedFormatter = {
-    format: async (results: readonly ESLint.LintResult[], resultsMeta: ResultsMeta) =>
-        JSON.stringify({ results, resultsMeta }),
+    format: async (results: readonly ESLint.LintResult[], resultsMeta: ResultsMeta):
+    Promise<string> => toStringAsync({ results, resultsMeta }),
 };
 
 isStream(gulpESLintNew.formatEach());
 gulpESLintNew.formatEach('test');
-gulpESLintNew.formatEach({ format: () => 'test' });
+gulpESLintNew.formatEach({ format: (): string => 'test' });
 gulpESLintNew.formatEach(loadedFormatter);
-gulpESLintNew.formatEach(() => 'test');
+gulpESLintNew.formatEach((): string => 'test');
 gulpESLintNew.formatEach(formatterFunction);
-(formatter?: string | LoadedFormatter | FormatterFunction) =>
-    gulpESLintNew.formatEach(formatter);
-(writer: NodeJS.WritableStream | GulpESLintWriter | undefined) =>
-    gulpESLintNew.formatEach(undefined, writer);
+
+void
+(
+    (formatter?: string | LoadedFormatter | FormatterFunction): NodeJS.ReadWriteStream =>
+        gulpESLintNew.formatEach(formatter)
+);
+
+void
+(
+    (writer: NodeJS.WritableStream | GulpESLintWriter | undefined): NodeJS.ReadWriteStream =>
+        gulpESLintNew.formatEach(undefined, writer)
+);
+
 // @ts-expect-error Invalid argument type.
 gulpESLintNew.formatEach({ });
 // @ts-expect-error Invalid argument type.
@@ -148,14 +162,23 @@ gulpESLintNew.formatEach(invalidLoadedFormatter);
 
 isStream(gulpESLintNew.format());
 gulpESLintNew.format('test');
-gulpESLintNew.format({ format: () => 'test' });
+gulpESLintNew.format({ format: (): string => 'test' });
 gulpESLintNew.format(loadedFormatter);
-gulpESLintNew.format(() => 'test');
+gulpESLintNew.format((): string => 'test');
 gulpESLintNew.format(formatterFunction);
-(formatter?: string | LoadedFormatter | FormatterFunction) =>
-    gulpESLintNew.format(formatter);
-(writer: NodeJS.WritableStream | GulpESLintWriter | undefined) =>
-    gulpESLintNew.format(undefined, writer);
+
+void
+(
+    (formatter?: string | LoadedFormatter | FormatterFunction): NodeJS.ReadWriteStream =>
+        gulpESLintNew.format(formatter)
+);
+
+void
+(
+    (writer: NodeJS.WritableStream | GulpESLintWriter | undefined): NodeJS.ReadWriteStream =>
+        gulpESLintNew.format(undefined, writer)
+);
+
 // @ts-expect-error Invalid argument type.
 gulpESLintNew.format({ });
 // @ts-expect-error Invalid argument type.

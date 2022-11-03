@@ -19,7 +19,7 @@ function lintWarnings() {
 
 module.exports =
 {
-    'default': series(quietLint, lintWarnings),
-    'quiet-lint': quietLint,
-    'lint-warnings': lintWarnings,
+    'default':          series(quietLint, lintWarnings),
+    'quiet-lint':       quietLint,
+    'lint-warnings':    lintWarnings,
 };

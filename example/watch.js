@@ -54,7 +54,7 @@ function cachedLintWatch() {
 
 module.exports =
 {
-    'default': cachedLintWatch,
-    'lint-watch': lintWatch,
-    'cached-lint-watch': cachedLintWatch,
+    'default':              cachedLintWatch,
+    'lint-watch':           lintWatch,
+    'cached-lint-watch':    cachedLintWatch,
 };

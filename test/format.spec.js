@@ -99,11 +99,11 @@ describe('gulp-eslint-new format', () => {
         await assert.rejects(
             runStream(formatStream, files, lintStream),
             {
-                constructor: PluginError,
-                message: testMessage,
-                name: testErrorName,
-                plugin: 'gulp-eslint-new',
-                showStack: true,
+                constructor:    PluginError,
+                message:        testMessage,
+                name:           testErrorName,
+                plugin:         'gulp-eslint-new',
+                showStack:      true,
             },
         );
         assert.equal(writeCount, 1);
@@ -172,7 +172,9 @@ describe('gulp-eslint-new format', () => {
     ));
 
     it('should wrap errors thrown by an asynchronous format writer', () => testWrapError(
-        error => new Promise((_, reject) => setImmediate(() => reject(error))),
+        error => new Promise((_, reject) => {
+            setImmediate(() => reject(error));
+        }),
     ));
 
     it('should emit an error if an invalid formatter is passed', async () => {
@@ -186,10 +188,10 @@ describe('gulp-eslint-new format', () => {
         await assert.rejects(
             runStream(formatStream, files, lintStream),
             {
-                constructor: PluginError,
-                name: 'Error',
-                plugin: 'gulp-eslint-new',
-                showStack: true,
+                constructor:    PluginError,
+                name:           'Error',
+                plugin:         'gulp-eslint-new',
+                showStack:      true,
             },
         );
     });
@@ -200,11 +202,11 @@ describe('gulp-eslint-new format', () => {
         await assert.rejects(
             runStream(gulpESLintNew.format(), [file]),
             {
-                constructor: PluginError,
-                fileName: file.path,
-                message: 'ESLint information not available',
-                plugin: 'gulp-eslint-new',
-                showStack: false,
+                constructor:    PluginError,
+                fileName:       file.path,
+                message:        'ESLint information not available',
+                plugin:         'gulp-eslint-new',
+                showStack:      false,
             },
         );
     });
@@ -221,11 +223,11 @@ describe('gulp-eslint-new format', () => {
         await assert.rejects(
             runStream(gulpESLintNew.format(), files),
             {
-                constructor: PluginError,
+                constructor:    PluginError,
                 message:
                 'The files in the stream were not processed by the same instance of ESLint',
-                plugin: 'gulp-eslint-new',
-                showStack: false,
+                plugin:         'gulp-eslint-new',
+                showStack:      false,
             },
         );
     });
@@ -254,11 +256,11 @@ describe('gulp-eslint-new formatEach', () => {
         await assert.rejects(
             runStream(formatStream, files, lintStream),
             {
-                constructor: PluginError,
-                message: testMessage,
-                name: testErrorName,
-                plugin: 'gulp-eslint-new',
-                showStack: true,
+                constructor:    PluginError,
+                message:        testMessage,
+                name:           testErrorName,
+                plugin:         'gulp-eslint-new',
+                showStack:      true,
             },
         );
         assert.equal(writeCount, 1);
@@ -356,7 +358,9 @@ describe('gulp-eslint-new formatEach', () => {
     ));
 
     it('should wrap errors thrown by an asynchronous format writer', () => testWrapError(
-        error => new Promise((_, reject) => setImmediate(() => reject(error))),
+        error => new Promise((_, reject) => {
+            setImmediate(() => reject(error));
+        }),
     ));
 
     it('should emit an error if an invalid formatter is passed', async () => {
@@ -370,10 +374,10 @@ describe('gulp-eslint-new formatEach', () => {
         await assert.rejects(
             runStream(formatStream, files, lintStream),
             {
-                constructor: PluginError,
-                name: 'Error',
-                plugin: 'gulp-eslint-new',
-                showStack: true,
+                constructor:    PluginError,
+                name:           'Error',
+                plugin:         'gulp-eslint-new',
+                showStack:      true,
             },
         );
     });
@@ -384,11 +388,11 @@ describe('gulp-eslint-new formatEach', () => {
         await assert.rejects(
             runStream(gulpESLintNew.formatEach(), [file]),
             {
-                constructor: PluginError,
-                fileName: file.path,
-                message: 'ESLint information not available',
-                plugin: 'gulp-eslint-new',
-                showStack: false,
+                constructor:    PluginError,
+                fileName:       file.path,
+                message:        'ESLint information not available',
+                plugin:         'gulp-eslint-new',
+                showStack:      false,
             },
         );
     });

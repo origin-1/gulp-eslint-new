@@ -25,7 +25,7 @@ function flagNFix() {
 
 module.exports =
 {
-    'default': lintNFix,
-    'lint-n-fix': lintNFix,
-    'flag-n-fix': flagNFix,
+    'default':      lintNFix,
+    'lint-n-fix':   lintNFix,
+    'flag-n-fix':   flagNFix,
 };

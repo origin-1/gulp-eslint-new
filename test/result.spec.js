@@ -17,16 +17,17 @@ describe('gulp-eslint-new result', () => {
             const lintStream =
             gulpESLintNew(
                 {
-                    [ESLINT_KEY]: ESLint,
-                    baseConfig: {
+                    [ESLINT_KEY]:   ESLint,
+                    baseConfig:
+                    {
                         rules: {
-                            'camelcase': 1,         // not fixable
-                            'no-extra-parens': 1,   // fixable
-                            'no-undef': 2,          // not fixable
-                            'quotes': [2, 'single'], // fixable
+                            'camelcase':        1,              // not fixable
+                            'no-extra-parens':  1,              // fixable
+                            'no-undef':         2,              // not fixable
+                            'quotes':           [2, 'single'],  // fixable
                         },
                     },
-                    useEslintrc: false,
+                    useEslintrc:    false,
                 },
             );
             const testDataList = [
@@ -190,17 +191,18 @@ describe('gulp-eslint-new results', () => {
             const lintStream =
             gulpESLintNew(
                 {
-                    [ESLINT_KEY]: ESLint,
-                    baseConfig: {
+                    [ESLINT_KEY]:   ESLint,
+                    baseConfig:
+                    {
                         rules: {
-                            'camelcase': 1,         // not fixable
-                            'no-extra-parens': 1,   // fixable
-                            'no-undef': 2,          // not fixable
-                            'quotes': [2, 'single'], // fixable
+                            'camelcase':        1,              // not fixable
+                            'no-extra-parens':  1,              // fixable
+                            'no-undef':         2,              // not fixable
+                            'quotes':           [2, 'single'],  // fixable
                         },
                     },
-                    useEslintrc: false,
-                    warnIgnored: true,
+                    useEslintrc:    false,
+                    warnIgnored:    true,
                 },
             );
             lintStream

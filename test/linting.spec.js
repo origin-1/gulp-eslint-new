@@ -46,15 +46,16 @@ describe('gulp-eslint-new plugin', () => {
             const options =
                 useEslintrcConfig ? {
                     [ESLINT_KEY]: ESLint,
-                    baseConfig: {
-                        rules: { 'no-var': 2, 'strict': [2, 'global'], 'valid-jsdoc': 1 },
-                    },
+                    baseConfig:
+                    { rules: { 'no-var': 2, 'strict': [2, 'global'], 'valid-jsdoc': 1 } },
                 } : {
-                    [ESLINT_KEY]: ESLint,
-                    configType: 'flat',
-                    overrideConfig: {
+                    [ESLINT_KEY]:   ESLint,
+                    configType:     'flat',
+                    overrideConfig:
+                    {
                         languageOptions: { sourceType: 'script' },
-                        rules: { 'no-var': 2, 'strict': [2, 'global'], 'valid-jsdoc': 1 },
+                        rules:
+                        { 'no-var': 2, 'strict': [2, 'global'], 'valid-jsdoc': 1 },
                     },
                 };
             await finished(gulpESLintNew(options).resume().end(file));
@@ -82,26 +83,25 @@ describe('gulp-eslint-new plugin', () => {
             const file = createVinylFile('file.ts', 'function fn(): void { }');
             const options =
                 useEslintrcConfig ? {
-                    [ESLINT_KEY]: ESLint,
-                    configType: 'eslintrc',
-                    baseConfig: {
-                        parser: '@typescript-eslint/parser',
-                        rules: { 'eol-last': 'error' },
-                    },
+                    [ESLINT_KEY]:   ESLint,
+                    configType:     'eslintrc',
+                    baseConfig:
+                    { parser: '@typescript-eslint/parser', rules: { 'eol-last': 'error' } },
                     useEslintrc: false,
                 } : {
-                    [ESLINT_KEY]: ESLint,
-                    configType: 'flat',
-                    overrideConfig: {
-                        files: ['*'],
-                        languageOptions: { parser: '@typescript-eslint/parser' },
-                        rules: { 'eol-last': 'error' },
+                    [ESLINT_KEY]:       ESLint,
+                    configType:         'flat',
+                    overrideConfig:
+                    {
+                        files:              ['*'],
+                        languageOptions:    { parser: '@typescript-eslint/parser' },
+                        rules:              { 'eol-last': 'error' },
                     },
                     overrideConfigFile: true,
-                    plugins: {
-                        '@typescript-eslint': {
-                            parsers: { parser: require('@typescript-eslint/parser') },
-                        },
+                    plugins:
+                    {
+                        '@typescript-eslint':
+                        { parsers: { parser: require('@typescript-eslint/parser') } },
                     },
                 };
             await finished(
@@ -130,12 +130,12 @@ describe('gulp-eslint-new plugin', () => {
             it('with an absolute path', async () => {
                 const options =
                     useEslintrcConfig ? {
-                        [ESLINT_KEY]: ESLint,
+                        [ESLINT_KEY]:       ESLint,
                         overrideConfigFile: join(__dirname, 'config/eslintrc-config.js'),
-                        useEslintrc: false,
+                        useEslintrc:        false,
                     } : {
-                        [ESLINT_KEY]: ESLint,
-                        configType: 'flat',
+                        [ESLINT_KEY]:       ESLint,
+                        configType:         'flat',
                         overrideConfigFile: join(__dirname, 'config/flat-config.js'),
                     };
                 await testConfig(options);
@@ -144,14 +144,14 @@ describe('gulp-eslint-new plugin', () => {
             it('with a relative path', async () => {
                 const options =
                     useEslintrcConfig ? {
-                        [ESLINT_KEY]: ESLint,
-                        cwd: __dirname,
+                        [ESLINT_KEY]:       ESLint,
+                        cwd:                __dirname,
                         overrideConfigFile: 'config/eslintrc-config.js',
-                        useEslintrc: false,
+                        useEslintrc:        false,
                     } : {
-                        [ESLINT_KEY]: ESLint,
-                        configType: 'flat',
-                        cwd: __dirname,
+                        [ESLINT_KEY]:       ESLint,
+                        configType:         'flat',
+                        cwd:                __dirname,
                         overrideConfigFile: 'config/flat-config.js',
                     };
                 await testConfig(options);
@@ -249,7 +249,7 @@ describe('gulp-eslint-new plugin', () => {
 
     function testEslintrcLinting(ESLint) {
 
-        it('should throw an error after warning about migrated options', async () => {
+        it('should throw an error after warning about migrated options', () => {
             let actualMessage;
             const gulpWarn =
             message => {
@@ -270,10 +270,10 @@ describe('gulp-eslint-new plugin', () => {
             await finished(
                 gulpESLintNew(
                     {
-                        [ESLINT_KEY]: ESLint,
+                        [ESLINT_KEY]:   ESLint,
                         overrideConfig: { rules: { 'ok': 'error' } },
-                        rulePaths: ['../custom-rules'],
-                        useEslintrc: false,
+                        rulePaths:      ['../custom-rules'],
+                        useEslintrc:    false,
                     },
                 )
                     .resume()
@@ -288,9 +288,9 @@ describe('gulp-eslint-new plugin', () => {
             it('with an absolute path', async () => {
                 await testConfig(
                     {
-                        [ESLINT_KEY]: ESLint,
-                        baseConfig: { extends: join(__dirname, 'config/eslintrc-config.js') },
-                        useEslintrc: false,
+                        [ESLINT_KEY]:   ESLint,
+                        baseConfig:     { extends: join(__dirname, 'config/eslintrc-config.js') },
+                        useEslintrc:    false,
                     },
                 );
             });
@@ -298,10 +298,10 @@ describe('gulp-eslint-new plugin', () => {
             it('with a relative path', async () => {
                 await testConfig(
                     {
-                        [ESLINT_KEY]: ESLint,
-                        cwd: __dirname,
-                        baseConfig: { extends: './config/eslintrc-config.js' },
-                        useEslintrc: false,
+                        [ESLINT_KEY]:   ESLint,
+                        cwd:            __dirname,
+                        baseConfig:     { extends: './config/eslintrc-config.js' },
+                        useEslintrc:    false,
                     },
                 );
             });
@@ -309,9 +309,9 @@ describe('gulp-eslint-new plugin', () => {
             it('with a package', async () => {
                 await testConfig(
                     {
-                        [ESLINT_KEY]: ESLint,
-                        baseConfig: { extends: '~shareable/eslintrc-config' },
-                        useEslintrc: false,
+                        [ESLINT_KEY]:   ESLint,
+                        baseConfig:     { extends: '~shareable/eslintrc-config' },
+                        useEslintrc:    false,
                     },
                 );
             });
@@ -423,30 +423,31 @@ describe('gulp-eslint-new plugin', () => {
         assert.equal(file._eslintInfo.eslint.constructor.name, 'ESLint');
     });
 
-    it('should not raise a warning when no options are migrated', async () => {
+    it('should not raise a warning when no options are migrated', () => {
         const gulpWarn = () => assert.fail('Unexpected warning');
         gulpESLintNew(
             {
-                [GULP_WARN_KEY]: gulpWarn,
-                overrideConfig: {
-                    env: { },
-                    extends: [],
-                    globals: { },
+                [GULP_WARN_KEY]:    gulpWarn,
+                overrideConfig:
+                {
+                    env:            { },
+                    extends:        [],
+                    globals:        { },
                     ignorePatterns: [],
-                    parser: '',
-                    parserOptions: { },
-                    plugins: [],
-                    rules: { },
+                    parser:         '',
+                    parserOptions:  { },
+                    plugins:        [],
+                    rules:          { },
                 },
                 overrideConfigFile: null,
-                plugins: { },
-                useEslintrc: false,
-                warnIgnored: true,
+                plugins:            { },
+                useEslintrc:        false,
+                warnIgnored:        true,
             },
         );
     });
 
-    it('should raise a warning when options are migrated', async () => {
+    it('should raise a warning when options are migrated', () => {
         let actualMessage;
         const gulpWarn =
         message => {
@@ -454,18 +455,18 @@ describe('gulp-eslint-new plugin', () => {
         };
         gulpESLintNew(
             {
-                [GULP_WARN_KEY]: gulpWarn,
-                configFile: null,
-                envs: [],
-                extends: [],
-                globals: [],
-                ignorePattern: [],
-                parser: '',
-                parserOptions: { },
-                plugins: [],
-                rules: { },
-                useEslintrc: false,
-                warnFileIgnored: true,
+                [GULP_WARN_KEY]:    gulpWarn,
+                configFile:         null,
+                envs:               [],
+                extends:            [],
+                globals:            [],
+                ignorePattern:      [],
+                parser:             '',
+                parserOptions:      { },
+                plugins:            [],
+                rules:              { },
+                useEslintrc:        false,
+                warnFileIgnored:    true,
             },
         );
         assert(typeof actualMessage === 'string');
@@ -483,7 +484,7 @@ describe('gulp-eslint-new plugin', () => {
         assert(actualMessage.includes('\n • warnFileIgnored → warnIgnored\n'));
     });
 
-    it('should set option "cwd" if undefined', async () => {
+    it('should set option "cwd" if undefined', () => {
         let actualCwd;
         const ESLint =
         function ({ cwd }) {
@@ -510,8 +511,8 @@ describe('gulp-eslint-new plugin', () => {
                     .end(new File({ path: resolve('stream.js'), contents: Readable.from([]) })),
             ),
             {
-                message: 'gulp-eslint-new doesn\'t support Vinyl files with Stream contents.',
-                plugin: 'gulp-eslint-new',
+                message:    'gulp-eslint-new doesn\'t support Vinyl files with Stream contents.',
+                plugin:     'gulp-eslint-new',
             },
         );
     });
@@ -529,11 +530,11 @@ describe('gulp-eslint-new plugin', () => {
                 file.eslint.messages,
                 [
                     {
-                        fatal: false,
+                        fatal:      false,
                         message:
                         'File ignored because of a matching ignore pattern. Set "ignore" ' +
                         'option to false to override.',
-                        severity: 1,
+                        severity:   1,
                     },
                 ],
             );
@@ -558,11 +559,11 @@ describe('gulp-eslint-new plugin', () => {
                 file.eslint.messages,
                 [
                     {
-                        fatal: false,
+                        fatal:      false,
                         message:
                         'File ignored by default. Use a negated ignore pattern like ' +
                         '"!node_modules/*" to override.',
-                        severity: 1,
+                        severity:   1,
                     },
                 ],
             );
@@ -591,11 +592,10 @@ describe('gulp-eslint-new plugin', () => {
             await finished(
                 gulpESLintNew(
                     {
-                        baseConfig: {
-                            rules: { 'no-octal': 2, 'no-undef': 1, 'valid-jsdoc': 1 },
-                        },
-                        quiet: true,
-                        useEslintrc: false,
+                        baseConfig:
+                        { rules: { 'no-octal': 2, 'no-undef': 1, 'valid-jsdoc': 1 } },
+                        quiet:          true,
+                        useEslintrc:    false,
                     },
                 )
                     .resume()
@@ -620,11 +620,10 @@ describe('gulp-eslint-new plugin', () => {
             await finished(
                 gulpESLintNew(
                     {
-                        baseConfig: {
-                            rules: { 'no-octal': 2, 'no-undef': 1, 'valid-jsdoc': 1 },
-                        },
-                        quiet: ({ severity }) => severity === 1,
-                        useEslintrc: false,
+                        baseConfig:
+                        { rules: { 'no-octal': 2, 'no-undef': 1, 'valid-jsdoc': 1 } },
+                        quiet:          ({ severity }) => severity === 1,
+                        useEslintrc:    false,
                     },
                 )
                     .resume()

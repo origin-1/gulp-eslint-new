@@ -39,7 +39,7 @@ function failAtEnd() {
 
 module.exports =
 {
-    'default': failImmediately,
+    'default':          failImmediately,
     'fail-immediately': failImmediately,
-    'fail-at-end': failAtEnd,
+    'fail-at-end':      failAtEnd,
 };

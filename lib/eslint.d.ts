@@ -1,4 +1,4 @@
-import { ESLint, Linter } from 'eslint';
+import type { ESLint, Linter } from 'eslint';
 
 type ConfigData = Linter.Config;
 
@@ -42,7 +42,7 @@ interface LoadedFormatter {
     format(results: ESLint.LintResult[], resultsMeta: ResultsMeta): string | Promise<string>;
 }
 
-type Plugin = ESLint.Plugin & { parsers?: Record<string, Linter.ParserModule> | undefined };
+type Plugin = ESLint.Plugin & { parsers?: Record<string, Linter.ParserModule> | undefined; };
 
 interface ResultsMeta {
     maxWarningsExceeded?: {

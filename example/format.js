@@ -5,7 +5,6 @@
 const { createWriteStream } = require('fs');
 const { series, src }       = require('gulp');
 const gulpESLintNew         = require('gulp-eslint-new');
-const { stdout }            = require('process');
 const { inspect }           = require('util');
 
 function defaultFormatter() {
@@ -27,7 +26,7 @@ function customFormatter() {
     return src('demo/**/*.js')
         .pipe(gulpESLintNew()) // Lint all files.
         // Format results using a custom function.
-        .pipe(gulpESLintNew.format(results => inspect(results, { depth: 3 }), stdout));
+        .pipe(gulpESLintNew.format(results => inspect(results, { depth: 3 }), process.stdout));
 }
 
 function formatToFile() {
@@ -39,9 +38,10 @@ function formatToFile() {
 
 module.exports =
 {
-    'default': series(defaultFormatter, eslintFormatter, customFormatter, formatToFile),
-    'default-formatter': defaultFormatter,
-    'eslint-formatter': eslintFormatter,
-    'custom-formatter': customFormatter,
-    'format-to-file': formatToFile,
+    'default':
+    series(defaultFormatter, eslintFormatter, customFormatter, formatToFile),
+    'default-formatter':    defaultFormatter,
+    'eslint-formatter':     eslintFormatter,
+    'custom-formatter':     customFormatter,
+    'format-to-file':       formatToFile,
 };

@@ -35,11 +35,12 @@ task(
             mochaPath,
             ['--check-leaks', 'test/*.spec.js'],
             {
-                all: true,
-                reporter: ['html', 'text-summary'],
-                src: 'lib',
-                useC8Config: false,
-                watermarks: {
+                all:            true,
+                reporter:       ['html', 'text-summary'],
+                src:            'lib',
+                useC8Config:    false,
+                watermarks:
+                {
                     branches:   [90, 100],
                     functions:  [90, 100],
                     lines:      [90, 100],
@@ -52,7 +53,7 @@ task(
 
 task(
     'ts-test',
-    async () => {
+    async () => { // eslint-disable-line require-await
         const { dirname, join } = require('path');
         const {
             createDiagnosticReporter,

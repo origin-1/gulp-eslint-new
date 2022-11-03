@@ -1,4 +1,5 @@
-import {
+import type
+{
     ConfigData,
     ESLintOptions,
     FlatConfig,
@@ -7,18 +8,20 @@ import {
     LintMessage,
     LintResult,
     LoadedFormatter,
-    ResultsMeta,
     Plugin,
+    ResultsMeta,
 }
     from './eslint';
-import                          'node';
-import { TransformCallback }    from 'stream';
+import                              'node';
+import type { TransformCallback }   from 'stream';
 
-export { FormatterContext, FormatterFunction };
+type Awaitable<T = unknown> = T | Promise<T>;
+
+export type { FormatterContext, FormatterFunction };
 
 export type GulpESLintOptions =
-(GulpESLintrcOptions & { configType?: 'eslintrc' | undefined }) |
-(GulpFlatESLintOptions & { configType: 'flat' });
+(GulpESLintrcOptions & { configType?: 'eslintrc' | undefined; }) |
+(GulpFlatESLintOptions & { configType: 'flat'; });
 
 export type GulpESLintResult = LintResult;
 
@@ -33,7 +36,7 @@ GulpESLintResult[] &
     fixableWarningCount: number;
 };
 
-export type GulpESLintWriter = (str: string) => unknown | Promise<unknown>;
+export type GulpESLintWriter = (str: string) => Awaitable;
 
 type GulpESLintrcOptions
 =
@@ -124,9 +127,9 @@ ESLintOptions,
 
 type LintResultStreamFunction<Type> =
 ((action: (value: Type, callback: TransformCallback) => void) => NodeJS.ReadWriteStream) &
-((action: (value: Type) => unknown | Promise<unknown>) => NodeJS.ReadWriteStream);
+((action: (value: Type) => Awaitable) => NodeJS.ReadWriteStream);
 
-export { LoadedFormatter, ResultsMeta };
+export type { LoadedFormatter, ResultsMeta };
 
 declare const gulpESLintNew: {
     /**
@@ -216,4 +219,5 @@ declare const gulpESLintNew: {
      */
     fix(): NodeJS.ReadWriteStream;
 };
+
 export default gulpESLintNew;

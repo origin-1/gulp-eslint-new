@@ -50,17 +50,22 @@ gulp.src(['**/*.js', '!node_modules/**'])
     .pipe(gulpESLintNew(
         {
             overrideConfig: {
-                env: {
-                    browser: true,
-                    commonjs: true,
-                    jquery: true,
+                env:        {
+                    browser:    true,
+                    commonjs:   true,
+                    jquery:     true,
                 },
-                extends: ['eslint:recommended', 'plugin:jquery/slim'],
-                globals: {
+                extends:    [
+                    'eslint:recommended',
+                    'plugin:jquery/slim',
+                ],
+                globals:    {
                     chrome: 'readonly',
                 },
-                plugins: ['jquery'],
-                rules: {
+                plugins:    [
+                    'jquery',
+                ],
+                rules:      {
                     'strict': 'error',
                 },
             },

@@ -72,9 +72,9 @@ describe('organizeOptions', () => {
             migratedOptions,
             [
                 {
-                    oldName: 'ignorePattern',
-                    newName: 'overrideConfig.ignorePatterns',
-                    formatChanged: false,
+                    oldName:        'ignorePattern',
+                    newName:        'overrideConfig.ignorePatterns',
+                    formatChanged:  false,
                 },
             ],
         );
@@ -96,9 +96,9 @@ describe('organizeOptions', () => {
             migratedOptions,
             [
                 {
-                    oldName: 'parserOptions',
-                    newName: 'overrideConfig.parserOptions',
-                    formatChanged: false,
+                    oldName:        'parserOptions',
+                    newName:        'overrideConfig.parserOptions',
+                    formatChanged:  false,
                 },
             ],
         );
