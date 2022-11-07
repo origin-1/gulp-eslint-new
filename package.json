@@ -38,7 +38,7 @@
     "ts-test": "tsc --project test/tsconfig.json"
   },
   "dependencies": {
-    "@types/eslint": "^8.4.9",
+    "@types/eslint": "^8.4.10",
     "@types/node": ">=12",
     "eslint": "8",
     "fancy-log": "^2.0.0",
@@ -48,7 +48,7 @@
     "vinyl-fs": "^3.0.3"
   },
   "devDependencies": {
-    "@origin-1/eslint-config": "^0.7.1",
+    "@origin-1/eslint-config": "^0.8.0",
     "@typescript-eslint/eslint-plugin": "^5.42.0",
     "@typescript-eslint/parser": "^5.42.0",
     "c8js": "^0.3.0",
