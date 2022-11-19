@@ -138,20 +138,26 @@ describe('utility functions', () => {
             const expectedFile = createVinylFile('invalid.js', 'x = 1;');
             await finished(
                 util
-                    .createTransform(
-                        file => {
-                            actualFile = file;
-                        },
-                    )
-                    .on('data', file => {
+                .createTransform(
+                    file => {
+                        actualFile = file;
+                    },
+                )
+                .on(
+                    'data',
+                    file => {
                         assert.equal(file, expectedFile);
                         actualFile = file;
-                    })
-                    .on('finish', () => {
+                    },
+                )
+                .on(
+                    'finish',
+                    () => {
                         assert(actualFile);
                         finishCalled = true;
-                    })
-                    .end(expectedFile),
+                    },
+                )
+                .end(expectedFile),
             );
             assert(finishCalled);
         });
@@ -165,21 +171,25 @@ describe('utility functions', () => {
                 createVinylFile('undeclared.js', 'x = 0;'),
             ];
             const testStream = util
-                .createTransform(
-                    file => {
-                        assert(files.includes(file));
-                        count += 1;
-                    }, () => {
-                        assert.equal(count, files.length);
-                        assert.equal(testStream._writableState.ending, true);
-                        finalCount = count;
-                    },
-                )
-                .resume()
-                .on('finish', () => {
+            .createTransform(
+                file => {
+                    assert(files.includes(file));
+                    count += 1;
+                },
+                () => {
+                    assert.equal(count, files.length);
+                    assert.equal(testStream._writableState.ending, true);
+                    finalCount = count;
+                },
+            )
+            .resume()
+            .on(
+                'finish',
+                () => {
                     assert.equal(finalCount, files.length);
                     finishCalled = true;
-                });
+                },
+            );
             files.forEach(file => testStream.write(file));
             testStream.end();
             await finished(testStream);
@@ -188,33 +198,39 @@ describe('utility functions', () => {
 
         it('should catch errors in an asynchronous file handler', done => {
             util
-                .createTransform(
-                    () => new Promise((_, reject) => {
-                        setImmediate(() => reject('foo'));
-                    }),
-                )
-                .on('error', err => {
+            .createTransform(
+                () => new Promise((_, reject) => {
+                    setImmediate(() => reject('foo'));
+                }),
+            )
+            .on(
+                'error',
+                err => {
                     assert(err.message, 'foo');
                     assert(err.plugin, 'gulp-eslint-new');
                     done();
-                })
-                .end(createVinylFile('file.js', ''));
+                },
+            )
+            .end(createVinylFile('file.js', ''));
         });
 
         it('should catch errors in an asynchronous flush handler', done => {
             util
-                .createTransform(
-                    noop,
-                    () => new Promise((_, reject) => {
-                        setImmediate(() => reject('foo'));
-                    }),
-                )
-                .on('error', err => {
+            .createTransform(
+                noop,
+                () => new Promise((_, reject) => {
+                    setImmediate(() => reject('foo'));
+                }),
+            )
+            .on(
+                'error',
+                err => {
                     assert(err.message, 'foo');
                     assert(err.plugin, 'gulp-eslint-new');
                     done();
-                })
-                .end(createVinylFile('file.js', ''));
+                },
+            )
+            .end(createVinylFile('file.js', ''));
         });
 
     });
@@ -484,11 +500,14 @@ describe('utility functions', () => {
                 cb();
             };
             writable
-                .on('error', done)
-                .on('finish', () => {
+            .on('error', done)
+            .on(
+                'finish',
+                () => {
                     assert.equal(written, true);
                     done();
-                });
+                },
+            );
             writer(testValue);
             writable.end();
         });

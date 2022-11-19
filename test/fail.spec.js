@@ -13,31 +13,31 @@ describe('gulp-eslint-new failOnError', () => {
         const lintStream =
         gulpESLintNew({ baseConfig: { rules: { 'no-undef': 2 } }, useEslintrc: false });
         lintStream
-            .pipe(gulpESLintNew.failOnError())
-            .on('error', err => {
-                assert.equal(err.fileName, file.path);
-                assert.equal(err.message, '\'x\' is not defined.');
-                assert.equal(err.plugin, 'gulp-eslint-new');
-                done();
-            });
+        .pipe(gulpESLintNew.failOnError())
+        .on('error', err => {
+            assert.equal(err.fileName, file.path);
+            assert.equal(err.message, '\'x\' is not defined.');
+            assert.equal(err.plugin, 'gulp-eslint-new');
+            done();
+        });
         lintStream.end(file);
     });
 
     it('should pass a file if only warnings are found', done => {
         gulpESLintNew({ baseConfig: { rules: { 'no-undef': 1, 'strict': 0 } }, useEslintrc: false })
-            .pipe(gulpESLintNew.failOnError())
-            .on('error', done)
-            .on('finish', done)
-            .end(createVinylFile('invalid.js', 'x = 0;'));
+        .pipe(gulpESLintNew.failOnError())
+        .on('error', done)
+        .on('finish', done)
+        .end(createVinylFile('invalid.js', 'x = 0;'));
     });
 
     it('should handle ESLint reports without messages', done => {
         const file = createVinylFile('invalid.js', '#invalid!syntax}');
         file.eslint = { };
         gulpESLintNew.failOnError()
-            .on('error', done)
-            .on('finish', done)
-            .end(file);
+        .on('error', done)
+        .on('finish', done)
+        .end(file);
     });
 
 });
@@ -48,13 +48,13 @@ describe('gulp-eslint-new failAfterError', () => {
         const lintStream =
         gulpESLintNew({ baseConfig: { rules: { 'no-undef': 2 } }, useEslintrc: false });
         lintStream
-            .pipe(gulpESLintNew.failAfterError())
-            .on('error', err => {
-                assert.equal(err.message, 'Failed with 1 error');
-                assert.equal(err.name, 'ESLintError');
-                assert.equal(err.plugin, 'gulp-eslint-new');
-                done();
-            });
+        .pipe(gulpESLintNew.failAfterError())
+        .on('error', err => {
+            assert.equal(err.message, 'Failed with 1 error');
+            assert.equal(err.name, 'ESLintError');
+            assert.equal(err.plugin, 'gulp-eslint-new');
+            done();
+        });
         lintStream.end(createVinylFile('invalid.js', 'x = 1;'));
     });
 
@@ -62,31 +62,31 @@ describe('gulp-eslint-new failAfterError', () => {
         const lintStream =
         gulpESLintNew({ baseConfig: { rules: { 'no-undef': 2 } }, useEslintrc: false });
         lintStream
-            .pipe(gulpESLintNew.failAfterError())
-            .on('error', err => {
-                assert.equal(err.message, 'Failed with 2 errors');
-                assert.equal(err.name, 'ESLintError');
-                assert.equal(err.plugin, 'gulp-eslint-new');
-                done();
-            });
+        .pipe(gulpESLintNew.failAfterError())
+        .on('error', err => {
+            assert.equal(err.message, 'Failed with 2 errors');
+            assert.equal(err.name, 'ESLintError');
+            assert.equal(err.plugin, 'gulp-eslint-new');
+            done();
+        });
         lintStream.end(createVinylFile('invalid.js', 'x = 1; a = false;'));
     });
 
     it('should pass when the file stream ends if only warnings are found', done => {
         gulpESLintNew({ baseConfig: { rules: { 'no-undef': 1, strict: 0 } }, useEslintrc: false })
-            .pipe(gulpESLintNew.failAfterError())
-            .on('error', done)
-            .on('finish', done)
-            .end(createVinylFile('invalid.js', 'x = 0;'));
+        .pipe(gulpESLintNew.failAfterError())
+        .on('error', done)
+        .on('finish', done)
+        .end(createVinylFile('invalid.js', 'x = 0;'));
     });
 
     it('should handle ESLint reports without messages', done => {
         const file = createVinylFile('invalid.js', '#invalid!syntax}');
         file.eslint = { };
         gulpESLintNew.failAfterError()
-            .on('error', done)
-            .on('finish', done)
-            .end(file);
+        .on('error', done)
+        .on('finish', done)
+        .end(file);
     });
 
 });

@@ -106,13 +106,13 @@ describe('gulp-eslint-new plugin', () => {
                 };
             await finished(
                 gulpESLintNew(options)
-                    .resume()
-                    .on('end', () => {
-                        for (const key of Object.keys(require('tslib'))) {
-                            delete global[key];
-                        }
-                    })
-                    .end(file),
+                .resume()
+                .on('end', () => {
+                    for (const key of Object.keys(require('tslib'))) {
+                        delete global[key];
+                    }
+                })
+                .end(file),
             );
             assert.equal(file.eslint.filePath, file.path);
             assert(Array.isArray(file.eslint.messages));
@@ -276,8 +276,8 @@ describe('gulp-eslint-new plugin', () => {
                         useEslintrc:    false,
                     },
                 )
-                    .resume()
-                    .end(file),
+                .resume()
+                .end(file),
             );
             assert.equal(file.eslint.filePath, file.path);
             assert(isEmptyArray(file.eslint.messages));
@@ -324,8 +324,8 @@ describe('gulp-eslint-new plugin', () => {
                 const file = createVinylFile('semi/file.js', '$()');
                 await finished(
                     gulpESLintNew({ [ESLINT_KEY]: ESLint, useEslintrc: true })
-                        .resume()
-                        .end(file),
+                    .resume()
+                    .end(file),
                 );
                 assert.equal(file.eslint.filePath, file.path);
                 assert(Array.isArray(file.eslint.messages));
@@ -347,8 +347,8 @@ describe('gulp-eslint-new plugin', () => {
                 const file = createVinylFile('semi/file.js', '$()');
                 await finished(
                     gulpESLintNew({ [ESLINT_KEY]: ESLint, useEslintrc: false })
-                        .resume()
-                        .end(file),
+                    .resume()
+                    .end(file),
                 );
                 assert.equal(file.eslint.filePath, file.path);
                 assert(isEmptyArray(file.eslint.messages));
@@ -364,10 +364,10 @@ describe('gulp-eslint-new plugin', () => {
                     gulpESLintNew(
                         { [ESLINT_KEY]: ESLint, overrideConfig: { plugins: [pluginName] } },
                     )
-                        .on('error', error => {
-                            err = error;
-                        })
-                        .end(createVinylFile('file.js', '')),
+                    .on('error', error => {
+                        err = error;
+                    })
+                    .end(createVinylFile('file.js', '')),
                 ),
             );
             assert.equal(err.plugin, 'gulp-eslint-new');
@@ -403,8 +403,8 @@ describe('gulp-eslint-new plugin', () => {
         const file = createVinylFile('file.js', '$()');
         await finished(
             gulpESLintNew('semi/.eslintrc')
-                .resume()
-                .end(file),
+            .resume()
+            .end(file),
         );
         assert.equal(file.eslint.filePath, file.path);
         assert(Array.isArray(file.eslint.messages));
@@ -498,8 +498,8 @@ describe('gulp-eslint-new plugin', () => {
         const file = createVinylDirectory();
         await finished(
             gulpESLintNew({ baseConfig: { rules: { 'strict': 2 } }, useEslintrc: false })
-                .resume()
-                .end(file),
+            .resume()
+            .end(file),
         );
         assert(!file.eslint);
     });
@@ -508,7 +508,7 @@ describe('gulp-eslint-new plugin', () => {
         await assert.rejects(
             finished(
                 gulpESLintNew({ useEslintrc: false })
-                    .end(new File({ path: resolve('stream.js'), contents: Readable.from([]) })),
+                .end(new File({ path: resolve('stream.js'), contents: Readable.from([]) })),
             ),
             {
                 message:    'gulp-eslint-new doesn\'t support Vinyl files with Stream contents.',
@@ -598,8 +598,8 @@ describe('gulp-eslint-new plugin', () => {
                         useEslintrc:    false,
                     },
                 )
-                    .resume()
-                    .end(file),
+                .resume()
+                .end(file),
             );
             assert.equal(file.eslint.filePath, file.path);
             assert(Array.isArray(file.eslint.messages));
@@ -626,8 +626,8 @@ describe('gulp-eslint-new plugin', () => {
                         useEslintrc:    false,
                     },
                 )
-                    .resume()
-                    .end(file),
+                .resume()
+                .end(file),
             );
             assert.equal(file.eslint.filePath, file.path);
             assert(Array.isArray(file.eslint.messages));

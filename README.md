@@ -47,32 +47,32 @@ Or use the plugin API to do things like:
 
 ```javascript
 gulp.src(['**/*.js', '!node_modules/**'])
-    .pipe(gulpESLintNew(
-        {
-            overrideConfig: {
-                env:        {
-                    browser:    true,
-                    commonjs:   true,
-                    jquery:     true,
-                },
-                extends:    [
-                    'eslint:recommended',
-                    'plugin:jquery/slim',
-                ],
-                globals:    {
-                    chrome: 'readonly',
-                },
-                plugins:    [
-                    'jquery',
-                ],
-                rules:      {
-                    'strict': 'error',
-                },
+.pipe(gulpESLintNew(
+    {
+        overrideConfig: {
+            env:        {
+                browser:    true,
+                commonjs:   true,
+                jquery:     true,
             },
-            warnIgnored: true,
+            extends:    [
+                'eslint:recommended',
+                'plugin:jquery/slim',
+            ],
+            globals:    {
+                chrome: 'readonly',
+            },
+            plugins:    [
+                'jquery',
+            ],
+            rules:      {
+                'strict': 'error',
+            },
         },
-    ))
-    .pipe(gulpESLintNew.formatEach('compact', process.stderr));
+        warnIgnored: true,
+    },
+))
+.pipe(gulpESLintNew.formatEach('compact', process.stderr));
 ```
 
 For additional examples, look through the [example directory](https://github.com/origin-1/gulp-eslint-new/tree/main/example).
@@ -184,19 +184,19 @@ Call a function for each ESLint file result. No returned value is expected. If a
 
 ```javascript
 gulp.src(['**/*.js', '!node_modules/**'])
-    .pipe(gulpESLintNew())
-    .pipe(gulpESLintNew.result(
-        result => {
-            // Called for each ESLint result.
-            console.log(`ESLint result: ${result.filePath}`);
-            console.log(`# Messages: ${result.messages.length}`);
-            console.log(`# Warnings: ${result.warningCount} (${
-                result.fixableWarningCount} fixable)`);
-            console.log(`# Errors: ${result.errorCount} (${
-                result.fixableErrorCount} fixable, ${
-                result.fatalErrorCount} fatal)`);
-        },
-    ));
+.pipe(gulpESLintNew())
+.pipe(gulpESLintNew.result(
+    result => {
+        // Called for each ESLint result.
+        console.log(`ESLint result: ${result.filePath}`);
+        console.log(`# Messages: ${result.messages.length}`);
+        console.log(`# Warnings: ${result.warningCount} (${
+            result.fixableWarningCount} fixable)`);
+        console.log(`# Errors: ${result.errorCount} (${
+            result.fixableErrorCount} fixable, ${
+            result.fatalErrorCount} fatal)`);
+    },
+));
 ```
 
 Param Type: `(result: Object, callback: Function) => void`
@@ -240,18 +240,18 @@ The results list has additional properties that indicate the number of messages 
 
 ```javascript
 gulp.src(['**/*.js', '!node_modules/**'])
-    .pipe(gulpESLintNew())
-    .pipe(gulpESLintNew.results(
-        results => {
-            // Called once for all ESLint results.
-            console.log(`Total Results: ${results.length}`);
-            console.log(`Total Warnings: ${results.warningCount} (${
-                results.fixableWarningCount} fixable)`);
-            console.log(`Total Errors: ${results.errorCount} (${
-                results.fixableErrorCount} fixable, ${
-                results.fatalErrorCount} fatal)`);
-        },
-    ));
+.pipe(gulpESLintNew())
+.pipe(gulpESLintNew.results(
+    results => {
+        // Called once for all ESLint results.
+        console.log(`Total Results: ${results.length}`);
+        console.log(`Total Warnings: ${results.warningCount} (${
+            results.fixableWarningCount} fixable)`);
+        console.log(`Total Errors: ${results.errorCount} (${
+            results.fixableErrorCount} fixable, ${
+            results.fatalErrorCount} fatal)`);
+    },
+));
 ```
 
 Param type: `(results: Object[], callback: Function) => void`
@@ -269,8 +269,8 @@ Stop a task/stream if an ESLint error has been reported for any file.
 ```javascript
 // Cause the stream to stop (fail) without processing more files.
 gulp.src(['**/*.js', '!node_modules/**'])
-    .pipe(gulpESLintNew())
-    .pipe(gulpESLintNew.failOnError());
+.pipe(gulpESLintNew())
+.pipe(gulpESLintNew.failOnError());
 ```
 
 ### `gulpESLintNew.failAfterError()`
@@ -281,8 +281,8 @@ Stop a task/stream if an ESLint error has been reported for any file, but wait f
 // Cause the stream to stop (fail) when the stream ends if any ESLint error(s)
 // occurred.
 gulp.src(['**/*.js', '!node_modules/**'])
-    .pipe(gulpESLintNew())
-    .pipe(gulpESLintNew.failAfterError());
+.pipe(gulpESLintNew())
+.pipe(gulpESLintNew.failAfterError());
 ```
 
 ### `gulpESLintNew.format(formatter, writer)`
@@ -347,8 +347,8 @@ To enable autofix with gulp-eslint-new, set the option `fix` to `true` in [`gulp
 
 ```javascript
 gulp.src(['**/*.{js,ts}', '!node_modules/**'])
-    .pipe(gulpESLintNew({ fix: true }))
-    .pipe(gulpESLintNew.fix());
+.pipe(gulpESLintNew({ fix: true }))
+.pipe(gulpESLintNew.fix());
 ```
 
 See also the [autofix examples](https://github.com/origin-1/gulp-eslint-new/blob/main/example/fix.js).

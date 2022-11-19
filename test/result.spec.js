@@ -60,26 +60,26 @@ describe('gulp-eslint-new result', () => {
                 },
             ];
             lintStream
-                .pipe(gulpESLintNew.result(noop)) // Test that files are passed through.
-                .pipe(gulpESLintNew.result(result => {
-                    const testData = testDataList[resultCount];
-                    assert(result);
-                    assert(Array.isArray(result.messages));
-                    assert.equal(
-                        result.messages.length,
-                        testData.errorCount + testData.warningCount,
-                    );
-                    assert.equal(result.errorCount, testData.errorCount);
-                    assert.equal(result.warningCount, testData.warningCount);
-                    assert.equal(result.fixableErrorCount, testData.fixableErrorCount);
-                    assert.equal(result.fixableWarningCount, testData.fixableWarningCount);
-                    assert.equal(result.fatalErrorCount, testData.fatalErrorCount);
-                    resultCount++;
-                }))
-                .on('finish', () => {
-                    assert.equal(resultCount, 3);
-                    done();
-                });
+            .pipe(gulpESLintNew.result(noop)) // Test that files are passed through.
+            .pipe(gulpESLintNew.result(result => {
+                const testData = testDataList[resultCount];
+                assert(result);
+                assert(Array.isArray(result.messages));
+                assert.equal(
+                    result.messages.length,
+                    testData.errorCount + testData.warningCount,
+                );
+                assert.equal(result.errorCount, testData.errorCount);
+                assert.equal(result.warningCount, testData.warningCount);
+                assert.equal(result.fixableErrorCount, testData.fixableErrorCount);
+                assert.equal(result.fixableWarningCount, testData.fixableWarningCount);
+                assert.equal(result.fatalErrorCount, testData.fatalErrorCount);
+                resultCount++;
+            }))
+            .on('finish', () => {
+                assert.equal(resultCount, 3);
+                done();
+            });
             for (const { path, contents } of testDataList) {
                 lintStream.write(createVinylFile(path, contents));
             }
@@ -104,10 +104,10 @@ describe('gulp-eslint-new result', () => {
         await assert.rejects(
             finished(
                 gulpESLintNew
-                    .result(() => {
-                        throw Error('Expected Error');
-                    })
-                    .end(file),
+                .result(() => {
+                    throw Error('Expected Error');
+                })
+                .end(file),
             ),
             { message: 'Expected Error', name: 'Error', plugin: 'gulp-eslint-new' },
         );
@@ -119,10 +119,10 @@ describe('gulp-eslint-new result', () => {
         await assert.rejects(
             finished(
                 gulpESLintNew
-                    .result(() => {
-                        throw null;
-                    })
-                    .end(file),
+                .result(() => {
+                    throw null;
+                })
+                .end(file),
             ),
             { message: 'Unknown Error', name: 'Error', plugin: 'gulp-eslint-new' },
         );
@@ -137,12 +137,12 @@ describe('gulp-eslint-new result', () => {
 
     it('should ignore files without an ESLint result', done => {
         gulpESLintNew
-            .result(() => {
-                assert.fail('Expected no call');
-            })
-            .on('error', done)
-            .on('finish', done)
-            .end(createVinylFile('invalid.js', '#invalid!syntax}'));
+        .result(() => {
+            assert.fail('Expected no call');
+        })
+        .on('error', done)
+        .on('finish', done)
+        .end(createVinylFile('invalid.js', '#invalid!syntax}'));
     });
 
     it('should support a Node-style callback-based handler', async () => {
@@ -151,15 +151,15 @@ describe('gulp-eslint-new result', () => {
         file.eslint = { };
         await finished(
             gulpESLintNew
-                .result((actualResult, callback) => {
-                    setImmediate(() => {
-                        result = actualResult;
-                        callback();
-                    });
-                })
-                .resume()
-                .on('end', () => assert(result))
-                .end(file),
+            .result((actualResult, callback) => {
+                setImmediate(() => {
+                    result = actualResult;
+                    callback();
+                });
+            })
+            .resume()
+            .on('end', () => assert(result))
+            .end(file),
         );
         assert.equal(result, file.eslint);
     });
@@ -170,12 +170,12 @@ describe('gulp-eslint-new result', () => {
         file.eslint = { cwd: process.cwd() };
         await finished(
             gulpESLintNew
-                .result(async result => {
-                    cwd = await realpath(result.cwd);
-                })
-                .resume()
-                .on('end', () => assert(cwd))
-                .end(file),
+            .result(async result => {
+                cwd = await realpath(result.cwd);
+            })
+            .resume()
+            .on('end', () => assert(cwd))
+            .end(file),
         );
         assert.equal(cwd, file.cwd);
     });
@@ -206,23 +206,23 @@ describe('gulp-eslint-new results', () => {
                 },
             );
             lintStream
-                .pipe(gulpESLintNew.results(results => {
-                    assert(Array.isArray(results));
-                    assert.equal(results.length, 4);
-                    assert.equal(results.errorCount, 5);
-                    assert.equal(results.warningCount, 4);
-                    assert.equal(results.fixableErrorCount, 3);
-                    assert.equal(results.fixableWarningCount, 2);
-                    assert.equal(results.fatalErrorCount, 1);
-                    actualResults = results;
-                }))
-                .pipe(gulpESLintNew.results(results => {
-                    assert.deepEqual(results, actualResults);
-                }))
-                .on('finish', () => {
-                    assert(actualResults);
-                    done();
-                });
+            .pipe(gulpESLintNew.results(results => {
+                assert(Array.isArray(results));
+                assert.equal(results.length, 4);
+                assert.equal(results.errorCount, 5);
+                assert.equal(results.warningCount, 4);
+                assert.equal(results.fixableErrorCount, 3);
+                assert.equal(results.fixableWarningCount, 2);
+                assert.equal(results.fatalErrorCount, 1);
+                actualResults = results;
+            }))
+            .pipe(gulpESLintNew.results(results => {
+                assert.deepEqual(results, actualResults);
+            }))
+            .on('finish', () => {
+                assert(actualResults);
+                done();
+            });
             lintStream.write(createVinylFile('invalid-1.js', '#@?!'));
             lintStream.write(createVinylFile('invalid-2.js', 'x_1 = ("" + "");'));
             lintStream.write(createVinylFile('invalid-3.js', 'var x = ("");'));
@@ -248,10 +248,10 @@ describe('gulp-eslint-new results', () => {
         await assert.rejects(
             finished(
                 gulpESLintNew
-                    .results(() => {
-                        throw Error('Expected Error');
-                    })
-                    .end(file),
+                .results(() => {
+                    throw Error('Expected Error');
+                })
+                .end(file),
             ),
             { message: 'Expected Error', name: 'Error', plugin: 'gulp-eslint-new' },
         );
@@ -263,10 +263,10 @@ describe('gulp-eslint-new results', () => {
         await assert.rejects(
             finished(
                 gulpESLintNew
-                    .results(() => {
-                        throw null;
-                    })
-                    .end(file),
+                .results(() => {
+                    throw null;
+                })
+                .end(file),
             ),
             { message: 'Unknown Error', name: 'Error', plugin: 'gulp-eslint-new' },
         );
@@ -283,11 +283,11 @@ describe('gulp-eslint-new results', () => {
         let results;
         await finished(
             gulpESLintNew
-                .results(actualResults => {
-                    results = actualResults;
-                })
-                .resume()
-                .end(createVinylFile('invalid.js', '#invalid!syntax}')),
+            .results(actualResults => {
+                results = actualResults;
+            })
+            .resume()
+            .end(createVinylFile('invalid.js', '#invalid!syntax}')),
         );
         assert(isEmptyArray(results));
     });
@@ -298,15 +298,15 @@ describe('gulp-eslint-new results', () => {
         file.eslint = { };
         await finished(
             gulpESLintNew
-                .results((actualResults, callback) => {
-                    setImmediate(() => {
-                        results = actualResults;
-                        callback();
-                    });
-                })
-                .resume()
-                .on('end', () => assert(results))
-                .end(file),
+            .results((actualResults, callback) => {
+                setImmediate(() => {
+                    results = actualResults;
+                    callback();
+                });
+            })
+            .resume()
+            .on('end', () => assert(results))
+            .end(file),
         );
         assert(Array.isArray(results));
         assert.equal(results.length, 1);
@@ -319,12 +319,12 @@ describe('gulp-eslint-new results', () => {
         file.eslint = { };
         await finished(
             gulpESLintNew
-                .results(async () => {
-                    cwd = await realpath(process.cwd());
-                })
-                .resume()
-                .on('end', () => assert(cwd))
-                .end(file),
+            .results(async () => {
+                cwd = await realpath(process.cwd());
+            })
+            .resume()
+            .on('end', () => assert(cwd))
+            .end(file),
         );
         assert.equal(cwd, process.cwd());
     });

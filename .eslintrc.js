@@ -8,11 +8,7 @@ createConfig
     {
         files:      '*.js',
         jsVersion:  2020,
-        rules:
-        {
-            'brace-style':      ['error', '1tbs'],
-            'indent':           'error',
-        },
+        rules:      { 'brace-style': ['error', '1tbs'] },
     },
     {
         files:          '*.ts',
@@ -22,7 +18,6 @@ createConfig
         rules:
         {
             '@typescript-eslint/brace-style':   ['error', '1tbs'],
-            '@typescript-eslint/indent':        'error',
             'tsdoc/syntax':                     'error',
         },
     },

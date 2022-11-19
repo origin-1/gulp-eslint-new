@@ -88,13 +88,16 @@ describe('gulp-eslint-new format', () => {
         );
         const testMessage = 'Writer Test Error';
         const testErrorName = 'TestError';
-        const formatStream = gulpESLintNew
-            .format(formatResults, () => {
+        const formatStream =
+        gulpESLintNew.format(
+            formatResults,
+            () => {
                 ++writeCount;
                 const error = Error(testMessage);
                 error.name = testErrorName;
                 return useError(error);
-            });
+            },
+        );
         lintStream.pipe(formatStream);
         await assert.rejects(
             runStream(formatStream, files, lintStream),
@@ -131,8 +134,8 @@ describe('gulp-eslint-new format', () => {
             },
         );
         lintStream
-            .pipe(gulpESLintNew.format(noop, noop)) // Test that files are passed through.
-            .pipe(formatStream);
+        .pipe(gulpESLintNew.format(noop, noop)) // Test that files are passed through.
+        .pipe(formatStream);
         await runStream(formatStream, files, lintStream);
         assert.equal(errorEmitted, false);
         assert.equal(formatCount, 1);
@@ -147,8 +150,7 @@ describe('gulp-eslint-new format', () => {
         gulpESLintNew(
             { baseConfig: { rules: { 'strict': 2 } }, useEslintrc: false, warnIgnored: true },
         );
-        lintStream
-            .pipe(formatStream);
+        lintStream.pipe(formatStream);
         await runStream(formatStream, files, lintStream);
         assert.equal(formatCount, 1);
         assert.equal(writeCount, 1);
@@ -245,13 +247,16 @@ describe('gulp-eslint-new formatEach', () => {
         );
         const testMessage = 'Writer Test Error';
         const testErrorName = 'TestError';
-        const formatStream = gulpESLintNew
-            .formatEach(formatResult, () => {
+        const formatStream =
+        gulpESLintNew.formatEach(
+            formatResult,
+            () => {
                 ++writeCount;
                 const error = Error(testMessage);
                 error.name = testErrorName;
                 return useError(error);
-            });
+            },
+        );
         lintStream.pipe(formatStream);
         await assert.rejects(
             runStream(formatStream, files, lintStream),
@@ -288,8 +293,8 @@ describe('gulp-eslint-new formatEach', () => {
             },
         );
         lintStream
-            .pipe(gulpESLintNew.formatEach(noop, noop)) // Test that files are passed through.
-            .pipe(formatStream);
+        .pipe(gulpESLintNew.formatEach(noop, noop)) // Test that files are passed through.
+        .pipe(formatStream);
         await runStream(formatStream, files, lintStream);
         assert.equal(errorEmitted, false);
         const fileCount = files.length - 1; // Remove directory.
@@ -305,8 +310,7 @@ describe('gulp-eslint-new formatEach', () => {
         gulpESLintNew(
             { baseConfig: { rules: { 'strict': 2 } }, useEslintrc: false, warnIgnored: true },
         );
-        lintStream
-            .pipe(formatStream);
+        lintStream.pipe(formatStream);
         await runStream(formatStream, files, lintStream);
         const fileCount = files.length - 1; // Remove directory.
         assert.equal(formatCount, fileCount);

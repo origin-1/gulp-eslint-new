@@ -18,10 +18,10 @@ task(
         const gulpESLintNew = require('gulp-eslint-new');
 
         const stream =
-        src(['*.js', 'example/*.js', 'lib/*.{js,ts}', 'test/**/*.{js,ts}'])
-            .pipe(gulpESLintNew({ warnIgnored: true }))
-            .pipe(gulpESLintNew.format())
-            .pipe(gulpESLintNew.failAfterError());
+        src(['{.,}*.js', 'example/*.js', 'lib/*.{js,ts}', 'test/**/*.{js,ts}'])
+        .pipe(gulpESLintNew({ warnIgnored: true }))
+        .pipe(gulpESLintNew.format())
+        .pipe(gulpESLintNew.failAfterError());
         return stream;
     },
 );
