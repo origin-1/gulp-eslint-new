@@ -29,7 +29,7 @@ function inlineConfig() {
     return src('demo/**/*.js')
     .pipe(gulpESLintNew({
         overrideConfig: {
-            rules: {
+            rules:      {
                 'no-alert':             0,
                 'no-bitwise':           0,
                 'camelcase':            1,
@@ -55,14 +55,14 @@ function inlineConfig() {
                 'quotes':               0,
                 'no-unreachable':       2,
             },
-            globals: {
+            globals:    {
                 $: 'readonly',
             },
-            env: {
+            env:        {
                 'node': true,
             },
         },
-        warnIgnored: true,
+        warnIgnored:    true,
     }))
     .pipe(gulpESLintNew.format());
 }

@@ -154,7 +154,7 @@ describe('organizeOptions', () => {
         assert.deepEqual(
             eslintOptions,
             {
-                overrideConfig: {
+                overrideConfig:     {
                     env:            undefined,
                     extends:        undefined,
                     globals:        undefined,

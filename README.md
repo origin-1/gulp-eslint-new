@@ -69,7 +69,7 @@ gulp.src(['**/*.js', '!node_modules/**'])
                 'strict': 'error',
             },
         },
-        warnIgnored: true,
+        warnIgnored:    true,
     },
 ))
 .pipe(gulpESLintNew.formatEach('compact', process.stderr));

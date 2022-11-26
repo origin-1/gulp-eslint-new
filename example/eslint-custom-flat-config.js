@@ -5,7 +5,7 @@ const globals = require('globals');
 module.exports = [
     'eslint:recommended',
     {
-        rules: {
+        rules:              {
             'no-alert':     0,
             'no-bitwise':   0,
             'camelcase':    1,
@@ -16,7 +16,7 @@ module.exports = [
             'no-empty':     1,
             'strict':       2,
         },
-        languageOptions: {
+        languageOptions:    {
             ecmaVersion:    5,
             globals:        { $: false, ...globals.browser, ...globals.node },
             parserOptions:  { ecmaFeatures: { globalReturn: true } },

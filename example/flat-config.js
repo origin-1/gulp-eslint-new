@@ -36,7 +36,7 @@ function inlineConfig() {
         configType:         'flat',
         overrideConfig:
         {
-            rules: {
+            rules:              {
                 'no-alert':             0,
                 'no-bitwise':           0,
                 'camelcase':            1,
@@ -62,7 +62,7 @@ function inlineConfig() {
                 'quotes':               0,
                 'no-unreachable':       2,
             },
-            languageOptions: { globals: { $: 'readonly', ...globals.node } },
+            languageOptions:    { globals: { $: 'readonly', ...globals.node } },
         },
         overrideConfigFile: 'demo/eslint.config.js',
         warnIgnored:        true,

@@ -87,7 +87,7 @@ describe('gulp-eslint-new plugin', () => {
                     configType:     'eslintrc',
                     baseConfig:
                     { parser: '@typescript-eslint/parser', rules: { 'eol-last': 'error' } },
-                    useEslintrc: false,
+                    useEslintrc:    false,
                 } : {
                     [ESLINT_KEY]:       ESLint,
                     configType:         'flat',
