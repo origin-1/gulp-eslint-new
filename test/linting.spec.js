@@ -358,23 +358,23 @@ describe('gulp-eslint-new plugin', () => {
 
         it('should emit an error when it fails to load a plugin', async () => {
             const pluginName = 'this-is-unknown-plugin';
-            let err;
+            let emittedError;
             await assert.rejects(
                 finished(
                     gulpESLintNew(
                         { [ESLINT_KEY]: ESLint, overrideConfig: { plugins: [pluginName] } },
                     )
                     .on('error', error => {
-                        err = error;
+                        emittedError = error;
                     })
                     .end(createVinylFile('file.js', '')),
                 ),
             );
-            assert.equal(err.plugin, 'gulp-eslint-new');
-            assert.equal(err.name, 'Error');
-            assert.equal(err.code, 'MODULE_NOT_FOUND');
+            assert.equal(emittedError.plugin, 'gulp-eslint-new');
+            assert.equal(emittedError.name, 'Error');
+            assert.equal(emittedError.code, 'MODULE_NOT_FOUND');
             // Remove stack trace from error message as it's machine-dependent.
-            const message = err.message.replace(/\n.*$/s, '');
+            const message = emittedError.message.replace(/\n.*$/s, '');
             assert.equal(
                 message,
                 `Failed to load plugin '${

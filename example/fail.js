@@ -13,15 +13,12 @@ function failImmediately() {
     .pipe(gulpESLintNew.formatEach())
     // failOnError will emit an error (fail) immediately upon the first file that has an error.
     .pipe(gulpESLintNew.failOnError())
-    // Need to do something before the process exits? Try this:
-    .on(
+    // Need to do something when ESLint finds an error? Try this:
+    .once(
         'error',
         function (error) {
-            fancyLog(`Stream Exiting With Error: ${error.message}`);
-            // This is only required in Node.js 12 for gulp to detect that the task has terminated.
-            this.destroy();
-            // Expect an incongruous premature close error after this point, courtesy of gulp and
-            // end-of-stream.
+            fancyLog('Lint failed: see message below for details.');
+            this.emit('error', error);
         },
     );
 }

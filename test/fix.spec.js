@@ -82,7 +82,6 @@ describe('gulp-eslint-new fix', () => {
             done();
         });
         testStream.end();
-
     });
 
 });

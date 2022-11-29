@@ -198,7 +198,8 @@ describe('utility functions', () => {
                 createVinylFile('invalid.js', 'x = 1;'),
                 createVinylFile('undeclared.js', 'x = 0;'),
             ];
-            const testStream = util
+            const testStream =
+            util
             .createTransform(
                 file => {
                     assert(files.includes(file));
@@ -206,7 +207,6 @@ describe('utility functions', () => {
                 },
                 () => {
                     assert.equal(count, files.length);
-                    assert.equal(testStream._writableState.ending, true);
                     finalCount = count;
                 },
             )
@@ -233,9 +233,9 @@ describe('utility functions', () => {
             )
             .on(
                 'error',
-                err => {
-                    assert(err.message, 'foo');
-                    assert(err.plugin, 'gulp-eslint-new');
+                error => {
+                    assert(error.message, 'foo');
+                    assert(error.plugin, 'gulp-eslint-new');
                     done();
                 },
             )
@@ -252,9 +252,9 @@ describe('utility functions', () => {
             )
             .on(
                 'error',
-                err => {
-                    assert(err.message, 'foo');
-                    assert(err.plugin, 'gulp-eslint-new');
+                error => {
+                    assert(error.message, 'foo');
+                    assert(error.plugin, 'gulp-eslint-new');
                     done();
                 },
             )
