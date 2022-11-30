@@ -5,6 +5,8 @@
 const util                                  = require('#util');
 const { createVinylFile, finished, noop }   = require('./test-util');
 const { strict: assert }                    = require('assert');
+// eslint-disable-next-line n/no-deprecated-api
+const { Domain }                            = require('domain');
 const { resolve }                           = require('path');
 const { satisfies }                         = require('semver');
 const { Writable }                          = require('stream');
@@ -126,6 +128,32 @@ describe('utility functions', () => {
         it('should not include suppressedMessages in the result', () => {
             const result = util.createIgnoreResult('.hidden.js', process.cwd(), '8.7.0');
             assert(!('suppressedMessages' in result));
+        });
+
+    });
+
+    describe('createPluginError', () => {
+
+        it('should provide a consistent string representation', done => {
+            // gulp attaches streams to a domain.
+            // Errors emitted by a domain get additional properties that should not be shown.
+            const pluginError = util.createPluginError({ message: 'FOOBAR' });
+            const stream = new Writable({ final: done => done(pluginError) }).end();
+            const domain = new Domain();
+            domain.on(
+                'error',
+                error => {
+                    assert.equal(error.domainEmitter, stream);
+                    const actual = String(error);
+                    const expected =
+                    '\x1b[31mError\x1b[39m in plugin "\x1b[36mgulp-eslint-new\x1b[39m"\n' +
+                    'Message:\n' +
+                    '    FOOBAR';
+                    assert.equal(actual, expected);
+                    done();
+                },
+            )
+            .add(stream);
         });
 
     });
