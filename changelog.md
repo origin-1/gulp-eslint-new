@@ -1,3 +1,10 @@
+<a name="1.7.1"></a>
+## [1.7.1](https://github.com/origin-1/gulp-eslint-new/releases/tag/1.7.1) (2022-12-02)
+
+* Fixed "premature close" error when piping into a `failAfterError` stream from a `fix` stream.
+* Removed useless text `domainEmitter` `[object Object]` from gulp error output.
+* Fixed a code example.
+
 <a name="1.7.0"></a>
 ## [1.7.0](https://github.com/origin-1/gulp-eslint-new/releases/tag/1.7.0) (2022-11-01)
 
