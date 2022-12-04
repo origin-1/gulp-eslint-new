@@ -1,3 +1,7 @@
-/.vscode/
+.*
+!.editorconfig
+!.eslint*
+!.git*
+!.npmrc
 /coverage/
 /node_modules/
