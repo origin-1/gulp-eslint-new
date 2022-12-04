@@ -388,9 +388,8 @@ describe('utility functions', () => {
                 const json = await formatter.format(expectedResults);
                 const { results: actualResults, context } = JSON.parse(json);
                 assert.deepEqual(actualResults, expectedResults);
-                if (satisfies(ESLint.version, useEslintrcConfig ? '>=8.4' : '>=8.23')) {
+                if (satisfies(ESLint.version, useEslintrcConfig ? '>=8.4' : '>=8.23'))
                     assert.deepEqual(context.cwd, __dirname);
-                }
             });
 
             it('should resolve a custom formatter by package name', async () => {
@@ -413,9 +412,8 @@ describe('utility functions', () => {
                 const json = await formatter.format(expectedResults);
                 const { results: actualResults, context } = JSON.parse(json);
                 assert.deepEqual(actualResults, expectedResults);
-                if (satisfies(ESLint.version, useEslintrcConfig ? '>=8.4' : '>=8.23')) {
+                if (satisfies(ESLint.version, useEslintrcConfig ? '>=8.4' : '>=8.23'))
                     assert.deepEqual(context.cwd, __dirname);
-                }
             });
 
             it('should resolve an async custom formatter', async () => {
@@ -438,9 +436,8 @@ describe('utility functions', () => {
                 const json = await formatter.format(expectedResults);
                 const [actualResults, context] = JSON.parse(json);
                 assert.deepEqual(actualResults, expectedResults);
-                if (satisfies(ESLint.version, useEslintrcConfig ? '>=8.4' : '>=8.23')) {
+                if (satisfies(ESLint.version, useEslintrcConfig ? '>=8.4' : '>=8.23'))
                     assert.deepEqual(context.cwd, __dirname);
-                }
             });
 
             it('should resolve a specified formatter object', async () => {

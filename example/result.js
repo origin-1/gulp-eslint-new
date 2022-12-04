@@ -68,9 +68,8 @@ function lintResultsAsync() {
         // Another async example...
         setTimeout(() => {
             let error = null;
-            if (results.errorCount + results.warningCount > MAX_PROBLEMS) {
+            if (results.errorCount + results.warningCount > MAX_PROBLEMS)
                 error = Error('Too many problems!');
-            }
             done(error);
         });
     }));

@@ -27,7 +27,6 @@ createConfig
         extends:    'plugin:eslint-comments/recommended',
         rules:
         {
-            'curly':            ['error', 'all'],
             'no-throw-literal': 'off',
             'padded-blocks':    'off',
         },

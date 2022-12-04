@@ -108,9 +108,8 @@ describe('gulp-eslint-new plugin', () => {
                 gulpESLintNew(options)
                 .resume()
                 .on('end', () => {
-                    for (const key of Object.keys(require('tslib'))) {
+                    for (const key of Object.keys(require('tslib')))
                         delete global[key];
-                    }
                 })
                 .end(file),
             );

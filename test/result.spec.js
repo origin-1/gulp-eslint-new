@@ -80,9 +80,8 @@ describe('gulp-eslint-new result', () => {
                 assert.equal(resultCount, 3);
                 done();
             });
-            for (const { path, contents } of testDataList) {
+            for (const { path, contents } of testDataList)
                 lintStream.write(createVinylFile(path, contents));
-            }
             lintStream.end();
         }
 

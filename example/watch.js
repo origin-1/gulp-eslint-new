@@ -16,9 +16,8 @@ function lintWatch() {
     .on(
         'all',
         (eventType, path) => {
-            if (eventType === 'add' || eventType === 'change') {
+            if (eventType === 'add' || eventType === 'change')
                 src(path).pipe(lintAndPrint, { end: false });
-            }
         },
     );
 }
