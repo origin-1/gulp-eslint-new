@@ -42,7 +42,7 @@
     "@types/node": ">=12",
     "eslint": "8",
     "fancy-log": "^2.0.0",
-    "plugin-error": "^2.0.0",
+    "plugin-error": "^2.0.1",
     "semver": "^7.3.8",
     "ternary-stream": "^3.0.0",
     "vinyl-fs": "^3.0.3"
