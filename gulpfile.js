@@ -2,9 +2,11 @@
 
 const { parallel, series, src, task } = require('gulp');
 
-task(
+task
+(
     'clean',
-    async () => {
+    async () =>
+    {
         const { promises: { rm } } = require('fs');
 
         const options = { force: true, recursive: true };
@@ -12,26 +14,31 @@ task(
     },
 );
 
-task(
+task
+(
     'lint',
-    () => {
+    () =>
+    {
         const gulpESLintNew = require('gulp-eslint-new');
 
         const stream =
         src(['{.,}*.js', 'example/*.js', 'lib/*.{js,ts}', 'test/**/*.{js,ts}'])
         .pipe(gulpESLintNew({ warnIgnored: true }))
-        .pipe(gulpESLintNew.format())
+        .pipe(gulpESLintNew.format('compact'))
         .pipe(gulpESLintNew.failAfterError());
         return stream;
     },
 );
 
-task(
+task
+(
     'test',
-    async () => {
+    async () =>
+    {
         const { default: c8js } = await import('c8js');
         const mochaPath = require.resolve('mocha/bin/mocha');
-        await c8js(
+        await c8js
+        (
             mochaPath,
             ['--check-leaks', 'test/*.spec.js'],
             {
@@ -51,11 +58,14 @@ task(
     },
 );
 
-task(
+task
+(
     'ts-test',
-    async () => { // eslint-disable-line require-await
+    async () => // eslint-disable-line require-await
+    {
         const { dirname, join } = require('path');
-        const {
+        const
+        {
             createDiagnosticReporter,
             createProgram,
             getPreEmitDiagnostics,
@@ -72,7 +82,8 @@ task(
         const { fileNames, options } = parseJsonConfigFileContent(tsConfig.config, sys, basePath);
         const program = createProgram(fileNames, options);
         const diagnostics = getPreEmitDiagnostics(program);
-        if (diagnostics.length) {
+        if (diagnostics.length)
+        {
             const reporter = createDiagnosticReporter(sys, true);
             diagnostics.forEach(reporter);
             throw Error('TypeScript compilation failed');

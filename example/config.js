@@ -12,7 +12,8 @@ const gulpESLintNew   = require('gulp-eslint-new');
  *
  * @returns {NodeJS.ReadWriteStream} gulp file stream.
  */
-function basic() {
+function basic()
+{
     return src('demo/**/*.js')
     // Default: use local linting config.
     .pipe(gulpESLintNew())
@@ -25,45 +26,50 @@ function basic() {
  *
  * @returns {NodeJS.ReadWriteStream} gulp file stream.
  */
-function inlineConfig() {
+function inlineConfig()
+{
     return src('demo/**/*.js')
-    .pipe(gulpESLintNew({
-        overrideConfig: {
-            rules:      {
-                'no-alert':             0,
-                'no-bitwise':           0,
-                'camelcase':            1,
-                'curly':                1,
-                'eqeqeq':               0,
-                'no-eq-null':           0,
-                'guard-for-in':         1,
-                'no-empty':             1,
-                'no-use-before-define': 0,
-                'no-obj-calls':         2,
-                'no-unused-vars':       0,
-                'new-cap':              1,
-                'no-shadow':            0,
-                'strict':               2,
-                'no-invalid-regexp':    2,
-                'comma-dangle':         2,
-                'no-undef':             1,
-                'no-new':               1,
-                'no-extra-semi':        1,
-                'no-debugger':          2,
-                'no-caller':            1,
-                'semi':                 1,
-                'quotes':               0,
-                'no-unreachable':       2,
+    .pipe
+    (
+        gulpESLintNew
+        (
+            {
+                overrideConfig:
+                {
+                    rules:
+                    {
+                        'no-alert':             0,
+                        'no-bitwise':           0,
+                        'camelcase':            1,
+                        'curly':                1,
+                        'eqeqeq':               0,
+                        'no-eq-null':           0,
+                        'guard-for-in':         1,
+                        'no-empty':             1,
+                        'no-use-before-define': 0,
+                        'no-obj-calls':         2,
+                        'no-unused-vars':       0,
+                        'new-cap':              1,
+                        'no-shadow':            0,
+                        'strict':               2,
+                        'no-invalid-regexp':    2,
+                        'comma-dangle':         2,
+                        'no-undef':             1,
+                        'no-new':               1,
+                        'no-extra-semi':        1,
+                        'no-debugger':          2,
+                        'no-caller':            1,
+                        'semi':                 1,
+                        'quotes':               0,
+                        'no-unreachable':       2,
+                    },
+                    globals:    { $: 'readonly' },
+                    env:        { 'node': true },
+                },
+                warnIgnored: true,
             },
-            globals:    {
-                $: 'readonly',
-            },
-            env:        {
-                'node': true,
-            },
-        },
-        warnIgnored:    true,
-    }))
+        ),
+    )
     .pipe(gulpESLintNew.format());
 }
 
@@ -72,12 +78,19 @@ function inlineConfig() {
  *
  * @returns {NodeJS.ReadWriteStream} gulp file stream.
  */
-function loadConfig() {
+function loadConfig()
+{
     return src('demo/**/*.js')
-    .pipe(gulpESLintNew({
-        // Load a specific ESLint config.
-        overrideConfigFile: 'eslint-custom-config.json',
-    }))
+    .pipe
+    (
+        gulpESLintNew
+        (
+            {
+                // Load a specific ESLint config.
+                overrideConfigFile: 'eslint-custom-config.json',
+            },
+        ),
+    )
     .pipe(gulpESLintNew.format());
 }
 
@@ -86,7 +99,8 @@ function loadConfig() {
  *
  * @returns {NodeJS.ReadWriteStream} gulp file stream.
  */
-function loadConfigShorthand() {
+function loadConfigShorthand()
+{
     return src('demo/**/*.js')
     // Load a specific ESLint config
     .pipe(gulpESLintNew('eslint-custom-config.json'))
@@ -99,12 +113,14 @@ function loadConfigShorthand() {
 module.exports =
 {
     'default':
-    series(
+    series
+    (
         basic,
         inlineConfig,
         loadConfig,
         loadConfigShorthand,
-        async () => { // eslint-disable-line require-await
+        async () => // eslint-disable-line require-await
+        {
             console.log('All tasks completed successfully.');
         },
     ),

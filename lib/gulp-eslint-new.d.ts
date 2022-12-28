@@ -11,7 +11,7 @@ import type
     Plugin,
     ResultsMeta,
 }
-    from './eslint';
+from './eslint';
 import                              'node';
 import type { TransformCallback }   from 'stream';
 
@@ -41,14 +41,14 @@ export type GulpESLintWriter = (str: string) => Awaitable;
 type GulpESLintrcOptions
 =
 Omit<
-ESLintOptions,
-| 'cache'
-| 'cacheLocation'
-| 'cacheStrategy'
-| 'errorOnUnmatchedPattern'
-| 'extensions'
-| 'globInputPaths'
-| 'plugins'
+    ESLintOptions,
+    | 'cache'
+    | 'cacheLocation'
+    | 'cacheStrategy'
+    | 'errorOnUnmatchedPattern'
+    | 'extensions'
+    | 'globInputPaths'
+    | 'plugins'
 > &
 {
     /** @deprecated Use `overrideConfigFile` instead. */
@@ -100,13 +100,13 @@ ESLintOptions,
 type GulpFlatESLintOptions
 =
 Pick<
-ESLintOptions,
-| 'allowInlineConfig'
-| 'cwd'
-| 'fix'
-| 'fixTypes'
-| 'ignore'
-| 'reportUnusedDisableDirectives'
+    ESLintOptions,
+    | 'allowInlineConfig'
+    | 'cwd'
+    | 'fix'
+    | 'fixTypes'
+    | 'ignore'
+    | 'reportUnusedDisableDirectives'
 > &
 {
     baseConfig?: FlatConfig | undefined;
@@ -131,7 +131,8 @@ type LintResultStreamFunction<Type> =
 
 export type { LoadedFormatter, ResultsMeta };
 
-declare const gulpESLintNew: {
+declare const gulpESLintNew:
+{
     /**
      * Append ESLint result to each file.
      *
@@ -190,7 +191,8 @@ declare const gulpESLintNew: {
      * Defaults to gulp's [fancy-log](https://github.com/gulpjs/fancy-log#readme).
      * @returns gulp file stream.
      */
-    formatEach(
+    formatEach
+    (
         formatter?: string | LoadedFormatter | FormatterFunction,
         writer?: GulpESLintWriter | NodeJS.WritableStream
     ): NodeJS.ReadWriteStream;
@@ -207,7 +209,8 @@ declare const gulpESLintNew: {
      * Defaults to gulp's [fancy-log](https://github.com/gulpjs/fancy-log#readme).
      * @returns gulp file stream.
      */
-    format(
+    format
+    (
         formatter?: string | LoadedFormatter | FormatterFunction,
         writer?: GulpESLintWriter | NodeJS.WritableStream
     ): NodeJS.ReadWriteStream;

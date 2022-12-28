@@ -4,11 +4,13 @@ type ConfigData = Linter.Config;
 
 type ESLintOptions = ESLint.Options;
 
-interface FlatConfig {
+interface FlatConfig
+{
     files?: string[] | undefined;
     ignores?: string[] | undefined;
     languageOptions?: LanguageOptions | undefined;
-    linterOptions?: {
+    linterOptions?:
+    {
         noInlineConfig?:                boolean | undefined;
         reportUnusedDisableDirectives?: boolean | undefined;
     };
@@ -26,7 +28,8 @@ type FormatterFunction =
 
 type GlobalConf = boolean | 'off' | 'readable' | 'readonly' | 'writable' | 'writeable';
 
-interface LanguageOptions {
+interface LanguageOptions
+{
     ecmaVersion?:   number | 'latest' | undefined;
     globals?:       Record<string, GlobalConf> | undefined;
     parser?:        string | Linter.ParserModule | undefined;
@@ -38,14 +41,15 @@ type LintMessage = Linter.LintMessage;
 
 type LintResult = ESLint.LintResult;
 
-interface LoadedFormatter {
-    format(results: ESLint.LintResult[], resultsMeta: ResultsMeta): string | Promise<string>;
-}
+interface LoadedFormatter
+{ format(results: ESLint.LintResult[], resultsMeta: ResultsMeta): string | Promise<string>; }
 
 type Plugin = ESLint.Plugin & { parsers?: Record<string, Linter.ParserModule> | undefined; };
 
-interface ResultsMeta {
-    maxWarningsExceeded?: {
+interface ResultsMeta
+{
+    maxWarningsExceeded?:
+    {
         foundWarnings: number;
         maxWarnings: number;
     };

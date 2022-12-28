@@ -1,6 +1,7 @@
 'use strict';
 
-function create() {
+function create()
+{
     const result = { };
     return result;
 }

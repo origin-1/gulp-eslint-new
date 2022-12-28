@@ -7,14 +7,16 @@ const { series, src }       = require('gulp');
 const gulpESLintNew         = require('gulp-eslint-new');
 const { inspect }           = require('util');
 
-function defaultFormatter() {
+function defaultFormatter()
+{
     return src('demo/**/*.js')
     .pipe(gulpESLintNew()) // Lint all files.
     // Use ESLint's default formatter by default.
     .pipe(gulpESLintNew.format());
 }
 
-function eslintFormatter() {
+function eslintFormatter()
+{
     return src('demo/**/*.js')
     .pipe(gulpESLintNew()) // Lint all files.
     // Name a built-in formatter or path load.
@@ -22,14 +24,16 @@ function eslintFormatter() {
     .pipe(gulpESLintNew.formatEach('unix'));
 }
 
-function customFormatter() {
+function customFormatter()
+{
     return src('demo/**/*.js')
     .pipe(gulpESLintNew()) // Lint all files.
     // Format results using a custom function.
     .pipe(gulpESLintNew.format(results => inspect(results, { depth: 3 }), process.stdout));
 }
 
-function formatToFile() {
+function formatToFile()
+{
     return src('demo/**/*.js')
     .pipe(gulpESLintNew()) // Lint all files.
     // Format results using the default formatter, write to a file.

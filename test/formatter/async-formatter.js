@@ -2,8 +2,10 @@
 
 module.exports =
 (...args) =>
-new Promise(
-    resolve => {
+new Promise
+(
+    resolve =>
+    {
         setImmediate(() => resolve(JSON.stringify(args)));
     },
 );

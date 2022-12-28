@@ -5,7 +5,8 @@
 const { src }       = require('gulp');
 const gulpESLintNew = require('gulp-eslint-new');
 
-function lintNFix() {
+function lintNFix()
+{
     return src('demo/**/*.js')
     .pipe(gulpESLintNew({ fix: true }))
     .pipe(gulpESLintNew.format())
@@ -13,7 +14,8 @@ function lintNFix() {
     .pipe(gulpESLintNew.fix());
 }
 
-function flagNFix() {
+function flagNFix()
+{
     // Fix only when the option "--fix" is specified in the command line.
     const hasFixFlag = process.argv.slice(2).includes('--fix');
     return src('demo/**/*.js')

@@ -1,10 +1,11 @@
 import gulpESLintNew    from '../lib/gulp-eslint-new';
 import type
 { FormatterContext, FormatterFunction, GulpESLintWriter, LoadedFormatter, ResultsMeta }
-    from '../lib/gulp-eslint-new';
+from '../lib/gulp-eslint-new';
 import type { ESLint }  from 'eslint';
 
-gulpESLintNew(
+gulpESLintNew
+(
     {
         configFile:         undefined,
         envs:               undefined,
@@ -21,7 +22,8 @@ gulpESLintNew(
     },
 );
 
-gulpESLintNew(
+gulpESLintNew
+(
     {
         configType:                     'eslintrc',
         allowInlineConfig:              false,
@@ -40,7 +42,8 @@ gulpESLintNew(
     },
 );
 
-gulpESLintNew(
+gulpESLintNew
+(
     {
         configType:                     'flat',
         allowInlineConfig:              false,
@@ -63,15 +66,16 @@ void
 (
     (configType: 'eslintrc' | 'flat', ignorePatterns?: string | string[], rulePaths?: string[]):
     NodeJS.ReadWriteStream =>
-        gulpESLintNew(
-            {
-                configType,
-                allowInlineConfig:  false,
-                baseConfig:         { rules: { } },
-                ignorePatterns,
-                rulePaths,
-            },
-        )
+    gulpESLintNew
+    (
+        {
+            configType,
+            allowInlineConfig:  false,
+            baseConfig:         { rules: { } },
+            ignorePatterns,
+            rulePaths,
+        },
+    )
 );
 
 // @ts-expect-error Invalid option.
@@ -124,14 +128,16 @@ isStream(gulpESLintNew.failOnError());
 isStream(gulpESLintNew.failAfterError());
 
 const formatterFunction =
-    (results: ESLint.LintResult[], context?: FormatterContext): string =>
-        JSON.stringify({ results, context });
+(results: ESLint.LintResult[], context?: FormatterContext): string =>
+JSON.stringify({ results, context });
 declare const toStringAsync: (arg: unknown) => Promise<string>;
-const invalidLoadedFormatter = {
+const invalidLoadedFormatter =
+{
     format: async (results: readonly ESLint.LintResult[], ignored: boolean):
     Promise<string> => toStringAsync({ results, ignored }),
 };
-const loadedFormatter = {
+const loadedFormatter =
+{
     format: async (results: readonly ESLint.LintResult[], resultsMeta: ResultsMeta):
     Promise<string> => toStringAsync({ results, resultsMeta }),
 };
@@ -146,13 +152,13 @@ gulpESLintNew.formatEach(formatterFunction);
 void
 (
     (formatter?: string | LoadedFormatter | FormatterFunction): NodeJS.ReadWriteStream =>
-        gulpESLintNew.formatEach(formatter)
+    gulpESLintNew.formatEach(formatter)
 );
 
 void
 (
     (writer: NodeJS.WritableStream | GulpESLintWriter | undefined): NodeJS.ReadWriteStream =>
-        gulpESLintNew.formatEach(undefined, writer)
+    gulpESLintNew.formatEach(undefined, writer)
 );
 
 // @ts-expect-error Invalid argument type.
@@ -170,13 +176,13 @@ gulpESLintNew.format(formatterFunction);
 void
 (
     (formatter?: string | LoadedFormatter | FormatterFunction): NodeJS.ReadWriteStream =>
-        gulpESLintNew.format(formatter)
+    gulpESLintNew.format(formatter)
 );
 
 void
 (
     (writer: NodeJS.WritableStream | GulpESLintWriter | undefined): NodeJS.ReadWriteStream =>
-        gulpESLintNew.format(undefined, writer)
+    gulpESLintNew.format(undefined, writer)
 );
 
 // @ts-expect-error Invalid argument type.

@@ -6,7 +6,8 @@ const fancyLog      = require('fancy-log');
 const { src }       = require('gulp');
 const gulpESLintNew = require('gulp-eslint-new');
 
-function failImmediately() {
+function failImmediately()
+{
     return src('demo/**/*.js')
     .pipe(gulpESLintNew())
     // Format one at time since this stream may fail before it can format them all at the end.
@@ -14,16 +15,19 @@ function failImmediately() {
     // failOnError will emit an error (fail) immediately upon the first file that has an error.
     .pipe(gulpESLintNew.failOnError())
     // Need to do something when ESLint finds an error? Try this:
-    .once(
+    .once
+    (
         'error',
-        function (error) {
+        function (error)
+        {
             fancyLog('Lint failed: see message below for details.');
             this.emit('error', error);
         },
     );
 }
 
-function failAtEnd() {
+function failAtEnd()
+{
     return src('demo/**/*.js')
     .pipe(gulpESLintNew())
     // Format all results at once, at the end.

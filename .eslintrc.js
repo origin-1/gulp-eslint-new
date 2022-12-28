@@ -8,18 +8,13 @@ createConfig
     {
         files:      '*.js',
         jsVersion:  2020,
-        rules:      { 'brace-style': ['error', '1tbs'] },
     },
     {
         files:          '*.ts',
         tsVersion:      'latest',
         parserOptions:  { project: 'tsconfig.json' },
         plugins:        ['tsdoc'],
-        rules:
-        {
-            '@typescript-eslint/brace-style':   ['error', '1tbs'],
-            'tsdoc/syntax':                     'error',
-        },
+        rules:          { 'tsdoc/syntax': 'error' },
     },
     {
         files:      ['*.js', '*.ts'],

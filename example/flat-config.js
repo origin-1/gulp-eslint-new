@@ -14,13 +14,20 @@ const { join }        = require('path');
  *
  * @returns {NodeJS.ReadWriteStream} gulp file stream.
  */
-function basic() {
+function basic()
+{
     return src('demo/**/*.js')
     // Default: use local linting config.
-    .pipe(gulpESLintNew({
-        configType: 'flat',
-        cwd:        join(__dirname, 'demo'),  // Directory containing "eslint.config.js".
-    }))
+    .pipe
+    (
+        gulpESLintNew
+        (
+            {
+                configType: 'flat',
+                cwd:        join(__dirname, 'demo'), // Directory containing "eslint.config.js".
+            },
+        ),
+    )
     // Format ESLint results and print them to the console.
     .pipe(gulpESLintNew.format());
 }
@@ -30,43 +37,51 @@ function basic() {
  *
  * @returns {NodeJS.ReadWriteStream} gulp file stream.
  */
-function inlineConfig() {
+function inlineConfig()
+{
     return src('demo/**/*.js')
-    .pipe(gulpESLintNew({
-        configType:         'flat',
-        overrideConfig:
-        {
-            rules:              {
-                'no-alert':             0,
-                'no-bitwise':           0,
-                'camelcase':            1,
-                'curly':                1,
-                'eqeqeq':               0,
-                'no-eq-null':           0,
-                'guard-for-in':         1,
-                'no-empty':             1,
-                'no-use-before-define': 0,
-                'no-obj-calls':         2,
-                'no-unused-vars':       0,
-                'new-cap':              1,
-                'no-shadow':            0,
-                'strict':               2,
-                'no-invalid-regexp':    2,
-                'comma-dangle':         2,
-                'no-undef':             1,
-                'no-new':               1,
-                'no-extra-semi':        1,
-                'no-debugger':          2,
-                'no-caller':            1,
-                'semi':                 1,
-                'quotes':               0,
-                'no-unreachable':       2,
+    .pipe
+    (
+        gulpESLintNew
+        (
+            {
+                configType:         'flat',
+                overrideConfig:
+                {
+                    rules:
+                    {
+                        'no-alert':             0,
+                        'no-bitwise':           0,
+                        'camelcase':            1,
+                        'curly':                1,
+                        'eqeqeq':               0,
+                        'no-eq-null':           0,
+                        'guard-for-in':         1,
+                        'no-empty':             1,
+                        'no-use-before-define': 0,
+                        'no-obj-calls':         2,
+                        'no-unused-vars':       0,
+                        'new-cap':              1,
+                        'no-shadow':            0,
+                        'strict':               2,
+                        'no-invalid-regexp':    2,
+                        'comma-dangle':         2,
+                        'no-undef':             1,
+                        'no-new':               1,
+                        'no-extra-semi':        1,
+                        'no-debugger':          2,
+                        'no-caller':            1,
+                        'semi':                 1,
+                        'quotes':               0,
+                        'no-unreachable':       2,
+                    },
+                    languageOptions: { globals: { $: 'readonly', ...globals.node } },
+                },
+                overrideConfigFile: 'demo/eslint.config.js',
+                warnIgnored:        true,
             },
-            languageOptions:    { globals: { $: 'readonly', ...globals.node } },
-        },
-        overrideConfigFile: 'demo/eslint.config.js',
-        warnIgnored:        true,
-    }))
+        ),
+    )
     .pipe(gulpESLintNew.format());
 }
 
@@ -75,16 +90,23 @@ function inlineConfig() {
  *
  * @returns {NodeJS.ReadWriteStream} gulp file stream.
  */
-function loadConfig() {
+function loadConfig()
+{
     const { FlatCompat } = require('@eslint/eslintrc');
     const compat = new FlatCompat({ baseDirectory: __dirname });
     return src('demo/**/*.js')
-    .pipe(gulpESLintNew({
-        configType:     'flat',
-        cwd:            join(__dirname, 'demo'), // Directory containing "eslint.config.js".
-        // Load a specific eslintrc config.
-        overrideConfig: compat.config(require(join(__dirname, 'eslint-custom-config.json'))),
-    }))
+    .pipe
+    (
+        gulpESLintNew
+        (
+            {
+                configType:     'flat',
+                cwd:            join(__dirname, 'demo'), // Directory containing "eslint.config.js".
+                // Load a specific eslintrc config.
+                overrideConfig: compat.config(require('./eslint-custom-config.json')),
+            },
+        ),
+    )
     .pipe(gulpESLintNew.format());
 }
 
@@ -93,13 +115,20 @@ function loadConfig() {
  *
  * @returns {NodeJS.ReadWriteStream} gulp file stream.
  */
-function loadFlatConfig() {
+function loadFlatConfig()
+{
     return src('demo/**/*.js')
-    .pipe(gulpESLintNew({
-        configType:         'flat',
-        // Load a specific flat config.
-        overrideConfigFile: 'eslint-custom-flat-config.js',
-    }))
+    .pipe
+    (
+        gulpESLintNew
+        (
+            {
+                configType:         'flat',
+                // Load a specific flat config.
+                overrideConfigFile: 'eslint-custom-flat-config.js',
+            },
+        ),
+    )
     .pipe(gulpESLintNew.format());
 }
 
@@ -109,12 +138,14 @@ function loadFlatConfig() {
 module.exports =
 {
     'default':
-    series(
+    series
+    (
         basic,
         inlineConfig,
         loadConfig,
         loadFlatConfig,
-        async () => { // eslint-disable-line require-await
+        async () => // eslint-disable-line require-await
+        {
             console.log('All tasks completed successfully.');
         },
     ),
