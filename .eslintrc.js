@@ -20,11 +20,7 @@ createConfig
         files:      ['*.js', '*.ts'],
         env:        { node: true },
         extends:    'plugin:eslint-comments/recommended',
-        rules:
-        {
-            'no-throw-literal': 'off',
-            'padded-blocks':    'off',
-        },
+        rules:      { 'no-throw-literal': 'off' },
     },
 );
 
