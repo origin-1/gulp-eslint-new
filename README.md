@@ -4,14 +4,16 @@
 
 ## Installation
 
-[Use](https://docs.npmjs.com/cli/install) [npm](https://docs.npmjs.com/about-npm):
+Make sure that you are using a version of Node.js [supported by ESLint 8](https://eslint.org/docs/user-guide/getting-started#prerequisites).
+
+To install gulp-eslint-new, [use](https://docs.npmjs.com/cli/install) [npm](https://docs.npmjs.com/about-npm):
 
 ```console
 npm i -D gulp-eslint-new
 ```
 
-gulp-eslint-new will install the latest version of ESLint 8, unless another one is found.
-To use a particular version of ESLint 8, make sure to have it installed.
+gulp-eslint-new will also install the latest version of ESLint 8, unless another one is found.
+To use a particular version of ESLint 8, install it by yourself.
 For example, to use ESLint 8.8.0:
 
 ```console
