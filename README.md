@@ -74,18 +74,50 @@ For additional examples, look through the [example directory](https://github.com
 
 ### `gulpESLintNew()`
 
-*No explicit configuration.* A `.eslintrc` file may be resolved relative to each linted file.
+Run ESLint with default settings. A [configuration file][configuration file] may be resolved relative to each linted file.
+
+### `gulpESLintNew(overrideConfigFile)`
+
+Param type: `string`
+
+Run ESLint with the [configuration file][configuration file] located at the specified path.
 
 ### `gulpESLintNew(options)`
 
 Param type: `Record<string, unknown>`
 
-Supported options include all [linting options](https://eslint.org/docs/developer-guide/nodejs-api#linting) and [autofix options](https://eslint.org/docs/developer-guide/nodejs-api#autofix) of the `ESLint` constructor.
-Please, refer to the ESLint documentation for information about the usage of those options.
-Check also the notes about the [autofix function](#autofix).
-Additionally, gulp-eslint-new supports the options listed below.
+Run ESLint with the specified options.
+All supported options are listed below.
+See the linked content for details about each option.
 
-#### Additional Options
+**General options**
+* [`configType`](#optionsconfigtype)
+* [`cwd`](#optionscwd)
+
+**File enumeration options**
+* [`ignore`](#optionsignore)
+* [`ignorePath`](#optionsignorepath)
+
+**Linting options**
+* [`allowInlineConfig`][linting options]
+* [`baseConfig`][linting options]
+* [`overrideConfig`][linting options]
+* [`overrideConfigFile`][linting options]
+* [`plugins`][linting options]
+* [`reportUnusedDisableDirectives`][linting options]
+* [`resolvePluginsRelativeTo`][linting options]
+* [`rulePaths`][linting options]
+* [`useEslintrc`][linting options]
+
+**Autofix options**
+* [`fix`](#optionsfix)
+* [`fixTypes`](#optionsfixtypes)
+
+**Reporting options**
+* [`quiet`](#optionsquiet)
+* [`warnIgnored`](#optionswarnignored)
+
+#### General Options
 
 ##### `options.configType`
 
@@ -111,6 +143,8 @@ The working directory is where ESLint will look for a `.eslintignore` file by de
 It is also the base directory for any relative paths specified in the options (e.g. `overrideConfigFile`, `resolvePluginsRelativeTo`, `rulePaths`, `overrideConfig.extends`, etc.).
 The location of the files to be linted is not related to the working directory.
 
+#### File Enumeration Options
+
 ##### `options.ignore`
 
 Type: `boolean`
@@ -122,6 +156,25 @@ When `false`, ESLint will not respect `.eslintignore` files or ignore patterns i
 Type: `string`
 
 The path to a file ESLint uses instead of `.eslintignore` in the current working directory.
+
+#### Autofix Options
+
+##### `options.fix`
+
+Type: `boolean | (message: LintMessage) => boolean`
+
+Set to `true` or a function to generate fixes when possible, or set to `false` to explicitly disable autofixing.
+If a predicate function is present, it will be invoked once for each lint message, and only the lint messages for which the function returned `true` will be reported.
+
+**See the [Autofix](#autofix) section for more information and examples.**
+
+##### `options.fixTypes`
+
+Type: `("directive" | "problem" | "suggestion" | "layout")[]`
+
+The types of fixes to apply. Default is all types.
+
+#### Reporting Options
 
 ##### `options.quiet`
 
@@ -302,10 +355,12 @@ gulp.src(['**/*.js', '!node_modules/**'])
 
 ### `gulpESLintNew.format(formatter, writer)`
 
+`formatter` param type: `string | Object | Function | undefined`
+
+`writer` param type: `NodeJS.WritableStream | Function | undefined`
+
 Format all linted files once.
 This should be used in the stream after piping through `gulpESLintNew`; otherwise, this will find no ESLint results to format.
-
-`formatter` param type: `string | Object | Function | undefined`
 
 The `formatter` argument determines the [ESLint formatter](https://eslint.org/docs/user-guide/formatters/) used to format linting results.
 If a `string` is provided, a formatter module by that name or path will be resolved.
@@ -325,8 +380,6 @@ gulpESLintNew.format('checkstyle')
 gulpESLintNew.format('pretty')
 ```
 
-`writer` param type: `NodeJS.WritableStream | Function | undefined`
-
 The `writer` argument may be a writable stream, `Function`, or `undefined`.
 As a writable stream, the formatter output will be written to the stream.
 If `undefined`, the formatter output will be written to [gulp's log](https://github.com/gulpjs/fancy-log#logmsg).
@@ -342,6 +395,10 @@ gulpESLintNew.format('junit', process.stdout)
 
 ### `gulpESLintNew.formatEach(formatter, writer)`
 
+`formatter` param type: `string | Object | Function | undefined`
+
+`writer` param type: `NodeJS.WritableStream | Function | undefined`
+
 Format each linted file individually.
 This should be used in the stream after piping through `gulpESLintNew`; otherwise, this will find no ESLint results to format.
 
@@ -352,7 +409,8 @@ The arguments for `gulpESLintNew.formatEach` are the same as the arguments for [
 Overwrite files with the fixed content provided by ESLint.
 This should be used in conjunction with the option `fix` in [`gulpESLintNew(options)`](#gulpeslintnewoptions).
 Files without a fix and files that were not processed by ESLint will be left untouched.
-See the [Autofix](#autofix) section for more information and examples.
+
+**See the [Autofix](#autofix) section for more information and examples.**
 
 ## Autofix
 
@@ -379,6 +437,8 @@ ESLint results are attached as an `eslint` property to the Vinyl files that pass
 This is available to streams that follow the initial gulp-eslint-new stream.
 The functions [`gulpESLintNew.result`](#gulpeslintnewresultaction) and [`gulpESLintNew.results`](#gulpeslintnewresultsaction) are made available to support extensions and custom handling of ESLint results.
 
+[configuration file]: https://eslint.org/docs/user-guide/configure/configuration-files
 [gulp-eslint]: https://github.com/adametry/gulp-eslint
+[linting options]: https://eslint.org/docs/developer-guide/nodejs-api#linting
 [npm badge]: https://badge.fury.io/js/gulp-eslint-new.svg
 [npm URL]: https://www.npmjs.com/package/gulp-eslint-new
