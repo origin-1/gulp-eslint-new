@@ -76,13 +76,7 @@ For additional examples, look through the [example directory](https://github.com
 
 ### `gulpESLintNew()`
 
-Run ESLint with default settings. A [configuration file][configuration file] may be resolved relative to each linted file.
-
-### `gulpESLintNew(overrideConfigFile)`
-
-Param type: `string`
-
-Run ESLint with the [configuration file][configuration file] located at the specified path.
+Run ESLint with default settings. A [configuration file](https://eslint.org/docs/user-guide/configure/configuration-files) may be resolved relative to each linted file.
 
 ### `gulpESLintNew(options)`
 
@@ -439,7 +433,6 @@ ESLint results are attached as an `eslint` property to the Vinyl files that pass
 This is available to streams that follow the initial gulp-eslint-new stream.
 The functions [`gulpESLintNew.result`](#gulpeslintnewresultaction) and [`gulpESLintNew.results`](#gulpeslintnewresultsaction) are made available to support extensions and custom handling of ESLint results.
 
-[configuration file]: https://eslint.org/docs/user-guide/configure/configuration-files
 [gulp-eslint]: https://github.com/adametry/gulp-eslint
 [linting options]: https://eslint.org/docs/developer-guide/nodejs-api#linting
 [npm badge]: https://badge.fury.io/js/gulp-eslint-new.svg
