@@ -38,7 +38,7 @@
     "ts-test": "tsc --project test/tsconfig.json"
   },
   "dependencies": {
-    "@types/eslint": "^8.4.10",
+    "@types/eslint": "^8.21.0",
     "@types/node": ">=12",
     "eslint": "8",
     "fancy-log": "^2.0.0",
@@ -49,7 +49,7 @@
   },
   "devDependencies": {
     "@origin-1/eslint-config": "^0.10.0",
-    "@typescript-eslint/parser": "^5.47.0",
+    "@typescript-eslint/parser": "^5.51.0",
     "c8js": "^0.3.0",
     "eslint-8.0": "npm:eslint@8.0",
     "eslint-8.21": "npm:eslint@8.21",
@@ -60,7 +60,7 @@
     "eslint-plugin-tsdoc": "^0.2.17",
     "gulp": "^4.0.2",
     "mocha": "^9.2.2",
-    "typescript": "^4.9.4",
+    "typescript": "^4.9.5",
     "vinyl": "^3.0.0"
   },
   "engines": {

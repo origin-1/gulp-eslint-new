@@ -6,19 +6,19 @@ type ESLintOptions = ESLint.Options;
 
 interface FlatConfig
 {
-    files?: string[] | undefined;
-    ignores?: string[] | undefined;
-    languageOptions?: LanguageOptions | undefined;
+    files?:             string[];
+    ignores?:           string[];
+    languageOptions?:   LanguageOptions;
     linterOptions?:
     {
-        noInlineConfig?:                boolean | undefined;
-        reportUnusedDisableDirectives?: boolean | undefined;
+        noInlineConfig?:                boolean;
+        reportUnusedDisableDirectives?: boolean;
     };
-    name?: string | undefined;
-    plugins?: Record<string, Plugin> | undefined;
-    processor?: string | Linter.Processor | undefined;
-    rules?: Linter.RulesRecord | undefined;
-    settings?: Linter.Config['settings'];
+    name?:              string;
+    plugins?:           Record<string, Plugin>;
+    processor?:         string | Linter.Processor;
+    rules?:             Linter.RulesRecord;
+    settings?:          Record<string, unknown>;
 }
 
 type FormatterContext = ESLint.LintResultData & ResultsMeta;
@@ -30,11 +30,11 @@ type GlobalConf = boolean | 'off' | 'readable' | 'readonly' | 'writable' | 'writ
 
 interface LanguageOptions
 {
-    ecmaVersion?:   number | 'latest' | undefined;
-    globals?:       Record<string, GlobalConf> | undefined;
-    parser?:        string | Linter.ParserModule | undefined;
-    parserOptions?: object | undefined;
-    sourceType?:    'script' | 'module' | 'commonjs' | undefined;
+    ecmaVersion?:   number | 'latest';
+    globals?:       Record<string, GlobalConf>;
+    parser?:        string | Linter.ParserModule;
+    parserOptions?: Linter.ParserOptions;
+    sourceType?:    'script' | 'module' | 'commonjs';
 }
 
 type LintMessage = Linter.LintMessage;
