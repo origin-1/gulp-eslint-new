@@ -1,3 +1,9 @@
+<a name="1.7.2"></a>
+## [1.7.2](https://github.com/origin-1/gulp-eslint-new/releases/tag/1.7.2) (2023-02-11)
+
+* Improved TypeScript type declarations for the flat configuration system.
+* Improved readme file.
+
 <a name="1.7.1"></a>
 ## [1.7.1](https://github.com/origin-1/gulp-eslint-new/releases/tag/1.7.1) (2022-12-02)
 
