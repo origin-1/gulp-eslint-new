@@ -435,5 +435,5 @@ The functions [`gulpESLintNew.result`](#gulpeslintnewresultaction) and [`gulpESL
 
 [gulp-eslint]: https://github.com/adametry/gulp-eslint
 [linting options]: https://eslint.org/docs/developer-guide/nodejs-api#linting
-[npm badge]: https://badge.fury.io/js/gulp-eslint-new.svg
+[npm badge]: https://img.shields.io/npm/v/gulp-eslint-new?logo=npm
 [npm URL]: https://www.npmjs.com/package/gulp-eslint-new
