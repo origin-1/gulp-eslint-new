@@ -195,7 +195,8 @@ declare const gulpESLintNew:
     (
         formatter?: string | LoadedFormatter | FormatterFunction,
         writer?: GulpESLintWriter | NodeJS.WritableStream
-    ): NodeJS.ReadWriteStream;
+    ):
+    NodeJS.ReadWriteStream;
 
     /**
      * Wait until all files have been linted and format all results at once.
@@ -213,7 +214,8 @@ declare const gulpESLintNew:
     (
         formatter?: string | LoadedFormatter | FormatterFunction,
         writer?: GulpESLintWriter | NodeJS.WritableStream
-    ): NodeJS.ReadWriteStream;
+    ):
+    NodeJS.ReadWriteStream;
 
     /**
      * Overwrite source files with the fixed content provided by ESLint if present.

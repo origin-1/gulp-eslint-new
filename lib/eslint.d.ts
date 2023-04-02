@@ -32,7 +32,7 @@ interface LanguageOptions
 {
     ecmaVersion?:   number | 'latest';
     globals?:       Record<string, GlobalConf>;
-    parser?:        string | Linter.ParserModule;
+    parser?:        Linter.ParserModule;
     parserOptions?: Linter.ParserOptions;
     sourceType?:    'script' | 'module' | 'commonjs';
 }
