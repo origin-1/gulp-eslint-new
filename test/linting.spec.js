@@ -113,15 +113,10 @@ describe
                         overrideConfig:
                         {
                             files:              ['*'],
-                            languageOptions:    { parser: '@typescript-eslint/parser' },
+                            languageOptions:    { parser: require('@typescript-eslint/parser') },
                             rules:              { 'eol-last': 'error' },
                         },
                         overrideConfigFile: true,
-                        plugins:
-                        {
-                            '@typescript-eslint':
-                            { parsers: { parser: require('@typescript-eslint/parser') } },
-                        },
                     };
                     await finished
                     (
