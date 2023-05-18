@@ -93,7 +93,8 @@ See the linked content for details about each option.
 
 **File enumeration options**
 * [`ignore`](#optionsignore)
-* [`ignorePath`](#optionsignorepath)
+* [`ignorePath`](#optionsignorepath) (not in flat config)
+* [`ignorePatterns`](#optionsignorepatterns) (flat config only)
 
 **Linting options**
 * [`allowInlineConfig`][linting options]
@@ -102,9 +103,9 @@ See the linked content for details about each option.
 * [`overrideConfigFile`][linting options]
 * [`plugins`][linting options]
 * [`reportUnusedDisableDirectives`][linting options]
-* [`resolvePluginsRelativeTo`][linting options]
-* [`rulePaths`][linting options]
-* [`useEslintrc`][linting options]
+* [`resolvePluginsRelativeTo`][linting options] (not in flat config)
+* [`rulePaths`][linting options] (not in flat config)
+* [`useEslintrc`][linting options] (not in flat config)
 
 **Autofix options**
 * [`fix`](#optionsfix)
@@ -118,7 +119,7 @@ See the linked content for details about each option.
 
 ##### `options.configType`
 
-Type: `"eslintrc" | "flat"`
+Type: `"eslintrc" | "flat" | null`
 
 Newer versions of ESLint introduce a [new type of configuration](https://eslint.org/docs/user-guide/configuring/configuration-files-new) based on file `eslint.config.js`.
 Starting with gulp-eslint-new 1.7 it is possible to use the new configuration by setting the option `configType` to `"flat"`.
@@ -127,8 +128,6 @@ When using the new configuration, the options `ignorePath`, `resolvePluginsRelat
 [Legacy options](#legacy-options) are not supported either and will not be mapped to new options.
 Also, `ignorePatterns` is supported as a new top-level option, while other options like `baseConfig`, `overrideConfig` and `overrideConfigFile` accept different values.
 Refer to [the official documentation](https://eslint.org/docs/user-guide/configuring/configuration-files-new) for a description of all differences from the standard configuration.
-
-The new configuration system is still an experimental feature in ESLint 8.
 
 ##### `options.cwd`
 
@@ -153,6 +152,14 @@ When `false`, ESLint will not respect `.eslintignore` files or ignore patterns i
 Type: `string`
 
 The path to a file ESLint uses instead of `.eslintignore` in the current working directory.
+This option in not available when [`configType`](#optionsconfigtype) is `"flat"`.
+
+##### `options.ignorePatterns`
+
+Type: `string[] | null`
+
+Ignore file patterns to use in addition to config ignores.
+This option in only available when [`configType`](#optionsconfigtype) is `"flat"`.
 
 #### Autofix Options
 
@@ -167,7 +174,7 @@ If a predicate function is present, it will be invoked once for each lint messag
 
 ##### `options.fixTypes`
 
-Type: `("directive" | "problem" | "suggestion" | "layout")[]`
+Type: `("directive" | "problem" | "suggestion" | "layout")[] | null`
 
 The types of fixes to apply. Default is all types.
 

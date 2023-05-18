@@ -8,7 +8,6 @@ import type
     LintMessage,
     LintResult,
     LoadedFormatter,
-    Plugin,
     ResultsMeta,
 }
 from './eslint';
@@ -20,7 +19,7 @@ type Awaitable<T = unknown> = T | Promise<T>;
 export type { FormatterContext, FormatterFunction };
 
 export type GulpESLintOptions =
-(GulpESLintrcOptions & { configType?: 'eslintrc' | undefined; }) |
+(GulpESLintrcOptions & { configType?: 'eslintrc' | null | undefined; }) |
 (GulpFlatESLintOptions & { configType: 'flat'; });
 
 export type GulpESLintResult = LintResult;
@@ -106,18 +105,17 @@ Pick<
     | 'fix'
     | 'fixTypes'
     | 'ignore'
+    | 'plugins'
     | 'reportUnusedDisableDirectives'
 > &
 {
-    baseConfig?: FlatConfig | undefined;
+    baseConfig?: FlatConfig | (string | FlatConfig)[] | null | undefined;
 
-    ignorePatterns?: string | string[] | undefined;
+    ignorePatterns?: string[] | null | undefined;
 
-    overrideConfig?: FlatConfig | (string | FlatConfig)[] | undefined;
+    overrideConfig?: FlatConfig | (string | FlatConfig)[] | null | undefined;
 
-    overrideConfigFile?: string | true | undefined;
-
-    plugins?: Record<string, Plugin> | undefined;
+    overrideConfigFile?: string | true | null | undefined;
 
     quiet?:
     boolean | ((message: LintMessage, index: number, list: LintMessage[]) => unknown) | undefined;

@@ -1,8 +1,27 @@
-import type { ESLint, Linter } from 'eslint';
+import type { ESLint, Linter, Rule } from 'eslint';
 
 type ConfigData = Linter.Config;
 
-type ESLintOptions = ESLint.Options;
+type ESLintOptions =
+Omit<
+    ESLint.Options,
+    | 'baseConfig'
+    | 'fixTypes'
+    | 'overrideConfig'
+    | 'overrideConfigFile'
+    | 'plugins'
+    | 'reportUnusedDisableDirectives'
+    | 'resolvePluginsRelativeTo'
+> &
+{
+    baseConfig?:                    Linter.Config | null | undefined;
+    fixTypes?:                      Rule.RuleMetaData['type'][] | null | undefined;
+    overrideConfig?:                Linter.Config | null | undefined;
+    overrideConfigFile?:            string | null | undefined;
+    plugins?:                       Record<string, ESLint.Plugin> | null | undefined;
+    reportUnusedDisableDirectives?: Linter.StringSeverity | null | undefined;
+    resolvePluginsRelativeTo?:      string | null | undefined;
+};
 
 interface FlatConfig
 {
@@ -15,7 +34,7 @@ interface FlatConfig
         reportUnusedDisableDirectives?: boolean;
     };
     name?:              string;
-    plugins?:           Record<string, Plugin>;
+    plugins?:           Record<string, ESLint.Plugin>;
     processor?:         string | Linter.Processor;
     rules?:             Linter.RulesRecord;
     settings?:          Record<string, unknown>;
@@ -43,8 +62,6 @@ type LintResult = ESLint.LintResult;
 
 interface LoadedFormatter
 { format(results: ESLint.LintResult[], resultsMeta: ResultsMeta): string | Promise<string>; }
-
-type Plugin = ESLint.Plugin & { parsers?: Record<string, Linter.ParserModule> | undefined; };
 
 interface ResultsMeta
 {

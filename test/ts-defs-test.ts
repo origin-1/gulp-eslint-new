@@ -25,6 +25,18 @@ gulpESLintNew
 gulpESLintNew
 (
     {
+        baseConfig:                     null,
+        fixTypes:                       null,
+        overrideConfig:                 null,
+        overrideConfigFile:             null,
+        plugins:                        null,
+        reportUnusedDisableDirectives:  null,
+    },
+);
+
+gulpESLintNew
+(
+    {
         configType:                     'eslintrc',
         allowInlineConfig:              false,
         baseConfig:                     { rules: { } },
@@ -37,6 +49,7 @@ gulpESLintNew
         plugins:                        { foo: { } },
         quiet:                          true,
         reportUnusedDisableDirectives:  'off',
+        resolvePluginsRelativeTo:       'resolvePluginsRelativeTo',
         rulePaths:                      ['rulePaths'],
         warnIgnored:                    true,
     },
@@ -47,12 +60,12 @@ gulpESLintNew
     {
         configType:                     'flat',
         allowInlineConfig:              false,
-        baseConfig:                     { settings: { foo: 'bar' } },
+        baseConfig:                     { rules: { } },
         cwd:                            'cwd',
         fix:                            true,
         fixTypes:                       ['problem'],
         ignore:                         false,
-        ignorePatterns:                 'invalid.js',
+        ignorePatterns:                 ['ignored.js'],
         overrideConfig:                 ['eslint:recommended', { processor: 'foo/bar' }],
         overrideConfigFile:             true,
         plugins:                        { foo: { processors: { bar: { } } } },
@@ -64,15 +77,16 @@ gulpESLintNew
 
 void
 (
-    (configType: 'eslintrc' | 'flat', ignorePatterns?: string | string[], rulePaths?: string[]):
+    (configType: 'eslintrc' | 'flat', ignorePatterns?: string[] | null, rulePaths?: string[]):
     NodeJS.ReadWriteStream =>
     gulpESLintNew
     (
         {
             configType,
-            allowInlineConfig:  false,
-            baseConfig:         { rules: { } },
+            allowInlineConfig:          false,
+            baseConfig:                 { rules: { } },
             ignorePatterns,
+            resolvePluginsRelativeTo:   'resolvePluginsRelativeTo',
             rulePaths,
         },
     )
