@@ -70,9 +70,18 @@ describe
                     'should create a warning',
                     () =>
                     {
-                        function test(filePath, baseDir, expectedMessage)
+                        function test
+                        (
+                            filePath,
+                            {
+                                baseDir = process.cwd(),
+                                eslintConstructor = { name: 'ESLint', version: '8.0.0' },
+                            },
+                            expectedMessage,
+                        )
                         {
-                            const result = util.createIgnoreResult(filePath, baseDir, '8.0.0');
+                            const result =
+                            util.createIgnoreResult(filePath, baseDir, eslintConstructor);
                             assert(result);
                             assert.equal(result.filePath, filePath);
                             assert.equal(result.errorCount, 0);
@@ -90,13 +99,13 @@ describe
 
                         it
                         (
-                            'for a hidden file',
+                            'for a hidden file using the eslintrc config',
                             () =>
                             {
                                 test
                                 (
                                     resolve('.hidden.js'),
-                                    process.cwd(),
+                                    { },
                                     'File ignored by default. Use a negated ignore pattern (like ' +
                                     '"!<relative/path/to/filename>") to override.',
                                 );
@@ -105,13 +114,28 @@ describe
 
                         it
                         (
-                            'for a file in a hidden folder',
+                            'for a hidden file using the flat config',
+                            () =>
+                            {
+                                test
+                                (
+                                    resolve('.hidden.js'),
+                                    { eslintConstructor: { name: 'FlatESLint', version: '8.0.0' } },
+                                    'File ignored because of a matching ignore pattern. Set ' +
+                                    '"ignore" option to false to override.',
+                                );
+                            },
+                        );
+
+                        it
+                        (
+                            'for a file in a hidden folder using the eslintrc config',
                             () =>
                             {
                                 test
                                 (
                                     resolve('.hidden/file.js'),
-                                    process.cwd(),
+                                    { },
                                     'File ignored by default. Use a negated ignore pattern (like ' +
                                     '"!<relative/path/to/filename>") to override.',
                                 );
@@ -126,7 +150,7 @@ describe
                                 test
                                 (
                                     resolve('../file.js'),
-                                    process.cwd(),
+                                    { },
                                     'File ignored because of a matching ignore pattern. Set ' +
                                     '"ignore" option to false to override.',
                                 );
@@ -135,15 +159,34 @@ describe
 
                         it
                         (
-                            'for a path that includes "node_modules"',
+                            'for a path that includes "node_modules using the eslintrc config"',
                             () =>
                             {
                                 test
                                 (
                                     resolve('node_modules/test/index.js'),
-                                    process.cwd(),
+                                    { },
                                     'File ignored by default. Use a negated ignore pattern like ' +
                                     '"!node_modules/*" to override.',
+                                );
+                            },
+                        );
+
+                        it
+                        (
+                            'for a path that includes "node_modules using the flat config"',
+                            () =>
+                            {
+                                test
+                                (
+                                    resolve('node_modules/test/index.js'),
+                                    {
+                                        eslintConstructor:
+                                        { name: 'FlatESLint', version: '8.41.0' },
+                                    },
+                                    'File ignored by default because it is located under the ' +
+                                    'node_modules directory. Use ignore pattern ' +
+                                    '"!**/node_modules/" to override.',
                                 );
                             },
                         );
@@ -156,7 +199,7 @@ describe
                                 test
                                 (
                                     resolve('node_modules/file.js'),
-                                    resolve('node_modules'),
+                                    { baseDir: resolve('node_modules') },
                                     'File ignored because of a matching ignore pattern. Set ' +
                                     '"ignore" option to false to override.',
                                 );
@@ -171,7 +214,7 @@ describe
                                 test
                                 (
                                     resolve('node_modules_bak/file.js'),
-                                    process.cwd(),
+                                    { },
                                     'File ignored because of a matching ignore pattern. Set ' +
                                     '"ignore" option to false to override.',
                                 );
@@ -186,7 +229,7 @@ describe
                                 test
                                 (
                                     resolve('ignored.js'),
-                                    process.cwd(),
+                                    { },
                                     'File ignored because of a matching ignore pattern. Set ' +
                                     '"ignore" option to false to override.',
                                 );
@@ -201,7 +244,8 @@ describe
                     () =>
                     {
                         const result =
-                        util.createIgnoreResult('.hidden.js', process.cwd(), '8.8.0');
+                        util.createIgnoreResult
+                        ('.hidden.js', process.cwd(), { name: 'ESLint', version: '8.8.0' });
                         assert('suppressedMessages' in result);
                     },
                 );
@@ -212,7 +256,8 @@ describe
                     () =>
                     {
                         const result =
-                        util.createIgnoreResult('.hidden.js', process.cwd(), '8.7.0');
+                        util.createIgnoreResult
+                        ('.hidden.js', process.cwd(), { name: 'ESLint', version: '8.7.0' });
                         assert(!('suppressedMessages' in result));
                     },
                 );
