@@ -11,7 +11,7 @@ createConfig
     },
     {
         files:          '*.ts',
-        tsVersion:      '4.0.0',
+        tsVersion:      '4.2.0',
         parserOptions:  { project: 'tsconfig.json' },
         plugins:        ['tsdoc'],
         rules:          { 'tsdoc/syntax': 'error' },

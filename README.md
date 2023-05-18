@@ -5,6 +5,7 @@
 ## Installation
 
 Make sure that you are using a version of Node.js [supported by ESLint 8](https://eslint.org/docs/user-guide/getting-started#prerequisites).
+For TypeScript support, you need TypeScript 4.2 or later.
 
 To install gulp-eslint-new, [use](https://docs.npmjs.com/cli/install) [npm](https://docs.npmjs.com/about-npm):
 

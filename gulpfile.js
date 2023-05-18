@@ -22,7 +22,7 @@ task
         const gulpESLintNew = require('gulp-eslint-new');
 
         const stream =
-        src(['{.,}*.js', 'example/*.js', 'lib/*.{js,ts}', 'test/**/*.{js,ts}'])
+        src(['.eslintrc.js', '*.js', 'example/*.js', 'lib/*.{js,ts}', 'test/**/*.{js,ts}'])
         .pipe(gulpESLintNew({ warnIgnored: true }))
         .pipe(gulpESLintNew.format('compact'))
         .pipe(gulpESLintNew.failAfterError());
@@ -58,10 +58,9 @@ task
     },
 );
 
-task
-(
-    'ts-test',
-    async () => // eslint-disable-line require-await
+function tsTest(tsVersion, tsPkgName)
+{
+    async function task() // eslint-disable-line require-await
     {
         const { dirname, join } = require('path');
         const
@@ -73,7 +72,7 @@ task
             readConfigFile,
             sys,
         } =
-        require('typescript');
+        require(tsPkgName);
 
         const pkgPath = __dirname;
         const tsConfigPath = join(pkgPath, 'test/tsconfig.json');
@@ -88,7 +87,13 @@ task
             diagnostics.forEach(reporter);
             throw Error('TypeScript compilation failed');
         }
-    },
-);
+    }
+
+    const taskName = `ts-test/${tsVersion}`;
+    Object.defineProperty(task, 'name', { value: taskName });
+    return task;
+}
+
+task('ts-test', parallel(tsTest('4.2', 'typescript_4.2'), tsTest('*', 'typescript')));
 
 task('default', series(parallel('clean', 'lint', 'ts-test'), 'test'));

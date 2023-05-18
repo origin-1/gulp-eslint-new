@@ -61,6 +61,7 @@
     "gulp": "^4.0.2",
     "mocha": "^9.2.2",
     "typescript": "^5.0.4",
+    "typescript_4.2": "npm:typescript@4.2",
     "vinyl": "^3.0.0"
   },
   "engines": {
