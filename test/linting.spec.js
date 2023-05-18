@@ -305,6 +305,21 @@ describe
                             assert.equal(file.contents.toString(), 'var x = 0; \nvar y = 1;');
                         },
                     );
+
+                    it
+                    (
+                        'when invalid, should throw an error',
+                        () =>
+                        {
+                            assert.throws
+                            (
+                                () => gulpESLintNew({ [ESLINT_KEY]: ESLint, fix: null }),
+                                ({ code, constructor: { name } }) =>
+                                code === 'ESLINT_INVALID_OPTIONS' &&
+                                name === 'ESLintInvalidOptionsError',
+                            );
+                        },
+                    );
                 },
             );
         }
@@ -791,6 +806,19 @@ describe
                         assert(!file.eslint);
                     },
                 );
+
+                it
+                (
+                    'when invalid, should throw an error',
+                    () =>
+                    {
+                        assert.throws
+                        (
+                            () => gulpESLintNew({ warnIgnored: null }),
+                            { constructor: Error },
+                        );
+                    },
+                );
             },
         );
 
@@ -869,6 +897,19 @@ describe
                         (
                             file.eslint.usedDeprecatedRules,
                             [{ replacedBy: [], ruleId: 'valid-jsdoc' }],
+                        );
+                    },
+                );
+
+                it
+                (
+                    'when invalid, should throw an error',
+                    () =>
+                    {
+                        assert.throws
+                        (
+                            () => gulpESLintNew({ quiet: null }),
+                            { constructor: Error },
                         );
                     },
                 );
