@@ -1,3 +1,12 @@
+<a name="1.8.0"></a>
+## [1.8.0](https://github.com/origin-1/gulp-eslint-new/releases/tag/1.8.0) (2023-05-20)
+
+* Added validation for the options `quiet` and `warnIgnored`.
+* The miniumum supported TypeScript version is now 4.2.
+* Fixed and updated ignored file messages.
+* Improved TypeScript type declarations.
+* Improved readme file.
+
 <a name="1.7.2"></a>
 ## [1.7.2](https://github.com/origin-1/gulp-eslint-new/releases/tag/1.7.2) (2023-02-11)
 
