@@ -415,15 +415,13 @@ describe
 
         it
         (
-            'should fail if "overrideConfig" is not an object or null',
+            'should not fail if "overrideConfig" is invalid',
             () =>
             {
-                assert.throws
-                (
-                    () => organizeOptions({ overrideConfig: 'foo' }),
-                    ({ code, message }) =>
-                    code === 'ESLINT_INVALID_OPTIONS' && /\boverrideConfig\b/.test(message),
-                );
+                const { eslintOptions, migratedOptions } =
+                organizeOptions({ overrideConfig: 'foo' });
+                assert.equal(eslintOptions.overrideConfig, 'foo');
+                assert.deepEqual(migratedOptions, []);
             },
         );
 
