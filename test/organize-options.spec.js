@@ -17,8 +17,40 @@ describe
             () =>
             {
                 const { eslintOptions, migratedOptions } = organizeOptions('Config/Path');
-                assert.deepEqual(eslintOptions, { overrideConfigFile: 'Config/Path' });
+                assert.equal(eslintOptions.cwd, process.cwd());
+                assert.equal(eslintOptions.overrideConfigFile, 'Config/Path');
                 assert(isEmptyArray(migratedOptions));
+            },
+        );
+
+        it
+        (
+            'should use the current directory as `cwd` if "cwd" is undefined',
+            () =>
+            {
+                const { eslintOptions } = organizeOptions({ });
+                assert.equal(eslintOptions.cwd, process.cwd());
+            },
+        );
+
+        it
+        (
+            'should normalize "cwd"',
+            () =>
+            {
+                const cwd = `${process.cwd()}/foo/..`;
+                const { eslintOptions } = organizeOptions({ cwd });
+                assert.equal(eslintOptions.cwd, process.cwd());
+            },
+        );
+
+        it
+        (
+            'should not fail if "cwd" is invalid',
+            () =>
+            {
+                const { eslintOptions } = organizeOptions({ cwd: null });
+                assert.equal(eslintOptions.cwd, null);
             },
         );
 
@@ -29,11 +61,7 @@ describe
             {
                 const { eslintOptions, migratedOptions } =
                 organizeOptions({ configFile: 'Config/Path' });
-                assert.deepEqual
-                (
-                    eslintOptions,
-                    { overrideConfig: { }, overrideConfigFile: 'Config/Path' },
-                );
+                assert.equal(eslintOptions.overrideConfigFile, 'Config/Path');
                 assert.deepEqual
                 (
                     migratedOptions,
@@ -56,10 +84,7 @@ describe
                 const { eslintOptions, migratedOptions } =
                 organizeOptions({ envs: ['foo:true', 'bar:false', 'baz'] });
                 assert.deepEqual
-                (
-                    eslintOptions,
-                    { overrideConfig: { env: { foo: true, bar: false, baz: true } } },
-                );
+                (eslintOptions.overrideConfig, { env: { foo: true, bar: false, baz: true } });
                 assert.deepEqual
                 (
                     migratedOptions,
@@ -74,7 +99,7 @@ describe
             () =>
             {
                 const { eslintOptions, migratedOptions } = organizeOptions({ extends: 'foo' });
-                assert.deepEqual(eslintOptions, { overrideConfig: { extends: 'foo' } });
+                assert.deepEqual(eslintOptions.overrideConfig, { extends: 'foo' });
                 assert.deepEqual
                 (
                     migratedOptions,
@@ -97,10 +122,7 @@ describe
                 const { eslintOptions, migratedOptions } =
                 organizeOptions({ globals: ['foo:true', 'bar:false', 'baz'] });
                 assert.deepEqual
-                (
-                    eslintOptions,
-                    { overrideConfig: { globals: { foo: true, bar: false, baz: false } } },
-                );
+                (eslintOptions.overrideConfig, { globals: { foo: true, bar: false, baz: false } });
                 assert.deepEqual
                 (
                     migratedOptions,
@@ -123,10 +145,7 @@ describe
                 const { eslintOptions, migratedOptions } =
                 organizeOptions({ ignorePattern: ['foo', 'bar', 'baz'] });
                 assert.deepEqual
-                (
-                    eslintOptions,
-                    { overrideConfig: { ignorePatterns: ['foo', 'bar', 'baz'] } },
-                );
+                (eslintOptions.overrideConfig, { ignorePatterns: ['foo', 'bar', 'baz'] });
                 assert.deepEqual
                 (
                     migratedOptions,
@@ -147,7 +166,7 @@ describe
             () =>
             {
                 const { eslintOptions, migratedOptions } = organizeOptions({ parser: 'foo' });
-                assert.deepEqual(eslintOptions, { overrideConfig: { parser: 'foo' } });
+                assert.deepEqual(eslintOptions.overrideConfig, { parser: 'foo' });
                 assert.deepEqual
                 (
                     migratedOptions,
@@ -163,7 +182,7 @@ describe
             {
                 const { eslintOptions, migratedOptions } =
                 organizeOptions({ parserOptions: 'foo' });
-                assert.deepEqual(eslintOptions, { overrideConfig: { parserOptions: 'foo' } });
+                assert.deepEqual(eslintOptions.overrideConfig, { parserOptions: 'foo' });
                 assert.deepEqual
                 (
                     migratedOptions,
@@ -185,7 +204,7 @@ describe
             {
                 const { eslintOptions, migratedOptions } =
                 organizeOptions({ plugins: ['foo', 'bar'] });
-                assert.deepEqual(eslintOptions, { overrideConfig: { plugins: ['foo', 'bar'] } });
+                assert.deepEqual(eslintOptions.overrideConfig, { plugins: ['foo', 'bar'] });
                 assert.deepEqual
                 (
                     migratedOptions,
@@ -207,7 +226,8 @@ describe
             {
                 const { eslintOptions, migratedOptions } =
                 organizeOptions({ plugins: { foo: 'bar' } });
-                assert.deepEqual(eslintOptions, { overrideConfig: { }, plugins: { foo: 'bar' } });
+                assert.deepEqual(eslintOptions.overrideConfig, { });
+                assert.deepEqual(eslintOptions.plugins, { foo: 'bar' });
                 assert(isEmptyArray(migratedOptions));
             },
         );
@@ -218,7 +238,7 @@ describe
             () =>
             {
                 const { eslintOptions, migratedOptions } = organizeOptions({ rules: 'foo' });
-                assert.deepEqual(eslintOptions, { overrideConfig: { rules: 'foo' } });
+                assert.deepEqual(eslintOptions.overrideConfig, { rules: 'foo' });
                 assert.deepEqual
                 (
                     migratedOptions,
@@ -263,19 +283,15 @@ describe
                 );
                 assert.deepEqual
                 (
-                    eslintOptions,
+                    eslintOptions.overrideConfig,
                     {
-                        overrideConfig:
-                        {
-                            env:            undefined,
-                            extends:        undefined,
-                            globals:        undefined,
-                            ignorePatterns: undefined,
-                            parser:         undefined,
-                            parserOptions:  undefined,
-                            rules:          undefined,
-                        },
-                        overrideConfigFile: undefined,
+                        env:            undefined,
+                        extends:        undefined,
+                        globals:        undefined,
+                        ignorePatterns: undefined,
+                        parser:         undefined,
+                        parserOptions:  undefined,
+                        rules:          undefined,
                     },
                 );
                 assert.deepEqual
