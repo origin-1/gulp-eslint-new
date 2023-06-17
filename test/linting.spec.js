@@ -147,6 +147,33 @@ describe
 
             describe
             (
+                '"overrideConfig" option',
+                () =>
+                {
+                    it
+                    (
+                        'when invalid, should throw an error',
+                        () =>
+                        {
+                            const overrideConfig = () => { };
+                            const options =
+                            useEslintrcConfig ?
+                            { [ESLINT_KEY]: ESLint, overrideConfig, useEslintrc: false } :
+                            { [ESLINT_KEY]: ESLint, configType: 'flat', overrideConfig };
+                            assert.throws
+                            (
+                                () => gulpESLintNew(options),
+                                ({ code, constructor: { name } }) =>
+                                code === 'ESLINT_INVALID_OPTIONS' &&
+                                name === 'ESLintInvalidOptionsError',
+                            );
+                        },
+                    );
+                },
+            );
+
+            describe
+            (
                 '"overrideConfigFile" should work',
                 () =>
                 {
@@ -341,10 +368,10 @@ describe
                     (
                         () =>
                         gulpESLintNew
-                        (
-                            { [ESLINT_KEY]: ESLint, [GULP_WARN_KEY]: gulpWarn, configFile: 42 },
-                        ),
-                        ({ constructor: { name } }) => name === 'ESLintInvalidOptionsError',
+                        ({ [ESLINT_KEY]: ESLint, [GULP_WARN_KEY]: gulpWarn, configFile: 42 }),
+                        ({ code, constructor: { name } }) =>
+                        code === 'ESLINT_INVALID_OPTIONS' &&
+                        name === 'ESLintInvalidOptionsError',
                     );
                     assert(typeof actualMessage === 'string');
                 },

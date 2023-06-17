@@ -313,6 +313,22 @@ describe
 
         it
         (
+            'should migrate legacy options even if the "overrideConfig" target is invalid',
+            () =>
+            {
+                const { eslintOptions, migratedOptions } =
+                organizeOptions({ overrideConfig: false, rules: { foo: 0 } });
+                assert.equal(eslintOptions.overrideConfig, false);
+                assert.deepEqual
+                (
+                    migratedOptions,
+                    [{ oldName: 'rules', newName: 'overrideConfig.rules', formatChanged: false }],
+                );
+            },
+        );
+
+        it
+        (
             'should not migrate legacy options with "configType" "flat"',
             () =>
             {
@@ -409,6 +425,45 @@ describe
                     () => organizeOptions({ configType: 'foo' }),
                     ({ code, message }) =>
                     code === 'ESLINT_INVALID_OPTIONS' && /\bconfigType\b/.test(message),
+                );
+            },
+        );
+
+        it
+        (
+            'should fail if "quiet" is not a valid value',
+            () =>
+            {
+                assert.throws
+                (
+                    () => organizeOptions({ quiet: 'foo' }),
+                    ({ message }) => /\bquiet\b/.test(message),
+                );
+            },
+        );
+
+        it
+        (
+            'should fail if "warnIgnored" is not a valid value',
+            () =>
+            {
+                assert.throws
+                (
+                    () => organizeOptions({ warnIgnored: 'foo' }),
+                    ({ message }) => /\bwarnIgnored\b/.test(message),
+                );
+            },
+        );
+
+        it
+        (
+            'should fail if "warnFileIgnored" is not a valid value',
+            () =>
+            {
+                assert.throws
+                (
+                    () => organizeOptions({ warnFileIgnored: 'foo' }),
+                    ({ message }) => /\bwarnFileIgnored\b/.test(message),
                 );
             },
         );
