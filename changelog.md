@@ -1,3 +1,10 @@
+<a name="1.8.1"></a>
+## [1.8.1](https://github.com/origin-1/gulp-eslint-new/releases/tag/1.8.1) (2023-06-18)
+
+* Added validation for the legacy option `warnFileIgnored`.
+* gulp-eslint-new will now normalize `cwd` directories like ESLint 8.43.
+* `overrideConfig` validation is deferred to ESLint.
+
 <a name="1.8.0"></a>
 ## [1.8.0](https://github.com/origin-1/gulp-eslint-new/releases/tag/1.8.0) (2023-05-20)
 
