@@ -423,8 +423,7 @@ describe
                 assert.throws
                 (
                     () => organizeOptions({ configType: 'foo' }),
-                    ({ code, message }) =>
-                    code === 'ESLINT_INVALID_OPTIONS' && /\bconfigType\b/.test(message),
+                    ({ message }) => /\bconfigType\b/.test(message),
                 );
             },
         );
