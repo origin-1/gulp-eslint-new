@@ -66,7 +66,11 @@ gulpESLintNew
         fixTypes:                       ['problem'],
         ignore:                         false,
         ignorePatterns:                 ['ignored.js'],
-        overrideConfig:                 ['eslint:recommended', { processor: 'foo/bar' }],
+        overrideConfig:
+        [
+            'eslint:recommended',
+            { files: ['1/*.js', '2/*.js'], ignores: ['1/_.js', '2/_.js'], processor: 'foo/bar' },
+        ],
         overrideConfigFile:             true,
         plugins:                        { foo: { processors: { bar: { } } } },
         quiet:                          true,

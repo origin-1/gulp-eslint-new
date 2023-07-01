@@ -23,22 +23,12 @@ Omit<
     resolvePluginsRelativeTo?:      string | null | undefined;
 };
 
-interface FlatConfig
+type FlatConfig =
+Omit<Linter.FlatConfig, 'languageOptions'> &
 {
-    files?:             string[];
-    ignores?:           string[];
     languageOptions?:   LanguageOptions;
-    linterOptions?:
-    {
-        noInlineConfig?:                boolean;
-        reportUnusedDisableDirectives?: boolean;
-    };
     name?:              string;
-    plugins?:           Record<string, ESLint.Plugin>;
-    processor?:         string | Linter.Processor;
-    rules?:             Linter.RulesRecord;
-    settings?:          Record<string, unknown>;
-}
+};
 
 type FormatterContext = ESLint.LintResultData & ResultsMeta;
 
