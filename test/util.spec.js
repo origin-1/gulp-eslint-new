@@ -861,7 +861,6 @@ describe
                             format(results)
                             {
                                 assert.equal(this, formatterObj);
-                                assert(results);
                                 assert.equal(results, testResults);
                                 return formattedText;
                             },
@@ -891,7 +890,6 @@ describe
                             format(results)
                             {
                                 assert.equal(this, formatterObj);
-                                assert(results);
                                 assert.equal(results, testResults);
                                 return '';
                             },
@@ -911,7 +909,6 @@ describe
                         {
                             format(results)
                             {
-                                assert(results);
                                 assert.equal(results, testResults);
                             },
                         };
