@@ -1,3 +1,11 @@
+<a name="1.8.2"></a>
+## [1.8.2](https://github.com/origin-1/gulp-eslint-new/releases/tag/1.8.2) (2023-07-05)
+
+* Consolidated errors thrown when invalind options are passed to `gulpESLintNew`:
+  * Updated error messages to clarify that `undefined` is a valid value for the options `quiet`, `warnIgnored` and `warnFileIgnored`.
+  * Removed property `code` from the error thrown when an invalid value is specified for the option `configType`.
+* Improved TypeScript type declarations.
+
 <a name="1.8.1"></a>
 ## [1.8.1](https://github.com/origin-1/gulp-eslint-new/releases/tag/1.8.1) (2023-06-18)
 
