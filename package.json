@@ -35,7 +35,8 @@
     "coverage": "gulp test",
     "lint": "eslint . --format compact",
     "test": "mocha --check-leaks test/*.spec.js",
-    "ts-test": "tsc --project test/tsconfig.json"
+    "ts-test": "tsc --project test/tsconfig.json",
+    "version": "git add changelog.md"
   },
   "dependencies": {
     "@types/eslint": "^8.40.0",
