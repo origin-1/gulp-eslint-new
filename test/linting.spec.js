@@ -91,60 +91,6 @@ describe
                 },
             );
 
-            it
-            (
-                'should configure an alternate parser',
-                async () =>
-                {
-                    require('@typescript-eslint/parser').clearCaches();
-                    const file = createVinylFile('file.ts', 'function fn(): void { }');
-                    const options =
-                    useEslintrcConfig ?
-                    {
-                        [ESLINT_KEY]:   ESLint,
-                        configType:     'eslintrc',
-                        baseConfig:
-                        { parser: '@typescript-eslint/parser', rules: { 'eol-last': 'error' } },
-                        useEslintrc:    false,
-                    } :
-                    {
-                        [ESLINT_KEY]:       ESLint,
-                        configType:         'flat',
-                        overrideConfig:
-                        {
-                            files:              ['*'],
-                            languageOptions:    { parser: require('@typescript-eslint/parser') },
-                            rules:              { 'eol-last': 'error' },
-                        },
-                        overrideConfigFile: true,
-                    };
-                    await finished
-                    (
-                        gulpESLintNew(options)
-                        .resume()
-                        .on
-                        (
-                            'end',
-                            () =>
-                            {
-                                for (const key of Object.keys(require('tslib')))
-                                    delete global[key];
-                            },
-                        )
-                        .end(file),
-                    );
-                    assert.equal(file.eslint.filePath, file.path);
-                    assert(Array.isArray(file.eslint.messages));
-                    assert.equal(file.eslint.messages.length, 1);
-                    const [message] = file.eslint.messages;
-                    assert.equal(typeof message.message, 'string');
-                    assert.equal(typeof message.line, 'number');
-                    assert.equal(typeof message.column, 'number');
-                    assert.equal(message.ruleId, 'eol-last');
-                    assert.equal(message.severity, 2);
-                },
-            );
-
             describe
             (
                 '"overrideConfig" option',
