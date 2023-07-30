@@ -1,6 +1,14 @@
 import gulpESLintNew    from '../lib/gulp-eslint-new';
 import type
-{ FormatterContext, FormatterFunction, GulpESLintWriter, LoadedFormatter, ResultsMeta }
+{
+    FormatterContext,
+    FormatterFunction,
+    GulpESLintResult,
+    GulpESLintResults,
+    GulpESLintWriter,
+    LoadedFormatter,
+    ResultsMeta,
+}
 from '../lib/gulp-eslint-new';
 import type { ESLint }  from 'eslint';
 
@@ -132,6 +140,16 @@ gulpESLintNew.result((result, callback): void => callback());
 gulpESLintNew.result();
 // @ts-expect-error Too many arguments to callback.
 gulpESLintNew.result((result, callback, foo: unknown): unknown => foo);
+void
+(
+    (
+        action:
+        | ((result: GulpESLintResult) => Promise<void>)
+        | ((result: GulpESLintResult, callback: Function) => void),
+    ):
+    NodeJS.ReadWriteStream =>
+    gulpESLintNew.result(action)
+);
 
 isStream(gulpESLintNew.results((): undefined => undefined));
 gulpESLintNew.results((results): void => void results);
@@ -140,6 +158,16 @@ gulpESLintNew.results((results, callback): void => callback());
 gulpESLintNew.results();
 // @ts-expect-error Too many arguments to callback.
 gulpESLintNew.results((results, callback, foo: unknown): unknown => foo);
+void
+(
+    (
+        action:
+        | ((results: GulpESLintResults) => Promise<void>)
+        | ((results: GulpESLintResults, callback: Function) => void),
+    ):
+    NodeJS.ReadWriteStream =>
+    gulpESLintNew.results(action)
+);
 
 isStream(gulpESLintNew.failOnError());
 
