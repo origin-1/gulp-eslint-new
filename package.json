@@ -39,7 +39,7 @@
     "version": "git add changelog.md"
   },
   "dependencies": {
-    "@types/eslint": "^8.44.0",
+    "@types/eslint": "^8.44.1",
     "@types/node": ">=12",
     "eslint": "8",
     "fancy-log": "^2.0.0",
@@ -50,7 +50,7 @@
   },
   "devDependencies": {
     "@origin-1/eslint-config": "^0.16.0",
-    "c8js": "^0.5.0",
+    "c8js": "^0.6.0",
     "eslint-8.0": "npm:eslint@8.0",
     "eslint-8.21": "npm:eslint@8.21",
     "eslint-8.x": "npm:eslint@8.x",
