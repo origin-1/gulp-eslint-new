@@ -1,3 +1,8 @@
+<a name="1.8.3"></a>
+## [1.8.3](https://github.com/origin-1/gulp-eslint-new/releases/tag/1.8.3) (2023-07-30)
+
+* Using `export =` syntax in TypeScript type declaration file to enable type hinting in editors.
+
 <a name="1.8.2"></a>
 ## [1.8.2](https://github.com/origin-1/gulp-eslint-new/releases/tag/1.8.2) (2023-07-05)
 
