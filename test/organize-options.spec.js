@@ -11,6 +11,55 @@ describe
     'organizeOptions',
     () =>
     {
+        function testCwd(configType)
+        {
+            it
+            (
+                'should use the current directory as `cwd` if "cwd" is undefined',
+                () =>
+                {
+                    const { eslintOptions } = organizeOptions({ configType });
+                    assert.equal(eslintOptions.cwd, process.cwd());
+                },
+            );
+
+            it
+            (
+                'should normalize "cwd"',
+                () =>
+                {
+                    const cwd = `${process.cwd()}/foo/..`;
+                    const { eslintOptions } = organizeOptions({ configType, cwd });
+                    assert.equal(eslintOptions.cwd, process.cwd());
+                },
+            );
+
+            it
+            (
+                'should not fail if "cwd" is invalid',
+                () =>
+                {
+                    const { eslintOptions } = organizeOptions({ configType, cwd: null });
+                    assert.equal(eslintOptions.cwd, null);
+                },
+            );
+        }
+
+        function testCustomESLint(configType)
+        {
+            it
+            (
+                'should return a custom value for ESLint',
+                () =>
+                {
+                    const expected = { };
+                    const { ESLint: actual } =
+                    organizeOptions({ [ESLINT_KEY]: expected, configType });
+                    assert.equal(actual, expected);
+                },
+            );
+        }
+
         it
         (
             'should wrap a string config value into "overrideConfigFile"',
@@ -20,37 +69,6 @@ describe
                 assert.equal(eslintOptions.cwd, process.cwd());
                 assert.equal(eslintOptions.overrideConfigFile, 'Config/Path');
                 assert(isEmptyArray(migratedOptions));
-            },
-        );
-
-        it
-        (
-            'should use the current directory as `cwd` if "cwd" is undefined',
-            () =>
-            {
-                const { eslintOptions } = organizeOptions({ });
-                assert.equal(eslintOptions.cwd, process.cwd());
-            },
-        );
-
-        it
-        (
-            'should normalize "cwd"',
-            () =>
-            {
-                const cwd = `${process.cwd()}/foo/..`;
-                const { eslintOptions } = organizeOptions({ cwd });
-                assert.equal(eslintOptions.cwd, process.cwd());
-            },
-        );
-
-        it
-        (
-            'should not fail if "cwd" is invalid',
-            () =>
-            {
-                const { eslintOptions } = organizeOptions({ cwd: null });
-                assert.equal(eslintOptions.cwd, null);
             },
         );
 
@@ -335,6 +353,7 @@ describe
                 const expectedOptions =
                 {
                     configFile:         1,
+                    cwd:                process.cwd(),
                     envs:               2,
                     extends:            3,
                     globals:            4,
@@ -355,38 +374,31 @@ describe
 
         describe
         (
-            'should return a custom value for ESLint',
+            'with "configType" "eslintrc"',
             () =>
             {
-                it
-                (
-                    'with "configType" "eslintrc"',
-                    () =>
-                    {
-                        const expected = { };
-                        const { ESLint: actual } =
-                        organizeOptions({ [ESLINT_KEY]: expected, configType: 'eslintrc' });
-                        assert.equal(actual, expected);
-                    },
-                );
+                testCwd('eslintrc');
+                testCustomESLint('eslintrc');
+            },
+        );
 
-                it
-                (
-                    'with "configType" "flat"',
-                    () =>
-                    {
-                        assert.throws
-                        (
-                            () => organizeOptions({ [ESLINT_KEY]: null, configType: 'flat' }),
-                        );
-                        {
-                            const expected = { };
-                            const { ESLint: actual } =
-                            organizeOptions({ [ESLINT_KEY]: expected, configType: 'flat' });
-                            assert.equal(actual, expected);
-                        }
-                    },
-                );
+        describe
+        (
+            'with "configType" "flat"',
+            () =>
+            {
+                testCwd('flat');
+                testCustomESLint('flat');
+            },
+        );
+
+        it
+        (
+            'should throw an error if the current version of ESLint does not support flat config ' +
+            'with "configType" "flat"',
+            () =>
+            {
+                assert.throws(() => organizeOptions({ [ESLINT_KEY]: null, configType: 'flat' }));
             },
         );
 
@@ -523,7 +535,7 @@ describe
 
         it
         (
-            'should merge "overrideConfig" with eslintrc config',
+            'should merge "overrideConfig" with "configType" "eslintrc"',
             () =>
             {
                 const overrideConfig = { root: true };
@@ -535,7 +547,7 @@ describe
 
         it
         (
-            'should preserve "overrideConfig" with flat config',
+            'should preserve "overrideConfig" with "configType" "flat"',
             () =>
             {
                 const overrideConfig = { root: true };
