@@ -1,3 +1,9 @@
+<a name="1.8.4"></a>
+## [1.8.4](https://github.com/origin-1/gulp-eslint-new/releases/tag/1.8.4) (2023-10-02)
+
+* Fixed default setting and normalization of the option `cwd` with flat config.
+* Clarified that the option `warnIgnored` defaults to `false`.
+
 <a name="1.8.3"></a>
 ## [1.8.3](https://github.com/origin-1/gulp-eslint-new/releases/tag/1.8.3) (2023-07-30)
 
