@@ -194,7 +194,8 @@ When a function is provided, it will be used to filter ESLint result messages, r
 
 Type: `boolean`
 
-When `true`, add a result warning when ESLint ignores a file.
+When `true`, add a result warning when ESLint ignores a file. Default is `false`.
+
 This can be used to find files that are needlessly being loaded by `gulp.src`.
 For example, since ESLint automatically ignores file paths inside a `node_modules` directory but `gulp.src` does not, a gulp task may take seconds longer just reading files from `node_modules`.
 
