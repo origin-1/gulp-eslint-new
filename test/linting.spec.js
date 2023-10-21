@@ -417,6 +417,42 @@ describe
 
             it
             (
+                'should ignore a file ignored by .eslintignore',
+                async () =>
+                {
+                    const file = createVinylFile('ignored.js', '(function () {ignore = abc;}});');
+                    await finished
+                    (
+                        gulpESLintNew
+                        ({ [ESLINT_KEY]: ESLint, useEslintrc: false, warnIgnored: true })
+                        .resume()
+                        .end(file),
+                    );
+                    assert.equal(file.eslint.filePath, file.path);
+                    assert(Array.isArray(file.eslint.messages));
+                    assert.deepEqual
+                    (
+                        file.eslint.messages,
+                        [
+                            {
+                                fatal:      false,
+                                message:
+                                'File ignored because of a matching ignore pattern. Set "ignore" ' +
+                                'option to false to override.',
+                                severity:   1,
+                            },
+                        ],
+                    );
+                    assert.equal(file.eslint.errorCount, 0);
+                    assert.equal(file.eslint.warningCount, 1);
+                    assert.equal(file.eslint.fixableErrorCount, 0);
+                    assert.equal(file.eslint.fixableWarningCount, 0);
+                    assert.equal(file.eslint.fatalErrorCount, 0);
+                },
+            );
+
+            it
+            (
                 '"rulePaths" option should be considered',
                 async () =>
                 {
@@ -770,49 +806,6 @@ describe
                         message:
                         'gulp-eslint-new doesn\'t support Vinyl files with Stream contents.',
                         plugin: 'gulp-eslint-new',
-                    },
-                );
-            },
-        );
-
-        describe
-        (
-            '"warnIgnored" option',
-            () =>
-            {
-                it
-                (
-                    'when true, should warn when a file is ignored by .eslintignore',
-                    async () =>
-                    {
-                        const file =
-                        createVinylFile('ignored.js', '(function () {ignore = abc;}});');
-                        await finished
-                        (
-                            gulpESLintNew({ useEslintrc: false, warnIgnored: true })
-                            .resume()
-                            .end(file),
-                        );
-                        assert.equal(file.eslint.filePath, file.path);
-                        assert(Array.isArray(file.eslint.messages));
-                        assert.deepEqual
-                        (
-                            file.eslint.messages,
-                            [
-                                {
-                                    fatal:      false,
-                                    message:
-                                    'File ignored because of a matching ignore pattern. Set ' +
-                                    '"ignore" option to false to override.',
-                                    severity:   1,
-                                },
-                            ],
-                        );
-                        assert.equal(file.eslint.errorCount, 0);
-                        assert.equal(file.eslint.warningCount, 1);
-                        assert.equal(file.eslint.fixableErrorCount, 0);
-                        assert.equal(file.eslint.fixableWarningCount, 0);
-                        assert.equal(file.eslint.fatalErrorCount, 0);
                     },
                 );
             },
