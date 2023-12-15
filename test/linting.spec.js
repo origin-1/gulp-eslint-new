@@ -169,42 +169,6 @@ describe
                 },
             );
 
-            it
-            (
-                '"reportUnusedDisableDirectives" option should be considered',
-                async () =>
-                {
-                    const file = createVinylFile('file.js', '// eslint-disable-line');
-                    const options =
-                    useEslintrcConfig ?
-                    {
-                        [ESLINT_KEY]:                   ESLint,
-                        reportUnusedDisableDirectives:  'warn',
-                        useEslintrc:                    false,
-                    } :
-                    {
-                        [ESLINT_KEY]:                   ESLint,
-                        configType:                     'flat',
-                        overrideConfigFile:             true,
-                        reportUnusedDisableDirectives:  'warn',
-                    };
-                    await finished(gulpESLintNew(options).resume().end(file));
-                    assert.equal(file.eslint.filePath, file.path);
-                    assert(Array.isArray(file.eslint.messages));
-                    assert.equal(file.eslint.messages.length, 1);
-                    const [message] = file.eslint.messages;
-                    assert.equal
-                    (
-                        message.message,
-                        'Unused eslint-disable directive (no problems were reported).',
-                    );
-                    assert.equal(message.line, 1);
-                    assert.equal(message.column, 1);
-                    assert.equal(message.ruleId, null);
-                    assert.equal(message.severity, 1);
-                },
-            );
-
             describe
             (
                 '"fix" option',
@@ -453,6 +417,35 @@ describe
 
             it
             (
+                '"reportUnusedDisableDirectives" option should be considered',
+                async () =>
+                {
+                    const file = createVinylFile('file.js', '// eslint-disable-line');
+                    const options =
+                    {
+                        [ESLINT_KEY]:                   ESLint,
+                        reportUnusedDisableDirectives:  'warn',
+                        useEslintrc:                    false,
+                    };
+                    await finished(gulpESLintNew(options).resume().end(file));
+                    assert.equal(file.eslint.filePath, file.path);
+                    assert(Array.isArray(file.eslint.messages));
+                    assert.equal(file.eslint.messages.length, 1);
+                    const [message] = file.eslint.messages;
+                    assert.equal
+                    (
+                        message.message,
+                        'Unused eslint-disable directive (no problems were reported).',
+                    );
+                    assert.equal(message.line, 1);
+                    assert.equal(message.column, 1);
+                    assert.equal(message.ruleId, null);
+                    assert.equal(message.severity, 1);
+                },
+            );
+
+            it
+            (
                 '"rulePaths" option should be considered',
                 async () =>
                 {
@@ -507,8 +500,8 @@ describe
                             (
                                 {
                                     [ESLINT_KEY]:   ESLint,
-                                    cwd:            __dirname,
                                     baseConfig:     { extends: './config/eslintrc-config.js' },
+                                    cwd:            __dirname,
                                     useEslintrc:    false,
                                 },
                             );
@@ -944,6 +937,39 @@ describe
             {
                 const { FlatESLint } = require('eslint-8.x/use-at-your-own-risk');
                 testCommonLinting(FlatESLint);
+
+                it
+                (
+                    '"reportUnusedDisableDirectives" linter option should be considered',
+                    async function ()
+                    {
+                        if (!satisfies(FlatESLint.version, '>=8.56'))
+                            this.skip();
+                        const file = createVinylFile('file.js', '// eslint-disable-line');
+                        const options =
+                        {
+                            [ESLINT_KEY]:       FlatESLint,
+                            baseConfig:
+                            { linterOptions: { reportUnusedDisableDirectives: 1 } },
+                            configType:         'flat',
+                            overrideConfigFile: true,
+                        };
+                        await finished(gulpESLintNew(options).resume().end(file));
+                        assert.equal(file.eslint.filePath, file.path);
+                        assert(Array.isArray(file.eslint.messages));
+                        assert.equal(file.eslint.messages.length, 1);
+                        const [message] = file.eslint.messages;
+                        assert.equal
+                        (
+                            message.message,
+                            'Unused eslint-disable directive (no problems were reported).',
+                        );
+                        assert.equal(message.line, 1);
+                        assert.equal(message.column, 1);
+                        assert.equal(message.ruleId, null);
+                        assert.equal(message.severity, 1);
+                    },
+                );
             },
         );
     },

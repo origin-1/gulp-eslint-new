@@ -203,7 +203,6 @@ declare namespace gulpESLintNew
         | 'fixTypes'
         | 'ignore'
         | 'plugins'
-        | 'reportUnusedDisableDirectives'
     > &
     {
         baseConfig?: FlatConfig | (string | FlatConfig)[] | null | undefined;

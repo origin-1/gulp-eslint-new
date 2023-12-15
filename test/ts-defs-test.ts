@@ -66,24 +66,23 @@ gulpESLintNew
 gulpESLintNew
 (
     {
-        configType:                     'flat',
-        allowInlineConfig:              false,
-        baseConfig:                     { rules: { } },
-        cwd:                            'cwd',
-        fix:                            true,
-        fixTypes:                       ['problem'],
-        ignore:                         false,
-        ignorePatterns:                 ['ignored.js'],
+        configType:         'flat',
+        allowInlineConfig:  false,
+        baseConfig:         { rules: { } },
+        cwd:                'cwd',
+        fix:                true,
+        fixTypes:           ['problem'],
+        ignore:             false,
+        ignorePatterns:     ['ignored.js'],
         overrideConfig:
         [
             'eslint:recommended',
             { files: ['1/*.js', '2/*.js'], ignores: ['1/_.js', '2/_.js'], processor: 'foo/bar' },
         ],
-        overrideConfigFile:             true,
-        plugins:                        { foo: { processors: { bar: { } } } },
-        quiet:                          true,
-        reportUnusedDisableDirectives:  'off',
-        warnIgnored:                    true,
+        overrideConfigFile: true,
+        plugins:            { foo: { processors: { bar: { } } } },
+        quiet:              true,
+        warnIgnored:        true,
     },
 );
 
@@ -127,6 +126,9 @@ gulpESLintNew({ ignorePatterns: [] });
 
 // @ts-expect-error Invalid option for flat config.
 gulpESLintNew({ configType: 'flat', rules: undefined });
+
+// @ts-expect-error Invalid option for flat config.
+gulpESLintNew({ configType: 'flat', reportUnusedDisableDirectives: undefined });
 
 // @ts-expect-error Invalid option type for eslintrc config.
 gulpESLintNew({ overrideConfigFile: true });
