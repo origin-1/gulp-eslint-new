@@ -1,3 +1,9 @@
+<a name="1.9.0"></a>
+## [1.9.0](https://github.com/origin-1/gulp-eslint-new/releases/tag/1.9.0) (2023-12-16)
+
+* The top level option `reportUnusedDisableDirectives` is no longer supported with flat config, as it was removed in ESLint 8.56.
+* Updated code examples.
+
 <a name="1.8.4"></a>
 ## [1.8.4](https://github.com/origin-1/gulp-eslint-new/releases/tag/1.8.4) (2023-10-02)
 
