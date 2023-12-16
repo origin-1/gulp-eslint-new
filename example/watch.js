@@ -1,6 +1,6 @@
 'use strict';
 
-// npm install gulp gulp-cached gulp-eslint-new
+// npm install -D gulp gulp-cached gulp-eslint-new
 
 const { src, watch } = require('gulp');
 const gulpCached     = require('gulp-cached');

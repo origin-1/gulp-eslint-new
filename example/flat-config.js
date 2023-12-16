@@ -1,6 +1,6 @@
 'use strict';
 
-// npm install @eslint/eslintrc globals gulp gulp-eslint-new
+// npm install -D @eslint/eslintrc @eslint/js globals gulp gulp-eslint-new
 
 const globals         = require('globals');
 const { series, src } = require('gulp');
@@ -93,7 +93,9 @@ function inlineConfig()
 function loadConfig()
 {
     const { FlatCompat } = require('@eslint/eslintrc');
-    const compat = new FlatCompat({ baseDirectory: __dirname });
+    const js = require('@eslint/js');
+    const compat =
+    new FlatCompat({ baseDirectory: __dirname, recommendedConfig: js.configs.recommended });
     return src('demo/**/*.js')
     .pipe
     (

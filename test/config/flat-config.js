@@ -1,3 +1,5 @@
 'use strict';
 
-module.exports = ['eslint:recommended', { rules: { 'eol-last': 'error', 'no-undef': 'off' } }];
+const js = require('@eslint/js');
+
+module.exports = [js.configs.recommended, { rules: { 'eol-last': 'error', 'no-undef': 'off' } }];

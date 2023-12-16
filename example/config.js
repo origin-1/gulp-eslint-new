@@ -1,6 +1,6 @@
 'use strict';
 
-// npm install gulp gulp-eslint-new
+// npm install -D gulp gulp-eslint-new
 
 const { series, src } = require('gulp');
 const gulpESLintNew   = require('gulp-eslint-new');

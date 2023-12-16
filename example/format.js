@@ -1,6 +1,6 @@
 'use strict';
 
-// npm install gulp gulp-eslint-new
+// npm install -D gulp gulp-eslint-new
 
 const { createWriteStream } = require('fs');
 const { series, src }       = require('gulp');

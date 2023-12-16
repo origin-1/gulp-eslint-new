@@ -1,10 +1,11 @@
 'use strict';
 
+const js = require('@eslint/js');
 const globals = require('globals');
 
 module.exports =
 [
-    'eslint:recommended',
+    js.configs.recommended,
     {
         rules:
         {

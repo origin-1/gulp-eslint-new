@@ -52,6 +52,8 @@
     "vinyl-fs": "^4.0.0"
   },
   "devDependencies": {
+    "@eslint/eslintrc": "^2.1.4",
+    "@eslint/js": "^8.56.0",
     "@origin-1/eslint-config": "^0.19.0",
     "c8js": "^0.6.0",
     "eslint-8.0": "npm:eslint@8.0",
