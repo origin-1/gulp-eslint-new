@@ -1,16 +1,16 @@
 'use strict';
 
-const { ESLINT_KEY, GULP_WARN_KEY } = require('#util');
+const { ESLINT_KEY }        = require('#util');
 
 const { createVinylDirectory, createVinylFile, finishStream, isEmptyArray } =
 require('./test-util');
 
-const { strict: assert }            = require('assert');
-const gulpESLintNew                 = require('gulp-eslint-new');
-const { join, resolve }             = require('path');
-const { satisfies }                 = require('semver');
-const { Readable }                  = require('stream');
-const VinylFile                     = require('vinyl');
+const { strict: assert }    = require('assert');
+const gulpESLintNew         = require('gulp-eslint-new');
+const { join, resolve }     = require('path');
+const { satisfies }         = require('semver');
+const { Readable }          = require('stream');
+const VinylFile             = require('vinyl');
 
 async function testConfig(options)
 {
@@ -267,30 +267,6 @@ describe
 
         function testEslintrcLinting(ESLint)
         {
-            it
-            (
-                'should throw an error after warning about migrated options',
-                () =>
-                {
-                    let actualMessage;
-                    const gulpWarn =
-                    message =>
-                    {
-                        actualMessage = message;
-                    };
-                    assert.throws
-                    (
-                        () =>
-                        gulpESLintNew
-                        ({ [ESLINT_KEY]: ESLint, [GULP_WARN_KEY]: gulpWarn, configFile: 42 }),
-                        ({ code, constructor: { name } }) =>
-                        code === 'ESLINT_INVALID_OPTIONS' &&
-                        name === 'ESLintInvalidOptionsError',
-                    );
-                    assert(typeof actualMessage === 'string');
-                },
-            );
-
             it
             (
                 'should ignore a file ignored by .eslintignore',
@@ -571,84 +547,6 @@ describe
                 assert.equal(file.eslint.fixableWarningCount, 0);
                 assert.equal(file.eslint.fatalErrorCount, 0);
                 assert.equal(file._eslintInfo.eslint.constructor.name, 'ESLint');
-            },
-        );
-
-        it
-        (
-            'should not raise a warning when no options are migrated',
-            () =>
-            {
-                const gulpWarn = () => assert.fail('Unexpected warning');
-                gulpESLintNew
-                (
-                    {
-                        [GULP_WARN_KEY]:    gulpWarn,
-                        overrideConfig:
-                        {
-                            env:            { },
-                            extends:        [],
-                            globals:        { },
-                            ignorePatterns: [],
-                            parser:         '',
-                            parserOptions:  { },
-                            plugins:        [],
-                            rules:          { },
-                        },
-                        overrideConfigFile: null,
-                        plugins:            { },
-                        useEslintrc:        false,
-                        warnIgnored:        true,
-                    },
-                );
-            },
-        );
-
-        it
-        (
-            'should raise a warning when options are migrated',
-            () =>
-            {
-                let actualMessage;
-                const gulpWarn =
-                message =>
-                {
-                    actualMessage = message;
-                };
-                gulpESLintNew
-                (
-                    {
-                        [GULP_WARN_KEY]:    gulpWarn,
-                        configFile:         null,
-                        envs:               [],
-                        extends:            [],
-                        globals:            [],
-                        ignorePattern:      [],
-                        parser:             '',
-                        parserOptions:      { },
-                        plugins:            [],
-                        rules:              { },
-                        useEslintrc:        false,
-                        warnFileIgnored:    true,
-                    },
-                );
-                assert(typeof actualMessage === 'string');
-                assert(actualMessage.includes('\n • configFile → overrideConfigFile\n'));
-                assert(actualMessage.includes('\n • envs → overrideConfig.env (format changed)\n'));
-                assert(actualMessage.includes('\n • extends → overrideConfig.extends\n'));
-                assert
-                (
-                    actualMessage.includes
-                    ('\n • globals → overrideConfig.globals (format changed)\n'),
-                );
-                assert
-                (actualMessage.includes('\n • ignorePattern → overrideConfig.ignorePatterns\n'));
-                assert(actualMessage.includes('\n • parser → overrideConfig.parser\n'));
-                assert
-                (actualMessage.includes('\n • parserOptions → overrideConfig.parserOptions\n'));
-                assert(actualMessage.includes('\n • plugins → overrideConfig.plugins\n'));
-                assert(actualMessage.includes('\n • rules → overrideConfig.rules\n'));
-                assert(actualMessage.includes('\n • warnFileIgnored → warnIgnored\n'));
             },
         );
 

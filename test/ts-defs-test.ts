@@ -15,24 +15,6 @@ import type { ESLint }  from 'eslint';
 gulpESLintNew
 (
     {
-        configFile:         undefined,
-        envs:               undefined,
-        extends:            undefined,
-        globals:            undefined,
-        ignorePattern:      undefined,
-        parser:             undefined,
-        parserOptions:      undefined,
-        plugins:            undefined,
-        quiet:              undefined,
-        rules:              undefined,
-        warnFileIgnored:    undefined,
-        warnIgnored:        undefined,
-    },
-);
-
-gulpESLintNew
-(
-    {
         baseConfig:                     null,
         fixTypes:                       null,
         overrideConfig:                 null,

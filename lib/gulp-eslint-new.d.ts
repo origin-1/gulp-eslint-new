@@ -4,7 +4,6 @@ import type { TransformCallback }   from 'stream';
 
 type Awaitable<T = unknown> = T | Promise<T>;
 
-type ConfigData     = eslint.ConfigData;
 type FlatConfig     = eslint.FlatConfig;
 type ESLintOptions  = eslint.ESLintOptions;
 type LintMessage    = eslint.LintMessage;
@@ -142,53 +141,12 @@ declare namespace gulpESLintNew
         | 'errorOnUnmatchedPattern'
         | 'extensions'
         | 'globInputPaths'
-        | 'plugins'
     > &
     {
-        /** @deprecated Use `overrideConfigFile` instead. */
-        configFile?: ESLintOptions['overrideConfigFile'];
-
-        /**
-         * @deprecated
-         * Use `overrideConfig.env` or `baseConfig.env` instead.
-         * Note the different option name and format.
-         */
-        envs?: string[] | undefined;
-
-        /** @deprecated Use `overrideConfig.extends` or `baseConfig.extends` instead. */
-        extends?: ConfigData['extends'];
-
-        /**
-         * @deprecated
-         * Use `overrideConfig.globals` or `baseConfig.globals` instead. Note the different format.
-         */
-        globals?: string[] | undefined;
-
-        /**
-         * @deprecated
-         * Use `overrideConfig.ignorePatterns` or `baseConfig.ignorePatterns` instead.
-         * Note the different option name.
-         */
-        ignorePattern?: ConfigData['ignorePatterns'];
-
-        /** @deprecated Use `overrideConfig.parser` or `baseConfig.parser` instead. */
-        parser?: ConfigData['parser'];
-
-        /** @deprecated Use `overrideConfig.parserOptions` or `baseConfig.parserOptions` instead. */
-        parserOptions?: ConfigData['parserOptions'];
-
-        plugins?: ESLintOptions['plugins'] | ConfigData['plugins'];
-
         quiet?:
         | boolean
         | ((message: LintMessage, index: number, list: LintMessage[]) => unknown)
         | undefined;
-
-        /** @deprecated Use `overrideConfig.rules` or `baseConfig.rules` instead. */
-        rules?: ConfigData['rules'];
-
-        /** @deprecated Use `warnIgnored` instead. */
-        warnFileIgnored?: boolean | undefined;
 
         warnIgnored?: boolean | undefined;
     };

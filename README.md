@@ -23,10 +23,9 @@ npm i -D gulp-eslint-new eslint@8.8.0
 
 ## Migrating
 
-If you are migrating from [gulp-eslint][gulp-eslint], you probably won't need to change any settings in your gulp task.
-gulp-eslint-new can handle most of the options used with gulp-eslint, although some of them are now deprecated in favor of a new name or format.
+If you are migrating from [gulp-eslint][gulp-eslint], you probably won't need to make any substantial changes to your gulp task. Note though that some options have changed: the current options are documented in the [`gulpESLintNew(options)`](#gulpeslintnewoptions) section.
 
-Anyway, since gulp-eslint-new uses ESLint 8 while gulp-eslint sticks to ESLint 6, you may need to make some changes to your project to address incompatibilities between the versions of ESLint.
+Also, since gulp-eslint-new uses ESLint 8 while gulp-eslint sticks to ESLint 6, you may need to update your project to address incompatibilities between the versions of ESLint.
 You can find more information at the links below.
 * [Breaking changes for users from ESLint 6 to ESLint 7](https://eslint.org/docs/user-guide/migrating-to-7.0.0#breaking-changes-for-users)
 * [Breaking changes for users from ESLint 7 to ESLint 8](https://eslint.org/docs/user-guide/migrating-to-8.0.0#breaking-changes-for-users)
@@ -125,7 +124,6 @@ Newer versions of ESLint introduce a [new type of configuration](https://eslint.
 Starting with gulp-eslint-new 1.7 it is possible to use the new configuration by setting the option `configType` to `"flat"`.
 
 When using the new configuration, the options `ignorePath`, `reportUnusedDisableDirectives`, `resolvePluginsRelativeTo`, `rulePaths` and `useEslintrc` are no longer supported.
-[Legacy options](#legacy-options) are not supported either and will not be mapped to new options.
 Also, `ignorePatterns` is supported as a new top-level option, while other options like `baseConfig`, `overrideConfig` and `overrideConfigFile` accept different values.
 Refer to [the official documentation](https://eslint.org/docs/user-guide/configuring/configuration-files-new) for a description of all differences from the standard configuration.
 
@@ -198,28 +196,6 @@ When `true`, add a result warning when ESLint ignores a file. Default is `false`
 
 This can be used to find files that are needlessly being loaded by `gulp.src`.
 For example, since ESLint automatically ignores file paths inside a `node_modules` directory but `gulp.src` does not, a gulp task may take seconds longer just reading files from `node_modules`.
-
-#### Legacy Options
-
-The following legacy options are provided for backward compatibility with [gulp-eslint][gulp-eslint].
-Some of them used to be available as top-level options previously, but in current versions of ESLint, they must be specified as child properties of a `baseConfig` or `overrideConfig` object.
-When `gulpESLintNew` is passed any legacy options, it will map them automatically as shown in the table to match the new conventions.
-
-| Legacy option     | Migrated to                     | Notes |
-|-------------------|---------------------------------|-|
-| `configFile`      | `overrideConfigFile`            | New option name. |
-| `envs`            | `overrideConfig.env`            | New option name and format. `overrideConfig.env` should be an object as explained in the [documentation](https://eslint.org/docs/user-guide/configuring/language-options#specifying-environments). |
-| `extends`         | `overrideConfig.extends`        | |
-| `globals`         | `overrideConfig.globals`        | The new option format requires `overrideConfig.globals` to be an object as explained in the [documentation](https://eslint.org/docs/user-guide/configuring/language-options#specifying-globals). |
-| `ignorePattern`   | `overrideConfig.ignorePatterns` | New option name. |
-| `parser`          | `overrideConfig.parser`         | |
-| `parserOptions`   | `overrideConfig.parserOptions`  | |
-| `plugins`         | `overrideConfig.plugins`        | `plugins` as an array of strings is migrated to `overrideConfig.plugins`. By contrast, `plugins` as an object that maps strings to plugin implementations has different semantics and is not migrated. |
-| `rules`           | `overrideConfig.rules`          | |
-| `warnFileIgnored` | `warnIgnored`                   | New option name. |
-
-If any legacy options are used, `gulpESLintNew` will print a warning.
-To remove the warning, replace the legacy options used in your gulp task with the new options.
 
 ### `gulpESLintNew(overrideConfigFile)`
 
