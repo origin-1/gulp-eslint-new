@@ -102,7 +102,7 @@ See the linked content for details about each option.
 * [`overrideConfig`][linting options]
 * [`overrideConfigFile`][linting options]
 * [`plugins`][linting options]
-* [`reportUnusedDisableDirectives`][linting options]
+* [`reportUnusedDisableDirectives`][linting options] (not in flat config)
 * [`resolvePluginsRelativeTo`][linting options] (not in flat config)
 * [`rulePaths`][linting options] (not in flat config)
 * [`useEslintrc`][linting options] (not in flat config)
@@ -124,8 +124,7 @@ Type: `"eslintrc" | "flat" | null`
 Newer versions of ESLint introduce a [new type of configuration](https://eslint.org/docs/user-guide/configuring/configuration-files-new) based on file `eslint.config.js`.
 Starting with gulp-eslint-new 1.7 it is possible to use the new configuration by setting the option `configType` to `"flat"`.
 
-When using the new configuration, the options `ignorePath`, `resolvePluginsRelativeTo`, `rulePaths` and `useEslintrc` are no longer supported.
-Support for the option `reportUnusedDisableDirectives` is removed in ESLint 8.56.
+When using the new configuration, the options `ignorePath`, `reportUnusedDisableDirectives`, `resolvePluginsRelativeTo`, `rulePaths` and `useEslintrc` are no longer supported.
 [Legacy options](#legacy-options) are not supported either and will not be mapped to new options.
 Also, `ignorePatterns` is supported as a new top-level option, while other options like `baseConfig`, `overrideConfig` and `overrideConfigFile` accept different values.
 Refer to [the official documentation](https://eslint.org/docs/user-guide/configuring/configuration-files-new) for a description of all differences from the standard configuration.
