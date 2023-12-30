@@ -1,5 +1,3 @@
-/* eslint-env mocha */
-
 'use strict';
 
 const { GULP_DEST_KEY, GULP_WARN_KEY, createTransform } = require('#util');

@@ -1,5 +1,3 @@
-/* eslint-env mocha */
-
 'use strict';
 
 const { ESLINT_KEY, GULP_WARN_KEY } = require('#util');
@@ -12,7 +10,7 @@ const gulpESLintNew                 = require('gulp-eslint-new');
 const { join, resolve }             = require('path');
 const { satisfies }                 = require('semver');
 const { Readable }                  = require('stream');
-const File                          = require('vinyl');
+const VinylFile                     = require('vinyl');
 
 async function testConfig(options)
 {
@@ -788,13 +786,11 @@ describe
             'should emit an error when it takes a stream content',
             async () =>
             {
+                const file =
+                new VinylFile({ path: resolve('stream.js'), contents: Readable.from([]) });
                 await assert.rejects
                 (
-                    finished
-                    (
-                        gulpESLintNew({ useEslintrc: false })
-                        .end(new File({ path: resolve('stream.js'), contents: Readable.from([]) })),
-                    ),
+                    finished(gulpESLintNew({ useEslintrc: false }).end(file)),
                     {
                         message:
                         'gulp-eslint-new doesn\'t support Vinyl files with Stream contents.',

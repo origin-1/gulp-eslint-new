@@ -22,8 +22,8 @@ task
         const gulpESLintNew = require('gulp-eslint-new');
 
         const stream =
-        src(['.eslintrc.js', '*.js', 'example/*.js', 'lib/*.{js,ts}', 'test/**/*.{js,ts}'])
-        .pipe(gulpESLintNew({ warnIgnored: true }))
+        src(['*.js', 'example/*.js', 'lib/*.{js,ts}', 'test/**/*.{js,ts}'])
+        .pipe(gulpESLintNew({ configType: 'flat', warnIgnored: true }))
         .pipe(gulpESLintNew.format('compact'))
         .pipe(gulpESLintNew.failAfterError());
         return stream;

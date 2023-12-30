@@ -1,5 +1,3 @@
-/* eslint-env mocha */
-
 'use strict';
 
 const { ESLINT_KEY }                                    = require('#util');

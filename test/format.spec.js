@@ -1,5 +1,3 @@
-/* eslint-env mocha */
-
 'use strict';
 
 const { createVinylDirectory, createVinylFile, noop } = require('./test-util');
