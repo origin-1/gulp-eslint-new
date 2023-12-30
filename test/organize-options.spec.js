@@ -485,7 +485,7 @@ describe
                 const { eslintOptions, migratedOptions } =
                 organizeOptions({ overrideConfig: 'foo' });
                 assert.equal(eslintOptions.overrideConfig, 'foo');
-                assert.deepEqual(migratedOptions, []);
+                assert(isEmptyArray(migratedOptions));
             },
         );
 

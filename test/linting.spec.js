@@ -2,7 +2,7 @@
 
 const { ESLINT_KEY, GULP_WARN_KEY } = require('#util');
 
-const { createVinylDirectory, createVinylFile, finished, isEmptyArray } =
+const { createVinylDirectory, createVinylFile, finishStream, isEmptyArray } =
 require('./test-util');
 
 const { strict: assert }            = require('assert');
@@ -16,7 +16,7 @@ async function testConfig(options)
 {
     const filePath = 'file.js';
     const file = createVinylFile(filePath, 'console.log(\'Hi\');;');
-    await finished(gulpESLintNew(options).resume().end(file));
+    await finishStream(gulpESLintNew(options).end(file));
     assert.equal(file.eslint.filePath, file.path);
     assert(Array.isArray(file.eslint.messages));
     assert.equal(file.eslint.messages.length, 2);
@@ -66,7 +66,7 @@ describe
                             { 'no-var': 2, 'strict': [2, 'global'], 'valid-jsdoc': 1 },
                         },
                     };
-                    await finished(gulpESLintNew(options).resume().end(file));
+                    await finishStream(gulpESLintNew(options).end(file));
                     assert.equal(file.eslint.filePath, file.path);
                     assert(Array.isArray(file.eslint.messages));
                     assert.equal(file.eslint.messages.length, 1);
@@ -193,7 +193,7 @@ describe
                                 overrideConfig:     { rules: { 'no-trailing-spaces': 2 } },
                                 overrideConfigFile: true,
                             };
-                            await finished(gulpESLintNew(options).resume().end(file));
+                            await finishStream(gulpESLintNew(options).end(file));
                             assert.equal(file.eslint.filePath, file.path);
                             assert(isEmptyArray(file.eslint.messages));
                             assert.equal(file.eslint.errorCount, 0);
@@ -227,7 +227,7 @@ describe
                                 overrideConfig:     { rules: { 'no-trailing-spaces': 2 } },
                                 overrideConfigFile: true,
                             };
-                            await finished(gulpESLintNew(options).resume().end(file));
+                            await finishStream(gulpESLintNew(options).end(file));
                             assert.equal(file.eslint.filePath, file.path);
                             assert(Array.isArray(file.eslint.messages));
                             assert.equal(file.eslint.messages.length, 1);
@@ -286,7 +286,7 @@ describe
                             const stream = gulpESLintNew(options);
                             stream.write(file1);
                             stream.write(file2);
-                            await finished(stream.resume().end());
+                            await finishStream(stream.end());
                             assert.equal(file1.eslint.filePath, file1.path);
                             assert(Array.isArray(file1.eslint.messages));
                             assert.equal(file1.eslint.messages.length, 1);
@@ -323,7 +323,7 @@ describe
                                 configType:         'flat',
                                 overrideConfigFile: true,
                             };
-                            await finished(gulpESLintNew(options).resume().end(file));
+                            await finishStream(gulpESLintNew(options).end(file));
                             assert.equal(file.eslint, undefined);
                         },
                     );
@@ -383,11 +383,10 @@ describe
                 async () =>
                 {
                     const file = createVinylFile('ignored.js', '(function () {ignore = abc;}});');
-                    await finished
+                    await finishStream
                     (
                         gulpESLintNew
                         ({ [ESLINT_KEY]: ESLint, useEslintrc: false, warnIgnored: true })
-                        .resume()
                         .end(file),
                     );
                     assert.equal(file.eslint.filePath, file.path);
@@ -425,7 +424,7 @@ describe
                         reportUnusedDisableDirectives:  'warn',
                         useEslintrc:                    false,
                     };
-                    await finished(gulpESLintNew(options).resume().end(file));
+                    await finishStream(gulpESLintNew(options).end(file));
                     assert.equal(file.eslint.filePath, file.path);
                     assert(Array.isArray(file.eslint.messages));
                     assert.equal(file.eslint.messages.length, 1);
@@ -448,7 +447,7 @@ describe
                 async () =>
                 {
                     const file = createVinylFile('file.js', '');
-                    await finished
+                    await finishStream
                     (
                         gulpESLintNew
                         (
@@ -459,7 +458,6 @@ describe
                                 useEslintrc:    false,
                             },
                         )
-                        .resume()
                         .end(file),
                     );
                     assert.equal(file.eslint.filePath, file.path);
@@ -535,12 +533,8 @@ describe
                         async () =>
                         {
                             const file = createVinylFile('semi/file.js', '$()');
-                            await finished
-                            (
-                                gulpESLintNew({ [ESLINT_KEY]: ESLint, useEslintrc: true })
-                                .resume()
-                                .end(file),
-                            );
+                            await finishStream
+                            (gulpESLintNew({ [ESLINT_KEY]: ESLint, useEslintrc: true }).end(file));
                             assert.equal(file.eslint.filePath, file.path);
                             assert(Array.isArray(file.eslint.messages));
                             assert.equal(file.eslint.messages.length, 1);
@@ -564,12 +558,8 @@ describe
                         async () =>
                         {
                             const file = createVinylFile('semi/file.js', '$()');
-                            await finished
-                            (
-                                gulpESLintNew({ [ESLINT_KEY]: ESLint, useEslintrc: false })
-                                .resume()
-                                .end(file),
-                            );
+                            await finishStream
+                            (gulpESLintNew({ [ESLINT_KEY]: ESLint, useEslintrc: false }).end(file));
                             assert.equal(file.eslint.filePath, file.path);
                             assert(isEmptyArray(file.eslint.messages));
                         },
@@ -586,7 +576,7 @@ describe
                     let emittedError;
                     await assert.rejects
                     (
-                        finished
+                        finishStream
                         (
                             gulpESLintNew
                             (
@@ -647,12 +637,7 @@ describe
             async () =>
             {
                 const file = createVinylFile('file.js', '$()');
-                await finished
-                (
-                    gulpESLintNew('semi/.eslintrc')
-                    .resume()
-                    .end(file),
-                );
+                await finishStream(gulpESLintNew('semi/.eslintrc').end(file));
                 assert.equal(file.eslint.filePath, file.path);
                 assert(Array.isArray(file.eslint.messages));
                 assert.equal(file.eslint.messages.length, 1);
@@ -771,10 +756,9 @@ describe
             async () =>
             {
                 const file = createVinylDirectory();
-                await finished
+                await finishStream
                 (
                     gulpESLintNew({ baseConfig: { rules: { 'strict': 2 } }, useEslintrc: false })
-                    .resume()
                     .end(file),
                 );
                 assert.equal(file.eslint, undefined);
@@ -790,7 +774,7 @@ describe
                 new VinylFile({ path: resolve('stream.js'), contents: Readable.from([]) });
                 await assert.rejects
                 (
-                    finished(gulpESLintNew({ useEslintrc: false }).end(file)),
+                    finishStream(gulpESLintNew({ useEslintrc: false }).end(file)),
                     {
                         message:
                         'gulp-eslint-new doesn\'t support Vinyl files with Stream contents.',
@@ -812,7 +796,7 @@ describe
                     {
                         const file =
                         createVinylFile('invalid.js', 'a = 01;\nb = 02; // eslint-disable-line');
-                        await finished
+                        await finishStream
                         (
                             gulpESLintNew
                             (
@@ -823,7 +807,6 @@ describe
                                     useEslintrc:    false,
                                 },
                             )
-                            .resume()
                             .end(file),
                         );
                         assert.equal(file.eslint.filePath, file.path);
@@ -849,7 +832,7 @@ describe
                     {
                         const file =
                         createVinylFile('invalid.js', 'a = 01;\nb = 02; // eslint-disable-line');
-                        await finished
+                        await finishStream
                         (
                             gulpESLintNew
                             (
@@ -860,7 +843,6 @@ describe
                                     useEslintrc:    false,
                                 },
                             )
-                            .resume()
                             .end(file),
                         );
                         assert.equal(file.eslint.filePath, file.path);
@@ -950,7 +932,7 @@ describe
                             configType:         'flat',
                             overrideConfigFile: true,
                         };
-                        await finished(gulpESLintNew(options).resume().end(file));
+                        await finishStream(gulpESLintNew(options).end(file));
                         assert.equal(file.eslint.filePath, file.path);
                         assert(Array.isArray(file.eslint.messages));
                         assert.equal(file.eslint.messages.length, 1);

@@ -19,7 +19,8 @@ exports.createVinylFile =
     return file;
 };
 
-exports.finished = promisify(finished);
+const finishedAsync = promisify(finished);
+exports.finishStream = async stream => await finishedAsync(stream.resume());
 
 // In some versions on Node.js, `assert.deepEqual(value, []);` does not throw an error if `value` is
 // undefined.

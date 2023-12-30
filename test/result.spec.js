@@ -1,10 +1,10 @@
 'use strict';
 
-const { ESLINT_KEY }                                    = require('#util');
-const { createVinylFile, finished, isEmptyArray, noop } = require('./test-util');
-const { strict: assert }                                = require('assert');
-const { promises: { realpath } }                        = require('fs');
-const gulpESLintNew                                     = require('gulp-eslint-new');
+const { ESLINT_KEY }                                        = require('#util');
+const { createVinylFile, finishStream, isEmptyArray, noop } = require('./test-util');
+const { strict: assert }                                    = require('assert');
+const { promises: { realpath } }                            = require('fs');
+const gulpESLintNew                                         = require('gulp-eslint-new');
 
 describe
 (
@@ -138,7 +138,7 @@ describe
                 file.eslint = { };
                 await assert.rejects
                 (
-                    finished
+                    finishStream
                     (
                         gulpESLintNew
                         .result
@@ -164,7 +164,7 @@ describe
                 file.eslint = { };
                 await assert.rejects
                 (
-                    finished
+                    finishStream
                     (
                         gulpESLintNew
                         .result
@@ -221,7 +221,7 @@ describe
                 let result;
                 const file = createVinylFile('invalid.js', '#invalid!syntax}');
                 file.eslint = { };
-                await finished
+                await finishStream
                 (
                     gulpESLintNew
                     .result
@@ -238,7 +238,6 @@ describe
                             );
                         },
                     )
-                    .resume()
                     .on('end', () => assert(result))
                     .end(file),
                 );
@@ -254,7 +253,7 @@ describe
                 let cwd;
                 const file = createVinylFile('invalid.js', '#invalid!syntax}');
                 file.eslint = { cwd: process.cwd() };
-                await finished
+                await finishStream
                 (
                     gulpESLintNew
                     .result
@@ -264,7 +263,6 @@ describe
                             cwd = await realpath(result.cwd);
                         },
                     )
-                    .resume()
                     .on('end', () => assert(cwd))
                     .end(file),
                 );
@@ -381,7 +379,7 @@ describe
                 file.eslint = { };
                 await assert.rejects
                 (
-                    finished
+                    finishStream
                     (
                         gulpESLintNew
                         .results
@@ -407,7 +405,7 @@ describe
                 file.eslint = { };
                 await assert.rejects
                 (
-                    finished
+                    finishStream
                     (
                         gulpESLintNew
                         .results
@@ -443,7 +441,7 @@ describe
             async () =>
             {
                 let results;
-                await finished
+                await finishStream
                 (
                     gulpESLintNew
                     .results
@@ -453,7 +451,6 @@ describe
                             results = actualResults;
                         },
                     )
-                    .resume()
                     .end(createVinylFile('invalid.js', '#invalid!syntax}')),
                 );
                 assert(isEmptyArray(results));
@@ -468,7 +465,7 @@ describe
                 let results;
                 const file = createVinylFile('invalid.js', '#invalid!syntax}');
                 file.eslint = { };
-                await finished
+                await finishStream
                 (
                     gulpESLintNew
                     .results
@@ -485,7 +482,6 @@ describe
                             );
                         },
                     )
-                    .resume()
                     .on('end', () => assert(results))
                     .end(file),
                 );
@@ -503,7 +499,7 @@ describe
                 let cwd;
                 const file = createVinylFile('invalid.js', '#invalid!syntax}');
                 file.eslint = { };
-                await finished
+                await finishStream
                 (
                     gulpESLintNew
                     .results
@@ -513,7 +509,6 @@ describe
                             cwd = await realpath(process.cwd());
                         },
                     )
-                    .resume()
                     .on('end', () => assert(cwd))
                     .end(file),
                 );

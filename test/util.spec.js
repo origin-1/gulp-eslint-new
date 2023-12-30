@@ -1,13 +1,13 @@
 'use strict';
 
-const util                                  = require('#util');
-const { createVinylFile, finished, noop }   = require('./test-util');
-const { strict: assert }                    = require('assert');
+const util                                      = require('#util');
+const { createVinylFile, finishStream, noop }   = require('./test-util');
+const { strict: assert }                        = require('assert');
 // eslint-disable-next-line n/no-deprecated-api
-const { Domain }                            = require('domain');
-const { resolve }                           = require('path');
-const { satisfies }                         = require('semver');
-const { Writable }                          = require('stream');
+const { Domain }                                = require('domain');
+const { resolve }                               = require('path');
+const { satisfies }                             = require('semver');
+const { Writable }                              = require('stream');
 
 describe
 (
@@ -309,7 +309,7 @@ describe
                         let actualFile;
                         let finishCalled = false;
                         const expectedFile = createVinylFile('invalid.js', 'x = 1;');
-                        await finished
+                        await finishStream
                         (
                             util
                             .createTransform
@@ -371,7 +371,6 @@ describe
                                 finalCount = count;
                             },
                         )
-                        .resume()
                         .on
                         (
                             'finish',
@@ -383,7 +382,7 @@ describe
                         );
                         files.forEach(file => testStream.write(file));
                         testStream.end();
-                        await finished(testStream);
+                        await finishStream(testStream);
                         assert(finishCalled);
                     },
                 );
