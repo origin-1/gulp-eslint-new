@@ -186,7 +186,7 @@ Type: `boolean`
 
 When `true`, this option will filter warning messages from ESLint results. This mimics the ESLint CLI [`--quiet` option](https://eslint.org/docs/user-guide/command-line-interface#--quiet).
 
-Type: `(message: string, index: number, list: Object[]) => unknown`
+Type: `(message: LintMessage, index: number, list: LintMessage[]) => unknown`
 
 When a function is provided, it will be used to filter ESLint result messages, removing any messages that do not return a `true` (or truthy) value.
 
