@@ -1,6 +1,6 @@
 'use strict';
 
-// npm install -D @eslint/eslintrc @eslint/js globals gulp gulp-eslint-new
+// npm install -D @eslint/eslintrc@2 @eslint/js@8 eslint@8 globals gulp gulp-eslint-new
 
 const globals         = require('globals');
 const { series, src } = require('gulp');
