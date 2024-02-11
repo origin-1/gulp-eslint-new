@@ -39,7 +39,7 @@
     "lint": "eslint . --format compact",
     "test": "mocha --check-leaks test/*.spec.js",
     "ts-test": "tsc --project test/tsconfig.json",
-    "version": "git add changelog.md"
+    "version": "git add CHANGELOG.md"
   },
   "dependencies": {
     "@types/eslint": "^8.56.0",
