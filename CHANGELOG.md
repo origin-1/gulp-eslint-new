@@ -1,3 +1,10 @@
+<a name="1.9.1"></a>
+## [1.9.1](https://github.com/origin-1/gulp-eslint-new/releases/tag/1.9.1) (2024-02-11)
+
+* Fixed the type of the option `quiet` in the readme file.
+* Clarified that the option `reportUnusedDisableDirectives` is unsupported with flat config.
+* Updated code examples.
+
 <a name="1.9.0"></a>
 ## [1.9.0](https://github.com/origin-1/gulp-eslint-new/releases/tag/1.9.0) (2023-12-16)
 
