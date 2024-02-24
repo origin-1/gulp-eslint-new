@@ -94,6 +94,6 @@ function tsTest(tsVersion, tsPkgName)
     return task;
 }
 
-task('ts-test', parallel(tsTest('4.2', 'typescript_4.2'), tsTest('5', 'typescript_5')));
+task('ts-test', parallel(tsTest('4.6', 'typescript_4.6'), tsTest('5', 'typescript_5')));
 
-task('default', series(parallel('clean', 'lint', 'ts-test'), 'test'));
+task('default', series('clean', parallel('lint', 'ts-test'), 'test'));

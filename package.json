@@ -1,7 +1,7 @@
 {
   "name": "gulp-eslint-new",
   "version": "1.9.1",
-  "description": "A gulp plugin to lint code with ESLint 8",
+  "description": "A gulp plugin to lint code with ESLint 8.",
   "keywords": [
     "gulpplugin",
     "eslint",
@@ -18,7 +18,6 @@
     "lint",
     "plugin"
   ],
-  "homepage": "https://github.com/origin-1/gulp-eslint-new#readme",
   "license": "MIT",
   "author": "Adametry",
   "files": [
@@ -42,7 +41,7 @@
     "version": "git add CHANGELOG.md"
   },
   "dependencies": {
-    "@types/eslint": "^8.56.0",
+    "@types/eslint": "^8.56.7",
     "@types/node": ">=12",
     "eslint": "8",
     "fancy-log": "^2.0.0",
@@ -52,8 +51,8 @@
     "vinyl-fs": "^4.0.0"
   },
   "devDependencies": {
-    "@eslint/js": "^8.56.0",
-    "@origin-1/eslint-config": "^0.22.1",
+    "@eslint/js": "^8.57.0",
+    "@origin-1/eslint-config": "^0.23.0",
     "c8js": "^0.6.2",
     "eslint-8.0": "npm:eslint@8.0",
     "eslint-8.21": "npm:eslint@8.21",
@@ -61,12 +60,12 @@
     "eslint-config-~shareable": "file:test/config",
     "eslint-formatter-~formatter": "file:test/formatter",
     "eslint-plugin-tsdoc": "^0.2.17",
-    "globals": "^13.24.0",
-    "gulp": "^4.0.2",
+    "globals": "^15.0.0",
+    "gulp": "^5.0.0",
     "mocha": "^9.2.2",
-    "typescript": "~5.3.3",
-    "typescript_4.2": "npm:typescript@4.2",
-    "typescript_5": "npm:typescript@^5.3.3",
+    "typescript": "~5.4.4",
+    "typescript_4.6": "npm:typescript@4.6",
+    "typescript_5": "npm:typescript@5",
     "vinyl": "^3.0.0"
   },
   "engines": {

@@ -407,13 +407,13 @@ describe
             {
                 const options =
                 {
-                    cache:                   true,
-                    cacheFile:               '\0',
-                    cacheLocation:           '\0',
-                    cacheStrategy:           'metadata',
-                    errorOnUnmatchedPattern: true,
-                    extensions:              [],
-                    globInputPaths:          false,
+                    cache:                      true,
+                    cacheFile:                  '\0',
+                    cacheLocation:              '\0',
+                    cacheStrategy:              'metadata',
+                    errorOnUnmatchedPattern:    true,
+                    extensions:                 [],
+                    globInputPaths:             false,
                 };
                 assert.throws
                 (

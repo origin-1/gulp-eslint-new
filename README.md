@@ -1,11 +1,11 @@
 # gulp-eslint-new · [![npm version][npm badge]][npm URL]
 
-> A [gulp](https://gulpjs.com/) plugin to lint code with [ESLint](https://eslint.org/) 8
+> A [gulp](https://gulpjs.com/) plugin to lint code with [ESLint](https://eslint.org/) 8.
 
 ## Installation
 
 Make sure that you are using a version of Node.js [supported by ESLint 8](https://eslint.org/docs/user-guide/getting-started#prerequisites).
-For TypeScript support, you need TypeScript 4.2 or later.
+For TypeScript support, you need TypeScript 4.6 or later.
 
 To install gulp-eslint-new, [use](https://docs.npmjs.com/cli/install) [npm](https://docs.npmjs.com/about-npm):
 
