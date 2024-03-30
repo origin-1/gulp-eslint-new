@@ -176,12 +176,18 @@ declare namespace gulpESLintNew
         | ((message: LintMessage, index: number, list: LintMessage[]) => unknown)
         | undefined;
 
+        ruleFilter?: ((rule: { ruleId: string; severity: Severity; }) => unknown) | undefined;
+
+        stats?: boolean | undefined;
+
         warnIgnored?: boolean | undefined;
     };
 
     type LoadedFormatter = eslint.LoadedFormatter;
 
     type ResultsMeta = eslint.ResultsMeta;
+
+    type Severity = eslint.Severity;
 }
 
 declare const gulpESLintNew: gulpESLintNew.GulpESLintNew;

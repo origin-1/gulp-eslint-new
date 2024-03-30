@@ -1,7 +1,7 @@
 {
   "name": "gulp-eslint-new",
   "version": "1.9.1",
-  "description": "A gulp plugin to lint code with ESLint 8.",
+  "description": "A gulp plugin to lint code with ESLint 8 and 9.",
   "keywords": [
     "gulpplugin",
     "eslint",
@@ -43,7 +43,7 @@
   "dependencies": {
     "@types/eslint": "^8.56.7",
     "@types/node": ">=12",
-    "eslint": "8",
+    "eslint": "8 || 9",
     "fancy-log": "^2.0.0",
     "plugin-error": "^2.0.1",
     "semver": "^7.6.0",
@@ -57,6 +57,7 @@
     "eslint-8.0": "npm:eslint@8.0",
     "eslint-8.21": "npm:eslint@8.21",
     "eslint-8.x": "npm:eslint@8.x",
+    "eslint-9.x": "npm:eslint@9.x",
     "eslint-config-~shareable": "file:test/config",
     "eslint-formatter-~formatter": "file:test/formatter",
     "eslint-plugin-tsdoc": "^0.2.17",

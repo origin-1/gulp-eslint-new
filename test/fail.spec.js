@@ -23,7 +23,14 @@ describe
             {
                 const file = createVinylFile('invalid.js', 'x = 1;');
                 const lintStream =
-                gulpESLintNew({ baseConfig: { rules: { 'no-undef': 2 } }, useEslintrc: false });
+                gulpESLintNew
+                (
+                    {
+                        baseConfig:     { rules: { 'no-undef': 2 } },
+                        configType:     'eslintrc',
+                        useEslintrc:    false,
+                    },
+                );
                 lintStream
                 .pipe(gulpESLintNew.failOnError())
                 .on
@@ -47,7 +54,13 @@ describe
             done =>
             {
                 gulpESLintNew
-                ({ baseConfig: { rules: { 'no-undef': 1, 'strict': 0 } }, useEslintrc: false })
+                (
+                    {
+                        baseConfig:     { rules: { 'no-undef': 1, 'strict': 0 } },
+                        configType:     'eslintrc',
+                        useEslintrc:    false,
+                    },
+                )
                 .pipe(gulpESLintNew.failOnError())
                 .on('error', done)
                 .on('finish', done)
@@ -82,7 +95,14 @@ describe
             done =>
             {
                 const lintStream =
-                gulpESLintNew({ baseConfig: { rules: { 'no-undef': 2 } }, useEslintrc: false });
+                gulpESLintNew
+                (
+                    {
+                        baseConfig:     { rules: { 'no-undef': 2 } },
+                        configType:     'eslintrc',
+                        useEslintrc:    false,
+                    },
+                );
                 lintStream
                 .pipe(gulpESLintNew.failAfterError())
                 .on
@@ -106,7 +126,14 @@ describe
             done =>
             {
                 const lintStream =
-                gulpESLintNew({ baseConfig: { rules: { 'no-undef': 2 } }, useEslintrc: false });
+                gulpESLintNew
+                (
+                    {
+                        baseConfig:     { rules: { 'no-undef': 2 } },
+                        configType:     'eslintrc',
+                        useEslintrc:    false,
+                    },
+                );
                 lintStream
                 .pipe(gulpESLintNew.failAfterError())
                 .on
@@ -130,7 +157,13 @@ describe
             done =>
             {
                 gulpESLintNew
-                ({ baseConfig: { rules: { 'no-undef': 1, strict: 0 } }, useEslintrc: false })
+                (
+                    {
+                        baseConfig:     { rules: { 'no-undef': 1, strict: 0 } },
+                        configType:     'eslintrc',
+                        useEslintrc:    false,
+                    },
+                )
                 .pipe(gulpESLintNew.failAfterError())
                 .on('error', done)
                 .on('finish', done)

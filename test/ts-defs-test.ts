@@ -8,6 +8,7 @@ import type
     GulpESLintWriter,
     LoadedFormatter,
     ResultsMeta,
+    Severity,
 }
 from '../lib/gulp-eslint-new';
 import type { ESLint }  from 'eslint';
@@ -64,6 +65,8 @@ gulpESLintNew
         overrideConfigFile: true,
         plugins:            { foo: { processors: { bar: { } } } },
         quiet:              true,
+        ruleFilter:         ({ ruleId, severity }): ('' | Severity) => ruleId && severity,
+        stats:              true,
         warnIgnored:        true,
     },
 );
@@ -104,16 +107,25 @@ gulpESLintNew({ extensions: undefined });
 gulpESLintNew({ globInputPaths: undefined });
 
 // @ts-expect-error Invalid option for eslintrc config.
-gulpESLintNew({ ignorePatterns: [] });
+gulpESLintNew({ configType: 'eslintrc', ignorePatterns: [] });
 
-// @ts-expect-error Invalid option for flat config.
-gulpESLintNew({ configType: 'flat', rules: undefined });
+// @ts-expect-error Invalid option type for eslintrc config.
+gulpESLintNew({ configType: 'eslintrc', overrideConfigFile: true });
+
+// @ts-expect-error Invalid option.
+gulpESLintNew({ passOnNoPatterns: undefined });
 
 // @ts-expect-error Invalid option for flat config.
 gulpESLintNew({ configType: 'flat', reportUnusedDisableDirectives: undefined });
 
-// @ts-expect-error Invalid option type for eslintrc config.
-gulpESLintNew({ overrideConfigFile: true });
+// @ts-expect-error Invalid option for eslintrc config.
+gulpESLintNew({ configType: 'eslintrc', ruleFilter: undefined });
+
+// @ts-expect-error Invalid option.
+gulpESLintNew({ rules: undefined });
+
+// @ts-expect-error Invalid option for eslintrc config.
+gulpESLintNew({ configType: 'eslintrc', stats: undefined });
 
 const isStream = (stream: NodeJS.ReadWriteStream): void => void stream;
 

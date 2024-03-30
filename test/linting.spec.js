@@ -1,8 +1,8 @@
 'use strict';
 
-const { ESLINT_KEY }        = require('#util');
+const { ESLINT_PKG }        = require('#util');
 
-const { createVinylDirectory, createVinylFile, finishStream, isEmptyArray } =
+const { createVinylDirectory, createVinylFile, finishStream, isESLint9Supported, isEmptyArray } =
 require('./test-util');
 
 const { strict: assert }    = require('assert');
@@ -15,7 +15,7 @@ const VinylFile             = require('vinyl');
 async function testConfig(options)
 {
     const filePath = 'file.js';
-    const file = createVinylFile(filePath, 'console.log(\'Hi\');;');
+    const file = createVinylFile(filePath, 'var foo = bar(\'Hi\');');
     await finishStream(gulpESLintNew(options).end(file));
     assert.equal(file.eslint.filePath, file.path);
     assert(Array.isArray(file.eslint.messages));
@@ -24,7 +24,7 @@ async function testConfig(options)
     assert.equal(typeof message1.message, 'string');
     assert.equal(message1.line, 1);
     assert.equal(typeof message1.column, 'number');
-    assert.equal(message1.ruleId, 'no-extra-semi');
+    assert.equal(message1.ruleId, 'no-unused-vars');
     assert.equal(message1.severity, 2);
     assert.equal(typeof message2.message, 'string');
     assert.equal(message2.line, 1);
@@ -38,10 +38,8 @@ describe
     'gulp-eslint-new plugin',
     () =>
     {
-        function testCommonLinting(ESLint)
+        function testCommonLinting(eslintPkg, useEslintrcConfig)
         {
-            const useEslintrcConfig = ESLint.name === 'ESLint';
-
             it
             (
                 'should produce an expected result',
@@ -52,19 +50,20 @@ describe
                     const options =
                     useEslintrcConfig ?
                     {
-                        [ESLINT_KEY]:   ESLint,
+                        [ESLINT_PKG]:   eslintPkg,
                         baseConfig:
-                        { rules: { 'no-var': 2, 'strict': [2, 'global'], 'valid-jsdoc': 1 } },
+                        { rules: { 'no-sync': 1, 'no-var': 2, 'strict': [2, 'global'] } },
+                        configType:     'eslintrc',
                         useEslintrc:    false,
                     } :
                     {
-                        [ESLINT_KEY]:       ESLint,
+                        [ESLINT_PKG]:       eslintPkg,
                         configType:         'flat',
                         overrideConfig:
                         {
                             languageOptions: { sourceType: 'script' },
                             rules:
-                            { 'no-var': 2, 'strict': [2, 'global'], 'valid-jsdoc': 1 },
+                            { 'no-sync': 1, 'no-var': 2, 'strict': [2, 'global'] },
                         },
                         overrideConfigFile: true,
                     };
@@ -78,16 +77,14 @@ describe
                     assert.equal(typeof message.column, 'number');
                     assert.equal(message.ruleId, 'no-var');
                     assert.equal(message.severity, 2);
-                    if (satisfies(ESLint.version, useEslintrcConfig ? '>=8.8' : '>=8.23'))
+                    const eslintVersion = file._eslintInfo.eslint.version;
+                    if (satisfies(eslintVersion, useEslintrcConfig ? '>=8.8' : '>=8.23'))
                     {
                         assert.equal(file.eslint.suppressedMessages.length, 1);
                         assert.equal(file.eslint.suppressedMessages[0].ruleId, 'strict');
                     }
                     assert.deepEqual
-                    (
-                        file.eslint.usedDeprecatedRules,
-                        [{ replacedBy: [], ruleId: 'valid-jsdoc' }],
-                    );
+                    (file.eslint.usedDeprecatedRules, [{ replacedBy: [], ruleId: 'no-sync' }]);
                 },
             );
 
@@ -104,8 +101,8 @@ describe
                             const overrideConfig = () => { };
                             const options =
                             useEslintrcConfig ?
-                            { [ESLINT_KEY]: ESLint, overrideConfig, useEslintrc: false } :
-                            { [ESLINT_KEY]: ESLint, configType: 'flat', overrideConfig };
+                            { [ESLINT_PKG]: eslintPkg, configType: 'eslintrc', overrideConfig } :
+                            { [ESLINT_PKG]: eslintPkg, configType: 'flat', overrideConfig };
                             assert.throws
                             (
                                 () => gulpESLintNew(options),
@@ -131,12 +128,13 @@ describe
                             const options =
                             useEslintrcConfig ?
                             {
-                                [ESLINT_KEY]:       ESLint,
+                                [ESLINT_PKG]:       eslintPkg,
+                                configType:         'eslintrc',
                                 overrideConfigFile: join(__dirname, 'config/eslintrc-config.js'),
                                 useEslintrc:        false,
                             } :
                             {
-                                [ESLINT_KEY]:       ESLint,
+                                [ESLINT_PKG]:       eslintPkg,
                                 configType:         'flat',
                                 overrideConfigFile: join(__dirname, 'config/flat-config.js'),
                             };
@@ -152,13 +150,14 @@ describe
                             const options =
                             useEslintrcConfig ?
                             {
-                                [ESLINT_KEY]:       ESLint,
+                                [ESLINT_PKG]:       eslintPkg,
+                                configType:         'eslintrc',
                                 cwd:                __dirname,
                                 overrideConfigFile: 'config/eslintrc-config.js',
                                 useEslintrc:        false,
                             } :
                             {
-                                [ESLINT_KEY]:       ESLint,
+                                [ESLINT_PKG]:       eslintPkg,
                                 configType:         'flat',
                                 cwd:                __dirname,
                                 overrideConfigFile: 'config/flat-config.js',
@@ -183,13 +182,14 @@ describe
                             const options =
                             useEslintrcConfig ?
                             {
-                                [ESLINT_KEY]:       ESLint,
+                                [ESLINT_PKG]:       eslintPkg,
                                 baseConfig:         { rules: { 'no-trailing-spaces': 2 } },
+                                configType:         'eslintrc',
                                 fix:                true,
                                 useEslintrc:        false,
                             } :
                             {
-                                [ESLINT_KEY]:       ESLint,
+                                [ESLINT_PKG]:       eslintPkg,
                                 configType:         'flat',
                                 fix:                true,
                                 overrideConfig:     { rules: { 'no-trailing-spaces': 2 } },
@@ -217,13 +217,14 @@ describe
                             const options =
                             useEslintrcConfig ?
                             {
-                                [ESLINT_KEY]:       ESLint,
+                                [ESLINT_PKG]:       eslintPkg,
                                 baseConfig:         { rules: { 'no-trailing-spaces': 2 } },
+                                configType:         'eslintrc',
                                 fix:                ({ line }) => line > 1,
                                 useEslintrc:        false,
                             } :
                             {
-                                [ESLINT_KEY]:       ESLint,
+                                [ESLINT_PKG]:       eslintPkg,
                                 configType:         'flat',
                                 fix:                ({ line }) => line > 1,
                                 overrideConfig:     { rules: { 'no-trailing-spaces': 2 } },
@@ -250,8 +251,8 @@ describe
                         {
                             const options =
                             useEslintrcConfig ?
-                            { [ESLINT_KEY]: ESLint, fix: null } :
-                            { [ESLINT_KEY]: ESLint, configType: 'flat', fix: null };
+                            { [ESLINT_PKG]: eslintPkg, configType: 'eslintrc', fix: null } :
+                            { [ESLINT_PKG]: eslintPkg, configType: 'flat', fix: null };
                             assert.throws
                             (
                                 () => gulpESLintNew(options),
@@ -265,7 +266,7 @@ describe
             );
         }
 
-        function testEslintrcLinting(ESLint)
+        function testEslintrcLinting(eslintPkg)
         {
             it
             (
@@ -276,7 +277,14 @@ describe
                     await finishStream
                     (
                         gulpESLintNew
-                        ({ [ESLINT_KEY]: ESLint, useEslintrc: false, warnIgnored: true })
+                        (
+                            {
+                                [ESLINT_PKG]:   eslintPkg,
+                                configType:     'eslintrc',
+                                useEslintrc:    false,
+                                warnIgnored:    true,
+                            },
+                        )
                         .end(file),
                     );
                     assert.equal(file.eslint.filePath, file.path);
@@ -310,7 +318,8 @@ describe
                     const file = createVinylFile('file.js', '// eslint-disable-line');
                     const options =
                     {
-                        [ESLINT_KEY]:                   ESLint,
+                        [ESLINT_PKG]:                   eslintPkg,
+                        configType:                     'eslintrc',
                         reportUnusedDisableDirectives:  'warn',
                         useEslintrc:                    false,
                     };
@@ -342,7 +351,8 @@ describe
                         gulpESLintNew
                         (
                             {
-                                [ESLINT_KEY]:   ESLint,
+                                [ESLINT_PKG]:   eslintPkg,
+                                configType:     'eslintrc',
                                 overrideConfig: { rules: { 'ok': 'error' } },
                                 rulePaths:      ['../custom-rules'],
                                 useEslintrc:    false,
@@ -368,9 +378,10 @@ describe
                             await testConfig
                             (
                                 {
-                                    [ESLINT_KEY]:   ESLint,
+                                    [ESLINT_PKG]:   eslintPkg,
                                     baseConfig:
                                     { extends: join(__dirname, 'config/eslintrc-config.js') },
+                                    configType:     'eslintrc',
                                     useEslintrc:    false,
                                 },
                             );
@@ -385,8 +396,9 @@ describe
                             await testConfig
                             (
                                 {
-                                    [ESLINT_KEY]:   ESLint,
+                                    [ESLINT_PKG]:   eslintPkg,
                                     baseConfig:     { extends: './config/eslintrc-config.js' },
+                                    configType:     'eslintrc',
                                     cwd:            __dirname,
                                     useEslintrc:    false,
                                 },
@@ -402,8 +414,9 @@ describe
                             await testConfig
                             (
                                 {
-                                    [ESLINT_KEY]:   ESLint,
+                                    [ESLINT_PKG]:   eslintPkg,
                                     baseConfig:     { extends: '~shareable/eslintrc-config' },
+                                    configType:     'eslintrc',
                                     useEslintrc:    false,
                                 },
                             );
@@ -424,7 +437,17 @@ describe
                         {
                             const file = createVinylFile('semi/file.js', '$()');
                             await finishStream
-                            (gulpESLintNew({ [ESLINT_KEY]: ESLint, useEslintrc: true }).end(file));
+                            (
+                                gulpESLintNew
+                                (
+                                    {
+                                        [ESLINT_PKG]:   eslintPkg,
+                                        configType:     'eslintrc',
+                                        useEslintrc:    true,
+                                    },
+                                )
+                                .end(file),
+                            );
                             assert.equal(file.eslint.filePath, file.path);
                             assert(Array.isArray(file.eslint.messages));
                             assert.equal(file.eslint.messages.length, 1);
@@ -449,7 +472,17 @@ describe
                         {
                             const file = createVinylFile('semi/file.js', '$()');
                             await finishStream
-                            (gulpESLintNew({ [ESLINT_KEY]: ESLint, useEslintrc: false }).end(file));
+                            (
+                                gulpESLintNew
+                                (
+                                    {
+                                        [ESLINT_PKG]:   eslintPkg,
+                                        configType:     'eslintrc',
+                                        useEslintrc:    false,
+                                    },
+                                )
+                                .end(file),
+                            );
                             assert.equal(file.eslint.filePath, file.path);
                             assert(isEmptyArray(file.eslint.messages));
                         },
@@ -471,9 +504,10 @@ describe
                             gulpESLintNew
                             (
                                 {
-                                    [ESLINT_KEY]:   ESLint,
-                                    overrideConfig: { plugins: [pluginName] },
-                                    useEslintrc:    false,
+                                    [ESLINT_PKG]:       eslintPkg,
+                                    configType:         'eslintrc',
+                                    overrideConfig:     { plugins: [pluginName] },
+                                    useEslintrc:        false,
                                 },
                             )
                             .on
@@ -531,7 +565,7 @@ describe
             async () =>
             {
                 const file = createVinylFile('file.js', '$()');
-                await finishStream(gulpESLintNew('semi/.eslintrc').end(file));
+                await finishStream(gulpESLintNew('semi/.eslintrc.js').end(file));
                 assert.equal(file.eslint.filePath, file.path);
                 assert(Array.isArray(file.eslint.messages));
                 assert.equal(file.eslint.messages.length, 1);
@@ -552,31 +586,11 @@ describe
 
         it
         (
-            'should set option "cwd" if undefined',
-            () =>
-            {
-                let actualCwd;
-                const ESLint =
-                function ({ cwd })
-                {
-                    actualCwd = cwd;
-                };
-                gulpESLintNew({ [ESLINT_KEY]: ESLint });
-                assert.equal(actualCwd, process.cwd());
-            },
-        );
-
-        it
-        (
             'should ignore files with null content',
             async () =>
             {
                 const file = createVinylDirectory();
-                await finishStream
-                (
-                    gulpESLintNew({ baseConfig: { rules: { 'strict': 2 } }, useEslintrc: false })
-                    .end(file),
-                );
+                await finishStream(gulpESLintNew().end(file));
                 assert.equal(file.eslint, undefined);
             },
         );
@@ -590,7 +604,7 @@ describe
                 new VinylFile({ path: resolve('stream.js'), contents: Readable.from([]) });
                 await assert.rejects
                 (
-                    finishStream(gulpESLintNew({ useEslintrc: false }).end(file)),
+                    finishStream(gulpESLintNew().end(file)),
                     {
                         message:
                         'gulp-eslint-new doesn\'t support Vinyl files with Stream contents.',
@@ -618,7 +632,8 @@ describe
                             (
                                 {
                                     baseConfig:
-                                    { rules: { 'no-octal': 2, 'no-undef': 1, 'valid-jsdoc': 1 } },
+                                    { rules: { 'no-octal': 2, 'no-undef': 1, 'semi-style': 1 } },
+                                    configType:     'eslintrc',
                                     quiet:          true,
                                     useEslintrc:    false,
                                 },
@@ -636,7 +651,7 @@ describe
                         assert.deepEqual
                         (
                             file.eslint.usedDeprecatedRules,
-                            [{ replacedBy: [], ruleId: 'valid-jsdoc' }],
+                            [{ replacedBy: [], ruleId: 'semi-style' }],
                         );
                     },
                 );
@@ -654,7 +669,11 @@ describe
                             (
                                 {
                                     baseConfig:
-                                    { rules: { 'no-octal': 2, 'no-undef': 1, 'valid-jsdoc': 1 } },
+                                    {
+                                        rules:
+                                        { 'no-octal': 2, 'no-undef': 1, 'semi-style': 1 },
+                                    },
+                                    configType:     'eslintrc',
                                     quiet:          ({ severity }) => severity === 1,
                                     useEslintrc:    false,
                                 },
@@ -672,7 +691,7 @@ describe
                         assert.deepEqual
                         (
                             file.eslint.usedDeprecatedRules,
-                            [{ replacedBy: [], ruleId: 'valid-jsdoc' }],
+                            [{ replacedBy: [], ruleId: 'semi-style' }],
                         );
                     },
                 );
@@ -704,7 +723,9 @@ describe
                     {
                         const file1 = createVinylFile('.git/file1.js', '');
                         const file2 = createVinylFile('node_modules/file2.js', '');
-                        const stream = gulpESLintNew({ useEslintrc: false, warnIgnored: true });
+                        const stream =
+                        gulpESLintNew
+                        ({ configType: 'eslintrc', useEslintrc: false, warnIgnored: true });
                         stream.write(file1);
                         stream.write(file2);
                         await finishStream(stream.end());
@@ -733,7 +754,8 @@ describe
                     async () =>
                     {
                         const file = createVinylFile('node_modules/file.js', '');
-                        await finishStream(gulpESLintNew({ useEslintrc: false }).end(file));
+                        await finishStream
+                        (gulpESLintNew({ configType: 'eslintrc', useEslintrc: false }).end(file));
                         assert.equal(file.eslint, undefined);
                     },
                 );
@@ -755,9 +777,8 @@ describe
             'with ESLint 8.0',
             () =>
             {
-                const { ESLint } = require('eslint-8.0');
-                testCommonLinting(ESLint);
-                testEslintrcLinting(ESLint);
+                testCommonLinting('eslint-8.0', true);
+                testEslintrcLinting('eslint-8.0');
             },
         );
 
@@ -766,9 +787,8 @@ describe
             'with ESLint 8.x',
             () =>
             {
-                const { ESLint } = require('eslint-8.x');
-                testCommonLinting(ESLint);
-                testEslintrcLinting(ESLint);
+                testCommonLinting('eslint-8.x', true);
+                testEslintrcLinting('eslint-8.x');
             },
         );
 
@@ -776,10 +796,7 @@ describe
         (
             'with FlatESLint 8.21',
             () =>
-            {
-                const { FlatESLint } = require('eslint-8.21/use-at-your-own-risk');
-                testCommonLinting(FlatESLint);
-            },
+            { testCommonLinting('eslint-8.21', false); },
         );
 
         describe
@@ -787,22 +804,19 @@ describe
             'with FlatESLint 8.x',
             () =>
             {
-                const { FlatESLint } = require('eslint-8.x/use-at-your-own-risk');
-                testCommonLinting(FlatESLint);
+                testCommonLinting('eslint-8.x', false);
 
                 it
                 (
                     '"reportUnusedDisableDirectives" linter option should be considered',
-                    async function ()
+                    async () =>
                     {
-                        if (!satisfies(FlatESLint.version, '>=8.56'))
-                            this.skip();
                         const file = createVinylFile('file.js', '// eslint-disable-line');
                         const options =
                         {
-                            [ESLINT_KEY]:       FlatESLint,
+                            [ESLINT_PKG]:       'eslint-8.x',
                             baseConfig:
-                            { linterOptions: { reportUnusedDisableDirectives: 1 } },
+                            { linterOptions: { reportUnusedDisableDirectives: true } },
                             configType:         'flat',
                             overrideConfigFile: true,
                         };
@@ -822,6 +836,58 @@ describe
                         assert.equal(message.severity, 1);
                     },
                 );
+            },
+        );
+
+        const describe_v9 = isESLint9Supported ? describe : describe.skip;
+
+        describe_v9
+        (
+            'with ESLint 9.x',
+            () =>
+            {
+                testCommonLinting('eslint-9.x', false);
+
+                it
+                (
+                    '"reportUnusedDisableDirectives" linter option should be considered',
+                    async () =>
+                    {
+                        const file = createVinylFile('file.js', '// eslint-disable-line');
+                        const options =
+                        {
+                            [ESLINT_PKG]:       'eslint-9.x',
+                            baseConfig:
+                            { linterOptions: { reportUnusedDisableDirectives: 'error' } },
+                            configType:         'flat',
+                            overrideConfigFile: true,
+                        };
+                        await finishStream(gulpESLintNew(options).end(file));
+                        assert.equal(file.eslint.filePath, file.path);
+                        assert(Array.isArray(file.eslint.messages));
+                        assert.equal(file.eslint.messages.length, 1);
+                        const [message] = file.eslint.messages;
+                        assert.equal
+                        (
+                            message.message,
+                            'Unused eslint-disable directive (no problems were reported).',
+                        );
+                        assert.equal(message.line, 1);
+                        assert.equal(message.column, 1);
+                        assert.equal(message.ruleId, null);
+                        assert.equal(message.severity, 2);
+                    },
+                );
+            },
+        );
+
+        describe_v9
+        (
+            'with LegacyESLint 9.x',
+            () =>
+            {
+                testCommonLinting('eslint-9.x', true);
+                testEslintrcLinting('eslint-9.x');
             },
         );
     },

@@ -1,9 +1,10 @@
 'use strict';
 
-// npm install -D gulp gulp-eslint-new
+// npm install -D eslint@8 gulp gulp-eslint-new
 
 const { src }       = require('gulp');
 const gulpESLintNew = require('gulp-eslint-new');
+const { join }      = require('path');
 
 const MAX_PROBLEMS = 1;
 
@@ -11,7 +12,7 @@ function lintResult()
 {
     // Be sure to return the stream; otherwise, you may not get a proper exit code.
     return src('demo/**/*.js')
-    .pipe(gulpESLintNew())
+    .pipe(gulpESLintNew({ cwd: join(__dirname, 'demo') }))
     .pipe(gulpESLintNew.formatEach())
     .pipe
     (
@@ -37,7 +38,7 @@ function lintResult()
 function lintResultAsync()
 {
     return src('demo/**/*.js')
-    .pipe(gulpESLintNew())
+    .pipe(gulpESLintNew({ cwd: join(__dirname, 'demo') }))
     .pipe(gulpESLintNew.formatEach())
     .pipe
     (
@@ -73,7 +74,7 @@ function lintResultAsync()
 function lintResults()
 {
     return src('demo/**/*.js')
-    .pipe(gulpESLintNew())
+    .pipe(gulpESLintNew({ cwd: join(__dirname, 'demo') }))
     .pipe(gulpESLintNew.format())
     .pipe
     (
@@ -94,7 +95,7 @@ function lintResults()
 function lintResultsAsync()
 {
     return src('demo/**/*.js')
-    .pipe(gulpESLintNew())
+    .pipe(gulpESLintNew({ cwd: join(__dirname, 'demo') }))
     .pipe(gulpESLintNew.format())
     .pipe
     (

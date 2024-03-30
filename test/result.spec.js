@@ -1,10 +1,13 @@
 'use strict';
 
-const { ESLINT_KEY }                                        = require('#util');
-const { createVinylFile, finishStream, isEmptyArray, noop } = require('./test-util');
-const { strict: assert }                                    = require('assert');
-const { promises: { realpath } }                            = require('fs');
-const gulpESLintNew                                         = require('gulp-eslint-new');
+const { ESLINT_PKG }                = require('#util');
+
+const { createVinylFile, finishStream, isESLint9Supported, isEmptyArray, noop } =
+require('./test-util');
+
+const { strict: assert }            = require('assert');
+const { promises: { realpath } }    = require('fs');
+const gulpESLintNew                 = require('gulp-eslint-new');
 
 describe
 (
@@ -16,27 +19,40 @@ describe
             'should provide an ESLint result',
             () =>
             {
-                function testResult(ESLint, done)
+                function testResult(eslintPkg, useEslintrcConfig, done)
                 {
                     let resultCount = 0;
-                    const lintStream =
-                    gulpESLintNew
-                    (
+                    const options =
+                    useEslintrcConfig ?
+                    {
+                        [ESLINT_PKG]:   eslintPkg,
+                        baseConfig:
                         {
-                            [ESLINT_KEY]:   ESLint,
-                            baseConfig:
+                            rules:
                             {
-                                rules:
-                                {
-                                    'camelcase':        1,              // not fixable
-                                    'no-extra-parens':  1,              // fixable
-                                    'no-undef':         2,              // not fixable
-                                    'quotes':           [2, 'single'],  // fixable
-                                },
+                                'camelcase':        1,              // not fixable
+                                'no-extra-parens':  1,              // fixable
+                                'no-undef':         2,              // not fixable
+                                'quotes':           [2, 'single'],  // fixable
                             },
-                            useEslintrc:    false,
                         },
-                    );
+                        useEslintrc:    false,
+                    } :
+                    {
+                        [ESLINT_PKG]:       eslintPkg,
+                        baseConfig:
+                        {
+                            rules:
+                            {
+                                'camelcase':        1,              // not fixable
+                                'no-extra-parens':  1,              // fixable
+                                'no-undef':         2,              // not fixable
+                                'quotes':           [2, 'single'],  // fixable
+                            },
+                        },
+                        overrideConfigFile: true,
+                    };
+                    const lintStream = gulpESLintNew(options);
                     const testDataList =
                     [
                         {
@@ -110,21 +126,21 @@ describe
                 it
                 (
                     'with ESLint 8.0',
-                    done =>
-                    {
-                        const { ESLint } = require('eslint-8.0');
-                        testResult(ESLint, done);
-                    },
+                    done => { testResult('eslint-8.0', true, done); },
                 );
 
                 it
                 (
                     'with ESLint 8.x',
-                    done =>
-                    {
-                        const { ESLint } = require('eslint-8.x');
-                        testResult(ESLint, done);
-                    },
+                    done => { testResult('eslint-8.x', true, done); },
+                );
+
+                const it_v9 = isESLint9Supported ? it : it.skip;
+
+                it_v9
+                (
+                    'with ESLint 9.x',
+                    done => { testResult('eslint-9.x', false, done); },
                 );
             },
         );
@@ -282,14 +298,14 @@ describe
             'should provide ESLint results',
             () =>
             {
-                function testResults(ESLint, done)
+                function testResults(eslintPkg, done)
                 {
                     let actualResults;
                     const lintStream =
                     gulpESLintNew
                     (
                         {
-                            [ESLINT_KEY]:   ESLint,
+                            [ESLINT_PKG]:   eslintPkg,
                             baseConfig:
                             {
                                 rules:
@@ -351,21 +367,13 @@ describe
                 it
                 (
                     'with ESLint 8.0',
-                    done =>
-                    {
-                        const { ESLint } = require('eslint-8.0');
-                        testResults(ESLint, done);
-                    },
+                    done => { testResults('eslint-8.0', done); },
                 );
 
                 it
                 (
                     'with ESLint 8.x',
-                    done =>
-                    {
-                        const { ESLint } = require('eslint-8.x');
-                        testResults(ESLint, done);
-                    },
+                    done => { testResults('eslint-8.x', done); },
                 );
             },
         );

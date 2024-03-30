@@ -61,3 +61,5 @@ interface ResultsMeta
         maxWarnings: number;
     };
 }
+
+type Severity = Linter.Severity;

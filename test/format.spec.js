@@ -102,7 +102,12 @@ describe
             const lintStream =
             gulpESLintNew
             (
-                { baseConfig: { rules: { 'strict': 2 } }, useEslintrc: false, warnIgnored: true },
+                {
+                    baseConfig:     { rules: { 'strict': 2 } },
+                    configType:     'eslintrc',
+                    useEslintrc:    false,
+                    warnIgnored:    true,
+                },
             );
             const testMessage = 'Writer Test Error';
             const testErrorName = 'TestError';
@@ -154,6 +159,7 @@ describe
                 (
                     {
                         baseConfig:     { rules: { 'strict': 2 } },
+                        configType:     'eslintrc',
                         useEslintrc:    false,
                         warnIgnored:    true,
                     },
@@ -192,6 +198,7 @@ describe
                 (
                     {
                         baseConfig:     { rules: { 'strict': 2 } },
+                        configType:     'eslintrc',
                         useEslintrc:    false,
                         warnIgnored:    true,
                     },
@@ -257,6 +264,7 @@ describe
                 (
                     {
                         baseConfig:     { rules: { 'strict': 2 } },
+                        configType:     'eslintrc',
                         useEslintrc:    false,
                         warnIgnored:    true,
                     },
@@ -339,7 +347,12 @@ describe
             const lintStream =
             gulpESLintNew
             (
-                { baseConfig: { rules: { 'strict': 2 } }, useEslintrc: false, warnIgnored: true },
+                {
+                    baseConfig:     { rules: { 'strict': 2 } },
+                    configType:     'eslintrc',
+                    useEslintrc:    false,
+                    warnIgnored:    true,
+                },
             );
             const testMessage = 'Writer Test Error';
             const testErrorName = 'TestError';
@@ -391,6 +404,7 @@ describe
                 (
                     {
                         baseConfig:     { rules: { 'strict': 2 } },
+                        configType:     'eslintrc',
                         useEslintrc:    false,
                         warnIgnored:    true,
                     },
@@ -430,6 +444,7 @@ describe
                 (
                     {
                         baseConfig:     { rules: { 'strict': 2 } },
+                        configType:     'eslintrc',
                         useEslintrc:    false,
                         warnIgnored:    true,
                     },
@@ -531,6 +546,7 @@ describe
                 (
                     {
                         baseConfig:     { rules: { 'strict': 2 } },
+                        configType:     'eslintrc',
                         useEslintrc:    false,
                         warnIgnored:    true,
                     },

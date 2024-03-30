@@ -1,9 +1,12 @@
 'use strict';
 
-// npm install -D eslint@8 gulp gulp-eslint-new
+// npm install -D @eslint/eslintrc@2 @eslint/js@8 eslint@8 globals gulp gulp-eslint-new
 
-const { series, src } = require('gulp');
-const gulpESLintNew   = require('gulp-eslint-new');
+const { readFileSync }  = require('fs');
+const globals           = require('globals');
+const { series, src }   = require('gulp');
+const gulpESLintNew     = require('gulp-eslint-new');
+const { join }          = require('path');
 
 /**
  * Simple example of using ESLint and a formatter.
@@ -16,7 +19,17 @@ function basic()
 {
     return src('demo/**/*.js')
     // Default: use local linting config.
-    .pipe(gulpESLintNew())
+    .pipe
+    (
+        gulpESLintNew
+        (
+            {
+                configType: 'flat',
+                // Directory containing "eslint.config.js".
+                cwd:        join(__dirname, 'demo'),
+            },
+        ),
+    )
     // Format ESLint results and print them to the console.
     .pipe(gulpESLintNew.format());
 }
@@ -34,6 +47,7 @@ function inlineConfig()
         gulpESLintNew
         (
             {
+                configType:         'flat',
                 overrideConfig:
                 {
                     rules:
@@ -63,10 +77,10 @@ function inlineConfig()
                         'quotes':               0,
                         'no-unreachable':       2,
                     },
-                    globals:    { $: 'readonly' },
-                    env:        { 'node': true },
+                    languageOptions: { globals: { $: 'readonly', ...globals.node } },
                 },
-                warnIgnored: true,
+                overrideConfigFile: 'demo/eslint.config.js',
+                warnIgnored:        true,
             },
         ),
     )
@@ -74,11 +88,39 @@ function inlineConfig()
 }
 
 /**
- * Load configuration file.
+ * Load eslintrc configuration file.
  *
  * @returns {NodeJS.ReadWriteStream} gulp file stream.
  */
 function loadConfig()
+{
+    const { FlatCompat } = require('@eslint/eslintrc');
+    const js = require('@eslint/js');
+    const compat =
+    new FlatCompat({ baseDirectory: __dirname, recommendedConfig: js.configs.recommended });
+    return src('demo/**/*.js')
+    .pipe
+    (
+        gulpESLintNew
+        (
+            {
+                configType:     'flat',
+                // Directory containing "eslint.config.js".
+                cwd:            join(__dirname, 'demo'),
+                // Load a specific eslintrc config.
+                overrideConfig: compat.config(require('./custom-config/eslintrc-config.json')),
+            },
+        ),
+    )
+    .pipe(gulpESLintNew.format());
+}
+
+/**
+ * Load flat configuration file.
+ *
+ * @returns {NodeJS.ReadWriteStream} gulp file stream.
+ */
+function loadFlatConfig()
 {
     return src('demo/**/*.js')
     .pipe
@@ -86,24 +128,12 @@ function loadConfig()
         gulpESLintNew
         (
             {
-                // Load a specific ESLint config.
-                overrideConfigFile: 'eslint-custom-config.json',
+                configType:         'flat',
+                // Load a specific flat config.
+                overrideConfigFile: 'custom-config/flat-config.js',
             },
         ),
     )
-    .pipe(gulpESLintNew.format());
-}
-
-/**
- * Shorthand way to load a configuration file.
- *
- * @returns {NodeJS.ReadWriteStream} gulp file stream.
- */
-function loadConfigShorthand()
-{
-    return src('demo/**/*.js')
-    // Load a specific ESLint config
-    .pipe(gulpESLintNew('eslint-custom-config.json'))
     .pipe(gulpESLintNew.format());
 }
 
@@ -118,14 +148,14 @@ module.exports =
         basic,
         inlineConfig,
         loadConfig,
-        loadConfigShorthand,
+        loadFlatConfig,
         async () => // eslint-disable-line require-await
         {
             console.log('All tasks completed successfully.');
         },
     ),
-    'basic':                    basic,
-    'inline-config':            inlineConfig,
-    'load-config':              loadConfig,
-    'load-config-shorthand':    loadConfigShorthand,
+    'basic':            basic,
+    'inline-config':    inlineConfig,
+    'load-config':      loadConfig,
+    'load-flat-config': loadFlatConfig,
 };

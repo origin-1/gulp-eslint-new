@@ -1,6 +1,6 @@
 'use strict';
 
-const { ESLINT_KEY, organizeOptions }   = require('#util');
+const { ESLINT_PKG, organizeOptions }   = require('#util');
 const { strict: assert }                = require('assert');
 
 describe
@@ -42,21 +42,6 @@ describe
             );
         }
 
-        function testCustomESLint(configType)
-        {
-            it
-            (
-                'should return a custom value for ESLint',
-                () =>
-                {
-                    const expected = { };
-                    const { ESLint: actual } =
-                    organizeOptions({ [ESLINT_KEY]: expected, configType });
-                    assert.equal(actual, expected);
-                },
-            );
-        }
-
         it
         (
             'should wrap a string config value into "overrideConfigFile"',
@@ -71,21 +56,13 @@ describe
         describe
         (
             'with "configType" "eslintrc"',
-            () =>
-            {
-                testCwd('eslintrc');
-                testCustomESLint('eslintrc');
-            },
+            () => { testCwd('eslintrc'); },
         );
 
         describe
         (
             'with "configType" "flat"',
-            () =>
-            {
-                testCwd('flat');
-                testCustomESLint('flat');
-            },
+            () => { testCwd('flat'); },
         );
 
         it
@@ -94,7 +71,8 @@ describe
             'with "configType" "flat"',
             () =>
             {
-                assert.throws(() => organizeOptions({ [ESLINT_KEY]: null, configType: 'flat' }));
+                assert.throws
+                (() => organizeOptions({ [ESLINT_PKG]: 'eslint-8.0', configType: 'flat' }));
             },
         );
 
@@ -112,6 +90,7 @@ describe
                     errorOnUnmatchedPattern:    true,
                     extensions:                 [],
                     globInputPaths:             false,
+                    passOnNoPatterns:           false,
                 };
                 assert.throws
                 (
