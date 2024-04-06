@@ -1,3 +1,12 @@
+<a name="2.0.0"></a>
+## [2.0.0](https://github.com/origin-1/gulp-eslint-new/releases/tag/2.0.0) (2024-04-06)
+
+First release of gulp-eslint-new 2 supporting both ESLint 8 and 9.
+* Added support for ESLint 9.
+* Legacy options are no longer converted into the new format.
+* TypeScript < 4.6 is no longer supported.
+* Reorganized code examples to make them work with both ESLint 8 and 9.
+
 <a name="1.9.1"></a>
 ## [1.9.1](https://github.com/origin-1/gulp-eslint-new/releases/tag/1.9.1) (2024-02-11)
 
