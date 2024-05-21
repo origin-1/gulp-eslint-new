@@ -20,6 +20,26 @@ jobs:
         npm run lint
         npm run ts-test
 
+  test-eslint-8-only:
+
+    name: test (Node.js ${{ matrix.node-version }})
+
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: ['12', '14', '16']
+
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
+    - run: |
+        npm ci
+        npm install eslint@8
+        npm test
+
   test:
 
     name: test (Node.js ${{ matrix.node-version }})
@@ -28,7 +48,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: ['12', '14', '16', '18', '20', '22']
+        node-version: ['18', '20', '22']
 
     steps:
     - uses: actions/checkout@v4

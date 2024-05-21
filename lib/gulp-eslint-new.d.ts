@@ -1,6 +1,6 @@
+import type { TransformCallback }   from 'node:stream';
 import type * as eslint             from './eslint';
 import 'node';
-import type { TransformCallback }   from 'stream';
 
 type Awaitable<T = unknown> = T | Promise<T>;
 

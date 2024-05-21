@@ -1,14 +1,14 @@
-import gulpESLintNew    from '../lib/gulp-eslint-new';
-import type
+import
+gulpESLintNew,
 {
-    FormatterContext,
-    FormatterFunction,
-    GulpESLintResult,
-    GulpESLintResults,
-    GulpESLintWriter,
-    LoadedFormatter,
-    ResultsMeta,
-    Severity,
+    type FormatterContext,
+    type FormatterFunction,
+    type GulpESLintResult,
+    type GulpESLintResults,
+    type GulpESLintWriter,
+    type LoadedFormatter,
+    type ResultsMeta,
+    type Severity,
 }
 from '../lib/gulp-eslint-new';
 import type { ESLint }  from 'eslint';

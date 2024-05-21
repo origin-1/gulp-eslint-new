@@ -2,7 +2,6 @@
 
 // npm install -D @eslint/eslintrc@2 @eslint/js@8 eslint@8 globals gulp gulp-eslint-new
 
-const { readFileSync }  = require('fs');
 const globals           = require('globals');
 const { series, src }   = require('gulp');
 const gulpESLintNew     = require('gulp-eslint-new');

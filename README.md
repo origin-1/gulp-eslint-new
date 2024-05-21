@@ -5,7 +5,7 @@
 ## Installation
 
 Make sure that you are using a version of Node.js supported by your version of ESLint.
-See prerequisites for [ESLint 8](https://eslint.org/docs/v8.x/use/getting-started#prerequisites) and [ESLint 9](https://eslint.org/docs/latest/use/getting-started#prerequisites).
+See prerequisites for [ESLint 8](https://eslint.org/docs/v8.x/use/getting-started#prerequisites) and [ESLint 9](https://eslint.org/docs/v9.x/use/getting-started#prerequisites).
 For TypeScript support, you need TypeScript 4.6 or later.
 
 To install gulp-eslint-new, [use](https://docs.npmjs.com/cli/install) [npm](https://docs.npmjs.com/about-npm):
@@ -363,11 +363,11 @@ If this argument is `undefined`, a modified version of the ESLint "stylish" form
 // Use the default gulp-eslint-new formatter.
 gulpESLintNew.format()
 
-// Use the "checkstyle" ESLint formatter.
-gulpESLintNew.format('checkstyle')
+// Use the "html" ESLint formatter.
+gulpESLintNew.format('html')
 
 // Use "eslint-formatter-pretty" as a formatter (must be installed with `npm`).
-// See https://github.com/sindresorhus/eslint-formatter-pretty.
+// See https://www.npmjs.com/package/eslint-formatter-pretty.
 gulpESLintNew.format('pretty')
 ```
 
