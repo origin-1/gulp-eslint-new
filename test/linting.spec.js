@@ -281,6 +281,7 @@ describe
                             {
                                 [ESLINT_PKG]:   eslintPkg,
                                 configType:     'eslintrc',
+                                cwd:            resolve('eslintignore'),
                                 useEslintrc:    false,
                                 warnIgnored:    true,
                             },
