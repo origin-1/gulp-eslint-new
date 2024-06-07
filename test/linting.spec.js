@@ -33,6 +33,31 @@ async function testConfig(options)
     assert.equal(message2.severity, 2);
 }
 
+async function testIgnoreByPath(options, dataList)
+{
+    const stream = gulpESLintNew(options);
+    for (const data of dataList)
+    {
+        const file = data.file =
+        createVinylFile(join('__CWD__', data.filePath), '');
+        stream.write(file);
+    }
+    await finishStream(stream.end());
+    for (const { file, filePath, expectdMessage } of dataList)
+    {
+        const message = `for file "${filePath}"`;
+        assert.equal(file.eslint.filePath, file.path, message);
+        assert(Array.isArray(file.eslint.messages, message));
+        assert.equal(file.eslint.messages.length, 1, message);
+        assert.equal(file.eslint.messages[0].message, expectdMessage, message);
+        assert.equal(file.eslint.errorCount, 0, message);
+        assert.equal(file.eslint.warningCount, 1, message);
+        assert.equal(file.eslint.fixableErrorCount, 0, message);
+        assert.equal(file.eslint.fixableWarningCount, 0, message);
+        assert.equal(file.eslint.fatalErrorCount, 0, message);
+    }
+}
+
 describe
 (
     'gulp-eslint-new plugin',
@@ -270,44 +295,100 @@ describe
         {
             it
             (
-                'should ignore a file ignored by .eslintignore',
+                'should ignore files by path',
                 async () =>
                 {
-                    const file = createVinylFile('ignored.js', '(function () {ignore = abc;}});');
-                    await finishStream
+                    const options =
+                    {
+                        [ESLINT_PKG]:       eslintPkg,
+                        configType:         'eslintrc',
+                        cwd:                resolve('__CWD__'),
+                        baseConfig:         { ignorePatterns: ['ignored-*'] },
+                        useEslintrc:        false,
+                        warnIgnored:        true,
+                    };
+                    const dataList =
+                    [
+                        {
+                            filePath: '.git/file1.js',
+                            expectdMessage:
+                            'File ignored by default. Use a negated ignore pattern (like ' +
+                            '"!<relative/path/to/filename>") to override.',
+                        },
+                        {
+                            filePath: 'node_modules/file2.js',
+                            expectdMessage:
+                            'File ignored by default. Use a negated ignore pattern like ' +
+                            '"!**/node_modules/*" to override.',
+                        },
+                        {
+                            filePath: 'node_modules_bak/ignored-file3.js',
+                            expectdMessage:
+                            'File ignored because of a matching ignore pattern. Set "ignore" ' +
+                            'option to false to override.',
+                        },
+                        {
+                            filePath: '.file4.js',
+                            expectdMessage:
+                            'File ignored by default. Use a negated ignore pattern (like ' +
+                            '"!<relative/path/to/filename>") to override.',
+                        },
+                    ];
+                    await testIgnoreByPath(options, dataList);
+                },
+            );
+
+            describe
+            (
+                '.eslintignore',
+                () =>
+                {
+                    it
                     (
-                        gulpESLintNew
-                        (
-                            {
-                                [ESLINT_PKG]:   eslintPkg,
-                                configType:     'eslintrc',
-                                cwd:            resolve('eslintignore'),
-                                useEslintrc:    false,
-                                warnIgnored:    true,
-                            },
-                        )
-                        .end(file),
+                        'should ignore a file',
+                        async () =>
+                        {
+                            const file = createVinylFile('ignored.js', '');
+                            await finishStream
+                            (
+                                gulpESLintNew
+                                (
+                                    {
+                                        [ESLINT_PKG]:   eslintPkg,
+                                        configType:     'eslintrc',
+                                        cwd:            resolve('eslintignore'),
+                                        useEslintrc:    false,
+                                    },
+                                )
+                                .end(file),
+                            );
+                            assert(!file.eslint);
+                        },
                     );
-                    assert.equal(file.eslint.filePath, file.path);
-                    assert(Array.isArray(file.eslint.messages));
-                    assert.deepEqual
+
+                    it
                     (
-                        file.eslint.messages,
-                        [
-                            {
-                                fatal:      false,
-                                message:
-                                'File ignored because of a matching ignore pattern. Set "ignore" ' +
-                                'option to false to override.',
-                                severity:   1,
-                            },
-                        ],
+                        'should unignore a file',
+                        async () =>
+                        {
+                            const file =
+                            createVinylFile('project/node_modules/dependency/index.js', '');
+                            await finishStream
+                            (
+                                gulpESLintNew
+                                (
+                                    {
+                                        [ESLINT_PKG]:   eslintPkg,
+                                        configType:     'eslintrc',
+                                        cwd:            resolve('eslintignore'),
+                                        useEslintrc:    false,
+                                    },
+                                )
+                                .end(file),
+                            );
+                            assert(file.eslint);
+                        },
                     );
-                    assert.equal(file.eslint.errorCount, 0);
-                    assert.equal(file.eslint.warningCount, 1);
-                    assert.equal(file.eslint.fixableErrorCount, 0);
-                    assert.equal(file.eslint.fixableWarningCount, 0);
-                    assert.equal(file.eslint.fatalErrorCount, 0);
                 },
             );
 
@@ -540,6 +621,81 @@ describe
             );
         }
 
+        function testFlatLinting(eslintPkg)
+        {
+            it
+            (
+                'should ignore files by path',
+                async () =>
+                {
+                    const options =
+                    {
+                        [ESLINT_PKG]:       eslintPkg,
+                        configType:         'flat',
+                        cwd:                resolve('__CWD__'),
+                        overrideConfigFile: true,
+                        warnIgnored:        true,
+                    };
+                    const dataList =
+                    [
+                        {
+                            filePath: '.git/file1.js',
+                            expectdMessage:
+                            'File ignored. If this file is matched by a global ignore pattern, ' +
+                            'it can be unignored by setting the "ignore" option to false.',
+                        },
+                        {
+                            filePath: 'node_modules/file2.js',
+                            expectdMessage:
+                            'File ignored by default because it is located under the ' +
+                            'node_modules directory. Use ignore pattern "!**/node_modules/**" to ' +
+                            'override.',
+                        },
+                        {
+                            filePath: 'node_modules_bak/file3',
+                            expectdMessage:
+                            'File ignored. If this file is matched by a global ignore pattern, ' +
+                            'it can be unignored by setting the "ignore" option to false.',
+                        },
+                        {
+                            filePath:       '../file4.js',
+                            expectdMessage: 'File ignored because outside of base path.',
+                        },
+                        {
+                            filePath: 'file5.ts',
+                            expectdMessage:
+                            'File ignored. If this file is matched by a global ignore pattern, ' +
+                            'it can be unignored by setting the "ignore" option to false.',
+                        },
+                    ];
+                    await testIgnoreByPath(options, dataList);
+                },
+            );
+
+            it
+            (
+                'should unignore a file',
+                async () =>
+                {
+                    const file = createVinylFile('project/node_modules/dependency/index.js', '');
+                    await finishStream
+                    (
+                        gulpESLintNew
+                        (
+                            {
+                                [ESLINT_PKG]:       eslintPkg,
+                                configType:         'flat',
+                                overrideConfig:     { ignores: ['!**/node_modules/**'] },
+                                overrideConfigFile: true,
+                            },
+                        )
+                        .end(file),
+                    );
+                    assert(file.eslint);
+                },
+            );
+        }
+
         let originalCwd;
 
         beforeEach
@@ -719,38 +875,6 @@ describe
             {
                 it
                 (
-                    'when true, should warn about ignored files',
-                    async () =>
-                    {
-                        const file1 = createVinylFile('.git/file1.js', '');
-                        const file2 = createVinylFile('node_modules/file2.js', '');
-                        const stream =
-                        gulpESLintNew
-                        ({ configType: 'eslintrc', useEslintrc: false, warnIgnored: true });
-                        stream.write(file1);
-                        stream.write(file2);
-                        await finishStream(stream.end());
-                        assert.equal(file1.eslint.filePath, file1.path);
-                        assert(Array.isArray(file1.eslint.messages));
-                        assert.equal(file1.eslint.messages.length, 1);
-                        assert.equal(file1.eslint.errorCount, 0);
-                        assert.equal(file1.eslint.warningCount, 1);
-                        assert.equal(file1.eslint.fixableErrorCount, 0);
-                        assert.equal(file1.eslint.fixableWarningCount, 0);
-                        assert.equal(file1.eslint.fatalErrorCount, 0);
-                        assert.equal(file2.eslint.filePath, file2.path);
-                        assert(Array.isArray(file2.eslint.messages));
-                        assert.equal(file2.eslint.messages.length, 1);
-                        assert.equal(file2.eslint.errorCount, 0);
-                        assert.equal(file2.eslint.warningCount, 1);
-                        assert.equal(file2.eslint.fixableErrorCount, 0);
-                        assert.equal(file2.eslint.fixableWarningCount, 0);
-                        assert.equal(file2.eslint.fatalErrorCount, 0);
-                    },
-                );
-
-                it
-                (
                     'when not specified, should not warn about an ignored file',
                     async () =>
                     {
@@ -797,7 +921,10 @@ describe
         (
             'with FlatESLint 8.21',
             () =>
-            { testCommonLinting('eslint-8.21', false); },
+            {
+                testCommonLinting('eslint-8.21', false);
+                testFlatLinting('eslint-8.21');
+            },
         );
 
         describe
@@ -806,6 +933,7 @@ describe
             () =>
             {
                 testCommonLinting('eslint-8.x', false);
+                testFlatLinting('eslint-8.x');
 
                 it
                 (
@@ -848,6 +976,7 @@ describe
             () =>
             {
                 testCommonLinting('eslint-9.x', false);
+                testFlatLinting('eslint-9.x');
 
                 it
                 (

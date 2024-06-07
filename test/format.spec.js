@@ -1,10 +1,10 @@
 'use strict';
 
-const { createVinylDirectory, createVinylFile, noop } = require('./test-util');
-const { strict: assert }                              = require('assert');
-const gulpESLintNew                                   = require('gulp-eslint-new');
-const PluginError                                     = require('plugin-error');
-const { PassThrough }                                 = require('stream');
+const { createVinylDirectory, createVinylFile, noop }   = require('./test-util');
+const { strict: assert }                                = require('assert');
+const gulpESLintNew                                     = require('gulp-eslint-new');
+const PluginError                                       = require('plugin-error');
+const { PassThrough }                                   = require('stream');
 
 let formatCount;
 
