@@ -58,6 +58,33 @@ async function testIgnoreByPath(options, dataList)
     }
 }
 
+async function testIgnoreExternal(eslintPkg, baseDir, filePath)
+{
+    const file = createVinylFile(filePath, '');
+    const stream =
+    gulpESLintNew
+    (
+        {
+            [ESLINT_PKG]:       eslintPkg,
+            configType:         'flat',
+            cwd:                baseDir,
+            overrideConfigFile: true,
+            warnIgnored:        true,
+        },
+    )
+    .end(file);
+    await finishStream(stream);
+    assert.equal(file.eslint.filePath, filePath);
+    assert(Array.isArray(file.eslint.messages));
+    assert.equal(file.eslint.messages.length, 1);
+    assert.equal(file.eslint.messages[0].message, 'File ignored because outside of base path.');
+    assert.equal(file.eslint.errorCount, 0);
+    assert.equal(file.eslint.warningCount, 1);
+    assert.equal(file.eslint.fixableErrorCount, 0);
+    assert.equal(file.eslint.fixableWarningCount, 0);
+    assert.equal(file.eslint.fatalErrorCount, 0);
+}
+
 describe
 (
     'gulp-eslint-new plugin',
@@ -669,6 +696,44 @@ describe
                         },
                     ];
                     await testIgnoreByPath(options, dataList);
+                },
+            );
+
+            describe
+            (
+                'should ignore a file on a different drive',
+                () =>
+                {
+                    if (process.platform !== 'win32')
+                        return;
+
+                    it
+                    (
+                        'local base path, local file',
+                        () => testIgnoreExternal(eslintPkg, 'C:\\Project', 'D:\\Project\\file.js'),
+                    );
+
+                    it
+                    (
+                        'local base path, network file',
+                        () =>
+                        testIgnoreExternal(eslintPkg, 'C:\\Project', '\\\\NAS\\Share\\file.js'),
+                    );
+
+                    it
+                    (
+                        'network base path, local file',
+                        () =>
+                        testIgnoreExternal(eslintPkg, '\\\\NAS\\Share', 'C:\\Project\\file.js'),
+                    );
+
+                    it
+                    (
+                        'network base path, network file',
+                        () =>
+                        testIgnoreExternal
+                        (eslintPkg, '\\\\server1\\dir', '\\\\server2\\dir\\file.js'),
+                    );
                 },
             );
 
