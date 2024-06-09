@@ -36,9 +36,9 @@
     "build": "npm install && gulp",
     "coverage": "gulp test",
     "lint": "eslint . --format compact",
+    "release": "git add CHANGELOG.md && npm version -f",
     "test": "mocha --check-leaks test/*.spec.js",
-    "ts-test": "tsc --project test/tsconfig.json",
-    "version": "git add CHANGELOG.md"
+    "ts-test": "tsc --project test/tsconfig.json"
   },
   "dependencies": {
     "@types/eslint": "^8.56.10",
