@@ -1,3 +1,9 @@
+<a name="2.1.0"></a>
+## [2.1.0](https://github.com/origin-1/gulp-eslint-new/releases/tag/2.1.0) (2024-06-09)
+
+* Fixed and updated warning messages for ignored files.
+* Updated code examples and documentation.
+
 <a name="2.0.0"></a>
 ## [2.0.0](https://github.com/origin-1/gulp-eslint-new/releases/tag/2.0.0) (2024-04-06)
 
