@@ -120,6 +120,9 @@ See the linked content for details about each option.
 * [`quiet`](#optionsquiet)
 * [`warnIgnored`](#optionswarnignored)
 
+**Other options**
+* [`flags`][other options]
+
 #### General Options
 
 ##### `options.configType`
@@ -431,5 +434,6 @@ The functions [`gulpESLintNew.result`](#gulpeslintnewresultaction) and [`gulpESL
 [gulp-eslint]: https://github.com/adametry/gulp-eslint
 [legacy linting options]: https://eslint.org/docs/v8.x/integrate/nodejs-api#linting
 [linting options]: https://eslint.org/docs/latest/integrate/nodejs-api#linting
-[npm badge]: https://img.shields.io/npm/v/gulp-eslint-new?logo=npm
 [npm URL]: https://www.npmjs.com/package/gulp-eslint-new
+[npm badge]: https://img.shields.io/npm/v/gulp-eslint-new?logo=npm
+[other options]: https://eslint.org/docs/latest/integrate/nodejs-api#other-options

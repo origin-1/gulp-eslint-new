@@ -16,6 +16,7 @@ Omit<
 {
     baseConfig?:                    Linter.Config | null | undefined;
     fixTypes?:                      Rule.RuleMetaData['type'][] | null | undefined;
+    flags?:                         string[] | undefined;
     overrideConfig?:                Linter.Config | null | undefined;
     overrideConfigFile?:            string | null | undefined;
     plugins?:                       Record<string, ESLint.Plugin> | null | undefined;

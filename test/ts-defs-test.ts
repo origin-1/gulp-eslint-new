@@ -18,6 +18,7 @@ gulpESLintNew
     {
         baseConfig:                     null,
         fixTypes:                       null,
+        flags:                          undefined,
         overrideConfig:                 null,
         overrideConfigFile:             null,
         plugins:                        null,
@@ -34,6 +35,7 @@ gulpESLintNew
         cwd:                            'cwd',
         fix:                            true,
         fixTypes:                       ['problem'],
+        flags:                          ['flag'],
         ignore:                         false,
         overrideConfig:                 { env: { } },
         overrideConfigFile:             'overrideConfigFile',
@@ -55,6 +57,7 @@ gulpESLintNew
         cwd:                'cwd',
         fix:                true,
         fixTypes:           ['problem'],
+        flags:              ['flag'],
         ignore:             false,
         ignorePatterns:     ['ignored.js'],
         overrideConfig:
@@ -81,6 +84,7 @@ void
             configType,
             allowInlineConfig:          false,
             baseConfig:                 { rules: { } },
+            flags:                      ['flag'],
             ignorePatterns,
             resolvePluginsRelativeTo:   'resolvePluginsRelativeTo',
             rulePaths,

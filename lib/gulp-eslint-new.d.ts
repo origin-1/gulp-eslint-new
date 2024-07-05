@@ -159,6 +159,7 @@ declare namespace gulpESLintNew
         | 'cwd'
         | 'fix'
         | 'fixTypes'
+        | 'flags'
         | 'ignore'
         | 'plugins'
     > &
