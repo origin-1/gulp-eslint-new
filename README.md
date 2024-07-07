@@ -53,21 +53,41 @@ src(['scripts/*.js'])                   // Read files.
 Or use the plugin API to do things like:
 
 ```javascript
-gulp.src(['**/*.js', '!node_modules/**'])
+// gulpfile.mjs
+import js               from '@eslint/js';
+import jquery           from 'eslint-plugin-jquery';
+import globals          from 'globals';
+import gulp             from 'gulp';
+import gulpESLintNew    from 'gulp-eslint-new';
+
+export default
+() =>
+gulp.src(['**/*.{js,mjs}', '!node_modules/**'])
 .pipe
 (
     gulpESLintNew
     (
         {
+            configType:     'flat',
             overrideConfig:
-            {
-                env:        { browser: true, commonjs: true, jquery: true },
-                extends:    ['eslint:recommended', 'plugin:jquery/slim'],
-                globals:    { chrome: 'readonly' },
-                plugins:    ['jquery'],
-                rules:      { 'strict': 'error' },
-            },
-            warnIgnored: true,
+            [
+                js.configs.recommended,
+                jquery.configs.slim,
+                {
+                    languageOptions:
+                    {
+                        globals:
+                        {
+                            ...globals.browser,
+                            ...globals.jquery,
+                            chrome: 'readonly',
+                        },
+                    },
+                    rules:  { 'strict': 'error' },
+                },
+            ],
+            plugins:        { jquery },
+            warnIgnored:    true,
         },
     ),
 )
