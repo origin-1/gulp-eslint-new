@@ -113,8 +113,9 @@ declare namespace gulpESLintNew
     }
 
     type GulpESLintOptions =
-    (GulpESLintrcOptions & { configType?: 'eslintrc' | null | undefined; }) |
-    (GulpFlatESLintOptions & { configType: 'flat'; });
+    | ((GulpESLintrcOptions | GulpFlatESLintOptions) & { configType?: null | undefined; })
+    | (GulpESLintrcOptions & { configType: 'eslintrc'; })
+    | (GulpFlatESLintOptions & { configType: 'flat'; });
 
     type GulpESLintResult = eslint.LintResult;
 

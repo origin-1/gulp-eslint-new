@@ -26,6 +26,25 @@ gulpESLintNew
     },
 );
 
+{
+    let configType!: undefined | null;
+    gulpESLintNew
+    ({ configType, ignorePatterns: undefined, ruleFilter: undefined, stats: undefined });
+}
+
+{
+    let configType!: undefined | null;
+    gulpESLintNew
+    (
+        {
+            configType,
+            reportUnusedDisableDirectives:  undefined,
+            resolvePluginsRelativeTo:       undefined,
+            rulePaths:                      undefined,
+        },
+    );
+}
+
 gulpESLintNew
 (
     {
