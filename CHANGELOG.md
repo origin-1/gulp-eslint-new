@@ -1,3 +1,10 @@
+<a name="2.2.0"></a>
+## [2.2.0](https://github.com/origin-1/gulp-eslint-new/releases/tag/2.2.0) (2024-07-08)
+
+* Updated TypeScript type declarations for ESLint 9 compatibility.
+* Added support for option `flags`, new in ESLint 9.6.
+* Improved readme file.
+
 <a name="2.1.0"></a>
 ## [2.1.0](https://github.com/origin-1/gulp-eslint-new/releases/tag/2.1.0) (2024-06-09)
 
