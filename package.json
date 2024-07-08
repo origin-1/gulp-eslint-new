@@ -52,7 +52,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^8.57.0",
-    "@origin-1/eslint-config": "^1.3.0",
+    "@origin-1/eslint-config": "^1.4.0",
     "c8js": "^0.7.0",
     "eslint-8.0": "npm:eslint@8.0",
     "eslint-8.21": "npm:eslint@8.21",
@@ -62,10 +62,10 @@
     "eslint-formatter-~formatter": "file:test/formatter",
     "eslint-formatter-compact": "^8.40.0",
     "eslint-plugin-tsdoc": "^0.3.0",
-    "globals": "^15.4.0",
+    "globals": "^15.8.0",
     "gulp": "^5.0.0",
     "mocha": "^9.2.2",
-    "typescript": "~5.4.5",
+    "typescript": "~5.5.3",
     "typescript_4.6": "npm:typescript@4.6",
     "typescript_5": "npm:typescript@5",
     "vinyl": "^3.0.0"

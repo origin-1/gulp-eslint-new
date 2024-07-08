@@ -164,7 +164,7 @@ void
     (
         action:
         | ((result: GulpESLintResult) => Promise<void>)
-        | ((result: GulpESLintResult, callback: Function) => void),
+        | ((result: GulpESLintResult, callback: (err: Error | null) => void) => void),
     ):
     NodeJS.ReadWriteStream =>
     gulpESLintNew.result(action)
@@ -182,7 +182,7 @@ void
     (
         action:
         | ((results: GulpESLintResults) => Promise<void>)
-        | ((results: GulpESLintResults, callback: Function) => void),
+        | ((results: GulpESLintResults, callback: (err: Error | null) => void) => void),
     ):
     NodeJS.ReadWriteStream =>
     gulpESLintNew.results(action)
