@@ -100,7 +100,7 @@ For additional examples, look through the [example directory](https://github.com
 
 ### `gulpESLintNew()`
 
-Run ESLint with default settings. A [configuration file](https://eslint.org/docs/user-guide/configure/configuration-files) may be resolved relative to each linted file.
+Run ESLint with default settings. A [configuration file](https://eslint.org/docs/user-guide/configure/configuration-files) will be resolved depending on the version of ESLint used.
 
 ### `gulpESLintNew(options)`
 
