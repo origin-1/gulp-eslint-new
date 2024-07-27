@@ -3,26 +3,26 @@ gulpESLintNew,
 {
     type FormatterContext,
     type FormatterFunction,
-    type GulpESLintResult,
-    type GulpESLintResults,
-    type GulpESLintWriter,
+    type LintResult,
+    type LintResults,
     type LoadedFormatter,
     type ResultsMeta,
-    type Severity,
+    type Writer,
 }
 from '../lib/gulp-eslint-new';
-import type { ESLint }  from 'eslint';
+
+import type { ESLint } from 'eslint';
 
 gulpESLintNew
 (
     {
-        baseConfig:                     null,
-        fixTypes:                       null,
+        baseConfig:                     undefined,
+        fixTypes:                       undefined,
         flags:                          undefined,
-        overrideConfig:                 null,
-        overrideConfigFile:             null,
-        plugins:                        null,
-        reportUnusedDisableDirectives:  null,
+        overrideConfig:                 undefined,
+        overrideConfigFile:             undefined,
+        plugins:                        undefined,
+        reportUnusedDisableDirectives:  undefined,
     },
 );
 
@@ -81,13 +81,15 @@ gulpESLintNew
         ignorePatterns:     ['ignored.js'],
         overrideConfig:
         [
-            'eslint:recommended',
+            { ignores: ['dist'] },
             { files: ['1/*.js', '2/*.js'], ignores: ['1/_.js', '2/_.js'], processor: 'foo/bar' },
         ],
         overrideConfigFile: true,
         plugins:            { foo: { processors: { bar: { } } } },
         quiet:              true,
-        ruleFilter:         ({ ruleId, severity }): ('' | Severity) => ruleId && severity,
+        ruleFilter:
+        ({ ruleId, severity }: { ruleId: string; severity: 1 | 2; }): boolean =>
+        !!(ruleId && severity),
         stats:              true,
         warnIgnored:        true,
     },
@@ -163,8 +165,8 @@ void
 (
     (
         action:
-        | ((result: GulpESLintResult) => Promise<void>)
-        | ((result: GulpESLintResult, callback: (err: Error | null) => void) => void),
+        | ((result: LintResult) => Promise<void>)
+        | ((result: LintResult, callback: (err: Error | null) => void) => void),
     ):
     NodeJS.ReadWriteStream =>
     gulpESLintNew.result(action)
@@ -181,8 +183,8 @@ void
 (
     (
         action:
-        | ((results: GulpESLintResults) => Promise<void>)
-        | ((results: GulpESLintResults, callback: (err: Error | null) => void) => void),
+        | ((results: LintResults) => Promise<void>)
+        | ((results: LintResults, callback: (err: Error | null) => void) => void),
     ):
     NodeJS.ReadWriteStream =>
     gulpESLintNew.results(action)
@@ -222,7 +224,7 @@ void
 
 void
 (
-    (writer: NodeJS.WritableStream | GulpESLintWriter | undefined): NodeJS.ReadWriteStream =>
+    (writer: NodeJS.WritableStream | Writer | undefined): NodeJS.ReadWriteStream =>
     gulpESLintNew.formatEach(undefined, writer)
 );
 
@@ -246,7 +248,7 @@ void
 
 void
 (
-    (writer: NodeJS.WritableStream | GulpESLintWriter | undefined): NodeJS.ReadWriteStream =>
+    (writer: NodeJS.WritableStream | Writer | undefined): NodeJS.ReadWriteStream =>
     gulpESLintNew.format(undefined, writer)
 );
 

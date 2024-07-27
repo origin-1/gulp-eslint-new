@@ -41,19 +41,19 @@
     "ts-test": "tsc --project test/tsconfig.json"
   },
   "dependencies": {
-    "@types/eslint": "^8.56.10",
+    "@types/eslint": "^9.6.0",
     "@types/node": ">=12",
     "eslint": "8 || 9",
     "fancy-log": "^2.0.0",
     "plugin-error": "^2.0.1",
-    "semver": "^7.6.2",
+    "semver": "^7.6.3",
     "ternary-stream": "^3.0.0",
     "vinyl-fs": "^4.0.0"
   },
   "devDependencies": {
     "@eslint/js": "^8.57.0",
-    "@origin-1/eslint-config": "^1.4.0",
-    "c8js": "^0.7.0",
+    "@origin-1/eslint-config": "^1.5.0",
+    "c8js": "^0.8.0",
     "eslint-8.0": "npm:eslint@8.0",
     "eslint-8.21": "npm:eslint@8.21",
     "eslint-8.x": "npm:eslint@8.x",
@@ -65,7 +65,7 @@
     "globals": "^15.8.0",
     "gulp": "^5.0.0",
     "mocha": "^9.2.2",
-    "typescript": "~5.5.3",
+    "typescript": "~5.5.4",
     "typescript_4.6": "npm:typescript@4.6",
     "typescript_5": "npm:typescript@5",
     "vinyl": "^3.0.0"

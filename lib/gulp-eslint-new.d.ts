@@ -4,9 +4,9 @@ import 'node';
 
 type Awaitable<T = unknown> = T | Promise<T>;
 
-type FlatConfig     = eslint.FlatConfig;
-type ESLintOptions  = eslint.ESLintOptions;
-type LintMessage    = eslint.LintMessage;
+type ESLintrcOptions    = eslint.ESLintrcOptions;
+type FlatESLintOptions  = eslint.FlatESLintOptions;
+type LintMessage        = eslint.LintMessage;
 
 type LintResultStreamFunction<Type> =
 ((action: (value: Type, callback: TransformCallback) => void) => NodeJS.ReadWriteStream) &
@@ -14,6 +14,16 @@ type LintResultStreamFunction<Type> =
 
 declare namespace gulpESLintNew
 {
+    interface AdditionalOptions
+    {
+        quiet?:
+        | boolean
+        | ((message: LintMessage, index: number, list: LintMessage[]) => unknown)
+        | undefined;
+
+        warnIgnored?: boolean | undefined;
+    }
+
     type FormatterContext = eslint.FormatterContext;
 
     type FormatterFunction = eslint.FormatterFunction;
@@ -26,7 +36,7 @@ declare namespace gulpESLintNew
          * @param options - Options for gulp-eslint-new.
          * @returns gulp file stream.
          */
-        (options?: GulpESLintOptions): NodeJS.ReadWriteStream;
+        (options?: GulpESLintNewOptions): NodeJS.ReadWriteStream;
 
         /**
          * Append ESLint result to each file.
@@ -42,7 +52,7 @@ declare namespace gulpESLintNew
          * @param action - A function to handle each ESLint result.
          * @returns gulp file stream.
          */
-        result: LintResultStreamFunction<GulpESLintResult>;
+        result: LintResultStreamFunction<LintResult>;
 
         /**
          * Handle all ESLint results at the end of the stream.
@@ -50,7 +60,7 @@ declare namespace gulpESLintNew
          * @param action - A function to handle all ESLint results.
          * @returns gulp file stream.
          */
-        results: LintResultStreamFunction<GulpESLintResults>;
+        results: LintResultStreamFunction<LintResults>;
 
         /**
          * Fail when an ESLint error is found in an ESLint result.
@@ -81,7 +91,7 @@ declare namespace gulpESLintNew
         formatEach
         (
             formatter?: string | LoadedFormatter | FormatterFunction,
-            writer?: GulpESLintWriter | NodeJS.WritableStream
+            writer?:    Writer | NodeJS.WritableStream
         ):
         NodeJS.ReadWriteStream;
 
@@ -100,7 +110,7 @@ declare namespace gulpESLintNew
         format
         (
             formatter?: string | LoadedFormatter | FormatterFunction,
-            writer?: GulpESLintWriter | NodeJS.WritableStream
+            writer?:    Writer | NodeJS.WritableStream
         ):
         NodeJS.ReadWriteStream;
 
@@ -112,16 +122,43 @@ declare namespace gulpESLintNew
         fix(): NodeJS.ReadWriteStream;
     }
 
-    type GulpESLintOptions =
-    | ((GulpESLintrcOptions | GulpFlatESLintOptions) & { configType?: null | undefined; })
-    | (GulpESLintrcOptions & { configType: 'eslintrc'; })
-    | (GulpFlatESLintOptions & { configType: 'flat'; });
-
-    type GulpESLintResult = eslint.LintResult;
-
-    type GulpESLintResults
+    type GulpESLintNewEslintrcOptions
     =
-    GulpESLintResult[] &
+    Omit<
+        ESLintrcOptions,
+        | 'cache'
+        | 'cacheLocation'
+        | 'cacheStrategy'
+        | 'errorOnUnmatchedPattern'
+        | 'extensions'
+        | 'globInputPaths'
+    >
+    & AdditionalOptions;
+
+    type GulpESLintNewFlatOptions
+    =
+    Omit<
+        FlatESLintOptions,
+        | 'cache'
+        | 'cacheLocation'
+        | 'cacheStrategy'
+        | 'errorOnUnmatchedPattern'
+        | 'globInputPaths'
+        | 'passOnNoPatterns'
+    >
+    & AdditionalOptions;
+
+    type GulpESLintNewOptions =
+    |
+    ((GulpESLintNewEslintrcOptions | GulpESLintNewFlatOptions) & { configType?: null | undefined; })
+    | (GulpESLintNewEslintrcOptions & { configType: 'eslintrc'; })
+    | (GulpESLintNewFlatOptions & { configType: 'flat'; });
+
+    type LintResult = eslint.LintResult;
+
+    type LintResults
+    =
+    LintResult[] &
     {
         errorCount:          number;
         fatalErrorCount:     number;
@@ -130,66 +167,11 @@ declare namespace gulpESLintNew
         fixableWarningCount: number;
     };
 
-    type GulpESLintWriter = (str: string) => Awaitable;
-
-    type GulpESLintrcOptions
-    =
-    Omit<
-        ESLintOptions,
-        | 'cache'
-        | 'cacheLocation'
-        | 'cacheStrategy'
-        | 'errorOnUnmatchedPattern'
-        | 'extensions'
-        | 'globInputPaths'
-    > &
-    {
-        quiet?:
-        | boolean
-        | ((message: LintMessage, index: number, list: LintMessage[]) => unknown)
-        | undefined;
-
-        warnIgnored?: boolean | undefined;
-    };
-
-    type GulpFlatESLintOptions
-    =
-    Pick<
-        ESLintOptions,
-        | 'allowInlineConfig'
-        | 'cwd'
-        | 'fix'
-        | 'fixTypes'
-        | 'flags'
-        | 'ignore'
-        | 'plugins'
-    > &
-    {
-        baseConfig?: FlatConfig | (string | FlatConfig)[] | null | undefined;
-
-        ignorePatterns?: string[] | null | undefined;
-
-        overrideConfig?: FlatConfig | (string | FlatConfig)[] | null | undefined;
-
-        overrideConfigFile?: string | true | null | undefined;
-
-        quiet?:
-        | boolean
-        | ((message: LintMessage, index: number, list: LintMessage[]) => unknown)
-        | undefined;
-
-        ruleFilter?: ((rule: { ruleId: string; severity: Severity; }) => unknown) | undefined;
-
-        stats?: boolean | undefined;
-
-        warnIgnored?: boolean | undefined;
-    };
-
     type LoadedFormatter = eslint.LoadedFormatter;
 
     type ResultsMeta = eslint.ResultsMeta;
 
-    type Severity = eslint.Severity;
+    type Writer = (str: string) => Awaitable;
 }
 
 declare const gulpESLintNew: gulpESLintNew.GulpESLintNew;
