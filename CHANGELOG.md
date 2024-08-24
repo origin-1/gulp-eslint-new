@@ -1,3 +1,9 @@
+<a name="2.3.0"></a>
+## [2.3.0](https://github.com/origin-1/gulp-eslint-new/releases/tag/2.3.0) (2024-08-24)
+
+* Redefined TypeScript typings on the basis of [@types/eslint](https://www.npmjs.com/package/@types/eslint) 9.
+* Added `main` field to package.json file to support legacy tools.
+
 <a name="2.2.0"></a>
 ## [2.2.0](https://github.com/origin-1/gulp-eslint-new/releases/tag/2.2.0) (2024-07-08)
 
