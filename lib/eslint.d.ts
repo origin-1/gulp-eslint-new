@@ -4,17 +4,18 @@ type ESLintrcOptions = ESLint.LegacyOptions;
 
 type FlatESLintOptions = ESLint.Options;
 
+// In @types/eslint `ESLint.LintResultData` lacks the `maxWarningsExceeded` property.
 type FormatterContext = ESLint.LintResultData & ResultsMeta;
 
 type FormatterFunction =
-(results: ESLint.LintResult[], context?: FormatterContext) => string | Promise<string>;
+(results: ESLint.LintResult[], context: FormatterContext) => string | Promise<string>;
 
 type LintMessage = Linter.LintMessage;
 
 type LintResult = ESLint.LintResult;
 
 interface LoadedFormatter
-{ format(results: ESLint.LintResult[], resultsMeta: ResultsMeta): string | Promise<string>; }
+{ format(results: ESLint.LintResult[], resultsMeta?: ResultsMeta): string | Promise<string>; }
 
 interface ResultsMeta
 {

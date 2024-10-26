@@ -7,9 +7,7 @@ const globals           = require('globals');
 module.exports =
 createConfig
 (
-    {
-        ignores: ['**/.*', 'coverage', 'example/demo'],
-    },
+    { ignores: ['**/.*', 'coverage', 'example/demo'] },
     {
         files:              ['**/*.js'],
         jsVersion:          2020,
@@ -21,8 +19,7 @@ createConfig
     },
     {
         files:              ['**/*.ts'],
-        tsVersion:          '4.6.0',
-        languageOptions:    { parserOptions: { project: 'tsconfig.json' } },
+        tsVersion:          '4.8.0',
         plugins:            { 'tsdoc': eslintPluginTsdoc },
         rules:              { 'tsdoc/syntax': 'error' },
     },
