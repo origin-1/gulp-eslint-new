@@ -10,7 +10,7 @@ it
     async () =>
     {
         const namespace = await import('gulp-eslint-new');
-        const actual = Object.keys(namespace).sort();
+        const actual = Object.keys(namespace).filter(key => key !== 'module.exports').sort();
         const expected =
         [
             'default',
