@@ -621,6 +621,40 @@ describe
             );
         }
 
+        function testReportUnusedDisableDirectivesLinting(eslintPkg)
+        {
+            it
+            (
+                '"reportUnusedDisableDirectives" linter option should be considered',
+                async () =>
+                {
+                    const file = createVinylFile('file.js', '// eslint-disable-line');
+                    const options =
+                    {
+                        [ESLINT_PKG]:       eslintPkg,
+                        baseConfig:
+                        { linterOptions: { reportUnusedDisableDirectives: 'error' } },
+                        configType:         'flat',
+                        overrideConfigFile: true,
+                    };
+                    await finishStream(gulpESLintNew(options).end(file));
+                    assert.equal(file.eslint.filePath, file.path);
+                    assert(Array.isArray(file.eslint.messages));
+                    assert.equal(file.eslint.messages.length, 1);
+                    const [message] = file.eslint.messages;
+                    assert.equal
+                    (
+                        message.message,
+                        'Unused eslint-disable directive (no problems were reported).',
+                    );
+                    assert.equal(message.line, 1);
+                    assert.equal(message.column, 1);
+                    assert.equal(message.ruleId, null);
+                    assert.equal(message.severity, 2);
+                },
+            );
+        }
+
         function testFlatLinting(eslintPkg)
         {
             it
@@ -934,41 +968,32 @@ describe
             {
                 testCommonLinting('eslint-8.x', false);
                 testFlatLinting('eslint-8.x');
-
-                it
-                (
-                    '"reportUnusedDisableDirectives" linter option should be considered',
-                    async () =>
-                    {
-                        const file = createVinylFile('file.js', '// eslint-disable-line');
-                        const options =
-                        {
-                            [ESLINT_PKG]:       'eslint-8.x',
-                            baseConfig:
-                            { linterOptions: { reportUnusedDisableDirectives: true } },
-                            configType:         'flat',
-                            overrideConfigFile: true,
-                        };
-                        await finishStream(gulpESLintNew(options).end(file));
-                        assert.equal(file.eslint.filePath, file.path);
-                        assert(Array.isArray(file.eslint.messages));
-                        assert.equal(file.eslint.messages.length, 1);
-                        const [message] = file.eslint.messages;
-                        assert.equal
-                        (
-                            message.message,
-                            'Unused eslint-disable directive (no problems were reported).',
-                        );
-                        assert.equal(message.line, 1);
-                        assert.equal(message.column, 1);
-                        assert.equal(message.ruleId, null);
-                        assert.equal(message.severity, 1);
-                    },
-                );
+                testReportUnusedDisableDirectivesLinting('eslint-8.x');
             },
         );
 
         const describe_v9 = isESLint9Supported ? describe : describe.skip;
+
+        describe_v9
+        (
+            'with ESLint 9.0',
+            () =>
+            {
+                testCommonLinting('eslint-9.0', false);
+                testFlatLinting('eslint-9.0');
+                testReportUnusedDisableDirectivesLinting('eslint-9.0');
+            },
+        );
+
+        describe_v9
+        (
+            'with LegacyESLint 9.0',
+            () =>
+            {
+                testCommonLinting('eslint-9.0', true);
+                testEslintrcLinting('eslint-9.0');
+            },
+        );
 
         describe_v9
         (
@@ -977,35 +1002,20 @@ describe
             {
                 testCommonLinting('eslint-9.x', false);
                 testFlatLinting('eslint-9.x');
+                testReportUnusedDisableDirectivesLinting('eslint-9.x');
 
                 it
                 (
-                    '"reportUnusedDisableDirectives" linter option should be considered',
+                    '"overrideConfigFile" should work with a TypeScript config file',
                     async () =>
                     {
-                        const file = createVinylFile('file.js', '// eslint-disable-line');
                         const options =
                         {
                             [ESLINT_PKG]:       'eslint-9.x',
-                            baseConfig:
-                            { linterOptions: { reportUnusedDisableDirectives: 'error' } },
-                            configType:         'flat',
-                            overrideConfigFile: true,
+                            flags:              ['unstable_ts_config'],
+                            overrideConfigFile: join(__dirname, 'config/ts-config.ts'),
                         };
-                        await finishStream(gulpESLintNew(options).end(file));
-                        assert.equal(file.eslint.filePath, file.path);
-                        assert(Array.isArray(file.eslint.messages));
-                        assert.equal(file.eslint.messages.length, 1);
-                        const [message] = file.eslint.messages;
-                        assert.equal
-                        (
-                            message.message,
-                            'Unused eslint-disable directive (no problems were reported).',
-                        );
-                        assert.equal(message.line, 1);
-                        assert.equal(message.column, 1);
-                        assert.equal(message.ruleId, null);
-                        assert.equal(message.severity, 2);
+                        await testConfig(options);
                     },
                 );
             },

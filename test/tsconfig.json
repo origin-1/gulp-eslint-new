@@ -1,6 +1,7 @@
 {
   "extends": "../tsconfig.json",
   "files": [
+    "./config/ts-config.ts",
     "./ts-defs-test.ts"
   ]
 }
