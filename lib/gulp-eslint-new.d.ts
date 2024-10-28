@@ -2,7 +2,7 @@ import type { TransformCallback }   from 'node:stream';
 import type * as eslint             from './eslint';
 import 'node';
 
-type Awaitable<T = unknown> = T | Promise<T>;
+type Awaitable<T = unknown> = T | PromiseLike<T>;
 
 type ESLintrcOptions    = eslint.ESLintrcOptions;
 type FlatESLintOptions  = eslint.FlatESLintOptions;
