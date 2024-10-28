@@ -5,6 +5,7 @@
     "forceConsistentCasingInFileNames": true,
     "moduleResolution": "node",
     "noEmit": true,
+    "noUncheckedSideEffectImports": true,
     "strict": true,
     "types": [],
   }

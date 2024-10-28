@@ -42,7 +42,6 @@
     "ts-test": "tsc --project test/tsconfig.json"
   },
   "dependencies": {
-    "@types/node": ">=12",
     "eslint": "8 || 9",
     "fancy-log": "^2.0.0",
     "plugin-error": "^2.0.1",
@@ -75,7 +74,8 @@
     "vinyl": "^3.0.0"
   },
   "optionalDependencies": {
-    "@types/eslint": "^9.6.1"
+    "@types/eslint": "^9.6.1",
+    "@types/node": ">=12"
   },
   "engines": {
     "node": "^12.20 || ^14.13 || >=16"
@@ -87,6 +87,6 @@
   "imports": {
     "#util": "./lib/util.js"
   },
-  "types": "lib/gulp-eslint-new.d.ts",
-  "type": "commonjs"
+  "type": "commonjs",
+  "types": "lib/gulp-eslint-new.d.ts"
 }
