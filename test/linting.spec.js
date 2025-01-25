@@ -1012,10 +1012,40 @@ describe
                         const options =
                         {
                             [ESLINT_PKG]:       'eslint-9.x',
-                            flags:              ['unstable_ts_config'],
                             overrideConfigFile: join(__dirname, 'config/ts-config.ts'),
                         };
                         await testConfig(options);
+                    },
+                );
+
+                it
+                (
+                    '"reportUnusedInlineConfigs" linter option should be considered',
+                    async () =>
+                    {
+                        const file = createVinylFile('file.js', '/* eslint no-var: off */');
+                        const options =
+                        {
+                            [ESLINT_PKG]:       'eslint-9.x',
+                            baseConfig:
+                            { linterOptions: { reportUnusedInlineConfigs: 'error' } },
+                            overrideConfigFile: true,
+                        };
+                        await finishStream(gulpESLintNew(options).end(file));
+                        assert.equal(file.eslint.filePath, file.path);
+                        assert(Array.isArray(file.eslint.messages));
+                        assert.equal(file.eslint.messages.length, 1);
+                        const [message] = file.eslint.messages;
+                        assert.equal
+                        (
+                            message.message,
+                            'Unused inline config (\'no-var\' is not enabled so can\'t be turned ' +
+                            'off).',
+                        );
+                        assert.equal(message.line, 1);
+                        assert.equal(message.column, 1);
+                        assert.equal(message.ruleId, null);
+                        assert.equal(message.severity, 2);
                     },
                 );
             },
