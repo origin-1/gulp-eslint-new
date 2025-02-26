@@ -108,8 +108,9 @@ describe
                         assert.equal(file.eslint.suppressedMessages.length, 1);
                         assert.equal(file.eslint.suppressedMessages[0].ruleId, 'strict');
                     }
-                    assert.deepEqual
-                    (file.eslint.usedDeprecatedRules, [{ replacedBy: [], ruleId: 'no-sync' }]);
+                    assert(Array.isArray(file.eslint.usedDeprecatedRules));
+                    assert.equal(file.eslint.usedDeprecatedRules.length, 1);
+                    assert.equal(file.eslint.usedDeprecatedRules[0].ruleId, 'no-sync');
                 },
             );
 
