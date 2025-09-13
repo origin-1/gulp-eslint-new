@@ -3,9 +3,10 @@
     "esModuleInterop": true,
     "exactOptionalPropertyTypes": true,
     "forceConsistentCasingInFileNames": true,
-    "moduleResolution": "node",
+    "moduleResolution": "node10",
     "noEmit": true,
     "noUncheckedSideEffectImports": true,
+    "skipLibCheck": true,
     "strict": true,
     "types": [],
   }

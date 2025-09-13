@@ -133,7 +133,8 @@ declare namespace gulpESLintNew
         | 'extensions'
         | 'globInputPaths'
     >
-    & AdditionalOptions;
+    &
+    AdditionalOptions;
 
     type GulpESLintNewFlatOptions
     =
@@ -146,19 +147,20 @@ declare namespace gulpESLintNew
         | 'globInputPaths'
         | 'passOnNoPatterns'
     >
-    & AdditionalOptions;
+    &
+    AdditionalOptions;
 
     type GulpESLintNewOptions =
-    |
-    ((GulpESLintNewEslintrcOptions | GulpESLintNewFlatOptions) & { configType?: null | undefined; })
-    | (GulpESLintNewEslintrcOptions & { configType: 'eslintrc'; })
-    | (GulpESLintNewFlatOptions & { configType: 'flat'; });
+    | (GulpESLintNewEslintrcOptions | GulpESLintNewFlatOptions) & { configType?: null | undefined; }
+    | GulpESLintNewEslintrcOptions & { configType: 'eslintrc'; }
+    | GulpESLintNewFlatOptions & { configType: 'flat'; };
 
     type LintResult = eslint.LintResult;
 
     type LintResults
     =
-    LintResult[] &
+    LintResult[]
+    &
     {
         errorCount:          number;
         fatalErrorCount:     number;

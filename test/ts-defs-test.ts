@@ -26,14 +26,16 @@ gulpESLintNew
     },
 );
 
-{
-    let configType!: undefined | null;
+void
+(
+    (configType: undefined | null): unknown =>
     gulpESLintNew
-    ({ configType, ignorePatterns: undefined, ruleFilter: undefined, stats: undefined });
-}
+    ({ configType, ignorePatterns: undefined, ruleFilter: undefined, stats: undefined })
+);
 
-{
-    let configType!: undefined | null;
+void
+(
+    (configType: undefined | null): unknown =>
     gulpESLintNew
     (
         {
@@ -42,8 +44,8 @@ gulpESLintNew
             resolvePluginsRelativeTo:       undefined,
             rulePaths:                      undefined,
         },
-    );
-}
+    )
+);
 
 gulpESLintNew
 (
