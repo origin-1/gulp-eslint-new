@@ -24,6 +24,7 @@ declare namespace gulpESLintNew
         warnIgnored?: boolean | undefined;
     }
 
+    /** @deprecated Use type {@link eslint.LintResultData|`ESLint.LintResultData`}. */
     type FormatterContext = eslint.LintResultData;
 
     type FormatterFunction = eslint.FormatterFunction;
@@ -172,6 +173,7 @@ declare namespace gulpESLintNew
 
     type LoadedFormatter = eslint.LoadedFormatter;
 
+    /** @deprecated Use type {@link eslint.ResultsMeta|`ESLint.ResultsMeta`}. */
     type ResultsMeta = eslint.ResultsMeta;
 
     type Writer = (str: string) => Awaitable;
