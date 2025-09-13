@@ -125,6 +125,9 @@ gulpESLintNew({ cacheLocation: undefined });
 gulpESLintNew({ cacheStrategy: undefined });
 
 // @ts-expect-error Invalid option.
+gulpESLintNew({ concurrency: undefined });
+
+// @ts-expect-error Invalid option.
 gulpESLintNew({ errorOnUnmatchedPattern: undefined });
 
 // @ts-expect-error Invalid option.

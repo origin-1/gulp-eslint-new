@@ -87,6 +87,7 @@ describe
                     cacheFile:                  '\0',
                     cacheLocation:              '\0',
                     cacheStrategy:              'metadata',
+                    concurrency:                'off',
                     errorOnUnmatchedPattern:    true,
                     extensions:                 [],
                     globInputPaths:             false,

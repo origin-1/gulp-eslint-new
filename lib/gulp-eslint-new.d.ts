@@ -24,7 +24,7 @@ declare namespace gulpESLintNew
         warnIgnored?: boolean | undefined;
     }
 
-    type FormatterContext = eslint.FormatterContext;
+    type FormatterContext = eslint.LintResultData;
 
     type FormatterFunction = eslint.FormatterFunction;
 
@@ -143,6 +143,7 @@ declare namespace gulpESLintNew
         | 'cache'
         | 'cacheLocation'
         | 'cacheStrategy'
+        | 'concurrency'
         | 'errorOnUnmatchedPattern'
         | 'globInputPaths'
         | 'passOnNoPatterns'
