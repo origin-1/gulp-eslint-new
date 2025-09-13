@@ -74,7 +74,6 @@
     "vinyl": "^3.0.1"
   },
   "optionalDependencies": {
-    "@types/eslint": "^9.6.1",
     "@types/node": ">=12"
   },
   "engines": {
