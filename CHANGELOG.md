@@ -1,3 +1,9 @@
+<a name="2.5.0"></a>
+## [2.5.0](https://github.com/origin-1/gulp-eslint-new/releases/tag/2.5.0) (2025-09-14)
+
+* The unused option `concurrency` is no longer allowed.
+* The types `gulpESLintNew.FormatterContext` and `gulpESLintNew.ResultsMeta` have been deprecated in favor of ESLint's own `ESLint.LintResultData` and `ESLint.ResultsMeta` respectively.
+
 <a name="2.4.0"></a>
 ## [2.4.0](https://github.com/origin-1/gulp-eslint-new/releases/tag/2.4.0) (2024-10-28)
 
