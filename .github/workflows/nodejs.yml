@@ -16,8 +16,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v5
-    - uses: actions/setup-node@v5
+    - uses: actions/checkout@v6
+    - uses: actions/setup-node@v6
       with:
         node-version: 24
     - run: |
@@ -36,13 +36,33 @@ jobs:
         node-version: ['12', '14', '16']
 
     steps:
-    - uses: actions/checkout@v5
-    - uses: actions/setup-node@v5
+    - uses: actions/checkout@v6
+    - uses: actions/setup-node@v6
       with:
         node-version: ${{ matrix.node-version }}
     - run: |
         npm ci
         npm install eslint@8
+        npm test
+
+  test-eslint-8-and-9-only:
+
+    name: test (Node.js ${{ matrix.node-version }})
+
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: ['18']
+
+    steps:
+    - uses: actions/checkout@v6
+    - uses: actions/setup-node@v6
+      with:
+        node-version: ${{ matrix.node-version }}
+    - run: |
+        npm ci
+        npm install eslint@9
         npm test
 
   test:
@@ -53,13 +73,14 @@ jobs:
 
     strategy:
       matrix:
-        node-version: ['18', '20', '22', '24']
+        node-version: ['20', '22', '24']
 
     steps:
-    - uses: actions/checkout@v5
-    - uses: actions/setup-node@v5
+    - uses: actions/checkout@v6
+    - uses: actions/setup-node@v6
       with:
         node-version: ${{ matrix.node-version }}
     - run: |
         npm ci
+        npm install eslint@10
         npm test

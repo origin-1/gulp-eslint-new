@@ -1,7 +1,10 @@
 'use strict';
 
 const util                                      = require('#util');
-const { createVinylFile, finishStream, noop }   = require('./test-util');
+
+const { createVinylFile, finishStream, isESLint9Supported, isESLint10Supported, noop } =
+require('./test-util');
+
 const { strict: assert }                        = require('assert');
 // eslint-disable-next-line n/no-deprecated-api
 const { Domain }                                = require('domain');
@@ -361,9 +364,19 @@ describe
             'resolveFormatter',
             () =>
             {
-                function testResolveFormatter(ESLint)
+                function testResolveFormatter(requireESLint)
                 {
-                    const useEslintrcConfig = ESLint.name === 'ESLint';
+                    let ESLint;
+                    let useEslintrcConfig;
+
+                    before
+                    (
+                        () =>
+                        {
+                            ESLint = requireESLint();
+                            useEslintrcConfig = util.isEslintrcESLintConstructor(ESLint);
+                        },
+                    );
 
                     const testResults =
                     [
@@ -578,8 +591,7 @@ describe
                     'with ESLint 8.0',
                     () =>
                     {
-                        const { ESLint } = require('eslint-8.0');
-                        testResolveFormatter(ESLint);
+                        testResolveFormatter(() => require('eslint-8.0').ESLint);
                     },
                 );
 
@@ -588,8 +600,7 @@ describe
                     'with ESLint 8.x',
                     () =>
                     {
-                        const { ESLint } = require('eslint-8.x');
-                        testResolveFormatter(ESLint);
+                        testResolveFormatter(() => require('eslint-8.x').ESLint);
                     },
                 );
 
@@ -598,8 +609,8 @@ describe
                     'with FlatESLint 8.21',
                     () =>
                     {
-                        const { FlatESLint } = require('eslint-8.21/use-at-your-own-risk');
-                        testResolveFormatter(FlatESLint);
+                        testResolveFormatter
+                        (() => require('eslint-8.21/use-at-your-own-risk').FlatESLint);
                     },
                 );
 
@@ -608,8 +619,59 @@ describe
                     'with FlatESLint 8.x',
                     () =>
                     {
-                        const { FlatESLint } = require('eslint-8.x/use-at-your-own-risk');
-                        testResolveFormatter(FlatESLint);
+                        testResolveFormatter
+                        (() => require('eslint-8.x/use-at-your-own-risk').FlatESLint);
+                    },
+                );
+
+                const describe_v9 = isESLint9Supported ? describe : describe.skip;
+
+                describe_v9
+                (
+                    'with ESLint 9.0',
+                    () =>
+                    {
+                        testResolveFormatter(() => require('eslint-9.0').ESLint);
+                    },
+                );
+
+                describe_v9
+                (
+                    'with LegacyESLint 9.0',
+                    () =>
+                    {
+                        testResolveFormatter
+                        (() => require('eslint-9.0/use-at-your-own-risk').LegacyESLint);
+                    },
+                );
+
+                describe_v9
+                (
+                    'with ESLint 9.x',
+                    () =>
+                    {
+                        testResolveFormatter(() => require('eslint-9.x').ESLint);
+                    },
+                );
+
+                describe_v9
+                (
+                    'with LegacyESLint 9.x',
+                    () =>
+                    {
+                        testResolveFormatter
+                        (() => require('eslint-9.x/use-at-your-own-risk').LegacyESLint);
+                    },
+                );
+
+                const describe_v10 = isESLint10Supported ? describe : describe.skip;
+
+                describe_v10
+                (
+                    'with ESLint 10.0',
+                    () =>
+                    {
+                        testResolveFormatter(() => require('eslint-10.0').ESLint);
                     },
                 );
             },

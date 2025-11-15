@@ -1,5 +1,6 @@
 'use strict';
 
+const { ESLINT_PKG }                                    = require('#util');
 const { createVinylDirectory, createVinylFile, noop }   = require('./test-util');
 const { strict: assert }                                = require('assert');
 const gulpESLintNew                                     = require('gulp-eslint-new');
@@ -103,8 +104,8 @@ describe
             gulpESLintNew
             (
                 {
+                    [ESLINT_PKG]:   'eslint-8.x',
                     baseConfig:     { rules: { 'strict': 2 } },
-                    configType:     'eslintrc',
                     useEslintrc:    false,
                     warnIgnored:    true,
                 },
@@ -158,8 +159,8 @@ describe
                 gulpESLintNew
                 (
                     {
+                        [ESLINT_PKG]:   'eslint-8.x',
                         baseConfig:     { rules: { 'strict': 2 } },
-                        configType:     'eslintrc',
                         useEslintrc:    false,
                         warnIgnored:    true,
                     },
@@ -197,8 +198,8 @@ describe
                 gulpESLintNew
                 (
                     {
+                        [ESLINT_PKG]:   'eslint-8.x',
                         baseConfig:     { rules: { 'strict': 2 } },
-                        configType:     'eslintrc',
                         useEslintrc:    false,
                         warnIgnored:    true,
                     },
@@ -263,8 +264,8 @@ describe
                 gulpESLintNew
                 (
                     {
+                        [ESLINT_PKG]:   'eslint-8.x',
                         baseConfig:     { rules: { 'strict': 2 } },
-                        configType:     'eslintrc',
                         useEslintrc:    false,
                         warnIgnored:    true,
                     },
@@ -348,8 +349,8 @@ describe
             gulpESLintNew
             (
                 {
+                    [ESLINT_PKG]:   'eslint-8.x',
                     baseConfig:     { rules: { 'strict': 2 } },
-                    configType:     'eslintrc',
                     useEslintrc:    false,
                     warnIgnored:    true,
                 },
@@ -403,8 +404,8 @@ describe
                 gulpESLintNew
                 (
                     {
+                        [ESLINT_PKG]:   'eslint-8.x',
                         baseConfig:     { rules: { 'strict': 2 } },
-                        configType:     'eslintrc',
                         useEslintrc:    false,
                         warnIgnored:    true,
                     },
@@ -443,8 +444,8 @@ describe
                 gulpESLintNew
                 (
                     {
+                        [ESLINT_PKG]:   'eslint-8.x',
                         baseConfig:     { rules: { 'strict': 2 } },
-                        configType:     'eslintrc',
                         useEslintrc:    false,
                         warnIgnored:    true,
                     },
@@ -545,8 +546,8 @@ describe
                 gulpESLintNew
                 (
                     {
+                        [ESLINT_PKG]:   'eslint-8.x',
                         baseConfig:     { rules: { 'strict': 2 } },
-                        configType:     'eslintrc',
                         useEslintrc:    false,
                         warnIgnored:    true,
                     },

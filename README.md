@@ -1,11 +1,11 @@
 # gulp-eslint-new · [![npm version][npm badge]][npm URL]
 
-> A [gulp](https://gulpjs.com/) plugin to lint code with [ESLint](https://eslint.org/) 8 and 9.
+> A [gulp](https://gulpjs.com/) plugin to lint code with [ESLint](https://eslint.org/) 8, 9, and 10.
 
 ## Installation
 
 Make sure that you are using a version of Node.js supported by your version of ESLint.
-See prerequisites for [ESLint 8](https://eslint.org/docs/v8.x/use/getting-started#prerequisites) and [ESLint 9](https://eslint.org/docs/v9.x/use/getting-started#prerequisites).
+See prerequisites for [ESLint 8](https://eslint.org/docs/v8.x/use/getting-started#prerequisites), [ESLint 9](https://eslint.org/docs/v9.x/use/getting-started#prerequisites), or [ESLint 10](https://eslint.org/docs/v10.x/use/getting-started#prerequisites).
 For TypeScript support, you need TypeScript 4.8 or later.
 
 To install gulp-eslint-new, [use](https://docs.npmjs.com/cli/install) [npm](https://docs.npmjs.com/about-npm):
@@ -14,12 +14,12 @@ To install gulp-eslint-new, [use](https://docs.npmjs.com/cli/install) [npm](http
 npm i -D gulp-eslint-new
 ```
 
-gulp-eslint-new will also install the latest version of ESLint 9, unless another one is found.
+gulp-eslint-new will also install the latest version of ESLint 10, unless another one is found.
 To use a particular version of ESLint, install it by yourself.
-For example, to use ESLint 8.8.0:
+For example, to use ESLint 8.57.1:
 
 ```console
-npm i -D gulp-eslint-new eslint@8.8.0
+npm i -D gulp-eslint-new eslint@8.57.1
 ```
 
 ## Migrating
@@ -27,11 +27,12 @@ npm i -D gulp-eslint-new eslint@8.8.0
 If you are migrating from [gulp-eslint][gulp-eslint], you probably won't need to make any substantial changes to your gulp task, as the API is widely compatible.
 Note though that many options have changed: the current options are documented in the [`gulpESLintNew(options)`](#gulpeslintnewoptions) section.
 
-Also note that gulp-eslint-new is designed to work with ESLint 8 or 9, whereas the latest release of gulp-eslint only supports ESLint 6: you will need to update your project to address breaking changes in ESLint.
+Also note that gulp-eslint-new is designed to work with ESLint 8, 9 or 10, whereas the latest release of gulp-eslint only supports ESLint 6: you will need to update your project to address breaking changes in ESLint.
 You can follow the links below for more information.
 * [Breaking changes for users from ESLint 6 to ESLint 7](https://eslint.org/docs/user-guide/migrating-to-7.0.0#breaking-changes-for-users)
 * [Breaking changes for users from ESLint 7 to ESLint 8](https://eslint.org/docs/user-guide/migrate-to-8.0.0#breaking-changes-for-users)
 * [Breaking changes for users from ESLint 8 to ESLint 9](https://eslint.org/docs/user-guide/migrate-to-9.0.0#breaking-changes-for-users)
+* [Breaking changes for users from ESLint 9 to ESLint 10](https://eslint.org/docs/user-guide/migrate-to-10.0.0#breaking-changes-for-users)
 
 
 ## Usage
@@ -149,15 +150,13 @@ See the linked content for details about each option.
 
 Type: `"eslintrc" | "flat" | null`
 
-ESLint supports two types of configuration: a [new config](https://eslint.org/docs/user-guide/configure/configuration-files) type, aka flat config, based on file `eslint.config.*`, and a [legacy config](https://eslint.org/docs/user-guide/configure/configuration-files-deprecated) type, or eslintrc config, based on file `.eslintrc`.
+ESLint supports two configuration formats: a [new config](https://eslint.org/docs/user-guide/configure/configuration-files) type, aka flat config, based on file `eslint.config.*`, and a [legacy config](https://eslint.org/docs/user-guide/configure/configuration-files-deprecated) type, or eslintrc config, based on file `.eslintrc`.
 
-In ESLint 8, the default config type is the legacy config, and the new config is partly supported depending on the version of ESLint used.
-To use the the new config with ESLint 8 in gulp-eslint-new, set the option `configType` to `"flat"`.
+* **ESLint 8**: Uses the legacy config by default. Flat config is partially supported depending on the version. In gulp-eslint-new, set `configType: "flat"` to enable flat config.
+* **ESLint 9**: Uses flat config by default. To use legacy config in gulp-eslint-new, set `configType: "eslintrc"`.  
+* **ESLint 10**: Only supports flat config. Setting `configType: "eslintrc"` in gulp-eslint-new will result in an error.
 
-ESLint 9 uses the new config type by default.
-To use the legacy config with ESLint 9 in gulp-eslint-new, set the option `configType` to `"eslintrc"`.
-
-The new and legacy config types differ significantly in the available options and their usage.
+The new and legacy config formats differ significantly in the available options and their usage.
 Refer to the respective documentation in ESLint for the specifics of each options.
 
 ##### `options.cwd`

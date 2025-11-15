@@ -2,7 +2,15 @@
 
 const { ESLINT_PKG }        = require('#util');
 
-const { createVinylDirectory, createVinylFile, finishStream, isESLint9Supported, isEmptyArray } =
+const
+{
+    createVinylDirectory,
+    createVinylFile,
+    finishStream,
+    isESLint10Supported,
+    isESLint9Supported,
+    isEmptyArray,
+} =
 require('./test-util');
 
 const { strict: assert }    = require('assert');
@@ -102,7 +110,7 @@ describe
                     assert.equal(typeof message.column, 'number');
                     assert.equal(message.ruleId, 'no-var');
                     assert.equal(message.severity, 2);
-                    const eslintVersion = file._eslintInfo.eslint.version;
+                    const eslintVersion = file._eslintInfo.eslint.constructor.version;
                     if (satisfies(eslintVersion, useEslintrcConfig ? '>=8.8' : '>=8.23'))
                     {
                         assert.equal(file.eslint.suppressedMessages.length, 1);
@@ -286,6 +294,180 @@ describe
                                 code === 'ESLINT_INVALID_OPTIONS' &&
                                 name === 'ESLintInvalidOptionsError',
                             );
+                        },
+                    );
+                },
+            );
+
+            describe
+            (
+                '"quiet" option',
+                () =>
+                {
+                    it
+                    (
+                        'when true, should remove warnings',
+                        async () =>
+                        {
+                            const file =
+                            createVinylFile
+                            ('invalid.js', 'a = 01;\nb = 02; // eslint-disable-line');
+                            const options =
+                            useEslintrcConfig
+                            ?
+                            {
+                                [ESLINT_PKG]:   eslintPkg,
+                                baseConfig:
+                                { rules: { 'no-octal': 2, 'no-undef': 1, 'semi-style': 1 } },
+                                configType:     'eslintrc',
+                                quiet:          true,
+                                useEslintrc:    false,
+                            }
+                            :
+                            {
+                                [ESLINT_PKG]:       eslintPkg,
+                                configType:         'flat',
+                                overrideConfig:
+                                {
+                                    languageOptions: { sourceType: 'script' },
+                                    rules:
+                                    { 'no-octal': 2, 'no-undef': 1, 'semi-style': 1 },
+                                },
+                                overrideConfigFile: true,
+                                quiet:              true,
+                            };
+                            await finishStream(gulpESLintNew(options).end(file));
+                            assert.equal(file.eslint.filePath, file.path);
+                            assert(Array.isArray(file.eslint.messages));
+                            assert.equal(file.eslint.messages.length, 1);
+                            assert.equal(file.eslint.errorCount, 1);
+                            assert.equal(file.eslint.warningCount, 0);
+                            assert.equal(file.eslint.fixableErrorCount, 0);
+                            assert.equal(file.eslint.fixableWarningCount, 0);
+                            assert.equal(file.eslint.fatalErrorCount, 0);
+                            const eslintVersion = file._eslintInfo.eslint.constructor.version;
+                            if (satisfies(eslintVersion, '>=8.53'))
+                            {
+                                assert.equal(file.eslint.usedDeprecatedRules.length, 1);
+                                assert
+                                (Array.isArray(file.eslint.usedDeprecatedRules[0].replacedBy));
+                                assert.equal
+                                (file.eslint.usedDeprecatedRules[0].ruleId, 'semi-style');
+                            }
+                            else
+                                assert.equal(file.eslint.usedDeprecatedRules.length, 0);
+                        },
+                    );
+
+                    it
+                    (
+                        'when a function, should filter messages',
+                        async () =>
+                        {
+                            const file =
+                            createVinylFile
+                            ('invalid.js', 'a = 01;\nb = 02; // eslint-disable-line');
+                            const options =
+                            useEslintrcConfig
+                            ?
+                            {
+                                [ESLINT_PKG]:   eslintPkg,
+                                baseConfig:
+                                { rules: { 'no-octal': 2, 'no-undef': 1, 'semi-style': 1 } },
+                                configType:     'eslintrc',
+                                quiet:          ({ severity }) => severity === 1,
+                                useEslintrc:    false,
+                            }
+                            :
+                            {
+                                [ESLINT_PKG]:       eslintPkg,
+                                configType:         'flat',
+                                overrideConfig:
+                                {
+                                    languageOptions: { sourceType: 'script' },
+                                    rules:
+                                    { 'no-octal': 2, 'no-undef': 1, 'semi-style': 1 },
+                                },
+                                overrideConfigFile: true,
+                                quiet:              ({ severity }) => severity === 1,
+                            };
+                            await finishStream(gulpESLintNew(options).end(file));
+                            assert.equal(file.eslint.filePath, file.path);
+                            assert(Array.isArray(file.eslint.messages));
+                            assert.equal(file.eslint.messages.length, 1);
+                            assert.equal(file.eslint.errorCount, 0);
+                            assert.equal(file.eslint.warningCount, 1);
+                            assert.equal(file.eslint.fixableErrorCount, 0);
+                            assert.equal(file.eslint.fixableWarningCount, 0);
+                            assert.equal(file.eslint.fatalErrorCount, 0);
+                            assert(Array.isArray(file.eslint.usedDeprecatedRules));
+                            const eslintVersion = file._eslintInfo.eslint.constructor.version;
+                            if (satisfies(eslintVersion, '>=8.53'))
+                            {
+                                assert.equal(file.eslint.usedDeprecatedRules.length, 1);
+                                assert
+                                (Array.isArray(file.eslint.usedDeprecatedRules[0].replacedBy));
+                                assert.equal
+                                (file.eslint.usedDeprecatedRules[0].ruleId, 'semi-style');
+                            }
+                            else
+                                assert.equal(file.eslint.usedDeprecatedRules.length, 0);
+                        },
+                    );
+
+                    it
+                    (
+                        'when invalid, should throw an error',
+                        () =>
+                        {
+                            const options =
+                            useEslintrcConfig ?
+                            { [ESLINT_PKG]: eslintPkg, configType: 'eslintrc', quiet: null } :
+                            { [ESLINT_PKG]: eslintPkg, configType: 'flat', quiet: null };
+                            assert.throws(() => gulpESLintNew(options), { constructor: Error });
+                        },
+                    );
+                },
+            );
+
+            describe
+            (
+                '"warnIgnored" option',
+                () =>
+                {
+                    it
+                    (
+                        'when not specified, should not warn about an ignored file',
+                        async () =>
+                        {
+                            const file = createVinylFile('node_modules/file.js', '');
+                            const options =
+                            useEslintrcConfig ?
+                            {
+                                [ESLINT_PKG]:   eslintPkg,
+                                configType:     'eslintrc',
+                                useEslintrc:    false,
+                            } :
+                            {
+                                [ESLINT_PKG]:       eslintPkg,
+                                configType:         'flat',
+                                overrideConfigFile: true,
+                            };
+                            await finishStream(gulpESLintNew(options).end(file));
+                            assert.equal(file.eslint, undefined);
+                        },
+                    );
+
+                    it
+                    (
+                        'when invalid, should throw an error',
+                        () =>
+                        {
+                            const options =
+                            useEslintrcConfig ?
+                            { [ESLINT_PKG]: eslintPkg, configType: 'eslintrc', warnIgnored: null } :
+                            { [ESLINT_PKG]: eslintPkg, configType: 'flat', warnIgnored: null };
+                            assert.throws(() => gulpESLintNew(options), { constructor: Error });
                         },
                     );
                 },
@@ -808,132 +990,6 @@ describe
 
         describe
         (
-            '"quiet" option',
-            () =>
-            {
-                it
-                (
-                    'when true, should remove warnings',
-                    async () =>
-                    {
-                        const file =
-                        createVinylFile('invalid.js', 'a = 01;\nb = 02; // eslint-disable-line');
-                        await finishStream
-                        (
-                            gulpESLintNew
-                            (
-                                {
-                                    baseConfig:
-                                    { rules: { 'no-octal': 2, 'no-undef': 1, 'semi-style': 1 } },
-                                    configType:     'eslintrc',
-                                    quiet:          true,
-                                    useEslintrc:    false,
-                                },
-                            )
-                            .end(file),
-                        );
-                        assert.equal(file.eslint.filePath, file.path);
-                        assert(Array.isArray(file.eslint.messages));
-                        assert.equal(file.eslint.messages.length, 1);
-                        assert.equal(file.eslint.errorCount, 1);
-                        assert.equal(file.eslint.warningCount, 0);
-                        assert.equal(file.eslint.fixableErrorCount, 0);
-                        assert.equal(file.eslint.fixableWarningCount, 0);
-                        assert.equal(file.eslint.fatalErrorCount, 0);
-                        assert.deepEqual
-                        (
-                            file.eslint.usedDeprecatedRules,
-                            [{ replacedBy: [], ruleId: 'semi-style' }],
-                        );
-                    },
-                );
-
-                it
-                (
-                    'when a function, should filter messages',
-                    async () =>
-                    {
-                        const file =
-                        createVinylFile('invalid.js', 'a = 01;\nb = 02; // eslint-disable-line');
-                        await finishStream
-                        (
-                            gulpESLintNew
-                            (
-                                {
-                                    baseConfig:
-                                    {
-                                        rules:
-                                        { 'no-octal': 2, 'no-undef': 1, 'semi-style': 1 },
-                                    },
-                                    configType:     'eslintrc',
-                                    quiet:          ({ severity }) => severity === 1,
-                                    useEslintrc:    false,
-                                },
-                            )
-                            .end(file),
-                        );
-                        assert.equal(file.eslint.filePath, file.path);
-                        assert(Array.isArray(file.eslint.messages));
-                        assert.equal(file.eslint.messages.length, 1);
-                        assert.equal(file.eslint.errorCount, 0);
-                        assert.equal(file.eslint.warningCount, 1);
-                        assert.equal(file.eslint.fixableErrorCount, 0);
-                        assert.equal(file.eslint.fixableWarningCount, 0);
-                        assert.equal(file.eslint.fatalErrorCount, 0);
-                        assert.deepEqual
-                        (
-                            file.eslint.usedDeprecatedRules,
-                            [{ replacedBy: [], ruleId: 'semi-style' }],
-                        );
-                    },
-                );
-
-                it
-                (
-                    'when invalid, should throw an error',
-                    () =>
-                    {
-                        assert.throws
-                        (
-                            () => gulpESLintNew({ quiet: null }),
-                            { constructor: Error },
-                        );
-                    },
-                );
-            },
-        );
-
-        describe
-        (
-            '"warnIgnored" option',
-            () =>
-            {
-                it
-                (
-                    'when not specified, should not warn about an ignored file',
-                    async () =>
-                    {
-                        const file = createVinylFile('node_modules/file.js', '');
-                        await finishStream
-                        (gulpESLintNew({ configType: 'eslintrc', useEslintrc: false }).end(file));
-                        assert.equal(file.eslint, undefined);
-                    },
-                );
-
-                it
-                (
-                    'when invalid, should throw an error',
-                    () =>
-                    {
-                        assert.throws
-                        (() => gulpESLintNew({ warnIgnored: null }), { constructor: Error });
-                    },
-                );
-            },
-        );
-
-        describe
-        (
             'with ESLint 8.0',
             () =>
             {
@@ -1059,6 +1115,19 @@ describe
             {
                 testCommonLinting('eslint-9.x', true);
                 testEslintrcLinting('eslint-9.x');
+            },
+        );
+
+        const describe_v10 = isESLint10Supported ? describe : describe.skip;
+
+        describe_v10
+        (
+            'with ESLint 10.0',
+            () =>
+            {
+                testCommonLinting('eslint-10.0', false);
+                testFlatLinting('eslint-10.0');
+                testReportUnusedDisableDirectivesLinting('eslint-10.0');
             },
         );
     },

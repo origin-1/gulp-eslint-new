@@ -15,7 +15,8 @@ describe
                 'should use the current directory as `cwd` if "cwd" is undefined',
                 () =>
                 {
-                    const { eslintOptions } = organizeOptions({ configType });
+                    const { eslintOptions } =
+                    organizeOptions({ [ESLINT_PKG]: 'eslint-8.x', configType });
                     assert.equal(eslintOptions.cwd, process.cwd());
                 },
             );
@@ -26,7 +27,8 @@ describe
                 () =>
                 {
                     const cwd = `${process.cwd()}/foo/..`;
-                    const { eslintOptions } = organizeOptions({ configType, cwd });
+                    const { eslintOptions } =
+                    organizeOptions({ [ESLINT_PKG]: 'eslint-8.x', configType, cwd });
                     assert.equal(eslintOptions.cwd, process.cwd());
                 },
             );
@@ -36,7 +38,8 @@ describe
                 'should not fail if "cwd" is invalid',
                 () =>
                 {
-                    const { eslintOptions } = organizeOptions({ configType, cwd: null });
+                    const { eslintOptions } =
+                    organizeOptions({ [ESLINT_PKG]: 'eslint-8.x', configType, cwd: null });
                     assert.equal(eslintOptions.cwd, null);
                 },
             );
@@ -63,6 +66,17 @@ describe
         (
             'with "configType" "flat"',
             () => { testCwd('flat'); },
+        );
+
+        it
+        (
+            'should throw an error if the current version of ESLint does not support eslintrc ' +
+            'config with "configType" "eslintrc"',
+            () =>
+            {
+                assert.throws
+                (() => organizeOptions({ [ESLINT_PKG]: 'eslint-10.0', configType: 'eslintrc' }));
+            },
         );
 
         it

@@ -1,5 +1,6 @@
 'use strict';
 
+const { ESLINT_PKG }        = require('#util');
 const { createVinylFile }   = require('./test-util');
 const { strict: assert }    = require('assert');
 const gulpESLintNew         = require('gulp-eslint-new');
@@ -26,8 +27,8 @@ describe
                 gulpESLintNew
                 (
                     {
+                        [ESLINT_PKG]:   'eslint-8.x',
                         baseConfig:     { rules: { 'no-undef': 2 } },
-                        configType:     'eslintrc',
                         useEslintrc:    false,
                     },
                 );
@@ -56,8 +57,8 @@ describe
                 gulpESLintNew
                 (
                     {
+                        [ESLINT_PKG]:   'eslint-8.x',
                         baseConfig:     { rules: { 'no-undef': 1, 'strict': 0 } },
-                        configType:     'eslintrc',
                         useEslintrc:    false,
                     },
                 )
@@ -98,8 +99,8 @@ describe
                 gulpESLintNew
                 (
                     {
+                        [ESLINT_PKG]:   'eslint-8.x',
                         baseConfig:     { rules: { 'no-undef': 2 } },
-                        configType:     'eslintrc',
                         useEslintrc:    false,
                     },
                 );
@@ -129,8 +130,8 @@ describe
                 gulpESLintNew
                 (
                     {
+                        [ESLINT_PKG]:   'eslint-8.x',
                         baseConfig:     { rules: { 'no-undef': 2 } },
-                        configType:     'eslintrc',
                         useEslintrc:    false,
                     },
                 );
@@ -159,8 +160,8 @@ describe
                 gulpESLintNew
                 (
                     {
+                        [ESLINT_PKG]:   'eslint-8.x',
                         baseConfig:     { rules: { 'no-undef': 1, strict: 0 } },
-                        configType:     'eslintrc',
                         useEslintrc:    false,
                     },
                 )

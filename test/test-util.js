@@ -23,6 +23,8 @@ exports.createVinylFile =
 const finishedAsync = promisify(finished);
 exports.finishStream = async stream => await finishedAsync(stream.resume());
 
+exports.isESLint10Supported = satisfies(process.versions.node, '^20.19.0 || ^22.13.0 || >=24');
+
 exports.isESLint9Supported = satisfies(process.versions.node, '^18.18.0 || ^20.9.0 || >=21.1.0');
 
 // In some versions on Node.js, `assert.deepEqual(value, []);` does not throw an error if `value` is
