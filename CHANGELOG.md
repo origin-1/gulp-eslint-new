@@ -1,3 +1,8 @@
+<a name="2.6.0"></a>
+## [2.6.0](https://github.com/origin-1/gulp-eslint-new/releases/tag/2.6.0) (2026-02-08)
+
+ESLint 10 is now supported.
+
 <a name="2.5.0"></a>
 ## [2.5.0](https://github.com/origin-1/gulp-eslint-new/releases/tag/2.5.0) (2025-09-14)
 
