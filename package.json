@@ -51,7 +51,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^8.57.1",
-    "@origin-1/eslint-config": "^1.13.0",
+    "@origin-1/eslint-config": "^1.14.0",
     "@types/eslint__js": "^8.42.3",
     "c8js": "^0.8.1",
     "eslint-10.0": "npm:eslint@10.0.0",

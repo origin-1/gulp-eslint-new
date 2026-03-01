@@ -12,7 +12,6 @@ createConfig
         files:              ['**/*.js'],
         jsVersion:          2020,
         languageOptions:    { sourceType: 'script' },
-        rules:              { 'object-shorthand': ['error', 'always', { avoidQuotes: true }] },
     },
     {
         files:              ['test/*.spec.js'],

@@ -92,7 +92,7 @@ declare namespace gulpESLintNew
         formatEach
         (
             formatter?: string | LoadedFormatter | FormatterFunction,
-            writer?:    Writer | NodeJS.WritableStream
+            writer?:    Writer | NodeJS.WritableStream,
         ):
         NodeJS.ReadWriteStream;
 
@@ -111,7 +111,7 @@ declare namespace gulpESLintNew
         format
         (
             formatter?: string | LoadedFormatter | FormatterFunction,
-            writer?:    Writer | NodeJS.WritableStream
+            writer?:    Writer | NodeJS.WritableStream,
         ):
         NodeJS.ReadWriteStream;
 
