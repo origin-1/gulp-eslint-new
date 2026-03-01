@@ -150,7 +150,7 @@ See the linked content for details about each option.
 
 Type: `"eslintrc" | "flat" | null`
 
-ESLint supports two configuration formats: a [new config](https://eslint.org/docs/user-guide/configure/configuration-files) type, aka flat config, based on file `eslint.config.*`, and a [legacy config](https://eslint.org/docs/user-guide/configure/configuration-files-deprecated) type, or eslintrc config, based on file `.eslintrc`.
+ESLint supports two configuration formats: a [new config](https://eslint.org/docs/user-guide/configure/configuration-files) type, aka flat config, based on file `eslint.config.*`, and a [legacy config](https://eslint.org/docs/v9.x/use/configure/configuration-files-deprecated) type, or eslintrc config, based on file `.eslintrc`.
 
 * **ESLint 8**: Uses the legacy config by default. Flat config is partially supported depending on the version. In gulp-eslint-new, set `configType: "flat"` to enable flat config.
 * **ESLint 9**: Uses flat config by default. To use legacy config in gulp-eslint-new, set `configType: "eslintrc"`.  
