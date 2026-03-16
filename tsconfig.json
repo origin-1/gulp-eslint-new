@@ -8,6 +8,7 @@
     "noUncheckedSideEffectImports": true,
     "skipLibCheck": true,
     "strict": true,
+    "useUnknownInCatchVariables": true,
     "types": [],
   }
 }
