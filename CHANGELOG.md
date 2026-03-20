@@ -1,3 +1,8 @@
+<a name="2.6.2"></a>
+## [2.6.2](https://github.com/origin-1/gulp-eslint-new/releases/tag/2.6.2) (2026-03-20)
+
+Documented support for bulk suppressions options `applySuppressions` and `suppressionsLocation`.
+
 <a name="2.6.1"></a>
 ## [2.6.1](https://github.com/origin-1/gulp-eslint-new/releases/tag/2.6.1) (2026-03-01)
 
