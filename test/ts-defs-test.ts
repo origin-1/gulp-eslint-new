@@ -72,28 +72,30 @@ gulpESLintNew
 gulpESLintNew
 (
     {
-        configType:         'flat',
-        allowInlineConfig:  false,
-        baseConfig:         { rules: { } },
-        cwd:                'cwd',
-        fix:                true,
-        fixTypes:           ['problem'],
-        flags:              ['flag'],
-        ignore:             false,
-        ignorePatterns:     ['ignored.js'],
+        configType:             'flat',
+        allowInlineConfig:      false,
+        applySuppressions:      true,
+        baseConfig:             { rules: { } },
+        cwd:                    'cwd',
+        fix:                    true,
+        fixTypes:               ['problem'],
+        flags:                  ['flag'],
+        ignore:                 false,
+        ignorePatterns:         ['ignored.js'],
         overrideConfig:
         [
             { ignores: ['dist'] },
             { files: ['1/*.js', '2/*.js'], ignores: ['1/_.js', '2/_.js'], processor: 'foo/bar' },
         ],
-        overrideConfigFile: true,
-        plugins:            { foo: { processors: { bar: { } } } },
-        quiet:              true,
+        overrideConfigFile:     true,
+        plugins:                { foo: { processors: { bar: { } } } },
+        quiet:                  true,
         ruleFilter:
         ({ ruleId, severity }: { ruleId: string; severity: 1 | 2; }): boolean =>
         !!(ruleId && severity),
-        stats:              true,
-        warnIgnored:        true,
+        stats:                  true,
+        suppressionsLocation:   'eslint-suppressions.json',
+        warnIgnored:            true,
     },
 );
 
@@ -114,6 +116,9 @@ void
         },
     )
 );
+
+// @ts-expect-error Invalid option for eslintrc config.
+gulpESLintNew({ configType: 'eslintrc', applySuppressions: true });
 
 // @ts-expect-error Invalid option.
 gulpESLintNew({ cache: undefined });
@@ -156,6 +161,9 @@ gulpESLintNew({ rules: undefined });
 
 // @ts-expect-error Invalid option for eslintrc config.
 gulpESLintNew({ configType: 'eslintrc', stats: undefined });
+
+// @ts-expect-error Invalid option for eslintrc config.
+gulpESLintNew({ configType: 'eslintrc', suppressionsLocation: 'eslint-suppressions.json' });
 
 const isStream = (stream: NodeJS.ReadWriteStream): void => void stream;
 

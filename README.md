@@ -141,6 +141,10 @@ See the linked content for details about each option.
 * [`quiet`](#optionsquiet)
 * [`warnIgnored`](#optionswarnignored)
 
+**Suppressions options**
+* [`applySuppressions`][linting options] (ESLint ≥ v10.1)
+* [`suppressionsLocation`][linting options] (ESLint ≥ v10.1)
+
 **Other options**
 * [`flags`][other options]
 

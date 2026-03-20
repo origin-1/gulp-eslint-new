@@ -113,8 +113,11 @@ describe
                     const eslintVersion = file._eslintInfo.eslint.constructor.version;
                     if (satisfies(eslintVersion, useEslintrcConfig ? '>=8.8' : '>=8.23'))
                     {
+                        assert(Array.isArray(file.eslint.suppressedMessages));
                         assert.equal(file.eslint.suppressedMessages.length, 1);
-                        assert.equal(file.eslint.suppressedMessages[0].ruleId, 'strict');
+                        const [suppressedMessage] = file.eslint.suppressedMessages;
+                        assert.equal(suppressedMessage.ruleId, 'strict');
+                        assert.equal(suppressedMessage.severity, 2);
                     }
                     assert(Array.isArray(file.eslint.usedDeprecatedRules));
                     assert.equal(file.eslint.usedDeprecatedRules.length, 1);
@@ -804,40 +807,6 @@ describe
             );
         }
 
-        function testReportUnusedDisableDirectivesLinting(eslintPkg)
-        {
-            it
-            (
-                '"reportUnusedDisableDirectives" linter option should be considered',
-                async () =>
-                {
-                    const file = createVinylFile('file.js', '// eslint-disable-line');
-                    const options =
-                    {
-                        [ESLINT_PKG]:       eslintPkg,
-                        baseConfig:
-                        { linterOptions: { reportUnusedDisableDirectives: 'error' } },
-                        configType:         'flat',
-                        overrideConfigFile: true,
-                    };
-                    await finishStream(gulpESLintNew(options).end(file));
-                    assert.equal(file.eslint.filePath, file.path);
-                    assert(Array.isArray(file.eslint.messages));
-                    assert.equal(file.eslint.messages.length, 1);
-                    const [message] = file.eslint.messages;
-                    assert.equal
-                    (
-                        message.message,
-                        'Unused eslint-disable directive (no problems were reported).',
-                    );
-                    assert.equal(message.line, 1);
-                    assert.equal(message.column, 1);
-                    assert.equal(message.ruleId, null);
-                    assert.equal(message.severity, 2);
-                },
-            );
-        }
-
         function testFlatLinting(eslintPkg)
         {
             it
@@ -909,6 +878,88 @@ describe
                         .end(file),
                     );
                     assert(file.eslint);
+                },
+            );
+        }
+
+        function testNewV9xFeatures(eslintPkg)
+        {
+            it
+            (
+                '"overrideConfigFile" should work with a TypeScript config file',
+                async () =>
+                {
+                    const options =
+                    {
+                        [ESLINT_PKG]:       eslintPkg,
+                        overrideConfigFile: join(__dirname, 'config/ts-config.ts'),
+                    };
+                    await testConfig(options);
+                },
+            );
+
+            it
+            (
+                '"reportUnusedInlineConfigs" linter option should be considered',
+                async () =>
+                {
+                    const file = createVinylFile('file.js', '/* eslint no-var: off */');
+                    const options =
+                    {
+                        [ESLINT_PKG]:       eslintPkg,
+                        baseConfig:
+                        { linterOptions: { reportUnusedInlineConfigs: 'error' } },
+                        overrideConfigFile: true,
+                    };
+                    await finishStream(gulpESLintNew(options).end(file));
+                    assert.equal(file.eslint.filePath, file.path);
+                    assert(Array.isArray(file.eslint.messages));
+                    assert.equal(file.eslint.messages.length, 1);
+                    const [message] = file.eslint.messages;
+                    assert.equal
+                    (
+                        message.message,
+                        'Unused inline config (\'no-var\' is not enabled so can\'t be turned ' +
+                        'off).',
+                    );
+                    assert.equal(message.line, 1);
+                    assert.equal(message.column, 1);
+                    assert.equal(message.ruleId, null);
+                    assert.equal(message.severity, 2);
+                },
+            );
+        }
+
+        function testReportUnusedDisableDirectivesLinting(eslintPkg)
+        {
+            it
+            (
+                '"reportUnusedDisableDirectives" linter option should be considered',
+                async () =>
+                {
+                    const file = createVinylFile('file.js', '// eslint-disable-line');
+                    const options =
+                    {
+                        [ESLINT_PKG]:       eslintPkg,
+                        baseConfig:
+                        { linterOptions: { reportUnusedDisableDirectives: 'error' } },
+                        configType:         'flat',
+                        overrideConfigFile: true,
+                    };
+                    await finishStream(gulpESLintNew(options).end(file));
+                    assert.equal(file.eslint.filePath, file.path);
+                    assert(Array.isArray(file.eslint.messages));
+                    assert.equal(file.eslint.messages.length, 1);
+                    const [message] = file.eslint.messages;
+                    assert.equal
+                    (
+                        message.message,
+                        'Unused eslint-disable directive (no problems were reported).',
+                    );
+                    assert.equal(message.line, 1);
+                    assert.equal(message.column, 1);
+                    assert.equal(message.ruleId, null);
+                    assert.equal(message.severity, 2);
                 },
             );
         }
@@ -1060,51 +1111,7 @@ describe
                 testCommonLinting('eslint-9.x', false);
                 testFlatLinting('eslint-9.x');
                 testReportUnusedDisableDirectivesLinting('eslint-9.x');
-
-                it
-                (
-                    '"overrideConfigFile" should work with a TypeScript config file',
-                    async () =>
-                    {
-                        const options =
-                        {
-                            [ESLINT_PKG]:       'eslint-9.x',
-                            overrideConfigFile: join(__dirname, 'config/ts-config.ts'),
-                        };
-                        await testConfig(options);
-                    },
-                );
-
-                it
-                (
-                    '"reportUnusedInlineConfigs" linter option should be considered',
-                    async () =>
-                    {
-                        const file = createVinylFile('file.js', '/* eslint no-var: off */');
-                        const options =
-                        {
-                            [ESLINT_PKG]:       'eslint-9.x',
-                            baseConfig:
-                            { linterOptions: { reportUnusedInlineConfigs: 'error' } },
-                            overrideConfigFile: true,
-                        };
-                        await finishStream(gulpESLintNew(options).end(file));
-                        assert.equal(file.eslint.filePath, file.path);
-                        assert(Array.isArray(file.eslint.messages));
-                        assert.equal(file.eslint.messages.length, 1);
-                        const [message] = file.eslint.messages;
-                        assert.equal
-                        (
-                            message.message,
-                            'Unused inline config (\'no-var\' is not enabled so can\'t be turned ' +
-                            'off).',
-                        );
-                        assert.equal(message.line, 1);
-                        assert.equal(message.column, 1);
-                        assert.equal(message.ruleId, null);
-                        assert.equal(message.severity, 2);
-                    },
-                );
+                testNewV9xFeatures('eslint-9.x');
             },
         );
 
@@ -1128,6 +1135,51 @@ describe
                 testCommonLinting('eslint-10.0', false);
                 testFlatLinting('eslint-10.0');
                 testReportUnusedDisableDirectivesLinting('eslint-10.0');
+                testNewV9xFeatures('eslint-10.0');
+            },
+        );
+
+        describe_v10
+        (
+            'with ESLint 10.x',
+            () =>
+            {
+                testCommonLinting('eslint-10.x', false);
+                testFlatLinting('eslint-10.x');
+                testReportUnusedDisableDirectivesLinting('eslint-10.x');
+                testNewV9xFeatures('eslint-10.x');
+
+                it
+                (
+                    'suppressions should work',
+                    async () =>
+                    {
+                        const file = createVinylFile('file.js', 'var foo = bar');
+                        const options =
+                        {
+                            [ESLINT_PKG]:           'eslint-10.x',
+                            applySuppressions:      true,
+                            baseConfig:
+                            { rules: { 'no-undef': 'error', 'no-var': 'warn' } },
+                            overrideConfigFile:     true,
+                            suppressionsLocation:   'eslint-suppressions.json',
+                        };
+                        await finishStream(gulpESLintNew(options).end(file));
+                        assert.equal(file.eslint.filePath, file.path);
+
+                        assert(Array.isArray(file.eslint.messages));
+                        assert.equal(file.eslint.messages.length, 1);
+                        const [message] = file.eslint.messages;
+                        assert.equal(message.ruleId, 'no-var');
+                        assert.equal(message.severity, 1);
+
+                        assert(Array.isArray(file.eslint.suppressedMessages));
+                        assert.equal(file.eslint.suppressedMessages.length, 1);
+                        const [suppressedMessage] = file.eslint.suppressedMessages;
+                        assert.equal(suppressedMessage.ruleId, 'no-undef');
+                        assert.equal(suppressedMessage.severity, 2);
+                    },
+                );
             },
         );
     },
