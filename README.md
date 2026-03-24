@@ -4,8 +4,8 @@
 
 ## Installation
 
-Make sure that you are using a version of Node.js supported by your version of ESLint.
-See prerequisites for [ESLint 8](https://eslint.org/docs/v8.x/use/getting-started#prerequisites), [ESLint 9](https://eslint.org/docs/v9.x/use/getting-started#prerequisites), or [ESLint 10](https://eslint.org/docs/v10.x/use/getting-started#prerequisites).
+Make sure to use a Node.js version supported by the ESLint version you plan to run.
+See the prerequisites for [ESLint 8](https://eslint.org/docs/v8.x/use/getting-started#prerequisites), [ESLint 9](https://eslint.org/docs/v9.x/use/getting-started#prerequisites), or [ESLint 10](https://eslint.org/docs/v10.x/use/getting-started#prerequisites).
 For TypeScript support, you need TypeScript 4.8 or later.
 
 To install gulp-eslint-new, [use](https://docs.npmjs.com/cli/install) [npm](https://docs.npmjs.com/about-npm):
@@ -14,26 +14,25 @@ To install gulp-eslint-new, [use](https://docs.npmjs.com/cli/install) [npm](http
 npm i -D gulp-eslint-new
 ```
 
-gulp-eslint-new will also install the latest version of ESLint 10, unless another one is found.
-To use a particular version of ESLint, install it by yourself.
+gulp-eslint-new declares ESLint as a dependency, so a compatible ESLint version will be installed if your project does not already provide one.
+To use a particular version of ESLint, install it explicitly.
 For example, to use ESLint 8.57.1:
 
 ```console
 npm i -D gulp-eslint-new eslint@8.57.1
 ```
 
-## Migrating
+## Migration from gulp-eslint
 
-If you are migrating from [gulp-eslint][gulp-eslint], you probably won't need to make any substantial changes to your gulp task, as the API is widely compatible.
-Note though that many options have changed: the current options are documented in the [`gulpESLintNew(options)`](#gulpeslintnewoptions) section.
+If you are migrating from [gulp-eslint][gulp-eslint], you probably won't need to make any substantial changes to your gulp pipeline code, as the API is widely compatible.
+The largest differences are in ESLint itself: gulp-eslint-new is designed to work with ESLint 8, 9 or 10, whereas the latest release of gulp-eslint only supports ESLint 6.
+You will need to update your project to address breaking changes in ESLint (see links below), including your configuration.
+Also note that many plugin options have changed: the current options are documented in the [`gulpESLintNew(options)`](#gulpeslintnewoptions) section.
 
-Also note that gulp-eslint-new is designed to work with ESLint 8, 9 or 10, whereas the latest release of gulp-eslint only supports ESLint 6: you will need to update your project to address breaking changes in ESLint.
-You can follow the links below for more information.
 * [Breaking changes for users from ESLint 6 to ESLint 7](https://eslint.org/docs/user-guide/migrating-to-7.0.0#breaking-changes-for-users)
 * [Breaking changes for users from ESLint 7 to ESLint 8](https://eslint.org/docs/user-guide/migrate-to-8.0.0#breaking-changes-for-users)
 * [Breaking changes for users from ESLint 8 to ESLint 9](https://eslint.org/docs/user-guide/migrate-to-9.0.0#breaking-changes-for-users)
 * [Breaking changes for users from ESLint 9 to ESLint 10](https://eslint.org/docs/user-guide/migrate-to-10.0.0#breaking-changes-for-users)
-
 
 ## Usage
 
@@ -179,21 +178,21 @@ The location of the files to be linted is not related to the working directory.
 
 Type: `boolean`
 
-When `false`, ESLint will not respect `.eslintignore` files or ignore patterns in your configurations.
+When `false`, ESLint will not respect `.eslintignore` files or ignore patterns from configuration.
 
 ##### `options.ignorePath`
 
 Type: `string`
 
 The path to a file ESLint uses instead of `.eslintignore` in the current working directory.
-This option in not available when [`configType`](#optionsconfigtype) is `"flat"`.
+This option is not available when [`configType`](#optionsconfigtype) is `"flat"`.
 
 ##### `options.ignorePatterns`
 
 Type: `string[] | null`
 
 Ignore file patterns to use in addition to config ignores.
-This option in only available when [`configType`](#optionsconfigtype) is `"flat"`.
+This option is only available when [`configType`](#optionsconfigtype) is `"flat"`.
 
 #### Autofix Options
 
@@ -376,7 +375,7 @@ gulp.src(['**/*.js', '!node_modules/**'])
 
 `writer` param type: `NodeJS.WritableStream | Function | undefined`
 
-Format all linted files once.
+Format all linted files at once.
 This should be used in the stream after piping through `gulpESLintNew`; otherwise, this will find no ESLint results to format.
 
 The `formatter` argument determines the [ESLint formatter](https://eslint.org/docs/user-guide/formatters/) used to format linting results.
@@ -441,7 +440,7 @@ gulp.src(['**/*.{js,ts}', '!node_modules/**'])
 .pipe(gulpESLintNew.fix());
 ```
 
-See also the [autofix examples](https://github.com/origin-1/gulp-eslint-new/blob/main/example/fix.js).
+See also the [autofix example](https://github.com/origin-1/gulp-eslint-new/blob/main/example/fix.js).
 
 The `fix` option applies fixes to the gulp stream.
 `gulpESLintNew.fix()` saves the fixed content to file.
