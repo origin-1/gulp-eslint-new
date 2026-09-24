@@ -22,8 +22,21 @@ task
         const gulpESLintNew = require('gulp-eslint-new');
 
         const stream =
-        src(['*.js', 'example/*.js', 'lib/*.{js,ts}', 'test/**/*.{js,ts}'])
-        .pipe(gulpESLintNew({ configType: 'flat', warnIgnored: true }))
+        src
+        (
+            [
+                '!coverage/**',
+                '!example/demo/**',
+                '!node_modules/**',
+                '**/*.{js,json,ts}',
+                'test/**/.eslintrc{,.js}',
+            ],
+        )
+        .pipe
+        (
+            gulpESLintNew
+            ({ overrideConfigFile: 'eslint.config.js', configType: 'flat', warnIgnored: true }),
+        )
         .pipe(gulpESLintNew.format('compact'))
         .pipe(gulpESLintNew.failAfterError());
         return stream;
@@ -94,6 +107,6 @@ function tsTest(tsVersion, tsPkgName)
     return task;
 }
 
-task('ts-test', parallel(tsTest('4.8', 'typescript_4.8'), tsTest('5', 'typescript_5')));
+task('ts-test', parallel(tsTest('5.0', 'typescript_5.0'), tsTest('5', 'typescript_5')));
 
 task('default', series('clean', parallel('lint', 'ts-test'), 'test'));

@@ -23,7 +23,7 @@ ESLint 10 is now supported.
 <a name="2.4.0"></a>
 ## [2.4.0](https://github.com/origin-1/gulp-eslint-new/releases/tag/2.4.0) (2024-10-28)
 
-* TypeScript < 4.8 is no longer supported.
+* TypeScript < 5.0 is no longer supported.
 * Improved TypeScript type declarations.
 
 <a name="2.3.0"></a>

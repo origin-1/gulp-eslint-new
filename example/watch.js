@@ -40,7 +40,8 @@ function cachedLintWatch()
     (
         globs,
         { ignoreInitial: false },
-        () => src(globs)
+        () =>
+        src(globs)
         .pipe(gulpCached(CACHE_NAME))
         // Only uncached and changed files past this point.
         .pipe(gulpESLintNew({ cwd: join(__dirname, 'demo') }))

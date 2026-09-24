@@ -213,13 +213,15 @@ JSON.stringify({ results, context });
 declare const toStringAsync: (arg: unknown) => Promise<string>;
 const invalidLoadedFormatter =
 {
-    format: async (results: readonly ESLint.LintResult[], ignored: boolean):
-    Promise<string> => toStringAsync({ results, ignored }),
+    format:
+    async (results: readonly ESLint.LintResult[], ignored: boolean): Promise<string> =>
+    toStringAsync({ results, ignored }),
 };
 const loadedFormatter =
 {
-    format: async (results: readonly ESLint.LintResult[], resultsMeta: ResultsMeta):
-    Promise<string> => toStringAsync({ results, resultsMeta }),
+    format:
+    async (results: readonly ESLint.LintResult[], resultsMeta: ResultsMeta): Promise<string> =>
+    toStringAsync({ results, resultsMeta }),
 };
 
 isStream(gulpESLintNew.formatEach());

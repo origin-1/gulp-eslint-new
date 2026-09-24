@@ -86,7 +86,7 @@ describe
                         [GULP_WARN_KEY]:
                         () =>
                         {
-                            ++warnCount;
+                            warnCount++;
                         },
                     },
                 );

@@ -118,7 +118,7 @@ describe
                 formatResults,
                 () =>
                 {
-                    ++writeCount;
+                    writeCount++;
                     const error = Error(testMessage);
                     error.name = testErrorName;
                     return useError(error);
@@ -230,7 +230,8 @@ describe
         it
         (
             'should wrap errors thrown by a synchronous format writer',
-            () => testWrapError
+            () =>
+            testWrapError
             (
                 error =>
                 {
@@ -242,9 +243,11 @@ describe
         it
         (
             'should wrap errors thrown by an asynchronous format writer',
-            () => testWrapError
+            () =>
+            testWrapError
             (
-                error => new Promise
+                error =>
+                new Promise
                 (
                     (_, reject) =>
                     {
@@ -363,7 +366,7 @@ describe
                 formatResult,
                 () =>
                 {
-                    ++writeCount;
+                    writeCount++;
                     const error = Error(testMessage);
                     error.name = testErrorName;
                     return useError(error);
@@ -475,7 +478,7 @@ describe
                 const loadFormatter =
                 () =>
                 {
-                    ++loadFormatterCallCount;
+                    loadFormatterCallCount++;
                     return { format: () => '' };
                 };
                 const eslint1 = { loadFormatter };
@@ -512,7 +515,8 @@ describe
         it
         (
             'should wrap errors thrown by a synchronous format writer',
-            () => testWrapError
+            () =>
+            testWrapError
             (
                 error =>
                 {
@@ -524,9 +528,11 @@ describe
         it
         (
             'should wrap errors thrown by an asynchronous format writer',
-            () => testWrapError
+            () =>
+            testWrapError
             (
-                error => new Promise
+                error =>
+                new Promise
                 (
                     (_, reject) =>
                     {

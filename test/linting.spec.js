@@ -46,7 +46,8 @@ async function testIgnoreByPath(options, dataList)
     const stream = gulpESLintNew(options);
     for (const data of dataList)
     {
-        const file = data.file =
+        const file =
+        data.file =
         createVinylFile(join('__CWD__', data.filePath), '');
         stream.write(file);
     }

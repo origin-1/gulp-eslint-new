@@ -224,7 +224,8 @@ describe
                         util
                         .createTransform
                         (
-                            () => new Promise
+                            () =>
+                            new Promise
                             (
                                 (_, reject) =>
                                 {
@@ -255,7 +256,8 @@ describe
                         .createTransform
                         (
                             noop,
-                            () => new Promise
+                            () =>
+                            new Promise
                             (
                                 (_, reject) =>
                                 {
@@ -758,7 +760,7 @@ describe
                             {
                                 assert(value);
                                 assert.equal(value, formattedText);
-                                ++writeCount;
+                                writeCount++;
                             },
                         );
                         assert.equal(writeCount, 1);
