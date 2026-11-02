@@ -1,9 +1,10 @@
 'use strict';
 
-const { GULP_DEST_KEY, GULP_WARN_KEY, createTransform } = require('#util');
-const { createVinylDirectory, createVinylFile }         = require('./test-util');
-const { strict: assert }                                = require('assert');
-const gulpESLintNew                                     = require('gulp-eslint-new');
+const { GULP_DEST_KEY, GULP_WARN_KEY, createTransform }         = require('#util');
+const { createVinylDirectory, createVinylFile, finishStream }   = require('./test-util');
+const { strict: assert }                                        = require('assert');
+const gulpESLintNew                                             = require('gulp-eslint-new');
+const PluginError                                               = require('plugin-error');
 
 describe
 (
@@ -113,6 +114,27 @@ describe
                     },
                 );
                 testStream.end();
+            },
+        );
+
+        it
+        (
+            'should emit an error if a linted file has no ESLint instance',
+            async () =>
+            {
+                const file = createVinylFile('file.js', '');
+                file.eslint = { };
+                await assert.rejects
+                (
+                    finishStream(gulpESLintNew.fix().end(file)),
+                    {
+                        constructor:    PluginError,
+                        fileName:       file.path,
+                        message:        'ESLint information not available',
+                        plugin:         'gulp-eslint-new',
+                        showStack:      false,
+                    },
+                );
             },
         );
     },
