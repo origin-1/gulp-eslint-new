@@ -13,6 +13,7 @@ from '../lib/gulp-eslint-new';
 
 import type { ESLint } from 'eslint';
 
+// Either config options without config type
 gulpESLintNew
 (
     {
@@ -22,31 +23,44 @@ gulpESLintNew
         overrideConfig:                 undefined,
         overrideConfigFile:             undefined,
         plugins:                        undefined,
-        reportUnusedDisableDirectives:  undefined,
     },
 );
 
+// Eslintrc options with unspecified config type
 void
 (
-    (configType: undefined | null): unknown =>
-    gulpESLintNew
-    ({ configType, ignorePatterns: undefined, ruleFilter: undefined, stats: undefined })
-);
-
-void
-(
-    (configType: undefined | null): unknown =>
+    (configType: undefined | null): NodeJS.ReadWriteStream =>
     gulpESLintNew
     (
         {
             configType,
+            ignorePath:                     undefined,
             reportUnusedDisableDirectives:  undefined,
             resolvePluginsRelativeTo:       undefined,
             rulePaths:                      undefined,
+            useEslintrc:                    undefined,
         },
     )
 );
 
+// Flat config options with unspecified config type
+void
+(
+    (configType: undefined | null): NodeJS.ReadWriteStream =>
+    gulpESLintNew
+    (
+        {
+            configType,
+            applySuppressions:      undefined,
+            ignorePatterns:         undefined,
+            ruleFilter:             undefined,
+            stats:                  undefined,
+            suppressionsLocation:   undefined,
+        },
+    )
+);
+
+// Eslintrc config options
 gulpESLintNew
 (
     {
@@ -58,6 +72,7 @@ gulpESLintNew
         fixTypes:                       ['problem'],
         flags:                          ['flag'],
         ignore:                         false,
+        ignorePath:                     'ignorePath',
         overrideConfig:                 { env: { } },
         overrideConfigFile:             'overrideConfigFile',
         plugins:                        { foo: { } },
@@ -65,10 +80,12 @@ gulpESLintNew
         reportUnusedDisableDirectives:  'off',
         resolvePluginsRelativeTo:       'resolvePluginsRelativeTo',
         rulePaths:                      ['rulePaths'],
+        useEslintrc:                    false,
         warnIgnored:                    true,
     },
 );
 
+// Flat config options
 gulpESLintNew
 (
     {
@@ -99,6 +116,7 @@ gulpESLintNew
     },
 );
 
+// Either config options
 void
 (
     (configType: 'eslintrc' | 'flat', ignorePatterns?: string[] | null, rulePaths?: string[]):
@@ -116,6 +134,9 @@ void
         },
     )
 );
+
+// @ts-expect-error Invalid option type.
+gulpESLintNew({ configType: 'invalid' });
 
 // @ts-expect-error Invalid option for eslintrc config.
 gulpESLintNew({ configType: 'eslintrc', applySuppressions: true });
@@ -138,11 +159,14 @@ gulpESLintNew({ errorOnUnmatchedPattern: undefined });
 // @ts-expect-error Invalid option.
 gulpESLintNew({ extensions: undefined });
 
-// @ts-expect-error Invalid option type for eslintrc config.
-gulpESLintNew({ configType: 'eslintrc', fixTypes: ['invalid'] });
+// @ts-expect-error Invalid option type.
+gulpESLintNew({ fixTypes: ['invalid'] });
 
 // @ts-expect-error Invalid option.
 gulpESLintNew({ globInputPaths: undefined });
+
+// @ts-expect-error Invalid option for flat config.
+gulpESLintNew({ configType: 'flat', ignorePath: undefined });
 
 // @ts-expect-error Invalid option for eslintrc config.
 gulpESLintNew({ configType: 'eslintrc', ignorePatterns: [] });
@@ -156,8 +180,14 @@ gulpESLintNew({ passOnNoPatterns: undefined });
 // @ts-expect-error Invalid option for flat config.
 gulpESLintNew({ configType: 'flat', reportUnusedDisableDirectives: undefined });
 
+// @ts-expect-error Invalid option for flat config.
+gulpESLintNew({ configType: 'flat', resolvePluginsRelativeTo: undefined });
+
 // @ts-expect-error Invalid option for eslintrc config.
 gulpESLintNew({ configType: 'eslintrc', ruleFilter: undefined });
+
+// @ts-expect-error Invalid option for flat config.
+gulpESLintNew({ configType: 'flat', rulePaths: undefined });
 
 // @ts-expect-error Invalid option.
 gulpESLintNew({ rules: undefined });
@@ -168,7 +198,14 @@ gulpESLintNew({ configType: 'eslintrc', stats: undefined });
 // @ts-expect-error Invalid option for eslintrc config.
 gulpESLintNew({ configType: 'eslintrc', suppressionsLocation: 'eslint-suppressions.json' });
 
+// @ts-expect-error Invalid option for flat config.
+gulpESLintNew({ configType: 'flat', useEslintrc: undefined });
+
 const isStream = (stream: NodeJS.ReadWriteStream): void => void stream;
+
+isStream(gulpESLintNew());
+isStream(gulpESLintNew('eslint.config.js'));
+isStream(gulpESLintNew({ }));
 
 isStream(gulpESLintNew.result((): undefined => undefined));
 gulpESLintNew.result((result): void => void result);
