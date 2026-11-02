@@ -88,6 +88,92 @@ describe
                         assert(!('suppressedMessages' in result));
                     },
                 );
+
+                it
+                (
+                    'should treat a file name starting with two dots as hidden in eslintrc mode',
+                    () =>
+                    {
+                        const result =
+                        util.createIgnoreResult
+                        ('..hidden.js', process.cwd(), { name: 'ESLint', version: '8.57.1' });
+                        assert.equal
+                        (
+                            result.messages[0].message,
+                            'File ignored by default. Use a negated ignore pattern (like ' +
+                            '"!<relative/path/to/filename>") to override.',
+                        );
+                    },
+                );
+
+                it
+                (
+                    'should not treat a parent directory reference as hidden in eslintrc mode',
+                    () =>
+                    {
+                        const result =
+                        util.createIgnoreResult
+                        ('../file.js', process.cwd(), { name: 'ESLint', version: '8.57.1' });
+                        assert.equal
+                        (
+                            result.messages[0].message,
+                            'File ignored because of a matching ignore pattern. Set "ignore" ' +
+                            'option to false to override.',
+                        );
+                    },
+                );
+
+                it
+                (
+                    'should not treat a ".eslintrc.*" file as hidden in eslintrc mode',
+                    () =>
+                    {
+                        const result =
+                        util.createIgnoreResult
+                        ('sub/.eslintrc.yml', process.cwd(), { name: 'ESLint', version: '8.57.1' });
+                        assert.equal
+                        (
+                            result.messages[0].message,
+                            'File ignored because of a matching ignore pattern. Set "ignore" ' +
+                            'option to false to override.',
+                        );
+                    },
+                );
+
+                it
+                (
+                    'should treat a ".eslintrc.*" file in a hidden directory as hidden in ' +
+                    'eslintrc mode',
+                    () =>
+                    {
+                        const result =
+                        util.createIgnoreResult
+                        ('.dir/.eslintrc.js', process.cwd(), { name: 'ESLint', version: '8.57.1' });
+                        assert.equal
+                        (
+                            result.messages[0].message,
+                            'File ignored by default. Use a negated ignore pattern (like ' +
+                            '"!<relative/path/to/filename>") to override.',
+                        );
+                    },
+                );
+
+                it
+                (
+                    'should treat a file named ".eslintrc" as hidden in eslintrc mode',
+                    () =>
+                    {
+                        const result =
+                        util.createIgnoreResult
+                        ('.eslintrc', process.cwd(), { name: 'ESLint', version: '8.57.1' });
+                        assert.equal
+                        (
+                            result.messages[0].message,
+                            'File ignored by default. Use a negated ignore pattern (like ' +
+                            '"!<relative/path/to/filename>") to override.',
+                        );
+                    },
+                );
             },
         );
 

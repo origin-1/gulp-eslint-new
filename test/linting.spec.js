@@ -493,7 +493,7 @@ describe
                         [ESLINT_PKG]:       eslintPkg,
                         configType:         'eslintrc',
                         cwd:                resolve('__CWD__'),
-                        baseConfig:         { ignorePatterns: ['ignored-*'] },
+                        baseConfig:         { ignorePatterns: ['ignored-*', '.eslintrc.*'] },
                         useEslintrc:        false,
                         warnIgnored:        true,
                     };
@@ -522,6 +522,18 @@ describe
                             expectdMessage:
                             'File ignored by default. Use a negated ignore pattern (like ' +
                             '"!<relative/path/to/filename>") to override.',
+                        },
+                        {
+                            filePath: '..file5.js',
+                            expectdMessage:
+                            'File ignored by default. Use a negated ignore pattern (like ' +
+                            '"!<relative/path/to/filename>") to override.',
+                        },
+                        {
+                            filePath: '.eslintrc.js',
+                            expectdMessage:
+                            'File ignored because of a matching ignore pattern. Set "ignore" ' +
+                            'option to false to override.',
                         },
                     ];
                     await testIgnoreByPath(options, dataList);
