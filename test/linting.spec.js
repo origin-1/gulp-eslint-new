@@ -55,15 +55,18 @@ async function testIgnoreByPath(options, dataList)
     for (const { file, filePath, expectdMessage } of dataList)
     {
         const message = `for file "${filePath}"`;
-        assert.equal(file.eslint.filePath, file.path, message);
-        assert(Array.isArray(file.eslint.messages, message));
-        assert.equal(file.eslint.messages.length, 1, message);
-        assert.equal(file.eslint.messages[0].message, expectdMessage, message);
-        assert.equal(file.eslint.errorCount, 0, message);
-        assert.equal(file.eslint.warningCount, 1, message);
-        assert.equal(file.eslint.fixableErrorCount, 0, message);
-        assert.equal(file.eslint.fixableWarningCount, 0, message);
-        assert.equal(file.eslint.fatalErrorCount, 0, message);
+        assert.equal(file.eslint.filePath, file.path,                   message);
+        assert(Array.isArray(file.eslint.messages),                     message);
+        assert.equal(file.eslint.messages.length,       1,              message);
+        assert.equal(file.eslint.messages[0].fatal,     false,          message);
+        assert.equal(file.eslint.messages[0].message,   expectdMessage, message);
+        assert.equal(file.eslint.messages[0].ruleId,    null,           message);
+        assert.equal(file.eslint.messages[0].severity,  1,              message);
+        assert.equal(file.eslint.errorCount,            0,              message);
+        assert.equal(file.eslint.warningCount,          1,              message);
+        assert.equal(file.eslint.fixableErrorCount,     0,              message);
+        assert.equal(file.eslint.fixableWarningCount,   0,              message);
+        assert.equal(file.eslint.fatalErrorCount,       0,              message);
     }
 }
 
