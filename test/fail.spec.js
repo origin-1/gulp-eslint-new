@@ -212,7 +212,15 @@ describe
                 const testTaskMin = // eslint-disable-line no-unused-vars
                 () =>
                 {
-                    const Readable = requireAs('ternary-stream', 'duplexify', 'readable-stream');
+                    const Readable =
+                    requireAs
+                    (
+                        'vinyl-fs',
+                        'vinyl-sourcemap',
+                        'vinyl-contents',
+                        'bl',
+                        'readable-stream',
+                    );
 
                     const readableStream = new Readable({ objectMode: true });
                     readableStream.push(file);
