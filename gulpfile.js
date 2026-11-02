@@ -71,7 +71,7 @@ task
     },
 );
 
-function tsTest(tsVersion, tsPkgName)
+function tsTest(tsVersion, tsPkgName, typesPkgName)
 {
     async function task() // eslint-disable-line require-await
     {
@@ -90,6 +90,12 @@ function tsTest(tsVersion, tsPkgName)
         const pkgPath = __dirname;
         const tsConfigPath = join(pkgPath, 'test/tsconfig.json');
         const tsConfig = readConfigFile(tsConfigPath, sys.readFile);
+        if (typesPkgName)
+        {
+            const typesPkgJsonPath = require.resolve(`${typesPkgName}/package.json`);
+            const typesPkgPath = dirname(typesPkgJsonPath);
+            tsConfig.config.compilerOptions = { paths: { eslint: [typesPkgPath] } };
+        }
         const basePath = dirname(tsConfigPath);
         const { fileNames, options } = parseJsonConfigFileContent(tsConfig.config, sys, basePath);
         const program = createProgram(fileNames, options);
@@ -111,7 +117,13 @@ task
 (
     'ts-test',
     parallel
-    (tsTest('5.0', 'typescript_5.0'), tsTest('5', 'typescript_5'), tsTest('6', 'typescript')),
+    (
+        tsTest('5.0',       'typescript_5.0'),
+        tsTest('5',         'typescript_5'),
+        tsTest('6',         'typescript'),
+        tsTest('6/v9.10',   'typescript', 'eslint-9.10'),
+        tsTest('6/v9.x',    'typescript', 'eslint-9.x'),
+    ),
 );
 
 task('default', series('clean', parallel('lint', 'ts-test'), 'test'));

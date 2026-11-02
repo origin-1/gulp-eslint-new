@@ -50,7 +50,7 @@
     "eslint": "8 || 9 || 10",
     "fancy-log": "^2.0.0",
     "plugin-error": "^2.0.1",
-    "semver": "^7.7.4",
+    "semver": "^7.8.6",
     "ternary-stream": "^3.0.0",
     "vinyl-fs": "^4.0.2"
   },
@@ -66,6 +66,7 @@
     "eslint-8.21": "npm:eslint@8.21",
     "eslint-8.x": "npm:eslint@8.x",
     "eslint-9.0": "npm:eslint@9.0",
+    "eslint-9.10": "npm:eslint@9.10",
     "eslint-9.x": "npm:eslint@9.x",
     "eslint-config-~shareable": "file:test/config",
     "eslint-formatter-~formatter": "file:test/formatter",
