@@ -24,7 +24,7 @@ interface ESLintrcOptions
     // Autofix
     fix?:
     boolean | ((message: Linter.LintMessage) => boolean) | undefined;
-    fixTypes?:                      FixType[] | null | undefined;
+    fixTypes?:                      ESLint.FixType[] | null | undefined;
 
     // Caching
     cache?:                         boolean | undefined;

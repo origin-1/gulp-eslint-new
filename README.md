@@ -24,7 +24,7 @@ npm i -D gulp-eslint-new eslint@8.57.1
 
 ## Migration from gulp-eslint
 
-If you are migrating from [gulp-eslint][gulp-eslint], you probably won't need to make any substantial changes to your gulp pipeline code, as the API is widely compatible.
+If you are migrating from [gulp-eslint][gulp-eslint], you probably won't need to make any substantial changes to your gulp pipeline code, as the API is largely compatible.
 The largest differences are in ESLint itself: gulp-eslint-new is designed to work with ESLint 8, 9 or 10, whereas the latest release of gulp-eslint only supports ESLint 6.
 You will need to update your project to address breaking changes in ESLint (see links below), including your configuration.
 Also note that many plugin options have changed: the current options are documented in the [`gulpESLintNew(options)`](#gulpeslintnewoptions) section.
@@ -91,7 +91,7 @@ gulp.src(['**/*.{js,mjs}', '!node_modules/**'])
         },
     ),
 )
-.pipe(gulpESLintNew.formatEach('compact', process.stderr));
+.pipe(gulpESLintNew.formatEach('stylish', process.stderr));
 ```
 
 For additional examples, look through the [example directory](https://github.com/origin-1/gulp-eslint-new/tree/main/example).
@@ -127,9 +127,9 @@ See the linked content for details about each option.
 * [`plugins`][linting options]
 * [`reportUnusedDisableDirectives`][legacy linting options] (not in flat config)
 * [`resolvePluginsRelativeTo`][legacy linting options] (not in flat config)
-* [`ruleFilter`][linting options] (flat config only)
+* [`ruleFilter`][linting options] (ESLint ≥ v9, flat config only)
 * [`rulePaths`][legacy linting options] (not in flat config)
-* [`stats`][linting options] (flat config only)
+* [`stats`][linting options] (ESLint ≥ v9, flat config only)
 * [`useEslintrc`][legacy linting options] (not in flat config)
 
 **Autofix options**
@@ -141,11 +141,11 @@ See the linked content for details about each option.
 * [`warnIgnored`](#optionswarnignored)
 
 **Suppressions options**
-* [`applySuppressions`][linting options] (ESLint ≥ v10.1)
-* [`suppressionsLocation`][linting options] (ESLint ≥ v10.1)
+* [`applySuppressions`][suppressions options] (ESLint ≥ v10.1)
+* [`suppressionsLocation`][suppressions options] (ESLint ≥ v10.1)
 
 **Other options**
-* [`flags`][other options]
+* [`flags`][other options] (ESLint ≥ v9.6)
 
 #### General Options
 
@@ -153,14 +153,14 @@ See the linked content for details about each option.
 
 Type: `"eslintrc" | "flat" | null`
 
-ESLint supports two configuration formats: a [new config](https://eslint.org/docs/user-guide/configure/configuration-files) type, aka flat config, based on file `eslint.config.*`, and a [legacy config](https://eslint.org/docs/v9.x/use/configure/configuration-files-deprecated) type, or eslintrc config, based on file `.eslintrc`.
+ESLint supports two configuration formats: a [new config](https://eslint.org/docs/user-guide/configure/configuration-files) type, aka flat config, based on file `eslint.config.*`, and a [legacy config](https://eslint.org/docs/v9.x/use/configure/configuration-files-deprecated) type, or eslintrc config, based on file `.eslintrc` or `.eslintrc.*`.
 
-* **ESLint 8**: Uses the legacy config by default. Flat config is partially supported depending on the version. In gulp-eslint-new, set `configType: "flat"` to enable flat config.
-* **ESLint 9**: Uses flat config by default. To use legacy config in gulp-eslint-new, set `configType: "eslintrc"`.  
+* **ESLint 8**: Uses the legacy config by default. Flat config is partially supported starting from ESLint 8.21. In gulp-eslint-new, set `configType: "flat"` to enable flat config.
+* **ESLint 9**: Uses flat config by default. To use legacy config in gulp-eslint-new, set `configType: "eslintrc"`.
 * **ESLint 10**: Only supports flat config. Setting `configType: "eslintrc"` in gulp-eslint-new will result in an error.
 
 The new and legacy config formats differ significantly in the available options and their usage.
-Refer to the respective documentation in ESLint for the specifics of each options.
+Refer to the respective documentation in ESLint for the specifics of each option.
 
 ##### `options.cwd`
 
@@ -168,8 +168,8 @@ Type: `string`
 
 The working directory. This must be an absolute path. Default is the current working directory.
 
-The working directory is where ESLint will look for a `.eslintignore` file by default.
-It is also the base directory for any relative paths specified in the options (e.g. `overrideConfigFile`, `resolvePluginsRelativeTo`, `rulePaths`, `overrideConfig.extends`, etc.).
+The working directory is the base directory for any relative paths specified in the options (e.g. `overrideConfigFile`, `suppressionsLocation`, etc.).
+In legacy config mode, it's also where ESLint will look for a `.eslintignore` file by default.
 The location of the files to be linted is not related to the working directory.
 
 #### File Enumeration Options
@@ -201,7 +201,7 @@ This option is only available when [`configType`](#optionsconfigtype) is `"flat"
 Type: `boolean | (message: LintMessage) => boolean`
 
 Set to `true` or a function to generate fixes when possible, or set to `false` to explicitly disable autofixing.
-If a predicate function is present, it will be invoked once for each lint message, and only the lint messages for which the function returned `true` will be reported.
+If a predicate function is present, it will be invoked once for each fixable lint message, and only the lint messages for which the function returns `true` will be fixed.
 
 **See the [Autofix](#autofix) section for more information and examples.**
 
@@ -272,11 +272,11 @@ gulp.src(['**/*.js', '!node_modules/**'])
 );
 ```
 
-Param Type: `(result: Object, callback: Function) => void`
+Param type: `(result: Object, callback: Function) => void`
 
 Call an asynchronous, Node-style callback-based function for each ESLint file result. The callback must be called for the stream to finish. If an error is passed to the callback, it will be wrapped in a gulp `PluginError` and emitted from the stream.
 
-Param Type: `(result: Object) => Promise<void>`
+Param type: `(result: Object) => Promise<void>`
 
 Call an asynchronous, promise-based function for each ESLint file result. If the promise is rejected, the rejection reason will be wrapped in a gulp `PluginError` and emitted from the stream.
 
@@ -406,7 +406,7 @@ A `Function` will be called with the formatter output as the only parameter.
 gulpESLintNew.format()
 
 // write messages to stdout
-gulpESLintNew.format('junit', process.stdout)
+gulpESLintNew.format('json', process.stdout)
 ```
 
 ### `gulpESLintNew.formatEach(formatter, writer)`
@@ -430,7 +430,7 @@ Files without a fix and files that were not processed by ESLint will be left unt
 
 ## Autofix
 
-ESLint can fix some lint problems automatically: this function is called *autofix*.
+ESLint can fix some lint problems automatically: this feature is called *autofix*.
 
 To enable autofix with gulp-eslint-new, set the option `fix` to `true` in [`gulpESLintNew(options)`](#gulpeslintnewoptions), then pipe the stream to [`gulpESLintNew.fix()`](#gulpeslintnewfix), e.g.
 
@@ -459,3 +459,4 @@ The functions [`gulpESLintNew.result`](#gulpeslintnewresultaction) and [`gulpESL
 [npm URL]: https://www.npmjs.com/package/gulp-eslint-new
 [npm badge]: https://img.shields.io/npm/v/gulp-eslint-new?logo=npm
 [other options]: https://eslint.org/docs/latest/integrate/nodejs-api#other-options
+[suppressions options]: https://eslint.org/docs/latest/integrate/nodejs-api#suppressions

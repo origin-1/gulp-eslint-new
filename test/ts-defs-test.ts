@@ -138,6 +138,9 @@ gulpESLintNew({ errorOnUnmatchedPattern: undefined });
 // @ts-expect-error Invalid option.
 gulpESLintNew({ extensions: undefined });
 
+// @ts-expect-error Invalid option type for eslintrc config.
+gulpESLintNew({ configType: 'eslintrc', fixTypes: ['invalid'] });
+
 // @ts-expect-error Invalid option.
 gulpESLintNew({ globInputPaths: undefined });
 
