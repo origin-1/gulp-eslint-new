@@ -43,11 +43,7 @@ ESLint.Options &
     suppressionsLocation?:  string | undefined;
 };
 
-type FormatterFunction =
-(results: LintResult[], context: LintResultData) => string | Promise<string>;
-
 type LintMessage        = Linter.LintMessage;
 type LintResult         = ESLint.LintResult;
 type LintResultData     = ESLint.LintResultData;
-type LoadedFormatter    = ESLint.LoadedFormatter;
 type ResultsMeta        = ESLint.ResultsMeta;

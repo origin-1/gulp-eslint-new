@@ -1,5 +1,5 @@
-import type { TransformCallback }   from 'node:stream';
 import type * as eslint             from './eslint';
+import type { TransformCallback }   from 'stream';
 import 'node';
 
 type Awaitable<T = unknown> = T | PromiseLike<T>;
@@ -27,7 +27,8 @@ declare namespace gulpESLintNew
     /** @deprecated Use type {@link eslint.LintResultData|`ESLint.LintResultData`}. */
     type FormatterContext = eslint.LintResultData;
 
-    type FormatterFunction = eslint.FormatterFunction;
+    type FormatterFunction =
+    (results: LintResult[], context: LintResultData) => string | Promise<string>;
 
     interface GulpESLintNew
     {
@@ -157,7 +158,9 @@ declare namespace gulpESLintNew
     | GulpESLintNewEslintrcOptions & { configType: 'eslintrc'; }
     | GulpESLintNewFlatOptions & { configType: 'flat'; };
 
-    type LintResult = eslint.LintResult;
+    type LintResult = eslint.LintResult & { fixed?: true; };
+
+    type LintResultData = eslint.LintResultData;
 
     type LintResults
     =
@@ -171,7 +174,10 @@ declare namespace gulpESLintNew
         fixableWarningCount: number;
     };
 
-    type LoadedFormatter = eslint.LoadedFormatter;
+    interface LoadedFormatter
+    {
+        format(results: LintResult[], resultsMeta?: ResultsMeta): string | Promise<string>;
+    }
 
     /** @deprecated Use type {@link eslint.ResultsMeta|`ESLint.ResultsMeta`}. */
     type ResultsMeta = eslint.ResultsMeta;

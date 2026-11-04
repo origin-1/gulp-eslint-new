@@ -251,6 +251,7 @@ const formatterFunction =
 (results: ESLint.LintResult[], context?: FormatterContext): string =>
 JSON.stringify({ results, context });
 declare const toStringAsync: (arg: unknown) => Promise<string>;
+declare const eslintLoadedFormatter: ESLint.LoadedFormatter;
 const invalidLoadedFormatter =
 {
     format:
@@ -268,6 +269,7 @@ isStream(gulpESLintNew.formatEach());
 gulpESLintNew.formatEach('test');
 gulpESLintNew.formatEach({ format: (): string => 'test' });
 gulpESLintNew.formatEach(loadedFormatter);
+gulpESLintNew.formatEach(eslintLoadedFormatter);
 gulpESLintNew.formatEach((): string => 'test');
 gulpESLintNew.formatEach(formatterFunction);
 
@@ -292,6 +294,7 @@ isStream(gulpESLintNew.format());
 gulpESLintNew.format('test');
 gulpESLintNew.format({ format: (): string => 'test' });
 gulpESLintNew.format(loadedFormatter);
+gulpESLintNew.format(eslintLoadedFormatter);
 gulpESLintNew.format((): string => 'test');
 gulpESLintNew.format(formatterFunction);
 
@@ -312,4 +315,19 @@ gulpESLintNew.format({ });
 // @ts-expect-error Invalid argument type.
 gulpESLintNew.format(invalidLoadedFormatter);
 
+void
+(
+    (formatter: FormatterFunction): void =>
+    {
+        void formatter([], { cwd: 'cwd', rulesMeta: { } });
+        // @ts-expect-error Missing properties in formatter context.
+        void formatter([], { });
+    }
+);
+gulpESLintNew.format(([{ fixed }]): string => String(fixed));
+gulpESLintNew.format({ format: ([{ fixed }]): string => String(fixed) });
+
 isStream(gulpESLintNew.fix());
+
+void (({ fixed }: LintResult): true | undefined => fixed);
+void ((result: LintResult): boolean => delete result.fixed);
