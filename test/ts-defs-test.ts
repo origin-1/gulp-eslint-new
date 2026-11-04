@@ -313,3 +313,6 @@ gulpESLintNew.format({ });
 gulpESLintNew.format(invalidLoadedFormatter);
 
 isStream(gulpESLintNew.fix());
+
+void (({ fixed }: LintResult): true | undefined => fixed);
+void ((result: LintResult): boolean => delete result.fixed);

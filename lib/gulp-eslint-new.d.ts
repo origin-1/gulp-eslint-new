@@ -157,7 +157,7 @@ declare namespace gulpESLintNew
     | GulpESLintNewEslintrcOptions & { configType: 'eslintrc'; }
     | GulpESLintNewFlatOptions & { configType: 'flat'; };
 
-    type LintResult = eslint.LintResult;
+    type LintResult = eslint.LintResult & { fixed?: true; };
 
     type LintResults
     =
