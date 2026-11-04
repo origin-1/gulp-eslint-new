@@ -467,6 +467,47 @@ describe
 
                     it
                     (
+                        'when not specified, should detach a previous result from an ignored file',
+                        async () =>
+                        {
+                            const file = createVinylFile('file.js', '');
+                            const options1 =
+                            useEslintrcConfig ?
+                            {
+                                [ESLINT_PKG]:   eslintPkg,
+                                configType:     'eslintrc',
+                                useEslintrc:    false,
+                            } :
+                            {
+                                [ESLINT_PKG]:       eslintPkg,
+                                configType:         'flat',
+                                overrideConfigFile: true,
+                            };
+                            await finishStream(gulpESLintNew(options1).end(file));
+                            assert(file.eslint);
+                            assert(file._eslintInfo);
+                            const options2 =
+                            useEslintrcConfig ?
+                            {
+                                [ESLINT_PKG]:   eslintPkg,
+                                configType:     'eslintrc',
+                                baseConfig:     { ignorePatterns: ['file.js'] },
+                                useEslintrc:    false,
+                            } :
+                            {
+                                [ESLINT_PKG]:       eslintPkg,
+                                configType:         'flat',
+                                overrideConfig:     { ignores: ['**/file.js'] },
+                                overrideConfigFile: true,
+                            };
+                            await finishStream(gulpESLintNew(options2).end(file));
+                            assert(!('eslint' in file));
+                            assert(!('_eslintInfo' in file));
+                        },
+                    );
+
+                    it
+                    (
                         'when invalid, should throw an error',
                         () =>
                         {
