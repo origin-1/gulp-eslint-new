@@ -11,23 +11,28 @@ createConfig
     { ignores: ['**/.*/**', 'coverage', 'example/demo'] },
     {
         files:              ['**/*.js'],
+        ignores:            ['lib'],
         jsVersion:          2020,
-        languageOptions:    { sourceType: 'script' },
+    },
+    {
+        files:              ['lib/**/*.js'],
+        jsVersion:          2019,
     },
     {
         files:              ['test/*.spec.js'],
         languageOptions:    { globals: globals.mocha },
     },
     {
+        files:              ['**/*.js'],
+        languageOptions:    { globals: globals.node, sourceType: 'script' },
+        plugins:            { globals: globals.node },
+        rules:              { 'no-throw-literal': 'off' },
+    },
+    {
         files:              ['**/*.ts'],
         tsVersion:          '5.0.0',
         plugins:            { 'tsdoc': eslintPluginTsdoc },
         rules:              { 'tsdoc/syntax': 'error' },
-    },
-    {
-        files:              ['**/*.{js,ts}'],
-        languageOptions:    { globals: globals.node },
-        rules:              { 'no-throw-literal': 'off' },
     },
     {
         files:              ['**/*.json', '**/.eslintrc'],

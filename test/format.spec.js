@@ -330,6 +330,7 @@ describe
                         constructor:    PluginError,
                         message:
                         'The files in the stream were not processed by the same instance of ESLint',
+                        name:           'ESLintError',
                         plugin:         'gulp-eslint-new',
                         showStack:      false,
                     },

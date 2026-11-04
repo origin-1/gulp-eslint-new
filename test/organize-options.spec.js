@@ -92,6 +92,16 @@ describe
 
         it
         (
+            'should not fail with an undefined argument',
+            () =>
+            {
+                assert.doesNotThrow(() => organizeOptions());
+                assert.doesNotThrow(() => organizeOptions(undefined));
+            },
+        );
+
+        it
+        (
             'should fail if a forbidden option is specified',
             () =>
             {
