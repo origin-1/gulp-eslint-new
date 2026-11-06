@@ -208,6 +208,43 @@ describe
                         .add(stream);
                     },
                 );
+
+                it
+                (
+                    'should not fail if an error has no message',
+                    () =>
+                    {
+                        const error = Error();
+                        const pluginError = util.createPluginError(error);
+                        assert.equal(pluginError.message, 'Unknown Error');
+                        assert.equal(pluginError.stack, error.stack);
+                        assert.equal(pluginError.showStack, true);
+                    },
+                );
+
+                it
+                (
+                    'should not fail if an error object has no message',
+                    () =>
+                    {
+                        const pluginError = util.createPluginError({ fileName: 'foo.js' });
+                        assert.equal(pluginError.message, 'Unknown Error');
+                        assert.equal(pluginError.fileName, 'foo.js');
+                    },
+                );
+
+                it
+                (
+                    'should not fail if an error is a falsy value',
+                    () =>
+                    {
+                        for (const error of [undefined, null, '', 0, false])
+                        {
+                            const pluginError = util.createPluginError(error);
+                            assert.equal(pluginError.message, 'Unknown Error');
+                        }
+                    },
+                );
             },
         );
 
@@ -358,6 +395,33 @@ describe
                             {
                                 assert(error.message, 'foo');
                                 assert(error.plugin, 'gulp-eslint-new');
+                                done();
+                            },
+                        )
+                        .end(createVinylFile('file.js', ''));
+                    },
+                );
+
+                it
+                (
+                    'should catch errors without a message in a file handler',
+                    done =>
+                    {
+                        util
+                        .createTransform
+                        (
+                            () =>
+                            {
+                                throw Error();
+                            },
+                        )
+                        .on
+                        (
+                            'error',
+                            error =>
+                            {
+                                assert.equal(error.message, 'Unknown Error');
+                                assert.equal(error.plugin, 'gulp-eslint-new');
                                 done();
                             },
                         )
