@@ -208,6 +208,79 @@ describe
                         .add(stream);
                     },
                 );
+
+                it
+                (
+                    'should not fail if an error has no message',
+                    () =>
+                    {
+                        const error = Error();
+                        const pluginError = util.createPluginError(error);
+                        assert.equal(pluginError.message, 'Unknown Error');
+                        assert.equal(pluginError.stack, error.stack);
+                        assert.equal(pluginError.showStack, true);
+                    },
+                );
+
+                it
+                (
+                    'should not fail if an error object has no message',
+                    () =>
+                    {
+                        const pluginError = util.createPluginError({ fileName: 'foo.js' });
+                        assert.equal(pluginError.message, 'Unknown Error');
+                        assert.equal(pluginError.fileName, 'foo.js');
+                        assert.equal(pluginError.showStack, false);
+                        assert(!('stack' in pluginError));
+                    },
+                );
+
+                it
+                (
+                    'should not fail if an error is a falsy value',
+                    () =>
+                    {
+                        for (const error of [undefined, null, '', 0, false])
+                        {
+                            const pluginError = util.createPluginError(error);
+                            assert.equal(pluginError.message, 'Unknown Error');
+                            assert.equal(pluginError.showStack, false);
+                            assert(!('stack' in pluginError));
+                        }
+                    },
+                );
+
+                it
+                (
+                    'should show the stack trace only for Error objects',
+                    () =>
+                    {
+                        const error = TypeError('foo');
+                        error.code = 'E_FOO';
+                        {
+                            const pluginError = util.createPluginError(error);
+                            assert.equal(pluginError.name, 'TypeError');
+                            assert.equal(pluginError.message, 'foo');
+                            assert.equal(pluginError.code, 'E_FOO');
+                            assert.equal(pluginError.stack, error.stack);
+                            assert.equal(pluginError.showStack, true);
+                        }
+                        {
+                            const pluginError = util.createPluginError({ message: 'foo' });
+                            assert.equal(pluginError.showStack, false);
+                        }
+                        {
+                            const pluginError = util.createPluginError('foo');
+                            assert.equal(pluginError.showStack, false);
+                        }
+                        {
+                            // A plain object can still request a stack trace explicitly.
+                            const pluginError =
+                            util.createPluginError({ message: 'foo', showStack: true });
+                            assert.equal(pluginError.showStack, true);
+                        }
+                    },
+                );
             },
         );
 
@@ -358,6 +431,33 @@ describe
                             {
                                 assert(error.message, 'foo');
                                 assert(error.plugin, 'gulp-eslint-new');
+                                done();
+                            },
+                        )
+                        .end(createVinylFile('file.js', ''));
+                    },
+                );
+
+                it
+                (
+                    'should catch errors without a message in a file handler',
+                    done =>
+                    {
+                        util
+                        .createTransform
+                        (
+                            () =>
+                            {
+                                throw Error();
+                            },
+                        )
+                        .on
+                        (
+                            'error',
+                            error =>
+                            {
+                                assert.equal(error.message, 'Unknown Error');
+                                assert.equal(error.plugin, 'gulp-eslint-new');
                                 done();
                             },
                         )
