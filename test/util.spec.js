@@ -538,6 +538,57 @@ describe
                         assert.equal(quietResult.foobar, 42);
                     },
                 );
+
+                it
+                (
+                    'should filter suppressed messages',
+                    () =>
+                    {
+                        const suppressions = [{ kind: 'directive', justification: '' }];
+                        const resultWithSuppressedMessages =
+                        {
+                            ...result,
+                            suppressedMessages:
+                            [
+                                {
+                                    ruleId:     'suppressed error',
+                                    message:    'This is a suppressed error.',
+                                    severity:   2,
+                                    suppressions,
+                                },
+                                {
+                                    ruleId:     'suppressed warning',
+                                    message:    'This is a suppressed warning.',
+                                    severity:   1,
+                                    suppressions,
+                                },
+                            ],
+                        };
+                        const quietResult =
+                        util.filterResult(resultWithSuppressedMessages, util.isErrorMessage);
+                        assert(Array.isArray(quietResult.suppressedMessages));
+                        assert.equal(quietResult.suppressedMessages.length, 1);
+                        assert.equal
+                        (quietResult.suppressedMessages[0].ruleId, 'suppressed error');
+                        // Suppressed messages do not contribute to the counts.
+                        assert.equal(quietResult.messages.length, 3);
+                        assert.equal(quietResult.errorCount, 3);
+                        assert.equal(quietResult.warningCount, 0);
+                        assert.equal(quietResult.fixableErrorCount, 1);
+                        assert.equal(quietResult.fixableWarningCount, 0);
+                        assert.equal(quietResult.fatalErrorCount, 1);
+                    },
+                );
+
+                it
+                (
+                    'should not add suppressed messages to a result without them',
+                    () =>
+                    {
+                        const quietResult = util.filterResult(result, util.isErrorMessage);
+                        assert(!('suppressedMessages' in quietResult));
+                    },
+                );
             },
         );
 

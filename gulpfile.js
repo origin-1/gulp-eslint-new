@@ -121,8 +121,8 @@ task
         tsTest('5.0',       'typescript_5.0'),
         tsTest('5',         'typescript_5'),
         tsTest('6',         'typescript'),
-        tsTest('6/v9.10',   'typescript', 'eslint-9.10'),
-        tsTest('6/v9.x',    'typescript', 'eslint-9.x'),
+        tsTest('6/9.10',    'typescript', 'eslint-9.10'),
+        tsTest('6/9.x',     'typescript', 'eslint-9.x'),
     ),
 );
 

@@ -127,9 +127,9 @@ See the linked content for details about each option.
 * [`plugins`][linting options]
 * [`reportUnusedDisableDirectives`][legacy linting options] (not in flat config)
 * [`resolvePluginsRelativeTo`][legacy linting options] (not in flat config)
-* [`ruleFilter`][linting options] (ESLint ≥ v9, flat config only)
+* [`ruleFilter`][linting options] (ESLint ≥ 9, flat config only)
 * [`rulePaths`][legacy linting options] (not in flat config)
-* [`stats`][linting options] (ESLint ≥ v9, flat config only)
+* [`stats`][linting options] (ESLint ≥ 9, flat config only)
 * [`useEslintrc`][legacy linting options] (not in flat config)
 
 **Autofix options**
@@ -141,11 +141,11 @@ See the linked content for details about each option.
 * [`warnIgnored`](#optionswarnignored)
 
 **Suppressions options**
-* [`applySuppressions`][suppressions options] (ESLint ≥ v10.1)
-* [`suppressionsLocation`][suppressions options] (ESLint ≥ v10.1)
+* [`applySuppressions`][suppressions options] (ESLint ≥ 10.1)
+* [`suppressionsLocation`][suppressions options] (ESLint ≥ 10.1)
 
 **Other options**
-* [`flags`][other options] (ESLint ≥ v9.6)
+* [`flags`][other options] (ESLint ≥ 9.6)
 
 #### General Options
 
@@ -221,7 +221,9 @@ When `true`, this option will filter warning messages from ESLint results. This 
 
 Type: `(message: LintMessage, index: number, list: LintMessage[]) => unknown`
 
-When a function is provided, it will be used to filter ESLint result messages, removing any messages that do not return a `true` (or truthy) value.
+When a function is provided, it will be used to filter ESLint result messages, removing any messages that do not return `true` or a truthy value.
+
+In both cases, the filter is also applied to suppressed messages (ESLint ≥ 8.8).
 
 ##### `options.warnIgnored`
 

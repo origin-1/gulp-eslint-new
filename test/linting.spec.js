@@ -353,6 +353,13 @@ describe
                             assert.equal(file.eslint.fixableWarningCount, 0);
                             assert.equal(file.eslint.fatalErrorCount, 0);
                             const eslintVersion = file._eslintInfo.eslint.constructor.version;
+                            if (satisfies(eslintVersion, useEslintrcConfig ? '>=8.8' : '>=8.23'))
+                            {
+                                assert(Array.isArray(file.eslint.suppressedMessages));
+                                assert.equal(file.eslint.suppressedMessages.length, 1);
+                                assert.equal
+                                (file.eslint.suppressedMessages[0].ruleId, 'no-octal');
+                            }
                             if (satisfies(eslintVersion, '>=8.53'))
                             {
                                 assert.equal(file.eslint.usedDeprecatedRules.length, 1);
@@ -409,6 +416,13 @@ describe
                             assert.equal(file.eslint.fatalErrorCount, 0);
                             assert(Array.isArray(file.eslint.usedDeprecatedRules));
                             const eslintVersion = file._eslintInfo.eslint.constructor.version;
+                            if (satisfies(eslintVersion, useEslintrcConfig ? '>=8.8' : '>=8.23'))
+                            {
+                                assert(Array.isArray(file.eslint.suppressedMessages));
+                                assert.equal(file.eslint.suppressedMessages.length, 1);
+                                assert.equal
+                                (file.eslint.suppressedMessages[0].ruleId, 'no-undef');
+                            }
                             if (satisfies(eslintVersion, '>=8.53'))
                             {
                                 assert.equal(file.eslint.usedDeprecatedRules.length, 1);
