@@ -353,6 +353,13 @@ describe
                             assert.equal(file.eslint.fixableWarningCount, 0);
                             assert.equal(file.eslint.fatalErrorCount, 0);
                             const eslintVersion = file._eslintInfo.eslint.constructor.version;
+                            if (satisfies(eslintVersion, useEslintrcConfig ? '>=8.8' : '>=8.23'))
+                            {
+                                assert(Array.isArray(file.eslint.suppressedMessages));
+                                assert.equal(file.eslint.suppressedMessages.length, 1);
+                                assert.equal
+                                (file.eslint.suppressedMessages[0].ruleId, 'no-octal');
+                            }
                             if (satisfies(eslintVersion, '>=8.53'))
                             {
                                 assert.equal(file.eslint.usedDeprecatedRules.length, 1);
@@ -409,6 +416,13 @@ describe
                             assert.equal(file.eslint.fatalErrorCount, 0);
                             assert(Array.isArray(file.eslint.usedDeprecatedRules));
                             const eslintVersion = file._eslintInfo.eslint.constructor.version;
+                            if (satisfies(eslintVersion, useEslintrcConfig ? '>=8.8' : '>=8.23'))
+                            {
+                                assert(Array.isArray(file.eslint.suppressedMessages));
+                                assert.equal(file.eslint.suppressedMessages.length, 1);
+                                assert.equal
+                                (file.eslint.suppressedMessages[0].ruleId, 'no-undef');
+                            }
                             if (satisfies(eslintVersion, '>=8.53'))
                             {
                                 assert.equal(file.eslint.usedDeprecatedRules.length, 1);
@@ -419,6 +433,78 @@ describe
                             }
                             else
                                 assert.equal(file.eslint.usedDeprecatedRules.length, 0);
+                        },
+                    );
+
+                    it
+                    (
+                        'when true, should remove the warning for an ignored file',
+                        async () =>
+                        {
+                            const file = createVinylFile('node_modules/file.js', '');
+                            const options =
+                            useEslintrcConfig ?
+                            {
+                                [ESLINT_PKG]:   eslintPkg,
+                                configType:     'eslintrc',
+                                quiet:          true,
+                                useEslintrc:    false,
+                                warnIgnored:    true,
+                            } :
+                            {
+                                [ESLINT_PKG]:       eslintPkg,
+                                configType:         'flat',
+                                overrideConfigFile: true,
+                                quiet:              true,
+                                warnIgnored:        true,
+                            };
+                            await finishStream(gulpESLintNew(options).end(file));
+                            assert.equal(file.eslint.filePath, file.path);
+                            assert(isEmptyArray(file.eslint.messages));
+                            assert.equal(file.eslint.errorCount, 0);
+                            assert.equal(file.eslint.warningCount, 0);
+                            assert(file._eslintInfo);
+                        },
+                    );
+
+                    it
+                    (
+                        'when a function, should filter the warning for an ignored file',
+                        async () =>
+                        {
+                            const file = createVinylFile('node_modules/file.js', '');
+                            const filteredMessages = [];
+                            const quiet =
+                            message =>
+                            {
+                                filteredMessages.push(message);
+                                return false;
+                            };
+                            const options =
+                            useEslintrcConfig ?
+                            {
+                                [ESLINT_PKG]:   eslintPkg,
+                                configType:     'eslintrc',
+                                quiet,
+                                useEslintrc:    false,
+                                warnIgnored:    true,
+                            } :
+                            {
+                                [ESLINT_PKG]:       eslintPkg,
+                                configType:         'flat',
+                                overrideConfigFile: true,
+                                quiet,
+                                warnIgnored:        true,
+                            };
+                            await finishStream(gulpESLintNew(options).end(file));
+                            assert.equal(filteredMessages.length, 1);
+                            const [message] = filteredMessages;
+                            assert.equal(message.ruleId, null);
+                            assert.equal(message.severity, 1);
+                            assert.match(message.message, /^File ignored/);
+                            assert.equal(file.eslint.filePath, file.path);
+                            assert(isEmptyArray(file.eslint.messages));
+                            assert.equal(file.eslint.warningCount, 0);
                         },
                     );
 
