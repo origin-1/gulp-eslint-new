@@ -1205,9 +1205,10 @@ describe
                 (
                     finishStream(gulpESLintNew().end(file)),
                     {
+                        fileName:   file.path,
                         message:
                         'gulp-eslint-new doesn\'t support Vinyl files with Stream contents.',
-                        plugin: 'gulp-eslint-new',
+                        plugin:     'gulp-eslint-new',
                     },
                 );
             },
