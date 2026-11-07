@@ -1,6 +1,6 @@
 'use strict';
 
-const { ESLINT_PKG }        = require('#util');
+const { ESLINT_PKG, organizeOptions }   = require('#util');
 
 const
 {
@@ -13,12 +13,12 @@ const
 } =
 require('./test-util');
 
-const { strict: assert }    = require('assert');
-const gulpESLintNew         = require('gulp-eslint-new');
-const { join, resolve }     = require('path');
-const { satisfies }         = require('semver');
-const { Readable }          = require('stream');
-const VinylFile             = require('vinyl');
+const { strict: assert }                = require('assert');
+const gulpESLintNew                     = require('gulp-eslint-new');
+const { join, resolve }                 = require('path');
+const { satisfies }                     = require('semver');
+const { Readable }                      = require('stream');
+const VinylFile                         = require('vinyl');
 
 async function testConfig(options)
 {
@@ -910,8 +910,43 @@ describe
                             'File ignored. If this file is matched by a global ignore pattern, ' +
                             'it can be unignored by setting the "ignore" option to false.',
                         },
+                        {
+                            filePath: '..dir/file6.ts',
+                            expectdMessage:
+                            'File ignored. If this file is matched by a global ignore pattern, ' +
+                            'it can be unignored by setting the "ignore" option to false.',
+                        },
                     ];
                     await testIgnoreByPath(options, dataList);
+                },
+            );
+
+            it
+            (
+                'should resolve the base path from the location of the config file',
+                async () =>
+                {
+                    const { ESLint } =
+                    organizeOptions({ [ESLINT_PKG]: eslintPkg, configType: 'flat' });
+                    const hasFindConfigFile =
+                    typeof ESLint.prototype.findConfigFile === 'function';
+                    const options =
+                    {
+                        [ESLINT_PKG]:   eslintPkg,
+                        configType:     'flat',
+                        cwd:            join(__dirname, 'fixtures/base-path/cwd'),
+                        warnIgnored:    true,
+                    };
+                    const file =
+                    createVinylFile(join(__dirname, 'fixtures/base-path/ignored/file.js'), '');
+                    await finishStream(gulpESLintNew(options).end(file));
+                    const expectedMessage =
+                    hasFindConfigFile ?
+                    'File ignored. If this file is matched by a global ignore pattern, it can be ' +
+                    'unignored by setting the "ignore" option to false.' :
+                    'File ignored because outside of base path.';
+                    assert.equal(file.eslint.messages.length, 1);
+                    assert.equal(file.eslint.messages[0].message, expectedMessage);
                 },
             );
 
