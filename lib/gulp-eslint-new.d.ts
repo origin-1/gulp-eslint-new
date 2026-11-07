@@ -86,7 +86,7 @@ declare namespace gulpESLintNew
          * Defaults to a modified version of the
          * [stylish](https://eslint.org/docs/user-guide/formatters/#stylish) formatter.
          * @param writer -
-         * A funtion or stream to write the formatted ESLint results.
+         * A function or stream to write the formatted ESLint results.
          * Defaults to gulp's [fancy-log](https://github.com/gulpjs/fancy-log#readme).
          * @returns gulp file stream.
          */
@@ -105,7 +105,7 @@ declare namespace gulpESLintNew
          * Defaults to a modified version of the
          * [stylish](https://eslint.org/docs/user-guide/formatters/#stylish) formatter.
          * @param writer -
-         * A funtion or stream to write the formatted ESLint results.
+         * A function or stream to write the formatted ESLint results.
          * Defaults to gulp's [fancy-log](https://github.com/gulpjs/fancy-log#readme).
          * @returns gulp file stream.
          */

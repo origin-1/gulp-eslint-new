@@ -1,15 +1,15 @@
 'use strict';
 
-const util                                      = require('#util');
+const util                  = require('#util');
 
 const { createVinylFile, finishStream, isESLint9Supported, isESLint10Supported, noop } =
 require('./test-util');
 
-const { strict: assert }                        = require('assert');
+const { strict: assert }    = require('assert');
 // eslint-disable-next-line n/no-deprecated-api
-const { Domain }                                = require('domain');
-const { satisfies }                             = require('semver');
-const { Writable }                              = require('stream');
+const { Domain }            = require('domain');
+const { satisfies }         = require('semver');
+const { Writable }          = require('stream');
 
 describe
 (
@@ -172,6 +172,57 @@ describe
                             'File ignored by default. Use a negated ignore pattern (like ' +
                             '"!<relative/path/to/filename>") to override.',
                         );
+                    },
+                );
+
+                it
+                (
+                    'should not treat a file name starting with two dots as external in flat mode',
+                    () =>
+                    {
+                        const result =
+                        util.createIgnoreResult
+                        ('..file.js', process.cwd(), { name: 'ESLint', version: '9.0.0' });
+                        assert.equal
+                        (
+                            result.messages[0].message,
+                            'File ignored because it is matched by a global ignore pattern or ' +
+                            'because no matching configuration was supplied. A file matched by ' +
+                            'a global ignore pattern can be unignored by setting the "ignore" ' +
+                            'option to false.',
+                        );
+                    },
+                );
+
+                it
+                (
+                    'should treat a file in a parent directory as external in flat mode',
+                    () =>
+                    {
+                        const result =
+                        util.createIgnoreResult
+                        ('../file.js', process.cwd(), { name: 'ESLint', version: '9.0.0' });
+                        assert.equal
+                        (result.messages[0].message, 'File ignored because outside of base path.');
+                    },
+                );
+
+                it
+                (
+                    'should treat a file on a different Windows drive as external in flat mode',
+                    () =>
+                    {
+                        const filePath = 'D:\\node_modules\\file.js';
+                        const result =
+                        util.createIgnoreResult
+                        (
+                            filePath,
+                            'C:\\dir',
+                            { name: 'ESLint', version: '9.0.0' },
+                            require('path').win32,
+                        );
+                        assert.equal
+                        (result.messages[0].message, 'File ignored because outside of base path.');
                     },
                 );
             },
@@ -542,6 +593,102 @@ describe
                         assert.equal(quietResult.fixableWarningCount, 0);
                         assert.equal(quietResult.fatalErrorCount, 1);
                         assert.equal(quietResult.foobar, 42);
+                    },
+                );
+            },
+        );
+
+        describe
+        (
+            'getBaseDir',
+            () =>
+            {
+                const FLAT_CONSTRUCTOR = { name: 'ESLint', version: '9.0.0' };
+
+                it
+                (
+                    'should return the directory of the config file in flat mode',
+                    async () =>
+                    {
+                        let actualFilePath;
+                        const eslint =
+                        {
+                            constructor: FLAT_CONSTRUCTOR,
+                            findConfigFile:
+                            filePath =>
+                            {
+                                actualFilePath = filePath;
+                                return Promise.resolve('/base/eslint.config.js');
+                            },
+                        };
+                        const baseDir =
+                        await util.getBaseDir({ cwd: '/cwd', eslint }, '/base/dir/file.js');
+                        assert.equal(baseDir, '/base');
+                        assert.equal(actualFilePath, '/base/dir/file.js');
+                    },
+                );
+
+                it
+                (
+                    'should return the current directory if a config file is specified',
+                    async () =>
+                    {
+                        const eslint =
+                        {
+                            constructor:    FLAT_CONSTRUCTOR,
+                            findConfigFile: () => Promise.resolve('/base/eslint.config.js'),
+                        };
+                        for (const overrideConfigFile of ['eslint.config.js', true])
+                        {
+                            const baseDir =
+                            await util.getBaseDir
+                            ({ cwd: '/cwd', eslint, overrideConfigFile }, '/base/dir/file.js');
+                            assert.equal(baseDir, '/cwd');
+                        }
+                    },
+                );
+
+                it
+                (
+                    'should return the current directory if no config file is found',
+                    async () =>
+                    {
+                        const eslint =
+                        {
+                            constructor:    FLAT_CONSTRUCTOR,
+                            findConfigFile: () => Promise.resolve(),
+                        };
+                        const baseDir =
+                        await util.getBaseDir({ cwd: '/cwd', eslint }, '/base/dir/file.js');
+                        assert.equal(baseDir, '/cwd');
+                    },
+                );
+
+                it
+                (
+                    'should return the current directory if "findConfigFile" is not available',
+                    async () =>
+                    {
+                        const eslint = { constructor: FLAT_CONSTRUCTOR };
+                        const baseDir =
+                        await util.getBaseDir({ cwd: '/cwd', eslint }, '/base/dir/file.js');
+                        assert.equal(baseDir, '/cwd');
+                    },
+                );
+
+                it
+                (
+                    'should return the current directory in eslintrc mode',
+                    async () =>
+                    {
+                        const eslint =
+                        {
+                            constructor:    { name: 'ESLint', version: '8.57.1' },
+                            findConfigFile: () => Promise.resolve('/base/eslint.config.js'),
+                        };
+                        const baseDir =
+                        await util.getBaseDir({ cwd: '/cwd', eslint }, '/base/dir/file.js');
+                        assert.equal(baseDir, '/cwd');
                     },
                 );
             },
