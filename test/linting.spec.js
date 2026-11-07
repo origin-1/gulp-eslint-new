@@ -1196,6 +1196,22 @@ describe
 
         it
         (
+            'should not copy ESLint information to a cloned file',
+            async () =>
+            {
+                const file = createVinylFile('file.js', '');
+                await finishStream(gulpESLintNew().end(file));
+                assert(file.eslint);
+                assert(file._eslintInfo);
+                assert(!Object.prototype.propertyIsEnumerable.call(file, '_eslintInfo'));
+                const clonedFile = file.clone();
+                assert.deepEqual(clonedFile.eslint, file.eslint);
+                assert(!('_eslintInfo' in clonedFile));
+            },
+        );
+
+        it
+        (
             'should emit an error when it takes a stream content',
             async () =>
             {
