@@ -91,6 +91,18 @@ describe
 
                 it
                 (
+                    'should include usedDeprecatedRules in the result',
+                    () =>
+                    {
+                        const result =
+                        util.createIgnoreResult
+                        ('.hidden.js', process.cwd(), { name: 'ESLint', version: '8.0.0' });
+                        assert.deepEqual(result.usedDeprecatedRules, []);
+                    },
+                );
+
+                it
+                (
                     'should include nodeType in the message in ESLint 8.41 to 9',
                     () =>
                     {
