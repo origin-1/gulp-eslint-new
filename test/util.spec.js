@@ -91,6 +91,39 @@ describe
 
                 it
                 (
+                    'should include nodeType in the message in ESLint 8.41 to 9',
+                    () =>
+                    {
+                        for (const version of ['8.41.0', '9.0.0'])
+                        {
+                            const result =
+                            util.createIgnoreResult
+                            ('.hidden.js', process.cwd(), { name: 'ESLint', version });
+                            const [message] = result.messages;
+                            assert('nodeType' in message, version);
+                            assert.equal(message.nodeType, null, version);
+                        }
+                    },
+                );
+
+                it
+                (
+                    'should not include nodeType in the message in ESLint before 8.41 or in ' +
+                    'ESLint 10',
+                    () =>
+                    {
+                        for (const version of ['8.40.0', '10.0.0'])
+                        {
+                            const result =
+                            util.createIgnoreResult
+                            ('.hidden.js', process.cwd(), { name: 'ESLint', version });
+                            assert(!('nodeType' in result.messages[0]), version);
+                        }
+                    },
+                );
+
+                it
+                (
                     'should treat a file name starting with two dots as hidden in eslintrc mode',
                     () =>
                     {
