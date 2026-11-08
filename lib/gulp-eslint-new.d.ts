@@ -7,6 +7,7 @@ type Awaitable<T = unknown> = T | PromiseLike<T>;
 type ESLintrcOptions    = eslint.ESLintrcOptions;
 type FlatESLintOptions  = eslint.FlatESLintOptions;
 type LintMessage        = eslint.LintMessage;
+type ResultsMeta        = eslint.ResultsMeta;
 
 type LintResultStreamFunction<Type> =
 ((action: (value: Type, callback: TransformCallback) => void) => NodeJS.ReadWriteStream) &
@@ -23,9 +24,6 @@ declare namespace gulpESLintNew
 
         warnIgnored?: boolean | undefined;
     }
-
-    /** @deprecated Use type {@link eslint.LintResultData|`ESLint.LintResultData`}. */
-    type FormatterContext = eslint.LintResultData;
 
     type FormatterFunction =
     (results: LintResult[], context: LintResultData) => string | Promise<string>;
@@ -178,9 +176,6 @@ declare namespace gulpESLintNew
     {
         format(results: LintResult[], resultsMeta?: ResultsMeta): string | Promise<string>;
     }
-
-    /** @deprecated Use type {@link eslint.ResultsMeta|`ESLint.ResultsMeta`}. */
-    type ResultsMeta = eslint.ResultsMeta;
 
     type Writer = (str: string) => Awaitable;
 }

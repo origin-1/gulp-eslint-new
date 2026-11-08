@@ -1,14 +1,6 @@
 import
 gulpESLintNew,
-{
-    type FormatterContext,
-    type FormatterFunction,
-    type LintResult,
-    type LintResults,
-    type LoadedFormatter,
-    type ResultsMeta,
-    type Writer,
-}
+{ type FormatterFunction, type LintResult, type LintResults, type LoadedFormatter, type Writer }
 from '../lib/gulp-eslint-new';
 
 import type { ESLint } from 'eslint';
@@ -248,7 +240,7 @@ isStream(gulpESLintNew.failOnError());
 isStream(gulpESLintNew.failAfterError());
 
 const formatterFunction =
-(results: ESLint.LintResult[], context?: FormatterContext): string =>
+(results: ESLint.LintResult[], context?: ESLint.LintResultData): string =>
 JSON.stringify({ results, context });
 declare const toStringAsync: (arg: unknown) => Promise<string>;
 declare const eslintLoadedFormatter: ESLint.LoadedFormatter;
@@ -261,7 +253,8 @@ const invalidLoadedFormatter =
 const loadedFormatter =
 {
     format:
-    async (results: readonly ESLint.LintResult[], resultsMeta: ResultsMeta): Promise<string> =>
+    async (results: readonly ESLint.LintResult[], resultsMeta: ESLint.ResultsMeta):
+    Promise<string> =>
     toStringAsync({ results, resultsMeta }),
 };
 
