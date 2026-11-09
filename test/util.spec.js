@@ -643,6 +643,23 @@ describe
 
                 it
                 (
+                    'should call the filter with a message as the only argument',
+                    () =>
+                    {
+                        const filterArgs = [];
+                        const filter =
+                        (...args) =>
+                        {
+                            filterArgs.push(args);
+                            return true;
+                        };
+                        util.filterResult(result, filter);
+                        assert.deepEqual(filterArgs, result.messages.map(message => [message]));
+                    },
+                );
+
+                it
+                (
                     'should filter suppressed messages',
                     () =>
                     {

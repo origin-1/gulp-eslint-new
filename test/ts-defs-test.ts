@@ -98,7 +98,7 @@ gulpESLintNew
         ],
         overrideConfigFile:     true,
         plugins:                { foo: { processors: { bar: { } } } },
-        quiet:                  true,
+        quiet:                  ({ severity }): boolean => severity === 2,
         ruleFilter:
         ({ ruleId, severity }: { ruleId: string; severity: 1 | 2; }): boolean =>
         !!(ruleId && severity),

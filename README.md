@@ -202,6 +202,7 @@ Type: `boolean | (message: LintMessage) => boolean`
 
 Set to `true` or a function to generate fixes when possible, or set to `false` to explicitly disable autofixing.
 If a predicate function is present, it will be invoked once for each fixable lint message, and only the lint messages for which the function returns `true` will be fixed.
+Lint messages filtered out by the option [`quiet`](#optionsquiet) are never fixed.
 
 **See the [Autofix](#autofix) section for more information and examples.**
 
@@ -219,11 +220,13 @@ Type: `boolean`
 
 When `true`, this option will filter warning messages from ESLint results. This mimics the ESLint CLI [`--quiet` option](https://eslint.org/docs/user-guide/command-line-interface#--quiet).
 
-Type: `(message: LintMessage, index: number, list: LintMessage[]) => unknown`
+Type: `(message: LintMessage) => unknown`
 
 When a function is provided, it will be used to filter ESLint result messages, removing any messages that do not return `true` or a truthy value.
 
 In both cases, the filter is also applied to suppressed messages (ESLint ≥ 8.8) and to the warning added for an ignored file by the option [`warnIgnored`](#optionswarnignored).
+
+If autofix is enabled with the option [`fix`](#optionsfix), messages that are filtered out are not fixed.
 
 ##### `options.warnIgnored`
 

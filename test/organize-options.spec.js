@@ -153,6 +153,119 @@ describe
             },
         );
 
+        describe
+        (
+            '"fix" with "quiet"',
+            () =>
+            {
+                it
+                (
+                    'should not change "fix" when "quiet" is false',
+                    () =>
+                    {
+                        const { eslintOptions } =
+                        organizeOptions({ [ESLINT_PKG]: 'eslint-8.x', fix: true, quiet: false });
+                        assert.equal(eslintOptions.fix, true);
+                    },
+                );
+
+                it
+                (
+                    'should not change "fix" when autofix is not enabled',
+                    () =>
+                    {
+                        {
+                            const { eslintOptions } =
+                            organizeOptions({ [ESLINT_PKG]: 'eslint-8.x', quiet: true });
+                            assert(!('fix' in eslintOptions));
+                        }
+                        {
+                            const { eslintOptions } =
+                            organizeOptions
+                            ({ [ESLINT_PKG]: 'eslint-8.x', fix: false, quiet: true });
+                            assert.equal(eslintOptions.fix, false);
+                        }
+                    },
+                );
+
+                it
+                (
+                    'should not change "fix" when "fix" is invalid',
+                    () =>
+                    {
+                        const { eslintOptions } =
+                        organizeOptions({ [ESLINT_PKG]: 'eslint-8.x', fix: 'foo', quiet: true });
+                        assert.equal(eslintOptions.fix, 'foo');
+                    },
+                );
+
+                it
+                (
+                    'should fix only errors when "quiet" is true and "fix" is true',
+                    () =>
+                    {
+                        const { eslintOptions } =
+                        organizeOptions({ [ESLINT_PKG]: 'eslint-8.x', fix: true, quiet: true });
+                        const { fix } = eslintOptions;
+                        assert.equal(typeof fix, 'function');
+                        assert.equal(fix({ severity: 2 }), true);
+                        assert.equal(fix({ severity: 1 }), false);
+                    },
+                );
+
+                it
+                (
+                    'should fix only filtered messages when "quiet" is a function',
+                    () =>
+                    {
+                        const quietArgs = [];
+                        const quiet =
+                        (...args) =>
+                        {
+                            quietArgs.push(args);
+                            return args[0].ruleId === 'foo' ? 'truthy' : '';
+                        };
+                        const { eslintOptions } =
+                        organizeOptions({ [ESLINT_PKG]: 'eslint-8.x', fix: true, quiet });
+                        const { fix } = eslintOptions;
+                        assert.equal(typeof fix, 'function');
+                        const fooMessage = { ruleId: 'foo' };
+                        const barMessage = { ruleId: 'bar' };
+                        assert(fix(fooMessage));
+                        assert(!fix(barMessage));
+                        assert.deepEqual(quietArgs, [[fooMessage], [barMessage]]);
+                    },
+                );
+
+                it
+                (
+                    'should fix only filtered errors when "quiet" is true and "fix" is a function',
+                    () =>
+                    {
+                        const fixArgs = [];
+                        const fixOption =
+                        (...args) =>
+                        {
+                            fixArgs.push(args);
+                            return args[0].ruleId === 'foo';
+                        };
+                        const { eslintOptions } =
+                        organizeOptions
+                        ({ [ESLINT_PKG]: 'eslint-8.x', fix: fixOption, quiet: true });
+                        const { fix } = eslintOptions;
+                        assert.equal(typeof fix, 'function');
+                        const fooError = { ruleId: 'foo', severity: 2 };
+                        const barError = { ruleId: 'bar', severity: 2 };
+                        const fooWarning = { ruleId: 'foo', severity: 1 };
+                        assert(fix(fooError));
+                        assert(!fix(barError));
+                        assert(!fix(fooWarning));
+                        assert.deepEqual(fixArgs, [[fooError], [barError]]);
+                    },
+                );
+            },
+        );
+
         it
         (
             'should fail if "warnIgnored" is not a valid value',

@@ -438,6 +438,127 @@ describe
 
                     it
                     (
+                        'when true, should not fix warnings',
+                        async () =>
+                        {
+                            const file = createVinylFile('fixable.js', 'var x = 0; ');
+                            const rules = { 'eol-last': 1, 'no-trailing-spaces': 2 };
+                            const options =
+                            useEslintrcConfig ?
+                            {
+                                [ESLINT_PKG]:       eslintPkg,
+                                baseConfig:         { rules },
+                                configType:         'eslintrc',
+                                fix:                true,
+                                quiet:              true,
+                                useEslintrc:        false,
+                            } :
+                            {
+                                [ESLINT_PKG]:       eslintPkg,
+                                configType:         'flat',
+                                fix:                true,
+                                overrideConfig:     { rules },
+                                overrideConfigFile: true,
+                                quiet:              true,
+                            };
+                            await finishStream(gulpESLintNew(options).end(file));
+                            assert.equal(file.eslint.filePath, file.path);
+                            assert(isEmptyArray(file.eslint.messages));
+                            assert.equal(file.eslint.errorCount, 0);
+                            assert.equal(file.eslint.warningCount, 0);
+                            assert.equal(file.eslint.fixableErrorCount, 0);
+                            assert.equal(file.eslint.fixableWarningCount, 0);
+                            assert.equal(file.eslint.fatalErrorCount, 0);
+                            assert.equal(file.eslint.fixed, true);
+                            assert.equal(file.eslint.output, 'var x = 0;');
+                            assert.equal(file.contents.toString(), 'var x = 0;');
+                        },
+                    );
+
+                    it
+                    (
+                        'when a function, should fix only unfiltered messages',
+                        async () =>
+                        {
+                            const file = createVinylFile('fixable.js', 'var x = 0; ');
+                            const rules = { 'eol-last': 1, 'no-trailing-spaces': 2 };
+                            const quiet = ({ severity }) => severity === 1;
+                            const options =
+                            useEslintrcConfig ?
+                            {
+                                [ESLINT_PKG]:       eslintPkg,
+                                baseConfig:         { rules },
+                                configType:         'eslintrc',
+                                fix:                true,
+                                quiet,
+                                useEslintrc:        false,
+                            } :
+                            {
+                                [ESLINT_PKG]:       eslintPkg,
+                                configType:         'flat',
+                                fix:                true,
+                                overrideConfig:     { rules },
+                                overrideConfigFile: true,
+                                quiet,
+                            };
+                            await finishStream(gulpESLintNew(options).end(file));
+                            assert.equal(file.eslint.filePath, file.path);
+                            assert(isEmptyArray(file.eslint.messages));
+                            assert.equal(file.eslint.errorCount, 0);
+                            assert.equal(file.eslint.warningCount, 0);
+                            assert.equal(file.eslint.fixableErrorCount, 0);
+                            assert.equal(file.eslint.fixableWarningCount, 0);
+                            assert.equal(file.eslint.fatalErrorCount, 0);
+                            assert.equal(file.eslint.fixed, true);
+                            assert.equal(file.eslint.output, 'var x = 0; \n');
+                            assert.equal(file.contents.toString(), 'var x = 0; \n');
+                        },
+                    );
+
+                    it
+                    (
+                        'when true, should fix only errors accepted by a "fix" function',
+                        async () =>
+                        {
+                            const file = createVinylFile('fixable.js', 'var x = 0; ');
+                            const rules = { 'eol-last': 1, 'no-trailing-spaces': 2 };
+                            const fix = ({ ruleId }) => ruleId === 'eol-last';
+                            const options =
+                            useEslintrcConfig ?
+                            {
+                                [ESLINT_PKG]:       eslintPkg,
+                                baseConfig:         { rules },
+                                configType:         'eslintrc',
+                                fix,
+                                quiet:              true,
+                                useEslintrc:        false,
+                            } :
+                            {
+                                [ESLINT_PKG]:       eslintPkg,
+                                configType:         'flat',
+                                fix,
+                                overrideConfig:     { rules },
+                                overrideConfigFile: true,
+                                quiet:              true,
+                            };
+                            await finishStream(gulpESLintNew(options).end(file));
+                            assert.equal(file.eslint.filePath, file.path);
+                            assert(Array.isArray(file.eslint.messages));
+                            assert.equal(file.eslint.messages.length, 1);
+                            assert.equal(file.eslint.messages[0].ruleId, 'no-trailing-spaces');
+                            assert.equal(file.eslint.errorCount, 1);
+                            assert.equal(file.eslint.warningCount, 0);
+                            assert.equal(file.eslint.fixableErrorCount, 1);
+                            assert.equal(file.eslint.fixableWarningCount, 0);
+                            assert.equal(file.eslint.fatalErrorCount, 0);
+                            assert(!('fixed' in file.eslint));
+                            assert(!('output' in file.eslint));
+                            assert.equal(file.contents.toString(), 'var x = 0; ');
+                        },
+                    );
+
+                    it
+                    (
                         'when true, should remove the warning for an ignored file',
                         async () =>
                         {

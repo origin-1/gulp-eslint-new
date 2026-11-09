@@ -17,10 +17,7 @@ declare namespace gulpESLintNew
 {
     interface AdditionalOptions
     {
-        quiet?:
-        | boolean
-        | ((message: LintMessage, index: number, list: LintMessage[]) => unknown)
-        | undefined;
+        quiet?: boolean | ((message: LintMessage) => unknown) | undefined;
 
         warnIgnored?: boolean | undefined;
     }
