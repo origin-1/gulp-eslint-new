@@ -1,6 +1,8 @@
 'use strict';
 
-const { GULP_DEST_KEY, GULP_WARN_KEY, createTransform }         = require('#util');
+const { GULP_DEST_KEY, GULP_WARN_KEY, STYLE_BANNER_KEY, createTransform } =
+require('#util');
+
 const { createVinylDirectory, createVinylFile, finishStream }   = require('./test-util');
 const { strict: assert }                                        = require('assert');
 
@@ -257,6 +259,45 @@ describe
                 );
                 testStream.end();
             },
+        );
+
+        function testWarningBanner(styleBannerResult, expectedBanner)
+        {
+            return async () =>
+            {
+                let actualMessage;
+                const testStream =
+                gulpESLintNew.fix
+                (
+                    {
+                        [GULP_WARN_KEY]:
+                        message =>
+                        {
+                            actualMessage = message;
+                        },
+                        [STYLE_BANNER_KEY]: () => styleBannerResult,
+                    },
+                );
+                const file = createVinylFile('file.js', '');
+                file.eslint = { };
+                file._eslintInfo = { };
+                await finishStream(testStream.end(file));
+                assert.equal(typeof actualMessage, 'string');
+                assert(actualMessage.startsWith(`${expectedBanner}\n`));
+            };
+        }
+
+        it
+        (
+            'should raise a styled warning',
+            testWarningBanner
+            (true, '\x1b[1;37m\x1b[40mgulp-eslint-new\x1b[0m \x1b[30m\x1b[43mWARN\x1b[0m'),
+        );
+
+        it
+        (
+            'should raise an unstyled warning',
+            testWarningBanner(false, 'gulp-eslint-new WARN'),
         );
 
         it

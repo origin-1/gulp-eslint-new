@@ -809,6 +809,66 @@ describe
 
         describe
         (
+            'hasColors',
+            () =>
+            {
+                it
+                (
+                    'should return false if the flag "--no-color" is specified',
+                    () =>
+                    {
+                        const process =
+                        { argv: ['--color', '--no-color'], stdout: { hasColors: () => true } };
+                        assert.equal(util.hasColors(process), false);
+                    },
+                );
+
+                it
+                (
+                    'should return true if the flag "--color" is specified',
+                    () =>
+                    {
+                        const process = { argv: ['--color'], stdout: { hasColors: () => false } };
+                        assert.equal(util.hasColors(process), true);
+                    },
+                );
+
+                it
+                (
+                    'should return false if the standard output stream is not a TTY',
+                    () =>
+                    {
+                        const process = { argv: [], stdout: { } };
+                        assert.equal(util.hasColors(process), false);
+                    },
+                );
+
+                it
+                (
+                    'should return the color support of the standard output stream',
+                    () =>
+                    {
+                        for (const expected of [false, true])
+                        {
+                            const process = { argv: [], stdout: { hasColors: () => expected } };
+                            assert.equal(util.hasColors(process), expected);
+                        }
+                    },
+                );
+
+                it
+                (
+                    'should default to the current process',
+                    () =>
+                    {
+                        assert.equal(typeof util.hasColors(), 'boolean');
+                    },
+                );
+            },
+        );
+
+        describe
+        (
             'resolveFormatter',
             () =>
             {
